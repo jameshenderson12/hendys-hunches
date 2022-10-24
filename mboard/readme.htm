@@ -1,0 +1,444 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML; 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+<title>MBoard - README</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+/* Style sheet and XHTML code
+Author: Mauricio Samy Silva http://www.maujor.com/ A Web Standard evangelist site
+City: Rio de Janeiro - Brazil
+Contact: maujorcss[at]maujor[dot]com
+Date: 2006-05-11
+*/
+body {
+        margin:5px 0;
+        padding:0;
+        background:#eee;
+        color: black;
+        font : 68.8%/1.5 Verdana, Geneva, Arial, Helvetica, sans-serif;
+        text-align:center;
+        }
+#wrapper {
+        width:700px;
+        background:#fff;
+        margin:0 auto;
+        text-align:left;
+        border:1px solid #ccc;
+        padding:10px 20px;
+        }
+h1 {
+        font-size:1.5em;
+        }
+h2 {
+        font-size:1.2em;
+        border-top:1px solid #999;
+        padding-top:1.8em;
+        }
+h3 {
+        font-size:1.0em;
+        }
+span.dest { color:#f00;}
+p {
+        color : black;
+        font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+        font-size: 1.0em;
+        }
+address {
+        font-weight:bold;
+        font-style:normal;
+        }
+ul.nobullets {
+        margin:0 0 1.0em;
+        padding:0;
+        list-style:none;
+        }
+ol li {margin-bottom:1.0em;}
+samp, code {
+        font-size:1.3em;
+        font-weight:bold;
+        }
+a:hover {
+        color : red;
+        background:#ccc;
+        text-decoration : none;
+        }
+table#installation {
+        border-collapse:collapse;
+        margin: 5px 15px 10px -25px;
+        border: 2px solid #999;
+        }
+table#installation thead {
+        text-align:center;
+        text-transform:uppercase;
+        }
+table#installation tr td, table#installation tr th {
+        padding: 2px 5px;
+        border: 1px solid #ccc;
+        }
+table#installation tr th {
+        border-bottom-width:2px;
+        border-bottom-color:#999;
+        }
+
+table#installation tr td var {
+        font-weight:bold;
+        font-style:normal;
+        }
+table#installation tr.odd {
+        background: #fafafa;
+        }
+
+
+</style>
+</head>
+<body>
+<div id="wrapper">
+<div id="main">
+<h1><span class="dest">MBoard</span><br />
+PHP message board</h1>
+
+<ul class="nobullets">
+<li>PHP message board (MBoard)</li>
+<li>Version: 1.3 from 18th November 2006</li>
+<li>Written by Klemen Stirn (info AT phpjunkyard DOT com)</li>
+<li><a href="http://www.phpjunkyard.com">PHPJunkYard.com - Free PHP scripts</a></li>
+<li><a href="http://www.phpjunkyard.com/php-message-board.php">PHP message board</a></li>
+<li><a href="http://developers.phpjunkyard.com/">Support and developers forum</a></li>
+</ul>
+
+<p><b>PLEASE NOTE:</b> I <span class="dest">cannot</span> provide free installation
+support for this free script! Please use the above e-mail address to contact me
+ONLY about possible bug reports, suggestions or comments! Thank you!</p>
+<h2>INDEX</h2>
+<ul class="nobullets">
+    <li><a href="#copy">Copyright notice and license</a></li>
+    <li><a href="#desc">Description &amp; requirements</a></li>
+    <li><a href="#thanks">Thanks to ...</a></li>
+    <li><a href="#install">Installation</a></li>
+    <li><a href="#upgrade">Upgrade from version 1.2, 1.21 or 1.22</a></li>
+    <li><a href="#help">Troubleshooting, FAQ and getting help</a></li>
+    <li><a href="#translate">Adding / Translating bad words list</a></li>
+    <li><a href="#other">Copyright removal, newsletter, rating this script and other</a></li>
+</ul>
+
+<h2 id="copy">COPYRIGHT NOTICE</h2>
+
+<p>Copyright 2004-2006 Klemen Stirn. All Rights Reserved.</p>
+<p>The MBoard may be used and modified free of charge by anyone so long as
+this copyright notice and the comments above remain intact. By using this
+code you agree to indemnify Klemen Stirn from any liability
+that might arise from it's use.</p>
+<p>Selling the code for this program without prior written consent is
+expressly forbidden. In other words, please ask first before you try and
+make money off this program.</p>
+<p>Obtain permission before redistributing this software over the Internet or
+in any other medium. In all cases copyright and header must remain intact.
+This Copyright is in full effect in any country that has International
+Trade Agreements with the United States of America or with
+the European Union.</p>
+
+<p><b>Removing copyright notice (&quot;Powered by&quot; statement)</b><br />
+Removing any of the copyright notices without purchasing a license is <b>illegal</b>!
+To remove PHPJunkyard copyright notice you must purchase a license for this script.
+For more information on how to obtain a license please visit the site below:<br />
+<a href="http://www.phpjunkyard.com/copyright-removal.php"
+target="_blank">http://www.phpjunkyard.com/copyright-removal.php</a></p>
+
+<h2 id="desc">DESCRIPTION</h2>
+
+<p>A simple message board where your visitors can post messages and replies. Comes with anti-SPAM protection.</p>
+
+<h2>REQUIREMENTS</h2>
+
+<ul>
+    <li>UNIX or Windows server (it *might* work on others too)</li>
+    <li>PHP4 support</li>
+    <li>FTP access and a FTP program</li>
+</ul>
+
+<h2 id="thanks">THANKS TO...</h2>
+
+<p>I would like to thank the following people for their help (in no particular order):</p>
+
+<ul>
+    <li><p><b>Henrie</b> from the Netherlands (<a href="http://members.home.nl/h.vdlocht/" target="_blank">Web site</a>) for his continuing dedication to help MBoard users on the support forum</p></li>
+    <li><p><b>Mauricio</b> (<a href="http://www.maujor.com/" target="_blank">Web site</a>) for the nice format of this readme file</p></li>
+    <li><p>guys from <b>Mayhemic Labs</b> (<a href="http://www.mayhemiclabs.com" target="_blank">Web site</a>) for helping make this script secure</p></li>
+</ul>
+
+<h2 id="install">&raquo; Installation</h2>
+
+<ol>
+<li>Open file settings.php in your favorite <b>PLAIN TEXT</b> editor (like Notepad or Wordpad on Windows systems, DO NOT use MS Word or similar editor) and set these variables:
+<table id="installation" summary="This is a simple two columns table - the first column names a variable and in second one has a descripton and the settings for the varible">
+<thead>
+<tr>
+<th>Variable</th>
+<th>Description/Setup</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td nowrap="nowrap"><var>$settings['apass']</var></td>
+<td>This will be your password for deleting posts. Change it from the
+default password <b>admin</b>. Use only letters a-Z, A-Z and numbers 0-9</td>
+</tr>
+<tr>
+<td nowrap="nowrap"><var>$settings['website_title']</var></td>
+<td>A short title of your website, eg &quot;My lovely website&quot;</td>
+</tr>
+<tr class="odd">
+<td nowrap="nowrap"><var>$settings['website_url']</var></td>
+<td>URL of your website.</td>
+</tr>
+<tr>
+<td><var>$settings['mboard_title']</var></td>
+<td>Title of your message board, for example &quot;My lovely forum&quot;</td>
+</tr>
+<tr class="odd">
+<td nowrap="nowrap"><var>$settings['mboard_url']</var></td>
+<td>URL to folder where message board is installed. Do NOT add a trailing &quot;/&quot; Examples:<br />
+http://www.yourdomain.com/mboard &nbsp; - <font color="#008000"><b>OK</b></font><br />
+http://www.yourdomain.com/mboard/ &nbsp; - <font color="#FF0000">Wrong</font>, dont add a / at the end!<br />
+http://www.yourdomain.com/mboard/mboard.php &nbsp; - <font color="#FF0000">Wrong</font>, don't add /mboard.php at the end!
+</td>
+</tr>
+<tr>
+<td nowrap="nowrap"><span class="dest">Updated in 1.3</span><br /><var>$settings['autosubmit']</var></td>
+<td>Setting this to <b>1</b> or <b>2</b> will require entering a &quot;security number&quot; in order to successfully
+submit a new post or reply to the message board. I have added this to prevent SPAM.
+Set to 0 if you want to disable the security number check.<br /><br />
+<b>Setting to 1</b> will display the security number in a generated <b>image</b>. For this to work
+your server must have GD library installed. You can test if your server supports all the required
+functions by uploading the <b>gd_test.php</b> file to your server and open it in your browser.
+If you get a red image with text WORKS your server shouldn't have problems with it. If you get an error (or blank page)
+when opening gd_test.php try using the text version as explained below or ask your hosting company to install the GD library for PHP.<br /><br />
+<b>Setting to 2</b> will display the security number in <b>text format</b>. While this is
+not as effective as an image it will still block the majority of known spam robots.<br /><br />
+RECOMMENDED SETTING: <var>$settings['autosubmit']=1</var>;<br />
+OR if the above doesn't work try<br />
+RECOMMENDED SETTING: <var>$settings['autosubmit']=2</var>;</td>
+</tr>
+<tr class="odd">
+<td nowrap="nowrap"><var>$settings['filter_sum']</var></td>
+<td>This variable is used in the preventing automated
+submissions and is just a little trick that should make it all even more reliable. The idea is to set this
+to some random sequence of chars and numbers, for example <b>dhjx72js</b>. It doesn't really matter how long it is,
+but you should use only chars (a-zA-Z) and digits (0-9). Don't leave the default value
+(as it would loose the whole point), set it to something of your own. Examples would be
+g3oyf98, p9ak85i, h398dgf and similar. Again, DO NOT USE these examples, just type some chars of your own!</td>
+</tr>
+<tr>
+<td nowrap="nowrap"><span class="dest">New in 1.3</span><br /><var>$settings['junkmark_use']</var></td>
+<td>Version 1.3 introduces new mechanism for fighting spam called <b>JunkMark<sup>TM</sup></b>,
+developed by Klemen Stirn (the author).
+It is designed to catch spammers who actually visit your MBoard and get past
+the security number check. Setting this variable to 1 will enable
+JunkMark<sup>TM</sup>, setting it to 0 will disable it. JunkMark<sup>TM</sup> calculates
+probability of a message being SPAM and gives it a score between
+0 (not SPAM) and 100 (SPAM). The higher the score the more likely the message is
+SPAM<br /><br />
+RECOMMENDED SETTING: <var>$settings['junkmark_use']=1</var>;</td>
+</tr>
+<tr class="odd">
+<td nowrap="nowrap"><span class="dest">New in 1.3</span><br /><var>$settings['junkmark_limit']</var></td>
+<td>Set to the score after which messages are rejected as SPAM. Messages which are given
+a JunkMark<sup>TM</sup> score same or higher to this limit will not be
+allowed to post. Possible values are between 0 and 100. I don't recommend
+setting it below 50! The optimal value is around 60 to 70.<br /><br />
+RECOMMENDED SETTING: <var>$settings['junkmark_limit']=60</var>;</td>
+</tr>
+<tr>
+<td nowrap="nowrap"><var>$settings['smileys']</var></td>
+<td>If set to <b>1</b> text like :), ;) etc will be replaced by smileys (image icons).
+Individual visitors will still be able to disable smileys for their entry. If you don't
+want to allow smileys set to <b>0</b>.</td>
+</tr>
+<tr class="odd">
+<td nowrap="nowrap"><var>$settings['notify']</var></td>
+<td>If set to <b>1</b> you will receive an e-mail notification
+at your admin e-mail address every time a new message is posted. Set
+to <b>0</b> if you don't want to be notified.</td>
+</tr>
+<tr>
+<td nowrap="nowrap"><var>$settings['admin_email']</var></td>
+<td>Your e-mail address where new entry notifications
+will be sent. Only required if <var>$settings['notify']</var> is set to 1.</td>
+</tr>
+<tr class="odd">
+<td nowrap="nowrap"><var>$settings['display_ip']</var></td>
+<td>If set to <b>1</b> messages will also display IP number of the author. Set to <b>0</b> to disable.</td>
+</tr>
+<tr>
+<td nowrap="nowrap"><var>$settings['maxposts']</var></td>
+<td>The maximum number of posts allowed to be displayed on the MBoard.</td>
+</tr>
+<tr class="odd">
+<td nowrap="nowrap"><var>$settings['keepoldmsg']</var></td>
+<td>If set to <b>0</b> old messages (when you come to maxposts limit) will be deleted from the server. Set to <b>1</b> if you want to keep old messages on the server.</td>
+</tr>
+<tr>
+<td nowrap="nowrap"><var>$settings['extension']</var></td>
+<td>The file extension of the HTML files with posts
+(advanced users only). For example if set to &quot;htm&quot; messages will be stored
+as &quot;msg/message.htm&quot;. You may leave this as it is.</td>
+</tr>
+<tr class="odd">
+<td nowrap="nowrap"><var>$settings['filter']</var></td>
+<td>If set to <b>1</b> all new posts will be filtered for bad words and replaced
+by ****.</td>
+</tr>
+<tr>
+<td nowrap="nowrap"><var>$settings['filter_lang']</var></td>
+<td>The language of bad words file. For now only English language is supported
+so you can only use "en" (CaSe SeNSiTiVe). Please read section &quot;Adding / Translating bad words list&quot; further down for
+info on how to add/translate bad words.</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>Save and close the settings.php file.</p>
+</li>
+<li>
+<p>Go to your FTP client and FTP to the public directory on your server (where the rest of your website is; usually "public_html", "www" or "site") and create a folder where you will install MBoard.<br />
+Example: /public_html/mboard
+Corresponding URL: http://www.yourdomain.com/mboard</p>
+</li>
+<li>
+<p>Upload all MBoard files to this folder. The "images" folder (all files in this folder) must be transferred in BINARY mode, other files in ASCII mode (refer to your FTP client instructions for details on how to set transfer mode properly).</p>
+</li>
+<li>
+<p>Within the MBoard directory create a folder called &quot;msg&quot;. It must be named
+EXACTLY &quot;msg&quot;, CaSe SeNSiTiVE! Names like &quot;Msg&quot; or &quot;MSG&quot;
+will result in an error! Make sure this folder is world-writable - on UNIX (Linux)
+servers you must CHMOD (set permissions for) this
+folder to 777 (rwx-rwx-rwx). Corresponding URL: http://www.yourdomain.com/mboard/msg</p>
+</li>
+<li>
+<p>Make sure that the PHP scripts have permission to write to files threads.txt
+and counts.txt - on UNIX (Linux) servers you must CHMOD (set permissions for) these two
+files to 666 (rw-rw-rw).</p>
+</li>
+</ol>
+
+<p>If you have done all this your message board should work now. In your browser open
+your MBoard, for example:<br />
+http://www.yourdomain.com/mboard/mboard.php and test it. You can delete messages
+by clicking the red [X] icon and entering your admin password.</p>
+
+<p>You may edit header.txt and footer.txt files to add your own header and footer
+to the links page. You will have to use <b>full image URLs</b> in the code. For example
+instead of &lt;IMG SRC=&quot;images/image.jpg&quot; ... &gt; use
+&lt;IMG SRC=&quot;http://www.yourdomain.com/images/image.jpg&quot; ... &gt;! Same
+goes for any Javascripts or CSS files if you are calling them from within the
+header or footer.</p>
+
+<h3 id="upgrade">Upgrading from version 1.2, 1.21 or 1.22</h3>
+
+<p>To upgrade from version 1.2x to version 1.3 follow these steps:</p>
+<ol>
+  <li>BACKUP your old MBoard</li>
+  <li>Edit the new settings.php file (more info under &quot;Installation&quot;) as new variables has been added</li>
+  <li>Upload these files to your server in ASCII mode: javascript.js, mboard.php, print_sec_img.php, secimg.inc.php, settings.php </li>
+  <li>Test everything. All your current posts should stay intact.</li>
+</ol>
+<p>Good luck with the script!</p>
+
+<h2 id="help">&raquo; Troubleshooting</h2>
+
+<p><span class="dest">PLEASE READ BEFORE ASKING</span> Since this script is free no support is guaranteed. You will find solutions for some common
+problems below. If you can't get the script to work please go through this readme file again carefully and repeat the
+installation step-by-step (also delete old files and folders from the server). Also please feel free to FIRST SEARCH for solutions
+and then post any questions or problems you might have to <a href="http://developers.phpjunkyard.com">PHPJunkyard forum</a>!</p>
+
+<h3>1. What is CHMOD and FTP?</h3>
+
+<p>I have prepared a simple <a href="http://www.phpjunkyard.com/ftp-chmod-tutorial.php" target="_blank">
+FTP and CHMOD tutorial</a> which will help you FTP files to your server and
+set correct CHMOD settings.</p>
+
+<h3>2. My message board doesn't work, HELP!</h3>
+
+<p>Here are a few things to check:</p>
+<ol>
+  <li>did you upload the images folder in BINARY mode and all other files ASCII mode?</li>
+  <li>did you create the &quot;msg&quot; folder? Remember the name is CaSe SeNSiTiVE!
+   Did you CHMOD it to 777 (rwx-rwx-rwx)? You should be able to open this folder for example
+   by typing http://www.yourdomain.com/mboard/msg in your browser.</li>
+  <li>are threads.txt and count.txt files world writable? CHMOD them to 666 (rw-rw-rw) if you are on a Linux server</li>
+  <li>if images don't display correctly check if you uploaded them (the entire &quot;images&quot; folder) correctly. The images folder must be placed within the mboard folder, for example http://www.yourdomain.com/mboard/images</li>
+  <li>go through the entire setup process again carefully</li>
+</ol>
+
+<h3>3. The security number image/text doesn't work (show up)?</h3>
+<p>For the image to work your server must have GD library installed. You can test if your server supports all the required
+functions by uploading the <b>gd_test.php</b> file to your server and open it in your browser. If you get an error (or an empty page)
+when opening gd_test.php you should either ask your hosting company to install the GD library for PHP or
+try with $settings['autosubmit'] set to 2. This will display the security number in text format
+which is not as effective but better than nothing.</p>
+
+<p>If you get the red WORKS image when opening gd_test.php but the security image still doesn't work you probably
+have problems with sessions. Ask your hosting company to check PHP sessions configuration.
+Same thing if $settings['autosubmit'] set to 2 doesn't work.</p>
+
+<h3>4. I installed MBoard but I still get many SPAM messages?</h3>
+<p>Make sure you have the latest version of MBoard and that you have variables <b>$settings['autosubmit']</b> set to 1 or 2 and <b>$settings['junkmark_use']</b> set to 1. Also make sure the variable <b>$settings['junkmark_limit']</b> is not set too high or too low (recommended value is 60).</p>
+
+<h3>5. May I use JunkMark<sup>TM</sup> SPAM filter in my other scripts?</h3>
+<p>No, you are not allowed to use JunkMark<sup>TM</sup> SPAM filter in any other script (commercial or open source) without my express written permission. It may only be used in MBoard and scripts that are direct derivates of MBoard (customized/modified versions).</p>
+
+<h2 id="translate">&raquo; Adding / Translating bad words list</h2>
+
+<p>As of version 1.1 MBoard can search for bad words in the comments and replace them with ****. Files with bad words list are stored in folder "badwords" and have two letter names. For now only English version is available (named "en.php").</p>
+<p><b>Before adding new words please install MBoard and test it so you are sure it works properly!</b></p>
+<p>To add new bad words open the en.php file in your favorite <b>PLAIN TEXT</b> editor (like Notepad or Wordpad on Windows systems, DO NOT use MS Word or similar editor), find the comment saying INSERT NEW BAD WORDS BELOW THIS LINE and add new bad words in this format:<br />
+  <br />
+"BADWORD" =&gt; "REPLACEMENT",<br />
+  <br />
+  For example if "asfhkjhfasf" is a bad word you would add this line to the file:<br />
+  <br />
+"asfhkjhfasf" =&gt; "a**********",<br />
+  <br />
+  Don't forget to add a comma ( , ) after the line!</p>
+<p>If you are translating the bad words file I suggest you leave the English words and add new ones in your language as explained above. Then save the file as two letter country code php file. For example, if you are translating the file in French, you should save the file as <b>fr.php</b> (CaSe SeNSiTiVe!). Upload fr.php to your "badwords" folder, go to settings.php again and set <b>$settings['filter_lang']</b> to <b>"fr"</b> (file name without .php).</p>
+<p>Now test the MBoard again. If you get an Error or Warning when you try to post a new message this means something is wrong with your language file. It either can't be found (check the name of the file, on most servers names are CaSe SeNsiTiVe!) or something is wrong with PHP syntax in it (make sure all the words are added in<br />
+  <b>"BADWORD" =&gt; "REPLACEMENT",</b> syntax).</p>
+<p><b>Please send me the translated file</b>. If you translate the bad words file to your language please send it to info AT phpjunkyard DOT com (or contact me through PHPJunkard.com contact form) and I will make it available to others for download. You may include your name, website URL and e-mail address and I will give you proper credit (translated by John Doe. Visit www.yourwebsite.com).</p>
+
+<h2 id="other">&raquo; Copyright removal</h2>
+
+You may NOT edit or remove any copyright or Powered by statements in MBoard code without purchasing a license! For more information please visit
+<a href="http://www.phpjunkyard.com/copyright-removal.php%20">http://www.phpjunkyard.com/copyright-removal.php</a>
+
+<h2>&raquo; Stay updated!</h2>
+
+<p>Join my FREE newsletter and you will be notified about new scripts, new versions of the existing scripts
+and other important news from PHPJunkYard.<br />
+<a href="http://www.phpjunkyard.com/newsletter.php">Click here for more info</a></p>
+
+
+<h2>&raquo; Please rate this script</h2>
+
+<p>If you like this script please rate it or even write a review at:</p>
+
+<p><a href="http://www.hotscripts.com/Detailed/37193.html" target="_blank">Rate this Script @ Hot Scripts</a></p>
+
+<p><a href="http://php.resourceindex.com/rate?05295" target="_blank">Rate this Script @ Hot Scripts</a></p>
+
+<h2>&raquo; What else?</h2>
+
+<p>That's it! If you use PHPJunkYard free scripts or any portion of their code  please place a link
+to PHPJunkYard.com on your website. I won't sue you if you don't, but
+I believe it is a fair trade for a free script/code. Think about it. You can
+find link suggestions <a href="http://www.phpjunkyard.com/link2us.php">here</a>.</p>
+
+<p>Best regards,</p>
+<address>Klemen Stirn<br />
+PHP JunkYard<br />
+<a href="http://www.phpjunkyard.com">http://www.PHPJunkYard.com</a></address>
+
+</div>
+</div>
+</body>
+</html>
