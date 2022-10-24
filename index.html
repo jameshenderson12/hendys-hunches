@@ -1,16 +1,95 @@
 <!doctype html>
-<html>
-<head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hendy's Hunches</title>
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
-</head>
+<html lang="en" class="h-100">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+		<title>Hendy's Hunches</title>
+		<link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/cover/">
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+		<style>
+		/* Custom default button */
+		.btn-secondary,
+		.btn-secondary:hover,
+		.btn-secondary:focus {
+		  color: #333;
+		  text-shadow: none; /* Prevent inheritance from `body` */
+		}
+		body {
+		  text-shadow: 0 .05rem .1rem rgba(0, 0, 0, .5);
+		  box-shadow: inset 0 0 5rem rgba(0, 0, 0, .5);
+		}
+		.cover-container {
+		  max-width: 42em;
+		}
+		.nav-masthead .nav-link {
+		  color: rgba(255, 255, 255, .5);
+		  border-bottom: .25rem solid transparent;
+		}
+		.nav-masthead .nav-link:hover,
+		.nav-masthead .nav-link:focus {
+		  border-bottom-color: rgba(255, 255, 255, .25);
+		}
+		.nav-masthead .nav-link + .nav-link {
+		  margin-left: 1rem;
+		}
+		.nav-masthead .active {
+		  color: #fff;
+		  border-bottom-color: #fff;
+		}
+		.bd-placeholder-img {
+			font-size: 1.125rem;
+			text-anchor: middle;
+			-webkit-user-select: none;
+			-moz-user-select: none;
+			user-select: none;
+		}
+		@media (min-width: 768px) {
+			.bd-placeholder-img-lg {
+				font-size: 3.5rem;
+			}
+		}
+		.b-example-divider {
+			height: 3rem;
+			background-color: rgba(0, 0, 0, .1);
+			border: solid rgba(0, 0, 0, .15);
+			border-width: 1px 0;
+			box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
+		}
+		.b-example-vr {
+			flex-shrink: 0;
+			width: 1.5rem;
+			height: 100vh;
+		}
+		.bi {
+			vertical-align: -.125em;
+			fill: currentColor;
+		}
+		.nav-scroller {
+			position: relative;
+			z-index: 2;
+			height: 2.75rem;
+			overflow-y: hidden;
+		}
+		.nav-scroller .nav {
+			display: flex;
+			flex-wrap: nowrap;
+			padding-bottom: 1rem;
+			margin-top: -1px;
+			overflow-x: auto;
+			text-align: center;
+			white-space: nowrap;
+			-webkit-overflow-scrolling: touch;
+		}
+		</style>
 
-<body>
-	
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+	</head>
+
+
+
+
+<!--
 <div class="card bg-light mb-3" style="max-width: 50rem; margin:0 auto;">
   <img class="card-img-top" src="logo2018.jpg" alt="Logo">
   <div class="card-body">
@@ -18,9 +97,42 @@
     <p class="card-text">Welcome to the official site for Hendy's Hunches; home of your predictions against the 2018 World Cup Russia in a bit to have fun and maybe just win a top prize along the way!</p>
     <p class="card-text">
 		<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAALCAYAAAB24g05AAAB7klEQVQokW3MvUtbYRiG8WcX2oIucVBBHYziETEBDRK/EogZImghiwU7ODhUcHApDg6CQyCDIIIg/gvSuRRKKVJKaenaEERCCEEOyck57/l6z9UhYir0hmv83WLb8DyNZXVrtTSmGWCaHg8PimbTptGwqNdb1Gomd/cmYts8LYqip7SO0FoThiFhGBIEAb7v43keruuilKJabfYOnmP9hP8HHcdBKUWl0kByObi5ibi+jri6iri81FxcaM7PQ87OAspln1LJ4/TU5eREcXzscHRkUy47iNQREc3hYUSxGLG1pdkoaPL5kGw2YHnZJ5XySCZdZmYUk5MO4+M2IyMd0mm7d3BwELG5qSkUQvLrXby09BzHH/HwcIfBQYtUykak1j3Y3+/i3HpAJtPDiYSLYSjicYexsS6OxSwGBtokkx1E7pEPIvzZK/E7d8CvzDt+pvf4sbDL97kdvhnb3MaLfB3b5Mtwgc+xPJ8Gsnx8tcrt7BveiyCeCOHuLv7aGn46jbewgDs3h5qexpmYwB4dpTM0hBWL0e7vp/XyBa2+PtqGQVUEUSIEO2/xt7fxikW8rde4GxuofB6VzeKsrGAvLtKZn8dKJGjPztI2DNpTU1REEFsES4SWCKYID481RWiIUBehJsK9CHciVEWo/NNf98bqGiXyomoAAAAASUVORK5CYII=" alt="Russia Flag">
-		<iframe src="http://free.timeanddate.com/countdown/i691ybmy/n1323/cf11/cm0/cu4/ct0/cs1/ca0/co0/cr0/ss0/cac555/cpc000/pct/tcfff/fs100/szw256/szh108/iso2018-06-14T00:00:00" allowTransparency="true" frameborder="0" width="243" height="16"></iframe></p>	 
+		<iframe src="http://free.timeanddate.com/countdown/i691ybmy/n1323/cf11/cm0/cu4/ct0/cs1/ca0/co0/cr0/ss0/cac555/cpc000/pct/tcfff/fs100/szw256/szh108/iso2018-06-14T00:00:00" allowTransparency="true" frameborder="0" width="243" height="16"></iframe></p>
   </div>
-</div>	
+</div>
+-->
 
-</body>	
+
+
+
+<body class="d-flex h-100 text-center text-bg-dark">
+
+<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+<header class="mb-auto">
+	<div>
+		<h3 class="float-md-start mb-0">Cover</h3>
+		<nav class="nav nav-masthead justify-content-center float-md-end">
+			<a class="nav-link fw-bold py-1 px-0 active" aria-current="page" href="#">Home</a>
+			<a class="nav-link fw-bold py-1 px-0" href="#">Features</a>
+			<a class="nav-link fw-bold py-1 px-0" href="#">Contact</a>
+		</nav>
+	</div>
+</header>
+
+<main class="px-3">
+	<h1>Cover your page.</h1>
+	<p class="lead">Welcome to Hendy's Hunches. Pit your FIFA World Cup 2022 fixture predictions against others for a chance to earn a prize spot or all important bragging rights!</p>
+	<p class="lead">
+		<a href="#" class="btn btn-lg btn-secondary fw-bold border-white bg-white">Learn more</a>
+	</p>
+</main>
+
+<footer class="mt-auto text-white-50">
+	<p>Cover template for <a href="https://getbootstrap.com/" class="text-white">Bootstrap</a>, by <a href="https://twitter.com/mdo" class="text-white">@mdo</a>.</p>
+</footer>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
+</body>
 </html>
