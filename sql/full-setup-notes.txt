@@ -1,0 +1,14 @@
+Setup Steps
+===========
+
+1. Check number of fixtures and update SQL (in "match results" and "user predictions") accordingly where 1 fixture x 2 entries (e.g. 64 = score_128, etc.)
+1. Ensure all database tables contain 'live' prefix. [DONE]
+2. Ensure database settings are correct in 'db-connect.php'. [DONE]
+3. Update all with 'live' db prefix. Do a find/replace all in root folder. [DONE]
+4. Update number of score_p and score_r values in 'process.php' as per item 1. [DONE]
+5. Update all config variables. [ ]
+
+
+
+Password required elements:
+(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}

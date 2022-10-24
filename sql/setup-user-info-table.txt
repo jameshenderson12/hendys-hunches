@@ -1,0 +1,20 @@
+CREATE TABLE live_user_information (
+	id SMALLINT(6) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    username CHAR(50) UNIQUE NOT NULL,
+    password CHAR(32) NOT NULL,	
+    firstname CHAR(50) NOT NULL,
+    surname CHAR(50) NOT NULL,
+    email CHAR(50) NOT NULL,
+	avatar CHAR(50) NOT NULL,
+    fieldofwork CHAR(50) NOT NULL,
+    faveteam CHAR(50) NOT NULL,
+    tournwinner CHAR(50) NOT NULL,
+	startpos SMALLINT(6) NOT NULL,
+	lastpos SMALLINT(6) NOT NULL,
+	currpos SMALLINT(6) NOT NULL,
+	signupdate TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	lastlogin TIMESTAMP NULL,
+	haspaid CHAR(5) DEFAULT 'No' NOT NULL,
+	wc2014rank CHAR(5) DEFAULT 'N/A' NOT NULL,
+	eu2016rank CHAR(5) DEFAULT 'N/A' NOT NULL
+);

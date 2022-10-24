@@ -1,0 +1,3 @@
+SELECT tournwinner, COUNT(*) as count FROM live_user_information GROUP BY tournwinner ORDER BY count DESC;
+
+SELECT tournwinner, COUNT(*) as count FROM live_user_information GROUP BY tournwinner ORDER BY tournwinner ASC;
