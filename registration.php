@@ -9,14 +9,14 @@
 	  gtag('js', new Date());
 
 	  gtag('config', 'UA-119623195-1');
-	</script>	  
+	</script>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Hendy's Hunches: Predictions Game">
     <meta name="author" content="James Henderson">
     <?php include "php/config.php" ?>
-	<?php include "php/process.php" ?>    
+	  <?php include "php/process.php" ?>    
     <link rel="shortcut icon" href="ico/favicon.ico">
 
     <title>Hendy's Hunches: Registration</title>
@@ -24,7 +24,7 @@
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.css" rel="stylesheet">
     <link href="css/registration.css" rel="stylesheet">
-    
+
     <!-- Just for debugging purposes. Don't actually copy this line! -->
     <!--[if lt IE 9]><script src="../../docs-assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
 
@@ -33,27 +33,27 @@
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
     <![endif]-->
-    <script type="text/javascript">	
-	
+    <script type="text/javascript">
+
 	function flagIncorrect() {
-		$(this).addClass("incorrect");		
+		$(this).addClass("incorrect");
 	}
-	
+
 	function flagCorrect() {
-		$(this).addClass("correct");		
+		$(this).addClass("correct");
 	}
-	
+
 	function validateFullForm() {
 		// Validate the username input
 		var un = document.forms["registrationForm"]["username"];
 		var unmsg = document.getElementById("un-msg");
 		if ((un.value == null) || (un.value == "") || ($('#un-msg').html() != "") ) {
 			alert("Please enter a unique username.");
-			un.style.border="1px solid #C33";					
-			un.focus();			
-			return false;				
-		}		
-		
+			un.style.border="1px solid #C33";
+			un.focus();
+			return false;
+		}
+
 		// Validate the password input
 		var pwd1 = document.forms["registrationForm"]["password"];
 		var pwd2 = document.forms["registrationForm"]["password2"];
@@ -69,21 +69,21 @@
 		  return false;
 		}
 		/*return true;*/
-		
+
 		// Validate the first name input
 		var fn = document.forms["registrationForm"]["firstname"];
 		if (fn.value == null || fn.value == "") {
 			alert("Please enter your first name.");
-			fn.style.border="1px solid #C33";					
-			fn.focus();			
-			return false;				
+			fn.style.border="1px solid #C33";
+			fn.focus();
+			return false;
 		}
 		// Validate the surname input
 		var sn = document.forms["registrationForm"]["surname"];
 		if (sn.value == null || sn.value == "") {
 			alert("Please enter your surname.");
-		    sn.style.border="1px solid #C33";		
-			sn.focus();			
+		    sn.style.border="1px solid #C33";
+			sn.focus();
 			return false;
 		}
 		// Validate the email input
@@ -93,25 +93,25 @@
 		var dotpos = x.lastIndexOf(".");
 		if (atpos < 1 || dotpos < atpos + 2 || dotpos + 2 >= x.length) {
 			alert("Please enter a valid email address.");
-		    y.style.border="1px solid #C33";		
-			y.focus();			
+		    y.style.border="1px solid #C33";
+			y.focus();
 			return false;
-		}		
-		// Validate the avatar selection		
+		}
+		// Validate the avatar selection
 		var avs = document.getElementById("avatarSelection");
 		var avt = document.getElementById("avatars");
 		if (avs.value == null || avs.value == "") {
 			alert("Please select a football kit avatar.");
 			avt.style.border="1px solid #C33";
 			return false;
-		}					
+		}
 		// Validate the field of work input
 		var xd1 = document.getElementById("fieldofwork");
 		var yd1 = document.getElementById("fieldofwork").options;
 			if (yd1[xd1.selectedIndex].index == "0") {
 				alert("Please specify your field of work.");
-				xd1.style.border="1px solid #C33";		
-				xd1.focus();							
+				xd1.style.border="1px solid #C33";
+				xd1.focus();
 				return false;
 			}
 		// Validate the favourite team input
@@ -119,16 +119,16 @@
 		var yd2 = document.getElementById("faveteam").options;
 			if (yd2[xd2.selectedIndex].index == "0") {
 				alert("Please choose your favourite team.");
-				xd2.style.border="1px solid #C33";		
-				xd2.focus();			
+				xd2.style.border="1px solid #C33";
+				xd2.focus();
 				return false;
-			}		
+			}
 		// Validate the world cup winner input
 		var xd3 = document.getElementById("tournwinner");
 		var yd3 = document.getElementById("tournwinner").options;
 			if (yd3[xd3.selectedIndex].index == "0") {
 				alert("Please specify who you think will win the tournament.");
-				xd3.style.border="1px solid #C33";		
+				xd3.style.border="1px solid #C33";
 				xd3.focus();
 				return false;
 			}
@@ -136,9 +136,9 @@
 		var dc = document.forms["registrationForm"]["disclaimer"];
 		if (!dc.checked) {
 			alert("You must agree to the terms and conditions.");
-			dc.focus();			
+			dc.focus();
 			return false;
-		}			
+		}
 	}
 	// Turn the name fields red if not input (onBlur - focus leaving the field)
 	function validateName(nameID) {
@@ -149,12 +149,12 @@
 		}
 		else x.style.border="1px solid #090";
 	}
-	
+
 	function checkPassword(str) {
 	    var re = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$/;
     	return re.test(str);
   	}
-		
+
 	// Turn the password field red if not input correct (onBlur - focus leaving the field)
 	function validatePassword() {
 		var x = document.getElementById("password");
@@ -164,7 +164,7 @@
 		}
 		else x.style.border="1px solid #090";
 	}
-	
+
 	// Turn the confirm password field red if not input correct (onBlur - focus leaving the field)
 	function validatePassword2() {
 		var x = document.getElementById("password2");
@@ -174,9 +174,9 @@
 			return false;
 		}
 		else x.style.border="1px solid #090";
-	}	
-	
-	// Turn the email field red if not input correct (onBlur - focus leaving the field)		
+	}
+
+	// Turn the email field red if not input correct (onBlur - focus leaving the field)
 	function validateEmail() {
 		var x = document.getElementById("email").value;
 		var y = document.getElementById("email");
@@ -186,16 +186,16 @@
 			y.style.border="1px solid #C33";
 			return false;
 		}
-		else 
+		else
 		{
 			y.style.border="1px solid #090";
 		}
 	}
-	
-	// Turn the dropdown fields red if no selection made (onBlur - focus leaving the field)	
+
+	// Turn the dropdown fields red if no selection made (onBlur - focus leaving the field)
 	function validateDropDown(dropDownID) {
 		var x = document.getElementById(dropDownID);
-		var y = document.getElementById(dropDownID).options;		
+		var y = document.getElementById(dropDownID).options;
 
 		if (y[x.selectedIndex].index = 0) {
 			x.style.border="1px solid #C33";
@@ -235,8 +235,8 @@
     	$('#username').keyup(username_check);
 		$('#username').addClass("incorrect");
     });
-        
-    function username_check(){	
+
+    function username_check(){
     	var username = $('#username').val();
     	if(username == "" || username.length < 4) {
 			$('#username').removeClass("correct");
@@ -255,7 +255,7 @@
 					if(response == 1) {
 						$('#username').css('border', '1px #C33 solid');
 						$('#username').removeClass("correct");
-						$('#username').addClass("incorrect");						
+						$('#username').addClass("incorrect");
 						$('#un-msg').html("Sorry but this username is already taken.");
 					}
 					else {
@@ -266,20 +266,20 @@
 					}
 			}
     	});
-    	}    
+    	}
     }
     </script>
   </head>
 
   <body>
-  
+
   <div class="container">
-  
+
         <h1>Hendy's Hunches: Registration</h1>
-        <p>Register your details below to sign up or return to the <a href="index.php">login page</a> to sign in. All fields are required to be completed.</p>       
-                
+        <p>Register your details below to sign up or return to the <a href="index.php">login page</a> to sign in. All fields are required to be completed.</p>
+
         <form id="registrationForm" name="registrationForm" class="form-horizontal" method="post" action="php/register.php" onSubmit="return validateFullForm()">
-            <!-- Username -->            
+            <!-- Username -->
             <div class="form-group">
             	<label for="username" class="col-sm-3 control-label">Username: </label>
                 <div class="col-sm-5">
@@ -287,7 +287,7 @@
                 </div>
                 <div class="col-sm-4"><p id="un-msg" class="additional-info"></p>
                 </div>
-            </div>            
+            </div>
             <!-- Password -->
             <div class="form-group">
             	<label for="password" class="col-sm-3 control-label">Password: </label>
@@ -305,15 +305,15 @@
                 <input type="password" class="form-control" id="password2" name="password2" placeholder="Confirm password" onBlur="return validatePassword2();" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" />
                 </div>
                 <div class="col-sm-4"></div>
-            </div>                        
-            <!-- First Name -->               
-            <div class="form-group">       
+            </div>
+            <!-- First Name -->
+            <div class="form-group">
 	    		<label for="firstname" class="col-sm-3 control-label">First Name: </label>
                 <div class="col-sm-5">
-	        	<input type="text" class="form-control" id="firstname" name="firstname" placeholder="Enter your first name" onBlur="return validateName('firstname');" required />                
+	        	<input type="text" class="form-control" id="firstname" name="firstname" placeholder="Enter your first name" onBlur="return validateName('firstname');" required />
                 </div>
                 <div class="col-sm-4"></div>
-            </div>            
+            </div>
             <!-- Surname -->
         	<div class="form-group">
             	<label for="surname" class="col-sm-3 control-label">Surname:</label>
@@ -321,7 +321,7 @@
 	        	<input type="text" class="form-control" id="surname" name="surname" placeholder="Enter your surname" onBlur="return validateName('surname');" required />
                 </div>
                 <div class="col-sm-4"></div>
-            </div>     	                  
+            </div>
             <!-- Email Address -->
             <div class="form-group">
            		<label for="email" class="col-sm-3 control-label">Email:</label>
@@ -329,78 +329,78 @@
 	        	<input type="email" class="form-control" id="email" name="email" placeholder="Enter email address" onBlur="return validateEmail();" required />
                 </div>
                 <div class="col-sm-4"></div>
-            </div>            
+            </div>
 			<!-- Avatar Selection -->
             <div class="form-group" id="avatars">
            		<label for="avatars" class="col-sm-3 control-label">Select Avatar:</label>
                 <div class="col-sm-6">
 	        	<button type="button" class="btn btn-default avatar" id="fk1" name="<?php echo $fk1; ?>" value="<?php echo $fk1; ?>" onClick="chooseImage('fk1');">
                 <img src="<?php echo $fk1; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>                
+                </button>
    	        	<button type="button" class="btn btn-default avatar" id="fk2" name="<?php echo $fk2; ?>" value="<?php echo $fk2; ?>" onClick="chooseImage('fk2');">
                 <img src="<?php echo $fk2; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>                
+                </button>
    	        	<button type="button" class="btn btn-default avatar" id="fk3" name="<?php echo $fk3; ?>" value="<?php echo $fk3; ?>" onClick="chooseImage('fk3');">
                 <img src="<?php echo $fk3; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>                                
+                </button>
    	        	<button type="button" class="btn btn-default avatar" id="fk4" name="<?php echo $fk4; ?>" value="<?php echo $fk4; ?>" onClick="chooseImage('fk4');">
                 <img src="<?php echo $fk4; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>                
+                </button>
    	        	<button type="button" class="btn btn-default avatar" id="fk5" name="<?php echo $fk5; ?>" value="<?php echo $fk5; ?>" onClick="chooseImage('fk5');">
                 <img src="<?php echo $fk5; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>                
+                </button>
    	        	<button type="button" class="btn btn-default avatar" id="fk6" name="<?php echo $fk6; ?>" value="<?php echo $fk6; ?>" onClick="chooseImage('fk6');">
                 <img src="<?php echo $fk6; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>                
+                </button>
    	        	<button type="button" class="btn btn-default avatar" id="fk7" name="<?php echo $fk7; ?>" value="<?php echo $fk7; ?>" onClick="chooseImage('fk7');">
                 <img src="<?php echo $fk7; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>                
+                </button>
    	        	<button type="button" class="btn btn-default avatar" id="fk8" name="<?php echo $fk8; ?>" value="<?php echo $fk8; ?>" onClick="chooseImage('fk8');">
                 <img src="<?php echo $fk8; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>                
+                </button>
    	        	<button type="button" class="btn btn-default avatar" id="fk9" name="<?php echo $fk9; ?>" value="<?php echo $fk9; ?>" onClick="chooseImage('fk9');">
                 <img src="<?php echo $fk9; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>                   	        	
+                </button>
                 <button type="button" class="btn btn-default avatar" id="fk10" name="<?php echo $fk10; ?>" value="<?php echo $fk10; ?>" onClick="chooseImage('fk10');">
                 <img src="<?php echo $fk10; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>                
+                </button>
                 <button type="button" class="btn btn-default avatar" id="fk11" name="<?php echo $fk11; ?>" value="<?php echo $fk11; ?>" onClick="chooseImage('fk11');">
                 <img src="<?php echo $fk11; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>               
+                </button>
                 <button type="button" class="btn btn-default avatar" id="fk12" name="<?php echo $fk12; ?>" value="<?php echo $fk12; ?>" onClick="chooseImage('fk12');">
                 <img src="<?php echo $fk12; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>                
+                </button>
                 <button type="button" class="btn btn-default avatar" id="fk13" name="<?php echo $fk13; ?>" value="<?php echo $fk13; ?>" onClick="chooseImage('fk13');">
                 <img src="<?php echo $fk13; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>                                
+                </button>
                 <button type="button" class="btn btn-default avatar" id="fk14" name="<?php echo $fk14; ?>" value="<?php echo $fk14; ?>" onClick="chooseImage('fk14');">
                 <img src="<?php echo $fk14; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>                
+                </button>
                 <button type="button" class="btn btn-default avatar" id="fk15" name="<?php echo $fk15; ?>" value="<?php echo $fk15; ?>" onClick="chooseImage('fk15');">
                 <img src="<?php echo $fk15; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>                
+                </button>
                 <button type="button" class="btn btn-default avatar" id="fk16" name="<?php echo $fk16; ?>" value="<?php echo $fk16; ?>" onClick="chooseImage('fk16');">
                 <img src="<?php echo $fk16; ?>" width="100%" height="100%" alt="" border="0" />
-                </button> 
+                </button>
                 <button type="button" class="btn btn-default avatar" id="fk17" name="<?php echo $fk17; ?>" value="<?php echo $fk17; ?>" onClick="chooseImage('fk17');">
                 <img src="<?php echo $fk17; ?>" width="100%" height="100%" alt="" border="0" />
-                </button> 
+                </button>
                 <button type="button" class="btn btn-default avatar" id="fk18" name="<?php echo $fk18; ?>" value="<?php echo $fk18; ?>" onClick="chooseImage('fk18');">
                 <img src="<?php echo $fk18; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>                                                                                
+                </button>
                 <!-- Hidden form to capture user's avatar selection-->
-                <input type="hidden" class="form-control" id="avatarSelection" name="avatarSelection" />           
+                <input type="hidden" class="form-control" id="avatarSelection" name="avatarSelection" />
                 </div>
             </div><!-- Avatars -->
             <!-- Field of Work -->
             <div class="form-group">
         		<label for="fieldofwork" class="col-sm-3 control-label">Field of Work:</label>
-                <div class="col-sm-5">        
+                <div class="col-sm-5">
 				<select id="fieldofwork" name="fieldofwork" class="form-control" onBlur="return validateDropDown('fieldofwork');" />
 				<option selected="selected" disabled class="text-success">--- Choose Employment Field ---</option>
 				<?php
                     // Source file for extracting data
-                    $file = 'text/select-sectors-input.txt';        
+                    $file = 'text/select-sectors-input.txt';
                     $handle = @fopen($file, 'r');
                     if ($handle) {
                        while (!feof($handle)) {
@@ -414,16 +414,16 @@
         		</select>
             	</div>
                 <div class="col-sm-4"></div>
-            </div> 
-            <!-- Favourite Team -->                           
+            </div>
+            <!-- Favourite Team -->
             <div class="form-group">
         		<label for="faveteam" class="col-sm-3 control-label">Favourite Team:</label>
                 <div class="col-sm-5">
 				<select id="faveteam" name="faveteam" class="form-control" onBlur="return validateDropDown('faveteam');" />
-				<option selected="selected" disabled class="text-success">--- Your Favourite Team ---</option>            
+				<option selected="selected" disabled class="text-success">--- Your Favourite Team ---</option>
 				<?php
                     // Source file for extracting data
-                    $file = 'text/select-clubteams-input.txt';        
+                    $file = 'text/select-clubteams-input.txt';
                     $handle = @fopen($file, 'r');
                     if ($handle) {
                        while (!feof($handle)) {
@@ -441,12 +441,12 @@
             <!-- Tournament Winner -->
             <div class="form-group">
             <label for="tournwinner" class="col-sm-3 control-label">World Cup 2018 Winner:</label>
-            <div class="col-sm-5">        
+            <div class="col-sm-5">
 			<select id="tournwinner" name="tournwinner" class="form-control" onBlur="return validateDropDown('tournwinner');" />
-				<option selected="selected" disabled class="text-success">--- Vote The Winner ---</option>        
+				<option selected="selected" disabled class="text-success">--- Vote The Winner ---</option>
 				<?php
                     // Source file for extracting data
-                    $file = 'text/select-wc2018teams-input.txt';        
+                    $file = 'text/select-wc2018teams-input.txt';
                     $handle = @fopen($file, 'r');
                     if ($handle) {
                        while (!feof($handle)) {
@@ -456,37 +456,37 @@
                    }
                    fclose($handle);
                    }
-                ?>        
+                ?>
 	        	</select>
                 </div>
                 <div class="col-sm-4">
                 	<p class="additional-info">Please note that no points are awarded for this selection.</p>
                 </div>
             </div>
-            
-            <!-- Disclaimer -->               
-            <div class="form-group">       
+
+            <!-- Disclaimer -->
+            <div class="form-group">
 	    		<label for="disclaimer" class="col-sm-3 control-label"></label>
                 <div class="col-sm-9">
-	        	<p><input type="checkbox" id="disclaimer" name="disclaimer" value="disclaimer">&nbsp;By signing up, I acknowledge and accept the <a href="" data-toggle="modal" data-target="#HHterms">terms and conditions</a> of Hendy's Hunches.</p>                
+	        	<p><input type="checkbox" id="disclaimer" name="disclaimer" value="disclaimer">&nbsp;By signing up, I acknowledge and accept the <a href="" data-toggle="modal" data-target="#HHterms">terms and conditions</a> of Hendy's Hunches.</p>
                 </div>
             </div>
-            
-            <!-- Signup/Reset Form Button -->               
-            <div class="form-group">       
+
+            <!-- Signup/Reset Form Button -->
+            <div class="form-group">
 	    		<label for="buttons" class="col-sm-3 control-label"></label>
                 <div class="col-sm-9">
-	        	<input type="submit" class="btn btn-primary" value="Sign me up!" name="predictionsSubmitted" />     
-          		<input type="reset" class="btn btn-default" value="Reset all" onClick="resetBorders();" />            
+	        	<input type="submit" class="btn btn-primary" value="Sign me up!" name="predictionsSubmitted" />
+          		<input type="reset" class="btn btn-default" value="Reset all" onClick="resetBorders();" />
                 </div>
-            </div>                          
-        
+            </div>
+
           <!-- Site footer -->
           <div class="footer">
           <?php include "includes/footer.php" ?>
-          </div>          
+          </div>
    	</form>
-    
+
       <!-- Modal -->
       <div id="HHterms" class="modal fade" role="dialog">
         <div class="modal-dialog">
@@ -511,26 +511,26 @@
             -->
           </div>
         </div>
-      </div>                      
-     
+      </div>
+
     </div><!-- /.container -->
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>    
+	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script type="text/javascript">
-		$("button").click(function(){			
+		$("button").click(function(){
 			$("button").css("background-color", "transparent").css("border", "1px solid #cccccc");
 			$(this).css("background-color", "#FFFF00").css("border", "1px solid #090");
-		}); 	
-		function chooseImage(imageId) {			
-			var x = document.getElementById(imageId).value;		
+		});
+		function chooseImage(imageId) {
+			var x = document.getElementById(imageId).value;
 			document.getElementById("avatarSelection").value = x;
 			document.getElementById("avatars").style.border = "none";
 		}
-	</script>    
+	</script>
   </body>
 </html>
