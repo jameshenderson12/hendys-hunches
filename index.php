@@ -74,7 +74,7 @@ session_start();
     }
     .modal {
       color: #000;
-      text-align: left !important;      
+      text-align: left;
     }
 		@media (min-width: 768px) {
 			.bd-placeholder-img-lg {
@@ -181,12 +181,14 @@ session_start();
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <img src="img/hh-logo-2018.jpg" class="img-responsive center-block" title="Hendy's Hunches Logo" alt="Hendy's Hunches Logo" style="width: 150px; margin-bottom: 10px;">
-            <p>By registering to play Hendy's Hunches, you acknowledge that your participation in this game, and the game itself, is intended only for fun and light-hearted entertainment. It is not a source of gambling.</p>
-            <p>Only one registration per person is allowed. There is a participation fee of £5 which is to be paid to James Henderson prior to 20th November, 2022. This participation fee comprises a percentage split of charity donation (charity TBC) and prize funds.</p>
-            <p>The game is based upon the FIFA World Cup Qatar 2022 tournament.</p>
-            <p>There will be a minimum of 3 prize funds and this number may be increased depending on the total number of participants. The number of prize funds available, and their amounts, will be indicated in the rankings table shortly after the game commences. Those participants who occupy a prize fund place after the final tournament fixture will receive the corresponding prize amount shortly thereafter. In the event of a shared spot, prizes will be split.</p>
-            <p>Family and friends are permitted to take part but be aware that any unpaid entrance fees will result in a participant being removed from the game.</p>
+            <img src="img/hh-logo-2018.jpg" class="img-responsive center-block" title="Hendy's Hunches Logo" alt="Hendy's Hunches Logo" style="width: 180px; margin-bottom: 10px;">
+            <ul>
+              <li>By registering to play Hendy's Hunches, you acknowledge that your involvement in this game, and the game itself, is intended only for entertainment. It is not a gambling site.</li>
+              <li>The game is based upon the FIFA World Cup Qatar 2022 tournament.</li>
+              <li>Only one registration per person is permitted. Family and friends are very welcome to take part. Any unpaid entrance fees will result in removal from the game.</li>
+              <li>A participation fee of £5 is to be paid prior to 20th November, 2022. This fee comprises a percentage split of charity (TBC) donation and prize funds.</li>
+              <li>The number of prize funds, and their amounts, will be indicated in due course. Prizes are awarded to winners after the final tournament fixture. In the event of a shared winning spot, prizes will be divided accordingly.</li>
+            </ul>
           </div>
           <div class="modal-footer">
             <!--<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
