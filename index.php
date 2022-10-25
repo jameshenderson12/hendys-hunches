@@ -132,7 +132,7 @@ session_start();
 
       <form id="login" class="form-login" role="form" method="post" action="php/login.php">
           <!--<h2 class="form-login-heading">Title</h2>-->
-          <img id="logo" src="img/hh-logo-2018.jpg" alt="Hendy's Hunches Logo" class="center-block img-responsive">
+          <!--<img id="logo" src="img/hh-logo-2018.jpg" alt="Hendy's Hunches Logo" class="center-block img-responsive">-->
           <div class="center-block text-center">
                   <h4><img src="flag-icons/24/qatar.png"> FIFA World Cup Qatar 2022</h4>
 
