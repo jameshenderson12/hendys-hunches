@@ -150,7 +150,7 @@ session_start();
 
           <div class="form-check form-switch">
             <input id="remember" name="remember" type="checkbox" class="form-check-input" role="switch" value="<?php if(isset($_COOKIE['remember_me'])) { echo 'checked="checked"'; } else { echo ''; } ?>">
-            <label class="form-check-label m-3" for="remember">Remember my username?</label>
+            <label class="form-check-label ml-3" for="remember">Remember my username?</label>
           </div>
           <hr />
           <!--
