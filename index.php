@@ -126,7 +126,7 @@ session_start();
 			<h1>Login</h1>
 			<img src="img/qatar-2022-logo.png" alt="Qatar 2022 edition of Hendy's Hunches" class="w-50 mb-3">
 
-      <form id="login" role="form" method="post" action="php/login.php">
+      <form id="login" class="w-75" role="form" method="post" action="php/login.php">
           <!--<h2 class="form-login-heading">Title</h2>-->
           <!--<img id="logo" src="img/hh-logo-2018.jpg" alt="Hendy's Hunches Logo" class="center-block img-responsive">-->
 
@@ -138,13 +138,10 @@ session_start();
             <input id="password" name="password" type="password" class="form-control" placeholder="Password" required>
             <label for="password">Password</label>
           </div>
-          <div class="form-check form-switch text-center">
+          <div class="form-check form-switch text-center" style="float: none !important;">
             <input id="remember" name="remember" type="checkbox" class="form-check-input" role="switch" value="<?php if(isset($_COOKIE['remember_me'])) { echo 'checked="checked"'; } else { echo ''; } ?>">
-            <label class="form-check-label" for="remember">
-              Remember my username?
-            </label>
+            <label class="form-check-label" for="remember">Remember my username?</label>
           </div>
-          <!--<button class="btn btn-lg btn-primary btn-block" type="submit">Log In</button>-->
           <hr />
           <!--
           <p class="text-center">
