@@ -116,7 +116,8 @@ session_start();
 				<nav class="nav nav-masthead justify-content-center float-md-end">
           <p>I'm new.</p>
 					<a class="nav-link fw-bold py-1 px-0" href="#">Register</a>
-					<a class="nav-link fw-bold py-1 px-0" href="#">Contact</a>
+					<a class="nav-link fw-bold py-1 px-0" href="#">Reset Password</a>
+          <a class="nav-link fw-bold py-1 px-0" href="#">Terms</a>
 				</nav>
 			</div>
 		</header>
@@ -138,20 +139,26 @@ session_start();
             <input id="password" name="password" type="password" class="form-control" placeholder="Password" required>
             <label for="password">Password</label>
           </div>
-
-          <input type="checkbox" name="remember" value="<?php if(isset($_COOKIE['remember_me'])) { echo 'checked="checked"'; } else { echo ''; } ?>"> Remember username
-          <button class="btn btn-lg btn-primary btn-block" type="submit">Log In</button>
+          <div class="form-check">
+            <input id="remember" name="remember" type="checkbox" class="form-check-input" value="<?php if(isset($_COOKIE['remember_me'])) { echo 'checked="checked"'; } else { echo ''; } ?>">
+            <label class="form-check-label" for="remember">
+              Remember my username?
+            </label>
+          </div>
+          <!--<button class="btn btn-lg btn-primary btn-block" type="submit">Log In</button>-->
           <hr />
+          <!--
           <p class="text-center">
           <a href="registration.php">Register To Play</a>&nbsp;&nbsp;|&nbsp;&nbsp;
           <a href="forgot-password.php">Reset Password</a>&nbsp;&nbsp;|&nbsp;
           <a href="" data-toggle="modal" data-target="#HHterms">Terms &amp; Conditions</a>
           </p>
+        -->
       </form>
 
 			<p class="lead">Pit your FIFA World Cup 2022 predictions against others for a chance to earn a prize spot or bragging rights in the rankings.</p>
 			<p class="lead">
-				<a href="#" class="btn btn-lg btn-secondary fw-bold border-white bg-white">Learn more</a>
+				<a href="#" class="btn btn-lg btn-secondary fw-bold border-white bg-white" type="submit">Log in</a>
 			</p>
 		</main>
 
