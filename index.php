@@ -126,7 +126,7 @@ session_start();
 			<h1>Login</h1>
 			<img src="img/qatar-2022-logo.png" alt="Qatar 2022 edition of Hendy's Hunches" class="w-50 mb-3">
 
-      <form id="login" class="w-75" role="form" method="post" action="php/login.php">
+      <form id="login" class="w-75 text-center" role="form" method="post" action="php/login.php">
           <!--<h2 class="form-login-heading">Title</h2>-->
           <!--<img id="logo" src="img/hh-logo-2018.jpg" alt="Hendy's Hunches Logo" class="center-block img-responsive">-->
 
