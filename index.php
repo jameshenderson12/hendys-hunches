@@ -119,9 +119,9 @@ session_start();
 			<div>
 				<h3 class="float-md-start mb-0">Hendy's Hunches</h3>
 				<nav class="nav nav-masthead justify-content-center float-md-end">
-					<a class="nav-link fw-bold py-1 px-0" href="#">Register</a>
-					<a class="nav-link fw-bold py-1 px-0" href="#">Reset Password</a>
-          <a class="nav-link fw-bold py-1 px-0" href="#">Terms</a>
+					<a class="nav-link fw-bold py-1 px-0" href="registration.php">Register</a>
+					<a class="nav-link fw-bold py-1 px-0" href="forgot-password.php">Reset Password</a>
+          <a class="nav-link fw-bold py-1 px-0" href="#" data-toggle="modal" data-target="#HHterms">Terms</a>
 				</nav>
 			</div>
 		</header>
@@ -148,9 +148,9 @@ session_start();
             </div>
           </div>
 
-          <div class="form-check form-switch d-flex justify-content-center">
-            <input id="remember" name="remember" type="checkbox" class="form-check-input mr-3" role="switch" value="<?php if(isset($_COOKIE['remember_me'])) { echo 'checked="checked"'; } else { echo ''; } ?>">
-            <label class="form-check-label" for="remember">Remember my username?</label>
+          <div class="form-check form-switch">
+            <input id="remember" name="remember" type="checkbox" class="form-check-input" role="switch" value="<?php if(isset($_COOKIE['remember_me'])) { echo 'checked="checked"'; } else { echo ''; } ?>">
+            <label class="form-check-label m-3" for="remember">Remember my username?</label>
           </div>
           <hr />
           <!--
@@ -162,10 +162,9 @@ session_start();
         -->
       </form>
 
-			<p class="lead">Pit your FIFA World Cup 2022 predictions against others for a chance to earn a prize spot or bragging rights in the rankings.</p>
+			<!--<p class="lead">Pit your FIFA World Cup 2022 predictions against others for a chance to earn a prize spot or bragging rights in the rankings.</p>-->
 			<p class="lead">
 				<a href="#" class="btn btn-lg btn-secondary fw-bold border-white bg-white" type="submit"><i class="fw-bold bi bi-box-arrow-in-right"></i> Log in</a>
-        <a href="#" class="btn btn-lg btn-secondary fw-bold border-white bg-white" type="submit"><i class="fw-bold bi bi-box-arrow-in-right"></i> Log in</a>
 			</p>
 		</main>
 
@@ -178,13 +177,13 @@ session_start();
             <button type="button" class="close" data-dismiss="modal">&times;</button>
             <h4 class="modal-title">Hendy's Hunches: Terms &amp; Conditions</h4>
           </div>
-          <div class="modal-body" style="font-size: 0.95em;">
+          <div class="modal-body">
             <img src="img/hh-logo-2018.jpg" class="img-responsive center-block" title="Hendy's Hunches Logo" alt="Hendy's Hunches Logo" style="width: 150px; margin-bottom: 10px;">
-            <p>By registering to play Hendy's Hunches, you acknowledge that your participation in this game, and the game itself, is only for fun and light-hearted entertainment.</p>
-            <p>Only one registration per person is allowed and there is a participation fee of £5 which is to be paid to James Henderson prior to 14th June, 2018. This participation fee comprises a percentage split of charity donation (charity TBC), prize fund and overheads.</p>
-            <p>The game is based upon the 2018 FIFA World Cup Russia tournament (all 64 fixtures).</p>
+            <p>By registering to play Hendy's Hunches, you acknowledge that your participation in this game, and the game itself, is intended only for fun and light-hearted entertainment. It is not a source of gambling.</p>
+            <p>Only one registration per person is allowed. There is a participation fee of £5 which is to be paid to James Henderson prior to 20th November, 2022. This participation fee comprises a percentage split of charity donation (charity TBC) and prize funds.</p>
+            <p>The game is based upon the FIFA World Cup Qatar 2022 tournament.</p>
             <p>There will be a minimum of 3 prize funds and this number may be increased depending on the total number of participants. The number of prize funds available, and their amounts, will be indicated in the rankings table shortly after the game commences. Those participants who occupy a prize fund place after the final tournament fixture will receive the corresponding prize amount shortly thereafter. In the event of a shared spot, prizes will be split.</p>
-            <p>You are very welcome to invite family and friends to take part but be aware that any unpaid entrance fees will result in a participant being removed from the game.</p>
+            <p>Family and friends are permitted to take part but be aware that any unpaid entrance fees will result in a participant being removed from the game.</p>
           </div>
           <!--
           <div class="modal-footer">
@@ -196,7 +195,7 @@ session_start();
     </div>
 
 		<footer class="mt-auto">
-			<p>Predictions game based on <a href="https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/qatar2022" class="text-white">FIFA World Cup Qatar 2022™</a></p>
+			<p>Predictions game based on <a href="https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/qatar2022" class="text-white">FIFA World Cup Qatar 2022™</a>. Developed by <a href="">James Henderson</a> (School of Health Sciences, University of Nottingham).</p>
 		</footer>
 		</div>
 
