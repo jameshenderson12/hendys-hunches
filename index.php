@@ -3,115 +3,206 @@
 session_start();
 ?>
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-119623195-1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+<html lang="en" class="h-100">
+  <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-119623195-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
 
-  gtag('config', 'UA-119623195-1');
-</script>	
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Hendy's Hunches: Predictions Game">
-<meta name="author" content="James Henderson">
-<link rel="icon" href="ico/favicon.ico">
+      gtag('config', 'UA-119623195-1');
+    </script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Hendy's Hunches: Predictions Game">
+    <meta name="author" content="James Henderson">
+		<title>Hendy's Hunches: Login</title>
+		<link rel="shortcut icon" href="ico/favicon.ico">
+		<link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/cover/">
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <link href="css/login.css" rel="stylesheet">
+		<style>
+		/* Custom default button */
+		.btn-secondary,
+		.btn-secondary:hover,
+		.btn-secondary:focus {
+		  color: #333;
+		  text-shadow: none; /* Prevent inheritance from `body` */
+		}
+		body {
+		  text-shadow: 0 .05rem .1rem rgba(0, 0, 0, .5);
+		  box-shadow: inset 0 0 5rem rgba(0, 0, 0, .5);
+			background-image: url(img/football-stadium.jpg);
+		}
+		main {
+			background: rgba(10, 20, 50, 0.5);
+			border-radius: 10px;
+			padding: 1em;
+			box-shadow: inset 0 0 5rem rgba(0, 0, 0, .5);
+		}
+		.cover-container {
+		  max-width: 42em;
+		}
+		.nav-masthead .nav-link {
+		  color: rgba(255, 255, 255, .5);
+		  border-bottom: .25rem solid transparent;
+		}
+		.nav-masthead .nav-link:hover,
+		.nav-masthead .nav-link:focus {
+		  border-bottom-color: rgba(255, 255, 255, .25);
+		}
+		.nav-masthead .nav-link + .nav-link {
+		  margin-left: 1rem;
+		}
+		.nav-masthead .active {
+		  color: #fff;
+		  border-bottom-color: #fff;
+		}
+		.bd-placeholder-img {
+			font-size: 1.125rem;
+			text-anchor: middle;
+			-webkit-user-select: none;
+			-moz-user-select: none;
+			user-select: none;
+		}
+		@media (min-width: 768px) {
+			.bd-placeholder-img-lg {
+				font-size: 3.5rem;
+			}
+		}
+		.b-example-divider {
+			height: 3rem;
+			background-color: rgba(0, 0, 0, .1);
+			border: solid rgba(0, 0, 0, .15);
+			border-width: 1px 0;
+			box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
+		}
+		.b-example-vr {
+			flex-shrink: 0;
+			width: 1.5rem;
+			height: 100vh;
+		}
+		.bi {
+			vertical-align: -.125em;
+			fill: currentColor;
+		}
+		.nav-scroller {
+			position: relative;
+			z-index: 2;
+			height: 2.75rem;
+			overflow-y: hidden;
+		}
+		.nav-scroller .nav {
+			display: flex;
+			flex-wrap: nowrap;
+			padding-bottom: 1rem;
+			margin-top: -1px;
+			overflow-x: auto;
+			text-align: center;
+			white-space: nowrap;
+			-webkit-overflow-scrolling: touch;
+		}
+		</style>
+	</head>
 
-<title>Hendy's Hunches: Login</title>
+	<body class="d-flex h-100 text-center text-bg-dark">
 
-<!-- Bootstrap core CSS -->
-<link href="css/bootstrap.min.css" rel="stylesheet">
+		<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+		<header class="mb-auto">
+			<div>
+				<h3 class="float-md-start mb-0">Coming Soon!</h3>
+				<nav class="nav nav-masthead justify-content-center float-md-end">
+					<iframe src="https://free.timeanddate.com/countdown/i8k6yqvc/n4511/cf11/cm0/cu3/ct0/cs1/ca0/co0/cr0/ss0/cacfff/cpc0f0/pct/tcfff/fs100/szw320/szh135/iso2022-11-20T16:00:00/bacfff/pa5" allowtransparency="true" frameborder="0" width="244" height="42"></iframe>
+					<!--<iframe src="https://free.timeanddate.com/countdown/i8k6yqvc/n4511/cf11/cm0/cu3/ct0/cs1/ca0/co0/cr0/ss0/cacfff/cpc0f0/pct/tcfff/fs100/szw320/szh135/iso2022-11-20T16:00:00/pa5" allowtransparency="true" frameborder="0" width="232" height="30"></iframe>-->
 
-<!-- Custom styles for this template -->
-<link href="css/login.css" rel="stylesheet">
+					<!--
+					<a class="nav-link fw-bold py-1 px-0" href="#">Features</a>
+					<a class="nav-link fw-bold py-1 px-0" href="#">Contact</a>
+				-->
+				</nav>
+			</div>
+		</header>
 
-<!-- Just for debugging purposes. Don't actually copy this line! -->
-<!--[if lt IE 9]><script src="../../docs-assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+		<main class="px-3">
 
-<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-<!--[if lt IE 9]>
-  <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-  <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
-<![endif]-->
-</head>
+			<h1>Hendy's Hunches: Login</h1>
+			<img src="img/qatar-2022-logo.png" alt="Qatar 2022 edition of Hendy's Hunches" class="w-50">
 
-<body>
+      <form id="login" class="form-login" role="form" method="post" action="php/login.php">
+          <!--<h2 class="form-login-heading">Title</h2>-->
+          <img id="logo" src="img/hh-logo-2018.jpg" alt="Hendy's Hunches Logo" class="center-block img-responsive">
+          <div class="center-block text-center">
+                  <h4><img src="flag-icons/24/qatar.png"> FIFA World Cup Qatar 2022</h4>
 
-<div class="container">
+          </div>
+          <label for="username" class="sr-only">Username</label>
+          <input id="username" name="username" type="text" class="form-control" placeholder="Username" value="<?php
+  echo $_COOKIE['remember_me']; ?>" required autofocus />
+          <!--<font color="orangered" size="+1"><tt><b>*</b></tt></font>-->
+          <label for="password" class="sr-only">Password</label>
+          <input id="password" name="password" type="password" class="form-control" placeholder="Password" required />
+          <!--<font color="orangered" size="+1"><tt><b>*</b></tt></font>-->
+          <!--<input type="reset" value="Reset Form" />-->
+          <!--<div class="checkbox">
+          <label>
+          <input type="checkbox" name="remember" value="<?php if(isset($_COOKIE['remember_me'])) {
+  			  echo 'checked="checked"';
+  		  }
+  		  else {
+  			  echo '';
+  		  }
+  		  ?>"> Remember username
+          </label>
+          </div>-->
+          <button class="btn btn-lg btn-primary btn-block" type="submit">Log In</button>
+          <hr />
+          <p class="text-center">
+          <!--<a href="registration.php">Register To Play</a>&nbsp;&nbsp;|&nbsp;&nbsp; -->
+          <a href="forgot-password.php">Reset Password</a>&nbsp;&nbsp;|&nbsp;
+          <a href="" data-toggle="modal" data-target="#HHterms">Terms &amp; Conditions</a>
+          </p>
+      </form>
 
-    <form id="login" class="form-login" role="form" method="post" action="php/login.php">
-        <!--<h2 class="form-login-heading">Title</h2>-->
-        <img id="logo" src="img/hh-logo-2018.jpg" alt="Hendy's Hunches Logo" class="center-block img-responsive">
-        <div class="center-block text-center">
-                <h4><img src="flag-icons/24/russia.png"> 2018 FIFA World Cup Edition</h4>
-                
+			<p class="lead">Pit your FIFA World Cup 2022 predictions against others for a chance to earn a prize spot or bragging rights in the rankings.</p>
+			<p class="lead">
+				<a href="#" class="btn btn-lg btn-secondary fw-bold border-white bg-white">Learn more</a>
+			</p>
+		</main>
+
+    <!-- Modal -->
+    <div id="HHterms" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Hendy's Hunches: Terms &amp; Conditions</h4>
+          </div>
+          <div class="modal-body" style="font-size: 0.95em;">
+            <img src="img/hh-logo-2018.jpg" class="img-responsive center-block" title="Hendy's Hunches Logo" alt="Hendy's Hunches Logo" style="width: 150px; margin-bottom: 10px;">
+            <p>By registering to play Hendy's Hunches, you acknowledge that your participation in this game, and the game itself, is only for fun and light-hearted entertainment.</p>
+            <p>Only one registration per person is allowed and there is a participation fee of £5 which is to be paid to James Henderson prior to 14th June, 2018. This participation fee comprises a percentage split of charity donation (charity TBC), prize fund and overheads.</p>
+            <p>The game is based upon the 2018 FIFA World Cup Russia tournament (all 64 fixtures).</p>
+            <p>There will be a minimum of 3 prize funds and this number may be increased depending on the total number of participants. The number of prize funds available, and their amounts, will be indicated in the rankings table shortly after the game commences. Those participants who occupy a prize fund place after the final tournament fixture will receive the corresponding prize amount shortly thereafter. In the event of a shared spot, prizes will be split.</p>
+            <p>You are very welcome to invite family and friends to take part but be aware that any unpaid entrance fees will result in a participant being removed from the game.</p>
+          </div>
+          <!--
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+          </div>
+          -->
         </div>
-        <label for="username" class="sr-only">Username</label>
-        <input id="username" name="username" type="text" class="form-control" placeholder="Username" value="<?php
-echo $_COOKIE['remember_me']; ?>" required autofocus />
-        <!--<font color="orangered" size="+1"><tt><b>*</b></tt></font>-->
-        <label for="password" class="sr-only">Password</label>
-        <input id="password" name="password" type="password" class="form-control" placeholder="Password" required />
-        <!--<font color="orangered" size="+1"><tt><b>*</b></tt></font>-->
-        <!--<input type="reset" value="Reset Form" />-->
-        <!--<div class="checkbox">
-        <label>
-        <input type="checkbox" name="remember" value="<?php if(isset($_COOKIE['remember_me'])) {
-			  echo 'checked="checked"';
-		  }
-		  else {
-			  echo '';
-		  }
-		  ?>"> Remember username        
-        </label>
-        </div>-->
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Log In</button>
-        <hr />
-        <p class="text-center">
-        <!--<a href="registration.php">Register To Play</a>&nbsp;&nbsp;|&nbsp;&nbsp; -->
-        <a href="forgot-password.php">Reset Password</a>&nbsp;&nbsp;|&nbsp;  
-        <a href="" data-toggle="modal" data-target="#HHterms">Terms &amp; Conditions</a>
-        </p>
-    </form>
-    
-    
-  <!-- Modal -->
-  <div id="HHterms" class="modal fade" role="dialog">
-    <div class="modal-dialog">
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">Hendy's Hunches: Terms &amp; Conditions</h4>
-        </div>
-        <div class="modal-body" style="font-size: 0.95em;">
-          <img src="img/hh-logo-2018.jpg" class="img-responsive center-block" title="Hendy's Hunches Logo" alt="Hendy's Hunches Logo" style="width: 150px; margin-bottom: 10px;">
-          <p>By registering to play Hendy's Hunches, you acknowledge that your participation in this game, and the game itself, is only for fun and light-hearted entertainment.</p>
-          <p>Only one registration per person is allowed and there is a participation fee of £5 which is to be paid to James Henderson prior to 14th June, 2018. This participation fee comprises a percentage split of charity donation (charity TBC), prize fund and overheads.</p>
-          <p>The game is based upon the 2018 FIFA World Cup Russia tournament (all 64 fixtures).</p>
-          <p>There will be a minimum of 3 prize funds and this number may be increased depending on the total number of participants. The number of prize funds available, and their amounts, will be indicated in the rankings table shortly after the game commences. Those participants who occupy a prize fund place after the final tournament fixture will receive the corresponding prize amount shortly thereafter. In the event of a shared spot, prizes will be split.</p>
-          <p>You are very welcome to invite family and friends to take part but be aware that any unpaid entrance fees will result in a participant being removed from the game.</p>
-        </div>
-        <!--
-        <div class="modal-footer">
-          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-        </div>
-        -->
       </div>
     </div>
-  </div>
-    
 
-</div> <!-- /container -->
+		<footer class="mt-auto">
+			<p>Predictions game based on <a href="https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/qatar2022" class="text-white">FIFA World Cup Qatar 2022™</a></p>
+		</footer>
+		</div>
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-</body>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.1"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
+	</body>
 </html>
