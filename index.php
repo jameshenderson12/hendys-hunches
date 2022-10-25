@@ -42,7 +42,7 @@ session_start();
 			border-radius: 10px;
 			padding: 1em;
 			box-shadow: inset 0 0 5rem rgba(0, 0, 0, .5);
-      text-shadow: 0 .05rem .1rem rgba(0, 0, 0, .5);      
+      text-shadow: 0 .05rem .1rem rgba(0, 0, 0, .5);
 		}
 		.cover-container {
 		  max-width: 42em;
@@ -71,6 +71,10 @@ session_start();
 		}
     .form-check .form-check-input {
 	     float: none !important;
+    }
+    .modal {
+      color: #000;
+      text-align: left !important;      
     }
 		@media (min-width: 768px) {
 			.bd-placeholder-img-lg {
