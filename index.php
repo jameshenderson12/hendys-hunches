@@ -114,7 +114,6 @@ session_start();
 			<div>
 				<h3 class="float-md-start mb-0">Hendy's Hunches</h3>
 				<nav class="nav nav-masthead justify-content-center float-md-end">
-          <p>I'm new.</p>
 					<a class="nav-link fw-bold py-1 px-0" href="#">Register</a>
 					<a class="nav-link fw-bold py-1 px-0" href="#">Reset Password</a>
           <a class="nav-link fw-bold py-1 px-0" href="#">Terms</a>
@@ -125,9 +124,9 @@ session_start();
 		<main class="px-3">
 
 			<h1>Login</h1>
-			<img src="img/qatar-2022-logo.png" alt="Qatar 2022 edition of Hendy's Hunches" class="w-50">
+			<img src="img/qatar-2022-logo.png" alt="Qatar 2022 edition of Hendy's Hunches" class="w-50 mb-3">
 
-      <form id="login" class="form-login" role="form" method="post" action="php/login.php">
+      <form id="login" role="form" method="post" action="php/login.php">
           <!--<h2 class="form-login-heading">Title</h2>-->
           <!--<img id="logo" src="img/hh-logo-2018.jpg" alt="Hendy's Hunches Logo" class="center-block img-responsive">-->
 
@@ -135,12 +134,12 @@ session_start();
             <input id="username" name="username" type="text" class="form-control" placeholder="Username" value="<?php echo $_COOKIE['remember_me']; ?>" required autofocus>
             <label for="username">Username</label>
           </div>
-          <div class="form-floating">
+          <div class="form-floating mb-3">
             <input id="password" name="password" type="password" class="form-control" placeholder="Password" required>
             <label for="password">Password</label>
           </div>
-          <div class="form-check">
-            <input id="remember" name="remember" type="checkbox" class="form-check-input" value="<?php if(isset($_COOKIE['remember_me'])) { echo 'checked="checked"'; } else { echo ''; } ?>">
+          <div class="form-check form-switch text-center">
+            <input id="remember" name="remember" type="checkbox" class="form-check-input" role="switch" value="<?php if(isset($_COOKIE['remember_me'])) { echo 'checked="checked"'; } else { echo ''; } ?>">
             <label class="form-check-label" for="remember">
               Remember my username?
             </label>
