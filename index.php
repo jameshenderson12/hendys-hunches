@@ -76,6 +76,9 @@ session_start();
       color: #000;
       text-align: left;
     }
+    .modal img {
+      text-align: center;
+    }
 		@media (min-width: 768px) {
 			.bd-placeholder-img-lg {
 				font-size: 3.5rem;
