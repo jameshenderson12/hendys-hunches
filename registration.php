@@ -355,33 +355,69 @@
 
 			<h1>Registration</h1>
 
-      <form id="login" role="form" method="post" action="php/login.php">
-
-          <div class="mb-3 row d-flex justify-content-center">
-            <label for="username" class="col-sm-2 col-form-label">Username</label>
-            <div class="col-sm-8">
-              <input type="text" class="form-control" id="username" name="username" value="<?php echo $_COOKIE['remember_me']; ?>" required>
+      <form class="row g-3 needs-validation" novalidate>
+        <div class="col-md-4">
+          <label for="validationCustom01" class="form-label">First name</label>
+          <input type="text" class="form-control" id="validationCustom01" value="" required>
+          <div class="valid-feedback">
+            Looks good!
+          </div>
+        </div>
+        <div class="col-md-4">
+          <label for="validationCustom02" class="form-label">Last name</label>
+          <input type="text" class="form-control" id="validationCustom02" value="" required>
+          <div class="valid-feedback">
+            Looks good!
+          </div>
+        </div>
+        <div class="col-md-4">
+          <label for="validationCustomUsername" class="form-label">Username</label>
+          <div class="input-group has-validation">
+            <span class="input-group-text" id="inputGroupPrepend">@</span>
+            <input type="text" class="form-control" id="validationCustomUsername" aria-describedby="inputGroupPrepend" required>
+            <div class="invalid-feedback">
+              Please choose a username.
             </div>
           </div>
-          <div class="mb-3 row d-flex justify-content-center">
-            <label for="password" class="col-sm-2 col-form-label">Password</label>
-            <div class="col-sm-8">
-              <input type="password" class="form-control" id="password" name="password" required>
+        </div>
+        <div class="col-md-6">
+          <label for="validationCustom03" class="form-label">City</label>
+          <input type="text" class="form-control" id="validationCustom03" required>
+          <div class="invalid-feedback">
+            Please provide a valid city.
+          </div>
+        </div>
+        <div class="col-md-3">
+          <label for="validationCustom04" class="form-label">State</label>
+          <select class="form-select" id="validationCustom04" required>
+            <option selected disabled value="">Choose...</option>
+            <option>...</option>
+          </select>
+          <div class="invalid-feedback">
+            Please select a valid state.
+          </div>
+        </div>
+        <div class="col-md-3">
+          <label for="validationCustom05" class="form-label">Zip</label>
+          <input type="text" class="form-control" id="validationCustom05" required>
+          <div class="invalid-feedback">
+            Please provide a valid zip.
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
+            <label class="form-check-label" for="invalidCheck">
+              Agree to terms and conditions
+            </label>
+            <div class="invalid-feedback">
+              You must agree before submitting.
             </div>
           </div>
-
-          <div class="form-check form-switch">
-            <input id="remember" name="remember" type="checkbox" class="form-check-input" role="switch" value="<?php if(isset($_COOKIE['remember_me'])) { echo 'checked="checked"'; } else { echo ''; } ?>">
-            <label class="form-check-label ml-3" for="remember">Remember my username?</label>
-          </div>
-          <hr />
-          <!--
-          <p class="text-center">
-          <a href="registration.php">Register To Play</a>&nbsp;&nbsp;|&nbsp;&nbsp;
-          <a href="forgot-password.php">Reset Password</a>&nbsp;&nbsp;|&nbsp;
-          <a href="" data-toggle="modal" data-target="#HHterms">Terms &amp; Conditions</a>
-          </p>
-        -->
+        </div>
+        <div class="col-12">
+          <button class="btn btn-primary" type="submit">Submit form</button>
+        </div>
       </form>
 
 			<!--<p class="lead">Pit your FIFA World Cup 2022 predictions against others for a chance to earn a prize spot or bragging rights in the rankings.</p>-->
@@ -426,349 +462,4 @@
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.1"></script>
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
 	</body>
-</html>
-
-
-
-
-        <p>Register your details below to sign up or return to the <a href="index.php">login page</a> to sign in. All fields are required to be completed.</p>
-
-
-
-        <form class="row g-3 needs-validation" novalidate>
-          <div class="col-md-4">
-            <label for="validationCustom01" class="form-label">First name</label>
-            <input type="text" class="form-control" id="validationCustom01" value="" required>
-            <div class="valid-feedback">
-              Looks good!
-            </div>
-          </div>
-          <div class="col-md-4">
-            <label for="validationCustom02" class="form-label">Last name</label>
-            <input type="text" class="form-control" id="validationCustom02" value="" required>
-            <div class="valid-feedback">
-              Looks good!
-            </div>
-          </div>
-          <div class="col-md-4">
-            <label for="validationCustomUsername" class="form-label">Username</label>
-            <div class="input-group has-validation">
-              <span class="input-group-text" id="inputGroupPrepend">@</span>
-              <input type="text" class="form-control" id="validationCustomUsername" aria-describedby="inputGroupPrepend" required>
-              <div class="invalid-feedback">
-                Please choose a username.
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <label for="validationCustom03" class="form-label">City</label>
-            <input type="text" class="form-control" id="validationCustom03" required>
-            <div class="invalid-feedback">
-              Please provide a valid city.
-            </div>
-          </div>
-          <div class="col-md-3">
-            <label for="validationCustom04" class="form-label">State</label>
-            <select class="form-select" id="validationCustom04" required>
-              <option selected disabled value="">Choose...</option>
-              <option>...</option>
-            </select>
-            <div class="invalid-feedback">
-              Please select a valid state.
-            </div>
-          </div>
-          <div class="col-md-3">
-            <label for="validationCustom05" class="form-label">Zip</label>
-            <input type="text" class="form-control" id="validationCustom05" required>
-            <div class="invalid-feedback">
-              Please provide a valid zip.
-            </div>
-          </div>
-          <div class="col-12">
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
-              <label class="form-check-label" for="invalidCheck">
-                Agree to terms and conditions
-              </label>
-              <div class="invalid-feedback">
-                You must agree before submitting.
-              </div>
-            </div>
-          </div>
-          <div class="col-12">
-            <button class="btn btn-primary" type="submit">Submit form</button>
-          </div>
-        </form>
-
-
-
-
-        <div class="mb-3 row d-flex justify-content-center">
-          <label for="username" class="col-sm-2 col-form-label">Username:</label>
-          <div class="col-sm-8">
-            <input type="text" class="form-control" id="username" name="username" value="<?php echo $_COOKIE['remember_me']; ?>" required>
-          </div>
-        </div>
-        <div class="mb-3 row d-flex justify-content-center">
-          <label for="password" class="col-sm-2 col-form-label">Password:</label>
-          <div class="col-sm-8">
-            <input type="password" class="form-control" id="password" name="password" required>
-          </div>
-        </div>
-
-        <form id="registrationForm" name="registrationForm" class="form-horizontal" method="post" action="php/register.php" onSubmit="return validateFullForm()">
-            <!-- Username -->
-            <div class="form-group">
-            	<label for="username" class="col-sm-3 control-label">Username: </label>
-                <div class="col-sm-5">
-                <input type="text" class="form-control" id="username" name="username" placeholder="Create username" />
-                </div>
-                <div class="col-sm-4"><p id="un-msg" class="additional-info"></p>
-                </div>
-            </div>
-            <!-- Password -->
-            <div class="form-group">
-            	<label for="password" class="col-sm-3 control-label">Password: </label>
-                <div class="col-sm-5">
-                <input type="password" class="form-control" id="password" name="password" placeholder="Create password" onBlur="return validatePassword();" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" onchange="form.password2.pattern = this.value;" />
-                </div>
-                <div class="col-sm-4">
-                	<p class="additional-info">Minimum of 6 characters; at least 1 uppercase letter and 1 number.</p>
-                </div>
-            </div>
-            <!-- Confirm Password -->
-            <div class="form-group">
-            	<label for="password2" class="col-sm-3 control-label">Confirm Password: </label>
-                <div class="col-sm-5">
-                <input type="password" class="form-control" id="password2" name="password2" placeholder="Confirm password" onBlur="return validatePassword2();" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" />
-                </div>
-                <div class="col-sm-4"></div>
-            </div>
-            <!-- First Name -->
-            <div class="form-group">
-	    		<label for="firstname" class="col-sm-3 control-label">First Name: </label>
-                <div class="col-sm-5">
-	        	<input type="text" class="form-control" id="firstname" name="firstname" placeholder="Enter your first name" onBlur="return validateName('firstname');" required />
-                </div>
-                <div class="col-sm-4"></div>
-            </div>
-            <!-- Surname -->
-        	<div class="form-group">
-            	<label for="surname" class="col-sm-3 control-label">Surname:</label>
-                <div class="col-sm-5">
-	        	<input type="text" class="form-control" id="surname" name="surname" placeholder="Enter your surname" onBlur="return validateName('surname');" required />
-                </div>
-                <div class="col-sm-4"></div>
-            </div>
-            <!-- Email Address -->
-            <div class="form-group">
-           		<label for="email" class="col-sm-3 control-label">Email:</label>
-                <div class="col-sm-5">
-	        	<input type="email" class="form-control" id="email" name="email" placeholder="Enter email address" onBlur="return validateEmail();" required />
-                </div>
-                <div class="col-sm-4"></div>
-            </div>
-			<!-- Avatar Selection -->
-            <div class="form-group" id="avatars">
-           		<label for="avatars" class="col-sm-3 control-label">Select Avatar:</label>
-                <div class="col-sm-6">
-	        	<button type="button" class="btn btn-default avatar" id="fk1" name="<?php echo $fk1; ?>" value="<?php echo $fk1; ?>" onClick="chooseImage('fk1');">
-                <img src="<?php echo $fk1; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>
-   	        	<button type="button" class="btn btn-default avatar" id="fk2" name="<?php echo $fk2; ?>" value="<?php echo $fk2; ?>" onClick="chooseImage('fk2');">
-                <img src="<?php echo $fk2; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>
-   	        	<button type="button" class="btn btn-default avatar" id="fk3" name="<?php echo $fk3; ?>" value="<?php echo $fk3; ?>" onClick="chooseImage('fk3');">
-                <img src="<?php echo $fk3; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>
-   	        	<button type="button" class="btn btn-default avatar" id="fk4" name="<?php echo $fk4; ?>" value="<?php echo $fk4; ?>" onClick="chooseImage('fk4');">
-                <img src="<?php echo $fk4; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>
-   	        	<button type="button" class="btn btn-default avatar" id="fk5" name="<?php echo $fk5; ?>" value="<?php echo $fk5; ?>" onClick="chooseImage('fk5');">
-                <img src="<?php echo $fk5; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>
-   	        	<button type="button" class="btn btn-default avatar" id="fk6" name="<?php echo $fk6; ?>" value="<?php echo $fk6; ?>" onClick="chooseImage('fk6');">
-                <img src="<?php echo $fk6; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>
-   	        	<button type="button" class="btn btn-default avatar" id="fk7" name="<?php echo $fk7; ?>" value="<?php echo $fk7; ?>" onClick="chooseImage('fk7');">
-                <img src="<?php echo $fk7; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>
-   	        	<button type="button" class="btn btn-default avatar" id="fk8" name="<?php echo $fk8; ?>" value="<?php echo $fk8; ?>" onClick="chooseImage('fk8');">
-                <img src="<?php echo $fk8; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>
-   	        	<button type="button" class="btn btn-default avatar" id="fk9" name="<?php echo $fk9; ?>" value="<?php echo $fk9; ?>" onClick="chooseImage('fk9');">
-                <img src="<?php echo $fk9; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>
-                <button type="button" class="btn btn-default avatar" id="fk10" name="<?php echo $fk10; ?>" value="<?php echo $fk10; ?>" onClick="chooseImage('fk10');">
-                <img src="<?php echo $fk10; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>
-                <button type="button" class="btn btn-default avatar" id="fk11" name="<?php echo $fk11; ?>" value="<?php echo $fk11; ?>" onClick="chooseImage('fk11');">
-                <img src="<?php echo $fk11; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>
-                <button type="button" class="btn btn-default avatar" id="fk12" name="<?php echo $fk12; ?>" value="<?php echo $fk12; ?>" onClick="chooseImage('fk12');">
-                <img src="<?php echo $fk12; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>
-                <button type="button" class="btn btn-default avatar" id="fk13" name="<?php echo $fk13; ?>" value="<?php echo $fk13; ?>" onClick="chooseImage('fk13');">
-                <img src="<?php echo $fk13; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>
-                <button type="button" class="btn btn-default avatar" id="fk14" name="<?php echo $fk14; ?>" value="<?php echo $fk14; ?>" onClick="chooseImage('fk14');">
-                <img src="<?php echo $fk14; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>
-                <button type="button" class="btn btn-default avatar" id="fk15" name="<?php echo $fk15; ?>" value="<?php echo $fk15; ?>" onClick="chooseImage('fk15');">
-                <img src="<?php echo $fk15; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>
-                <button type="button" class="btn btn-default avatar" id="fk16" name="<?php echo $fk16; ?>" value="<?php echo $fk16; ?>" onClick="chooseImage('fk16');">
-                <img src="<?php echo $fk16; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>
-                <button type="button" class="btn btn-default avatar" id="fk17" name="<?php echo $fk17; ?>" value="<?php echo $fk17; ?>" onClick="chooseImage('fk17');">
-                <img src="<?php echo $fk17; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>
-                <button type="button" class="btn btn-default avatar" id="fk18" name="<?php echo $fk18; ?>" value="<?php echo $fk18; ?>" onClick="chooseImage('fk18');">
-                <img src="<?php echo $fk18; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>
-                <!-- Hidden form to capture user's avatar selection-->
-                <input type="hidden" class="form-control" id="avatarSelection" name="avatarSelection" />
-                </div>
-            </div><!-- Avatars -->
-            <!-- Field of Work -->
-            <div class="form-group">
-        		<label for="fieldofwork" class="col-sm-3 control-label">Field of Work:</label>
-                <div class="col-sm-5">
-				<select id="fieldofwork" name="fieldofwork" class="form-control" onBlur="return validateDropDown('fieldofwork');" />
-				<option selected="selected" disabled class="text-success">--- Choose Employment Field ---</option>
-				<?php
-                    // Source file for extracting data
-                    $file = 'text/select-sectors-input.txt';
-                    $handle = @fopen($file, 'r');
-                    if ($handle) {
-                       while (!feof($handle)) {
-                       $line = fgets($handle, 4096);
-                       $item = explode('\n', $line);
-                       echo '<option value="' . $item[0] . '">' . $item[0] . '</option>' . "\n";
-                   }
-                   fclose($handle);
-                   }
-                ?>
-        		</select>
-            	</div>
-                <div class="col-sm-4"></div>
-            </div>
-            <!-- Favourite Team -->
-            <div class="form-group">
-        		<label for="faveteam" class="col-sm-3 control-label">Favourite Team:</label>
-                <div class="col-sm-5">
-				<select id="faveteam" name="faveteam" class="form-control" onBlur="return validateDropDown('faveteam');" />
-				<option selected="selected" disabled class="text-success">--- Your Favourite Team ---</option>
-				<?php
-                    // Source file for extracting data
-                    $file = 'text/select-clubteams-input.txt';
-                    $handle = @fopen($file, 'r');
-                    if ($handle) {
-                       while (!feof($handle)) {
-                       $line = fgets($handle, 4096);
-                       $item = explode('\n', $line);
-                       echo '<option value="' . $item[0] . '">' . $item[0] . '</option>' . "\n";
-                   }
-                   fclose($handle);
-                   }
-                ?>
-				</select>
-            	</div>
-                <div class="col-sm-4"></div>
-            </div>
-            <!-- Tournament Winner -->
-            <div class="form-group">
-            <label for="tournwinner" class="col-sm-3 control-label">World Cup 2018 Winner:</label>
-            <div class="col-sm-5">
-			<select id="tournwinner" name="tournwinner" class="form-control" onBlur="return validateDropDown('tournwinner');" />
-				<option selected="selected" disabled class="text-success">--- Vote The Winner ---</option>
-				<?php
-                    // Source file for extracting data
-                    $file = 'text/select-wc2018teams-input.txt';
-                    $handle = @fopen($file, 'r');
-                    if ($handle) {
-                       while (!feof($handle)) {
-                       $line = fgets($handle, 4096);
-                       $item = explode('\n', $line);
-                       echo '<option value="' . $item[0] . '">' . $item[0] . '</option>' . "\n";
-                   }
-                   fclose($handle);
-                   }
-                ?>
-	        	</select>
-                </div>
-                <div class="col-sm-4">
-                	<p class="additional-info">Please note that no points are awarded for this selection.</p>
-                </div>
-            </div>
-
-            <!-- Disclaimer -->
-            <div class="form-group">
-	    		<label for="disclaimer" class="col-sm-3 control-label"></label>
-                <div class="col-sm-9">
-	        	<p><input type="checkbox" id="disclaimer" name="disclaimer" value="disclaimer">&nbsp;By signing up, I acknowledge and accept the <a href="" data-toggle="modal" data-target="#HHterms">terms and conditions</a> of Hendy's Hunches.</p>
-                </div>
-            </div>
-
-            <!-- Signup/Reset Form Button -->
-            <div class="form-group">
-	    		<label for="buttons" class="col-sm-3 control-label"></label>
-                <div class="col-sm-9">
-	        	<input type="submit" class="btn btn-primary" value="Sign me up!" name="predictionsSubmitted" />
-          		<input type="reset" class="btn btn-default" value="Reset all" onClick="resetBorders();" />
-                </div>
-            </div>
-
-          <!-- Site footer -->
-          <div class="footer">
-          <?php include "includes/footer.php" ?>
-          </div>
-   	</form>
-
-      <!-- Modal -->
-      <div id="HHterms" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-          <!-- Modal content-->
-          <div class="modal-content">
-            <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal">&times;</button>
-              <h4 class="modal-title">Hendy's Hunches: Terms &amp; Conditions</h4>
-            </div>
-            <div class="modal-body" style="font-size: 0.95em;">
-				<img src="img/hh-logo-2018.jpg" class="img-responsive center-block" title="Hendy's Hunches Logo" 	alt="Hendy's Hunches Logo" style="width: 150px; margin-bottom: 10px;">
-				<p>By registering to play Hendy's Hunches, you acknowledge that your participation in this game, and the game itself, is only for fun and light-hearted entertainment.</p>
-				<p>Only one registration per person is allowed and there is a participation fee of £5 which is to be paid to James Henderson prior to 14th June, 2018. This participation fee comprises a percentage split of charity donation (charity TBC), prize fund and overheads.</p>
-				<p>The game is based upon the 2018 FIFA World Cup Russia tournament (all 64 fixtures).</p>
-				<p>There will be a minimum of 3 prize funds and this number may be increased depending on the total number of participants. The number of prize funds available, and their amounts, will be indicated in the rankings table shortly after the game commences. Those participants who occupy a prize fund place after the final tournament fixture will receive the corresponding prize amount shortly thereafter. In the event of a shared spot, prizes will be split.</p>
-				<p>You are very welcome to invite family and friends to take part but be aware that any unpaid entrance fees will result in a participant being removed from the game.</p>
-            </div>
-            <!--
-            <div class="modal-footer">
-              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-            </div>
-            -->
-          </div>
-        </div>
-      </div>
-
-    </div><!-- /.container -->
-
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script type="text/javascript">
-		$("button").click(function(){
-			$("button").css("background-color", "transparent").css("border", "1px solid #cccccc");
-			$(this).css("background-color", "#FFFF00").css("border", "1px solid #090");
-		});
-		function chooseImage(imageId) {
-			var x = document.getElementById(imageId).value;
-			document.getElementById("avatarSelection").value = x;
-			document.getElementById("avatars").style.border = "none";
-		}
-	</script>
-  </body>
 </html>
