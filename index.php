@@ -129,33 +129,21 @@ session_start();
       <form id="login" class="form-login" role="form" method="post" action="php/login.php">
           <!--<h2 class="form-login-heading">Title</h2>-->
           <!--<img id="logo" src="img/hh-logo-2018.jpg" alt="Hendy's Hunches Logo" class="center-block img-responsive">-->
-          <div class="center-block text-center">
-                  <h4><img src="flag-icons/24/qatar.png"> FIFA World Cup Qatar 2022</h4>
 
+          <div class="form-floating mb-3">
+            <input id="username" name="username" type="text" class="form-control" placeholder="Username" value="<?php echo $_COOKIE['remember_me']; ?>" required autofocus>
+            <label for="username">Username</label>
           </div>
-          <label for="username" class="sr-only">Username</label>
-          <input id="username" name="username" type="text" class="form-control" placeholder="Username" value="<?php
-  echo $_COOKIE['remember_me']; ?>" required autofocus />
-          <!--<font color="orangered" size="+1"><tt><b>*</b></tt></font>-->
-          <label for="password" class="sr-only">Password</label>
-          <input id="password" name="password" type="password" class="form-control" placeholder="Password" required />
-          <!--<font color="orangered" size="+1"><tt><b>*</b></tt></font>-->
-          <!--<input type="reset" value="Reset Form" />-->
-          <!--<div class="checkbox">
-          <label>
-          <input type="checkbox" name="remember" value="<?php if(isset($_COOKIE['remember_me'])) {
-  			  echo 'checked="checked"';
-  		  }
-  		  else {
-  			  echo '';
-  		  }
-  		  ?>"> Remember username
-          </label>
-          </div>-->
+          <div class="form-floating">
+            <input id="password" name="password" type="password" class="form-control" placeholder="Password" required>
+            <label for="password">Password</label>
+          </div>
+
+          <input type="checkbox" name="remember" value="<?php if(isset($_COOKIE['remember_me'])) { echo 'checked="checked"'; } else { echo ''; } ?>"> Remember username
           <button class="btn btn-lg btn-primary btn-block" type="submit">Log In</button>
           <hr />
           <p class="text-center">
-          <!--<a href="registration.php">Register To Play</a>&nbsp;&nbsp;|&nbsp;&nbsp; -->
+          <a href="registration.php">Register To Play</a>&nbsp;&nbsp;|&nbsp;&nbsp;
           <a href="forgot-password.php">Reset Password</a>&nbsp;&nbsp;|&nbsp;
           <a href="" data-toggle="modal" data-target="#HHterms">Terms &amp; Conditions</a>
           </p>
