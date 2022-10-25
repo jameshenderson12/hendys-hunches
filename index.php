@@ -74,6 +74,8 @@ session_start();
     }
     .modal {
       color: #000;
+    }
+    .modal li {
       text-align: left;
     }
     .modal img {
