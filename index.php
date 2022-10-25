@@ -182,12 +182,14 @@ session_start();
           </div>
           <div class="modal-body">
             <img src="img/hh-logo-2018.jpg" class="img-responsive center-block" title="Hendy's Hunches Logo" alt="Hendy's Hunches Logo" style="width: 180px; margin-bottom: 10px;">
+            <p>By registering to play Hendy's Hunches, you acknowledge that:</p>
             <ul>
-              <li>By registering to play Hendy's Hunches, you acknowledge that your involvement in this game, and the game itself, is intended only for entertainment. It is not a gambling site.</li>
-              <li>The game is based upon the FIFA World Cup Qatar 2022 tournament.</li>
-              <li>Only one registration per person is permitted. Family and friends are very welcome to take part. Any unpaid entrance fees will result in removal from the game.</li>
-              <li>A participation fee of £5 is to be paid prior to 20th November, 2022. This fee comprises a percentage split of charity (TBC) donation and prize funds.</li>
-              <li>The number of prize funds, and their amounts, will be indicated in due course. Prizes are awarded to winners after the final tournament fixture. In the event of a shared winning spot, prizes will be divided accordingly.</li>
+              <li>your involvement in this game, and the game itself, is intended only for entertainment (i.e. it is not a gambling site)</li>
+              <li>the game is based upon the official FIFA World Cup Qatar 2022™ tournament</li>
+              <li>only one registration per person is permitted although family and friends are very welcome to participate</li>
+              <li>any unpaid entrance fees will result in removal from the game</li>
+              <li>a participation fee of £5 is to be paid prior to 20/11/2022; split for charity (TBC) donation and prize funds</li>
+              <li>the number of prize funds, and their amounts, will be indicated in due course, awarded to winners after the final tournament fixture and, in the event of a shared winning spot, divided accordingly.</li>
             </ul>
           </div>
           <div class="modal-footer">
