@@ -33,8 +33,8 @@ session_start();
 		  text-shadow: none; /* Prevent inheritance from `body` */
 		}
 		body {
-		  text-shadow: 0 .05rem .1rem rgba(0, 0, 0, .5);
-		  box-shadow: inset 0 0 5rem rgba(0, 0, 0, .5);
+		  /*text-shadow: 0 .05rem .1rem rgba(0, 0, 0, .5);*/
+		  /*box-shadow: inset 0 0 5rem rgba(0, 0, 0, .5);*/
 			background-image: url(img/football-stadium.jpg);
 		}
 		main {
@@ -42,7 +42,7 @@ session_start();
 			border-radius: 10px;
 			padding: 1em;
 			box-shadow: inset 0 0 5rem rgba(0, 0, 0, .5);
-      text-align: center;
+      text-shadow: 0 .05rem .1rem rgba(0, 0, 0, .5);      
 		}
 		.cover-container {
 		  max-width: 42em;
@@ -186,7 +186,7 @@ session_start();
           </div>
           <div class="modal-footer">
             <!--<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
-            <button type="button" class="btn btn-primary">Understood</button>
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Understood</button>
           </div>
         </div>
       </div>
