@@ -121,7 +121,7 @@ session_start();
 				<nav class="nav nav-masthead justify-content-center float-md-end">
 					<a class="nav-link fw-bold py-1 px-0" href="registration.php">Register</a>
 					<a class="nav-link fw-bold py-1 px-0" href="forgot-password.php">Reset Password</a>
-          <a class="nav-link fw-bold py-1 px-0" href="#" data-toggle="modal" data-target="#HHterms">Terms</a>
+          <a class="nav-link fw-bold py-1 px-0" href="#" data-bs-toggle="modal" data-bs-target="#terms">Terms</a>
 				</nav>
 			</div>
 		</header>
@@ -168,14 +168,13 @@ session_start();
 			</p>
 		</main>
 
-    <!-- Modal -->
-    <div id="HHterms" class="modal fade" role="dialog">
+    <!-- HH Terms Modal -->
+    <div class="modal fade" id="terms" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
       <div class="modal-dialog">
-        <!-- Modal content-->
         <div class="modal-content">
           <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">Hendy's Hunches: Terms &amp; Conditions</h4>
+            <h1 class="modal-title fs-5" id="staticBackdropLabel">Hendy's Hunches: Terms &amp; Conditions</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
             <img src="img/hh-logo-2018.jpg" class="img-responsive center-block" title="Hendy's Hunches Logo" alt="Hendy's Hunches Logo" style="width: 150px; margin-bottom: 10px;">
@@ -185,17 +184,16 @@ session_start();
             <p>There will be a minimum of 3 prize funds and this number may be increased depending on the total number of participants. The number of prize funds available, and their amounts, will be indicated in the rankings table shortly after the game commences. Those participants who occupy a prize fund place after the final tournament fixture will receive the corresponding prize amount shortly thereafter. In the event of a shared spot, prizes will be split.</p>
             <p>Family and friends are permitted to take part but be aware that any unpaid entrance fees will result in a participant being removed from the game.</p>
           </div>
-          <!--
           <div class="modal-footer">
-            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            <!--<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
+            <button type="button" class="btn btn-primary">Understood</button>
           </div>
-          -->
         </div>
       </div>
     </div>
 
 		<footer class="mt-auto">
-			<p>Predictions game based on <a href="https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/qatar2022" class="text-white">FIFA World Cup Qatar 2022™</a>. Developed by <a href="">James Henderson</a> (School of Health Sciences, University of Nottingham).</p>
+			<p>Predictions game based on <a href="https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/qatar2022" class="text-white">FIFA World Cup Qatar 2022™</a></p>
 		</footer>
 		</div>
 
