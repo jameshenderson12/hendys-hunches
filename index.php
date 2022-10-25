@@ -135,7 +135,7 @@ session_start();
           <!--<h2 class="form-login-heading">Title</h2>-->
           <!--<img id="logo" src="img/hh-logo-2018.jpg" alt="Hendy's Hunches Logo" class="center-block img-responsive">-->
 
-          <div class="mb-3 row">
+          <div class="mb-3 row d-flex justify-content-center">
             <label for="username" class="col-sm-2 col-form-label">Username</label>
             <div class="col-sm-8">
               <input type="text" class="form-control" id="username" name="username" value="<?php echo $_COOKIE['remember_me']; ?>" required>
