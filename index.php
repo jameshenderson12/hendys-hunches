@@ -189,7 +189,7 @@ session_start();
             <img src="img/hh-logo-2018.jpg" class="img-responsive mt-auto" title="Hendy's Hunches Logo" alt="Hendy's Hunches Logo" style="width: 180px; margin-bottom: 10px;">
             <p>By registering to play Hendy's Hunches, you acknowledge that:</p>
             <ul>
-              <li>your involvement in this game, and the game itself, is intended only for entertainment (i.e. it is not a gambling site)</li>
+              <li>your involvement in this game, and the game itself, is intended only for entertainment; it is not a gambling site</li>
               <li>the game is based on FIFA World Cup Qatar 2022™</li>
               <li>only one registration per person is permitted although family and friends are welcome to participate</li>
               <li>an entry fee of £5 is to be paid prior to 20/11/2022; split for charity (TBC) donation and prize funds</li>
