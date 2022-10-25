@@ -112,22 +112,18 @@ session_start();
 		<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
 		<header class="mb-auto">
 			<div>
-				<h3 class="float-md-start mb-0">Coming Soon!</h3>
+				<h3 class="float-md-start mb-0">Hendy's Hunches</h3>
 				<nav class="nav nav-masthead justify-content-center float-md-end">
-					<iframe src="https://free.timeanddate.com/countdown/i8k6yqvc/n4511/cf11/cm0/cu3/ct0/cs1/ca0/co0/cr0/ss0/cacfff/cpc0f0/pct/tcfff/fs100/szw320/szh135/iso2022-11-20T16:00:00/bacfff/pa5" allowtransparency="true" frameborder="0" width="244" height="42"></iframe>
-					<!--<iframe src="https://free.timeanddate.com/countdown/i8k6yqvc/n4511/cf11/cm0/cu3/ct0/cs1/ca0/co0/cr0/ss0/cacfff/cpc0f0/pct/tcfff/fs100/szw320/szh135/iso2022-11-20T16:00:00/pa5" allowtransparency="true" frameborder="0" width="232" height="30"></iframe>-->
-
-					<!--
-					<a class="nav-link fw-bold py-1 px-0" href="#">Features</a>
+          <p>I'm new.</p>
+					<a class="nav-link fw-bold py-1 px-0" href="#">Register</a>
 					<a class="nav-link fw-bold py-1 px-0" href="#">Contact</a>
-				-->
 				</nav>
 			</div>
 		</header>
 
 		<main class="px-3">
 
-			<h1>Hendy's Hunches: Login</h1>
+			<h1>Login</h1>
 			<img src="img/qatar-2022-logo.png" alt="Qatar 2022 edition of Hendy's Hunches" class="w-50">
 
       <form id="login" class="form-login" role="form" method="post" action="php/login.php">
