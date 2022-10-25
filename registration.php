@@ -355,7 +355,7 @@
 
 			<h1>Registration</h1>
 
-      <form class="row g-3 needs-validation" novalidate>
+      <form class="row g-2 needs-validation" novalidate>
         <div class="col-md-4">
           <label for="validationCustom01" class="form-label">First name</label>
           <input type="text" class="form-control" id="validationCustom01" value="" required>
