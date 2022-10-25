@@ -137,13 +137,13 @@ session_start();
 
           <div class="mb-3 row">
             <label for="username" class="col-sm-2 col-form-label">Username</label>
-            <div class="col-sm-10">
+            <div class="col-sm-8">
               <input type="text" class="form-control" id="username" name="username" value="<?php echo $_COOKIE['remember_me']; ?>" required>
             </div>
           </div>
           <div class="mb-3 row">
             <label for="password" class="col-sm-2 col-form-label">Password</label>
-            <div class="col-sm-10">
+            <div class="col-sm-8">
               <input type="password" class="form-control" id="password" name="password" required>
             </div>
           </div>
@@ -164,7 +164,7 @@ session_start();
 
 			<p class="lead">Pit your FIFA World Cup 2022 predictions against others for a chance to earn a prize spot or bragging rights in the rankings.</p>
 			<p class="lead">
-				<a href="#" class="btn btn-lg btn-secondary fw-bold border-white bg-white" type="submit"><i class="bi bi-box-arrow-in-left"></i> Log in</a>
+				<a href="#" class="btn btn-lg btn-secondary fw-bold border-white bg-white" type="submit"><i class="fw-bold bi bi-box-arrow-in-right"></i> Log in</a>
 			</p>
 		</main>
 
