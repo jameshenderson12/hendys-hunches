@@ -135,20 +135,20 @@ session_start();
           <!--<img id="logo" src="img/hh-logo-2018.jpg" alt="Hendy's Hunches Logo" class="center-block img-responsive">-->
 
           <div class="mb-3 row">
-            <label for="username" class="col-xs-3 col-form-label">Username</label>
-            <div class="col-xs-9">
+            <label for="username" class="col-sm-3 col-form-label">Username</label>
+            <div class="col-sm-9">
               <input type="text" class="form-control" id="username" name="username" value="<?php echo $_COOKIE['remember_me']; ?>" required>
             </div>
           </div>
           <div class="mb-3 row">
-            <label for="password" class="col-xs-3 col-form-label">Password</label>
-            <div class="col-xs-9">
+            <label for="password" class="col-sm-3 col-form-label">Password</label>
+            <div class="col-sm-9">
               <input type="password" class="form-control" id="password" name="password" required>
             </div>
           </div>
 
-          <div class="form-check form-switch mr-2">
-            <input id="remember" name="remember" type="checkbox" class="form-check-input" role="switch" value="<?php if(isset($_COOKIE['remember_me'])) { echo 'checked="checked"'; } else { echo ''; } ?>">
+          <div class="form-check form-switch">
+            <input id="remember" name="remember" type="checkbox" class="form-check-input mr-2" role="switch" value="<?php if(isset($_COOKIE['remember_me'])) { echo 'checked="checked"'; } else { echo ''; } ?>">
             <label class="form-check-label" for="remember">Remember my username?</label>
           </div>
           <hr />
