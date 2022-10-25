@@ -135,20 +135,20 @@ session_start();
           <!--<img id="logo" src="img/hh-logo-2018.jpg" alt="Hendy's Hunches Logo" class="center-block img-responsive">-->
 
           <div class="mb-3 row">
-            <label for="username" class="col-sm-3 col-form-label">Username</label>
-            <div class="col-sm-9">
+            <label for="username" class="col-sm-2 col-form-label">Username</label>
+            <div class="col-sm-10">
               <input type="text" class="form-control" id="username" name="username" value="<?php echo $_COOKIE['remember_me']; ?>" required>
             </div>
           </div>
           <div class="mb-3 row">
-            <label for="password" class="col-sm-3 col-form-label">Password</label>
-            <div class="col-sm-9">
+            <label for="password" class="col-sm-2 col-form-label">Password</label>
+            <div class="col-sm-10">
               <input type="password" class="form-control" id="password" name="password" required>
             </div>
           </div>
 
           <div class="form-check form-switch">
-            <input id="remember" name="remember" type="checkbox" class="form-check-input mr-2" role="switch" value="<?php if(isset($_COOKIE['remember_me'])) { echo 'checked="checked"'; } else { echo ''; } ?>">
+            <input id="remember" name="remember" type="checkbox" class="form-check-input mr-3" role="switch" value="<?php if(isset($_COOKIE['remember_me'])) { echo 'checked="checked"'; } else { echo ''; } ?>">
             <label class="form-check-label" for="remember">Remember my username?</label>
           </div>
           <hr />
@@ -163,7 +163,7 @@ session_start();
 
 			<p class="lead">Pit your FIFA World Cup 2022 predictions against others for a chance to earn a prize spot or bragging rights in the rankings.</p>
 			<p class="lead">
-				<a href="#" class="btn btn-lg btn-secondary fw-bold border-white bg-white" type="submit">Log in</a>
+				<a href="#" class="btn btn-lg btn-secondary fw-bold border-white bg-white" type="submit"><i class="bi bi-airplane-fill"></i> Log in</a>
 			</p>
 		</main>
 
