@@ -140,17 +140,17 @@ session_start();
 			<h1>Login</h1>
 			<img src="img/qatar-2022-logo.png" alt="Qatar 2022 edition of Hendy's Hunches" class="w-50 mb-3">
 
-      <form id="login" role="form" method="post" action="php/login.php" class="align-items-center">
+      <form id="login" role="form" method="post" action="php/login.php" class="border border-white">
           <!--<h2 class="form-login-heading">Title</h2>-->
           <!--<img id="logo" src="img/hh-logo-2018.jpg" alt="Hendy's Hunches Logo" class="center-block img-responsive">-->
 
-          <div class="mb-3 row">
+          <div class="mb-3 row d-flex justify-content-center">
             <label for="username" class="col-sm-2 col-form-label">Username:</label>
             <div class="col-sm-8">
               <input type="text" class="form-control" id="username" name="username" value="<?php echo $_COOKIE['remember_me']; ?>" required>
             </div>
           </div>
-          <div class="mb-3 row">
+          <div class="mb-3 row d-flex justify-content-center">
             <label for="password" class="col-sm-2 col-form-label">Password:</label>
             <div class="col-sm-8">
               <input type="password" class="form-control" id="password" name="password" required>
@@ -169,12 +169,12 @@ session_start();
           <a href="" data-toggle="modal" data-target="#HHterms">Terms &amp; Conditions</a>
           </p>
         -->
+        <!--<p class="lead">Pit your FIFA World Cup 2022 predictions against others for a chance to earn a prize spot or bragging rights in the rankings.</p>-->
+  			<p class="lead">
+  				<a href="#" class="btn btn-lg btn-secondary fw-bold border-white bg-white" type="submit"><i class="fw-bold bi bi-box-arrow-in-right"></i> Log in</a>
+  			</p>
       </form>
 
-			<!--<p class="lead">Pit your FIFA World Cup 2022 predictions against others for a chance to earn a prize spot or bragging rights in the rankings.</p>-->
-			<p class="lead">
-				<a href="#" class="btn btn-lg btn-secondary fw-bold border-white bg-white" type="submit"><i class="fw-bold bi bi-box-arrow-in-right"></i> Log in</a>
-			</p>
 		</main>
 
     <!-- HH Terms Modal -->
