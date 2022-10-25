@@ -68,6 +68,9 @@ session_start();
 			-moz-user-select: none;
 			user-select: none;
 		}
+    .form-check .form-check-input {
+	     float: none !important;
+    }
 		@media (min-width: 768px) {
 			.bd-placeholder-img-lg {
 				font-size: 3.5rem;
@@ -127,24 +130,24 @@ session_start();
 			<h1>Login</h1>
 			<img src="img/qatar-2022-logo.png" alt="Qatar 2022 edition of Hendy's Hunches" class="w-50 mb-3">
 
-      <form id="login" class="w-75" role="form" method="post" action="php/login.php">
+      <form id="login" role="form" method="post" action="php/login.php">
           <!--<h2 class="form-login-heading">Title</h2>-->
           <!--<img id="logo" src="img/hh-logo-2018.jpg" alt="Hendy's Hunches Logo" class="center-block img-responsive">-->
 
           <div class="mb-3 row">
-            <label for="username" class="col-sm-2 col-form-label">Username</label>
-            <div class="col-sm-10">
+            <label for="username" class="col-sm-3 col-form-label">Username</label>
+            <div class="col-xs-9">
               <input type="text" class="form-control" id="username" name="username" value="<?php echo $_COOKIE['remember_me']; ?>" required>
             </div>
           </div>
           <div class="mb-3 row">
-            <label for="password" class="col-sm-2 col-form-label">Password</label>
-            <div class="col-sm-10">
+            <label for="password" class="col-sm-3 col-form-label">Password</label>
+            <div class="col-xs-9">
               <input type="password" class="form-control" id="password" name="password" required>
             </div>
           </div>
 
-          <div class="form-check form-switch" style="float: none !important;">
+          <div class="form-check form-switch mr-1">
             <input id="remember" name="remember" type="checkbox" class="form-check-input" role="switch" value="<?php if(isset($_COOKIE['remember_me'])) { echo 'checked="checked"'; } else { echo ''; } ?>">
             <label class="form-check-label" for="remember">Remember my username?</label>
           </div>
