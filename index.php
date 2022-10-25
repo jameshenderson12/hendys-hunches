@@ -134,7 +134,7 @@ session_start();
           <div class="mb-3 row">
             <label for="username" class="col-sm-2 col-form-label">Username</label>
             <div class="col-sm-10">
-              <input type="text" class="form-control-plaintext" id="username" name="username" value="<?php echo $_COOKIE['remember_me']; ?>" required>
+              <input type="text" class="form-control" id="username" name="username" value="<?php echo $_COOKIE['remember_me']; ?>" required>
             </div>
           </div>
           <div class="mb-3 row">
