@@ -356,14 +356,14 @@
 			<h1>Registration</h1>
 
       <form class="row g-3 needs-validation" novalidate>
-        <div class="col-md-3">
+        <div class="col-md-6">
           <label for="firstname" class="form-label">First name</label>
           <input type="text" class="form-control" id="firstname" required>
           <div class="valid-feedback">
             Looks good!
           </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-6">
           <label for="surname" class="form-label">Last name</label>
           <input type="text" class="form-control" id="surname" required>
           <div class="valid-feedback">
@@ -377,30 +377,48 @@
             Looks good!
           </div>
         </div>
-
-        <div class="col-md-4">
+        <div class="col-md-6">
           <label for="username" class="form-label">Username</label>
           <input type="text" class="form-control" id="username" required>
           <div class="invalid-feedback">
             Please choose a username.
           </div>
         </div>
-
-        <div class="col-md-4">
+        <div class="col-md-6">
           <label for="password" class="form-label">Password</label>
-          <input type="text" class="form-control" id="password" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}">
+          <input type="text" class="form-control" id="password" name="password" onBlur="return validatePassword();" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" onchange="form.password2.pattern = this.value;">
           <div class="invalid-feedback">
-            Please choose a username.
+            Minimum of 6 characters; at least 1 uppercase letter and 1 number.
           </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
           <label for="password2" class="form-label">Confirm Password</label>
-          <input type="text" class="form-control" id="password2" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}">
+          <input type="text" class="form-control" id="password2" name="password2" onBlur="return validatePassword2();" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}">
           <div class="invalid-feedback">
             Please choose a username.
           </div>
         </div>
-                        
+
+
+        <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+          <input type="radio" class="btn-check" autocomplete="off" id="fk1" name="<?php echo $fk1; ?>" value="<?php echo $fk1; ?>" onClick="chooseImage('fk1');">
+          <label class="btn btn-outline-primary" for="fk1"><img src="<?php echo $fk1; ?>" alt="Football kit description..." border="0" /></label>
+
+          <input type="radio" class="btn-check" autocomplete="off" id="fk2" name="<?php echo $fk2; ?>" value="<?php echo $fk2; ?>" onClick="chooseImage('fk2');">
+          <label class="btn btn-outline-primary" for="fk2"><img src="<?php echo $fk2; ?>" alt="Football kit description..." border="0" /></label>
+
+          <input type="radio" class="btn-check" autocomplete="off" id="fk3" name="<?php echo $fk3; ?>" value="<?php echo $fk3; ?>" onClick="chooseImage('fk3');">
+          <label class="btn btn-outline-primary" for="fk3"><img src="<?php echo $fk3; ?>" alt="Football kit description..." border="0" /></label>
+
+        </div>
+
+          <button type="button" class="btn btn-default avatar" id="fk2" name="<?php echo $fk2; ?>" value="<?php echo $fk2; ?>" onClick="chooseImage('fk2');">
+            <img src="<?php echo $fk2; ?>" width="100%" height="100%" alt="" border="0" />
+            </button>
+          <button type="button" class="btn btn-default avatar" id="fk3" name="<?php echo $fk3; ?>" value="<?php echo $fk3; ?>" onClick="chooseImage('fk3');">
+            <img src="<?php echo $fk3; ?>" width="100%" height="100%" alt="" border="0" />
+            </button>
+
         <div class="col-md-6">
           <label for="validationCustom03" class="form-label">City</label>
           <input type="text" class="form-control" id="validationCustom03" required>
@@ -497,7 +515,7 @@
 
 
         <form id="registrationForm" name="registrationForm" class="form-horizontal" method="post" action="php/register.php" onSubmit="return validateFullForm()">
-            <!-- Username -->
+            <!-- Username
             <div class="form-group">
             	<label for="username" class="col-sm-3 control-label">Username: </label>
                 <div class="col-sm-5">
@@ -506,7 +524,7 @@
                 <div class="col-sm-4"><p id="un-msg" class="additional-info"></p>
                 </div>
             </div>
-            <!-- Password -->
+            <!-- Password
             <div class="form-group">
             	<label for="password" class="col-sm-3 control-label">Password: </label>
                 <div class="col-sm-5">
@@ -516,7 +534,7 @@
                 	<p class="additional-info">Minimum of 6 characters; at least 1 uppercase letter and 1 number.</p>
                 </div>
             </div>
-            <!-- Confirm Password -->
+            <!-- Confirm Password
             <div class="form-group">
             	<label for="password2" class="col-sm-3 control-label">Confirm Password: </label>
                 <div class="col-sm-5">
@@ -524,7 +542,7 @@
                 </div>
                 <div class="col-sm-4"></div>
             </div>
-            <!-- First Name -->
+            <!-- First Name
             <div class="form-group">
 	    		<label for="firstname" class="col-sm-3 control-label">First Name: </label>
                 <div class="col-sm-5">
@@ -532,7 +550,7 @@
                 </div>
                 <div class="col-sm-4"></div>
             </div>
-            <!-- Surname -->
+            <!-- Surname
         	<div class="form-group">
             	<label for="surname" class="col-sm-3 control-label">Surname:</label>
                 <div class="col-sm-5">
@@ -540,7 +558,7 @@
                 </div>
                 <div class="col-sm-4"></div>
             </div>
-            <!-- Email Address -->
+            <!-- Email Address
             <div class="form-group">
            		<label for="email" class="col-sm-3 control-label">Email:</label>
                 <div class="col-sm-5">
@@ -548,7 +566,7 @@
                 </div>
                 <div class="col-sm-4"></div>
             </div>
-			<!-- Avatar Selection -->
+			<!-- Avatar Selection
             <div class="form-group" id="avatars">
            		<label for="avatars" class="col-sm-3 control-label">Select Avatar:</label>
                 <div class="col-sm-6">
@@ -606,7 +624,7 @@
                 <button type="button" class="btn btn-default avatar" id="fk18" name="<?php echo $fk18; ?>" value="<?php echo $fk18; ?>" onClick="chooseImage('fk18');">
                 <img src="<?php echo $fk18; ?>" width="100%" height="100%" alt="" border="0" />
                 </button>
-                <!-- Hidden form to capture user's avatar selection-->
+                <!-- Hidden form to capture user's avatar selection
                 <input type="hidden" class="form-control" id="avatarSelection" name="avatarSelection" />
                 </div>
             </div><!-- Avatars -->
