@@ -425,10 +425,10 @@
           <label for="fieldofwork" class="form-label">Field of work</label>
           <input id="fieldofwork" name="fieldofwork" class="form-control" onBlur="return validateDropDown('fieldofwork');" list="datalistOptions1" placeholder="Type to search...">
           <datalist id="datalistOptions1">
-            <!--<option selected="selected" disabled class="text-success">--- Choose Employment Field ---</option>-->
+            <!--<option selected>Open this select menu</option>-->
               <?php
                 // Source file for extracting data
-                $file = 'text/select-clubteams-input.txt';
+                $file = 'text/select-sectors-input.txt';
                 $handle = @fopen($file, 'r');
                 if ($handle) {
                  while (!feof($handle)) {
@@ -446,7 +446,7 @@
           <label for="faveteam" class="form-label">Favourite team</label>
           <input id="faveteam" name="faveteam" class="form-control" onBlur="return validateDropDown('faveteam');" list="datalistOptions2" placeholder="Type to search...">
           <datalist id="datalistOptions2">
-            <!--<option selected="selected" disabled class="text-success">--- Choose Employment Field ---</option>-->
+            <!--<option selected>Open this select menu</option>-->
               <?php
                 // Source file for extracting data
                 $file = 'text/select-clubteams-input.txt';
@@ -476,7 +476,7 @@
           <label for="tournwinner" class="form-label">Predicted winner</label>
           <input id="tournwinner" name="tournwinner" class="form-control" onBlur="return validateDropDown('tournwinner');" list="datalistOptions3" placeholder="Type to search...">
           <datalist id="datalistOptions3">
-            <!--<option selected="selected" disabled class="text-success">--- Choose Employment Field ---</option>-->
+            <!--<option selected>Open this select menu</option>-->
               <?php
                 // Source file for extracting data
                 $file = 'text/select-wc2018teams-input.txt';
@@ -530,14 +530,14 @@
           </div>
         </div>
         <div class="col-12">
-          <button class="btn btn-primary" type="submit">Get me signed up!</button>
+          <button class="btn btn-lg btn-primary fw-bold" type="submit"><i class="fw-bold bi bi-box-arrow-in-right"></i> Get me signed up!</button>
         </div>
       </form>
 
-			<!--<p class="lead">Pit your FIFA World Cup 2022 predictions against others for a chance to earn a prize spot or bragging rights in the rankings.</p>-->
+			<!--<p class="lead">Pit your FIFA World Cup 2022 predictions against others for a chance to earn a prize spot or bragging rights in the rankings.</p>
 			<p class="lead">
 				<a href="#" class="btn btn-lg btn-secondary fw-bold border-white bg-white" type="submit"><i class="fw-bold bi bi-box-arrow-in-right"></i> Log in</a>
-			</p>
+			</p>-->
 		</main>
 
     <!-- HH Terms Modal -->
