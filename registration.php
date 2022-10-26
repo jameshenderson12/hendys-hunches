@@ -423,8 +423,8 @@
 
         <div class="col-md-6">
           <label for="fieldofwork" class="form-label">Field of work</label>
-          <input id="fieldofwork" name="fieldofwork" class="form-control" onBlur="return validateDropDown('fieldofwork');" list="datalistOptions" placeholder="Type to search...">
-          <datalist id="datalistOptions">
+          <input id="fieldofwork" name="fieldofwork" class="form-control" onBlur="return validateDropDown('fieldofwork');" list="datalistOptions1" placeholder="Type to search...">
+          <datalist id="datalistOptions1">
             <!--<option selected="selected" disabled class="text-success">--- Choose Employment Field ---</option>-->
               <?php
                 // Source file for extracting data
@@ -444,8 +444,8 @@
 
         <div class="col-md-6">
           <label for="faveteam" class="form-label">Favourite team</label>
-          <input id="faveteam" name="faveteam" class="form-control" onBlur="return validateDropDown('faveteam');" list="datalistOptions" placeholder="Type to search...">
-          <datalist id="datalistOptions">
+          <input id="faveteam" name="faveteam" class="form-control" onBlur="return validateDropDown('faveteam');" list="datalistOptions2" placeholder="Type to search...">
+          <datalist id="datalistOptions2">
             <!--<option selected="selected" disabled class="text-success">--- Choose Employment Field ---</option>-->
               <?php
                 // Source file for extracting data
@@ -463,19 +463,19 @@
           </datalist>
         </div>
 
-
+<!--
         <select class="form-select" aria-label="Default select example">
           <option selected>Open this select menu</option>
           <option value="1">One</option>
           <option value="2">Two</option>
           <option value="3">Three</option>
         </select>
-
+-->
 
         <div class="col-md-6">
           <label for="tournwinner" class="form-label">Predicted winner</label>
-          <input id="tournwinner" name="tournwinner" class="form-control" onBlur="return validateDropDown('tournwinner');" list="datalistOptions" placeholder="Type to search...">
-          <datalist id="datalistOptions">
+          <input id="tournwinner" name="tournwinner" class="form-control" onBlur="return validateDropDown('tournwinner');" list="datalistOptions3" placeholder="Type to search...">
+          <datalist id="datalistOptions3">
             <!--<option selected="selected" disabled class="text-success">--- Choose Employment Field ---</option>-->
               <?php
                 // Source file for extracting data
