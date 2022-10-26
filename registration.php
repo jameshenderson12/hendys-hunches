@@ -401,14 +401,14 @@
 
 
         <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-          <input type="radio" class="btn-check" autocomplete="off" id="fk1" name="<?php echo $fk1; ?>" value="<?php echo $fk1; ?>" onClick="chooseImage('fk1');">
-          <label class="btn btn-outline-primary" for="fk1"><img src="<?php echo $fk1; ?>" alt="Football kit description..." border="0" /></label>
+          <input type="radio" class="btn-check" autocomplete="off" id="fk1" name="<?php echo $fk1; ?>" value="<?php echo $fk1; ?>">
+          <label class="btn btn-outline-primary" for="fk1"><img src="<?php echo $fk1; ?>" alt="Football kit description..." /></label>
 
-          <input type="radio" class="btn-check" autocomplete="off" id="fk2" name="<?php echo $fk2; ?>" value="<?php echo $fk2; ?>" onClick="chooseImage('fk2');">
-          <label class="btn btn-outline-primary" for="fk2"><img src="<?php echo $fk2; ?>" alt="Football kit description..." border="0" /></label>
+          <input type="radio" class="btn-check" autocomplete="off" id="fk2" name="<?php echo $fk2; ?>" value="<?php echo $fk2; ?>">
+          <label class="btn btn-outline-primary" for="fk2"><img src="<?php echo $fk2; ?>" alt="Football kit description..." /></label>
 
-          <input type="radio" class="btn-check" autocomplete="off" id="fk3" name="<?php echo $fk3; ?>" value="<?php echo $fk3; ?>" onClick="chooseImage('fk3');">
-          <label class="btn btn-outline-primary" for="fk3"><img src="<?php echo $fk3; ?>" alt="Football kit description..." border="0" /></label>
+          <input type="radio" class="btn-check" autocomplete="off" id="fk3" name="<?php echo $fk3; ?>" value="<?php echo $fk3; ?>">
+          <label class="btn btn-outline-primary" for="fk3"><img src="<?php echo $fk3; ?>" alt="Football kit description..." /></label>
 
         </div>
 
@@ -628,6 +628,8 @@
                 <input type="hidden" class="form-control" id="avatarSelection" name="avatarSelection" />
                 </div>
             </div><!-- Avatars -->
+
+
             <!-- Field of Work -->
             <div class="form-group">
         		<label for="fieldofwork" class="col-sm-3 control-label">Field of Work:</label>
