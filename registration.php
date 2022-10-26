@@ -532,7 +532,8 @@
           </div>
         </div>
         <div class="col-12">
-          <button class="btn btn-lg btn-primary fw-bold" type="submit"><i class="fw-bold bi bi-box-arrow-in-right"></i> Get me signed up!</button>
+          <button class="btn btn-lg btn-primary fw-bold" type="submit"><i class="fw-bold bi bi-hand-thumbs-up"></i> Sign me up!</button>
+          <button class="btn btn-lg btn-outline-secondary" type="reset" onClick="resetBorders();"><i class="fw-bold bi bi-x"></i> Reset all</button>
         </div>
       </form>
 
@@ -735,7 +736,7 @@
             	</div>
                 <div class="col-sm-4"></div>
             </div>
-            <!-- Tournament Winner -->
+            <!-- Tournament Winner
             <div class="form-group">
             <label for="tournwinner" class="col-sm-3 control-label">World Cup 2018 Winner:</label>
             <div class="col-sm-5">
@@ -761,7 +762,7 @@
                 </div>
             </div>
 
-            <!-- Signup/Reset Form Button -->
+            <!-- Signup/Reset Form Button
             <div class="form-group">
 	    		<label for="buttons" class="col-sm-3 control-label"></label>
                 <div class="col-sm-9">
@@ -770,10 +771,11 @@
                 </div>
             </div>
 
-          <!-- Site footer -->
+          <!-- Site footer
           <div class="footer">
           <?php include "includes/footer.php" ?>
           </div>
+        -->
    	</form>
 
     </div><!-- /.container -->
