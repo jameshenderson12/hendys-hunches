@@ -421,7 +421,7 @@
           <input type="radio" class="btn-check" autocomplete="off" id="fk6" name="fkradio" value="<?php echo $fk6; ?>" onClick="chooseImage('fk6');">
           <label class="btn btn-outline-light" for="fk6"><img src="<?php echo $fk6; ?>" alt="Football kit description..."class="w-100" /></label>
         </div>
-        <input type="text" class="hidden form-control" id="avatarSelection" name="avatarSelection" readonly>
+        <input type="text" class="form-control" id="avatarSelection" name="avatarSelection" readonly hidden>
 
         <div class="col-md-6">
           <label for="fieldofwork" class="form-label">Field of work</label>
