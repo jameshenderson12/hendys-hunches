@@ -1,25 +1,16 @@
 <?php
 // Start the session
 session_start();
-include "php/config.php";
 ?>
 <!DOCTYPE html>
 <html lang="en" class="h-100">
   <head>
-    <!-- Global site tag (gtag.js) - Google Analytics
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-119623195-1"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'UA-119623195-1');
-    </script>-->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Hendy's Hunches: Predictions Game">
     <meta name="author" content="James Henderson">
 		<title>Hendy's Hunches: Login</title>
+    <?php include "php/config.php" ?>
 		<link rel="shortcut icon" href="ico/favicon.ico">
 		<link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/cover/">
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
@@ -51,13 +42,13 @@ include "php/config.php";
       <form id="login" role="form" method="post" action="php/login.php" class="border border-white p-2 my-2 border-opacity-25">
 
           <div class="mb-3 row d-flex justify-content-center">
-            <label for="username" class="col-sm-2 col-form-label">Username:</label>
+            <label for="username" class="col-sm-2 col-form-label">Username</label>
             <div class="col-sm-8">
               <input type="text" class="form-control" id="username" name="username" value="<?php echo $_COOKIE['remember_me']; ?>" required>
             </div>
           </div>
           <div class="mb-3 row d-flex justify-content-center">
-            <label for="password" class="col-sm-2 col-form-label">Password:</label>
+            <label for="password" class="col-sm-2 col-form-label">Password</label>
             <div class="col-sm-8">
               <input type="password" class="form-control" id="password" name="password" required>
             </div>
