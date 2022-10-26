@@ -13,15 +13,15 @@
 //===============================
 
 // Initial config values for error reporting criteria
-ini_set('error_reporting', -1);
+//ini_set('error_reporting', -1);
 //ini_set('display_errors', 1);
-ini_set('html_errors', 1);
+//ini_set('html_errors', 1);
 
 //===============================
 // Global config variables
 //===============================
 
-$config['protocol'] = "https://"
+$config['protocol'] = "https://";
 $config['acronym'] = "HH";
 $config['title'] = "Hendy's Hunches";
 $config['version'] = "2.1.2";
