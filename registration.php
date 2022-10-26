@@ -402,15 +402,15 @@
 
         <div class="btn-group" role="group" aria-label="Radio toggle button group">
           <input type="radio" class="btn-check" autocomplete="off" id="fk1" name="fkradio" value="<?php echo $fk1; ?>" onClick="chooseImage('fk1');">
-          <label class="btn btn-outline-primary" for="fk1"><img src="<?php echo $fk1; ?>" alt="Football kit description..." /></label>
+          <label class="btn btn-outline-primary" for="fk1"><img src="<?php echo $fk1; ?>" alt="Football kit description..." class="w-100" /></label>
 
           <input type="radio" class="btn-check" autocomplete="off" id="fk2" name="fkradio" value="<?php echo $fk2; ?>" onClick="chooseImage('fk2');">
-          <label class="btn btn-outline-primary" for="fk2"><img src="<?php echo $fk2; ?>" alt="Football kit description..." /></label>
+          <label class="btn btn-outline-primary" for="fk2"><img src="<?php echo $fk2; ?>" alt="Football kit description..." class="w-100" /></label>
 
           <input type="radio" class="btn-check" autocomplete="off" id="fk3" name="fkradio" value="<?php echo $fk3; ?>" onClick="chooseImage('fk3');">
-          <label class="btn btn-outline-primary" for="fk3"><img src="<?php echo $fk3; ?>" alt="Football kit description..." /></label>
+          <label class="btn btn-outline-primary" for="fk3"><img src="<?php echo $fk3; ?>" alt="Football kit description..."class="w-100" /></label>
         </div>
-        <input type="text" class="form-control" id="avatarSelection" name="avatarSelection" readOnly />
+        <input type="text" class="form-control" id="avatarSelection" name="avatarSelection" readonly>
 
         <div class="col-md-6">
           <label for="validationCustom03" class="form-label">City</label>
