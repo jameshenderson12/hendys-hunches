@@ -6,7 +6,7 @@ include "php/config.php";
 <!DOCTYPE html>
 <html lang="en" class="h-100">
   <head>
-    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <!-- Global site tag (gtag.js) - Google Analytics
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-119623195-1"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -14,7 +14,7 @@ include "php/config.php";
       gtag('js', new Date());
 
       gtag('config', 'UA-119623195-1');
-    </script>
+    </script>-->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Hendy's Hunches: Predictions Game">
