@@ -139,7 +139,7 @@
     		  pwd1.focus();
     		  return false;
     		}
-    		/*return true;*/
+    		/*
     		// Validate the first name input
     		var fn = document.forms["registrationForm"]["firstname"];
     		if (fn.value == null || fn.value == "") {
@@ -291,7 +291,7 @@
     		$("button").removeClass("highlight");
     		for (var i = 0; i < x.length; i++) {
     			x.elements[i].style.border="1px solid #CCC";
-    		}
+    		}*/
     	}
   	</script>
 
@@ -304,10 +304,10 @@
       function username_check(){
       	var username = $('#username').val();
       	if(username == "" || username.length < 4) {
-  			$('#username').removeClass("correct");
-      		$('#username').addClass("incorrect");
-  			$('#username').css('border', '1px #CCC solid');
-  			$('#un-msg').html("");
+    			$('#username').removeClass("correct");
+        	$('#username').addClass("incorrect");
+    			$('#username').css('border', '1px #CCC solid');
+    			$('#un-msg').html("");
       		//$('#tick').hide();
   			}
   			else {
@@ -380,6 +380,7 @@
         <div class="col-md-6">
           <label for="username" class="form-label">Username</label>
           <input type="text" class="form-control" id="username" required>
+          <span class="un-msg"></span>
           <div class="invalid-feedback">
             Please choose a username.
           </div>
@@ -504,15 +505,13 @@
         </div>
         <hr />
         <div class="col-12 d-flex justify-content-evenly">
-          <button class="btn btn-lg btn-primary fw-bold" type="submit"><i class="fw-bold bi bi-hand-thumbs-up"></i> Sign me up!</button>
-          <button class="btn btn-lg btn-outline-light" type="reset" onClick="resetBorders();"><i class="fw-bold bi bi-x"></i> Reset all</button>
+          <p class="lead">
+            <button class="btn btn-lg btn-primary fw-bold" type="submit"><i class="fw-bold bi bi-hand-thumbs-up"></i> Sign me up!</button>
+            <button class="btn btn-lg btn-outline-light" type="reset" onClick="resetBorders();"><i class="fw-bold bi bi-x"></i> Reset all</button>
+          </p>
         </div>
       </form>
 
-			<!--<p class="lead">Pit your FIFA World Cup 2022 predictions against others for a chance to earn a prize spot or bragging rights in the rankings.</p>
-			<p class="lead">
-				<a href="#" class="btn btn-lg btn-secondary fw-bold border-white bg-white" type="submit"><i class="fw-bold bi bi-box-arrow-in-right"></i> Log in</a>
-			</p>-->
 		</main>
 
     <!-- HH Terms Modal -->
@@ -521,7 +520,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h1 class="modal-title fs-5" id="staticBackdropLabel">Hendy's Hunches: Terms &amp; Conditions</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <!--<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
           </div>
           <div class="modal-body">
             <img src="img/hh-logo-2018.jpg" class="img-responsive mt-auto" title="Hendy's Hunches Logo" alt="Hendy's Hunches Logo" style="width: 180px; margin-bottom: 10px;">
@@ -755,20 +754,14 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-	   <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-    <script src="js/bootstrap.min.js"></script>
+	  <!--<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>-->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.1"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
     <script type="text/javascript">
-    /*
-		$("button").click(function(){
-			$("button").css("background-color", "transparent").css("border", "1px solid #cccccc");
-			$(this).css("background-color", "#FFFF00").css("border", "1px solid #090");
-		});
-    */
-		function chooseImage(imageId) {
-			var x = document.getElementById(imageId).value;
-			document.getElementById("avatarSelection").value = x;
-		}
+  		function chooseImage(imageId) {
+  			var x = document.getElementById(imageId).value;
+  			document.getElementById("avatarSelection").value = x;
+  		}
 	</script>
   </body>
 </html>
