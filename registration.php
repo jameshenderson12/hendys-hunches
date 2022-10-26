@@ -400,24 +400,17 @@
         </div>
 
 
-        <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-          <input type="radio" class="btn-check" autocomplete="off" id="fk1" name="<?php echo $fk1; ?>" value="<?php echo $fk1; ?>">
+        <div class="btn-group" role="group" aria-label="Radio toggle button group">
+          <input type="radio" class="btn-check" autocomplete="off" id="fk1" name="fkradio" value="<?php echo $fk1; ?>" onClick="chooseImage('fk1');">
           <label class="btn btn-outline-primary" for="fk1"><img src="<?php echo $fk1; ?>" alt="Football kit description..." /></label>
 
-          <input type="radio" class="btn-check" autocomplete="off" id="fk2" name="<?php echo $fk2; ?>" value="<?php echo $fk2; ?>">
+          <input type="radio" class="btn-check" autocomplete="off" id="fk2" name="fkradio" value="<?php echo $fk2; ?>" onClick="chooseImage('fk2');">
           <label class="btn btn-outline-primary" for="fk2"><img src="<?php echo $fk2; ?>" alt="Football kit description..." /></label>
 
-          <input type="radio" class="btn-check" autocomplete="off" id="fk3" name="<?php echo $fk3; ?>" value="<?php echo $fk3; ?>">
+          <input type="radio" class="btn-check" autocomplete="off" id="fk3" name="fkradio" value="<?php echo $fk3; ?>" onClick="chooseImage('fk3');">
           <label class="btn btn-outline-primary" for="fk3"><img src="<?php echo $fk3; ?>" alt="Football kit description..." /></label>
-
         </div>
-
-          <button type="button" class="btn btn-default avatar" id="fk2" name="<?php echo $fk2; ?>" value="<?php echo $fk2; ?>" onClick="chooseImage('fk2');">
-            <img src="<?php echo $fk2; ?>" width="100%" height="100%" alt="" border="0" />
-            </button>
-          <button type="button" class="btn btn-default avatar" id="fk3" name="<?php echo $fk3; ?>" value="<?php echo $fk3; ?>" onClick="chooseImage('fk3');">
-            <img src="<?php echo $fk3; ?>" width="100%" height="100%" alt="" border="0" />
-            </button>
+        <input type="text" class="form-control" id="avatarSelection" name="avatarSelection" readOnly />
 
         <div class="col-md-6">
           <label for="validationCustom03" class="form-label">City</label>
@@ -734,14 +727,15 @@
 	   <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script type="text/javascript">
+    /*
 		$("button").click(function(){
 			$("button").css("background-color", "transparent").css("border", "1px solid #cccccc");
 			$(this).css("background-color", "#FFFF00").css("border", "1px solid #090");
 		});
+    */
 		function chooseImage(imageId) {
 			var x = document.getElementById(imageId).value;
 			document.getElementById("avatarSelection").value = x;
-			document.getElementById("avatars").style.border = "none";
 		}
 	</script>
   </body>
