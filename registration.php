@@ -421,29 +421,77 @@
         <input type="text" class="form-control" id="avatarSelection" name="avatarSelection" readonly>
 
 
-        <label for="exampleDataList" class="form-label">Datalist example</label>
-        <input class="form-control" list="datalistOptions" id="exampleDataList" placeholder="Type to search...">
-        <datalist id="datalistOptions">
-          <!--<option value="San Francisco">
-          <option value="New York">
-          <option value="Seattle">
-          <option value="Los Angeles">
-          <option value="Chicago">-->
-          <option selected="selected" disabled class="text-success">--- Choose Employment Field ---</option>
-            <?php
-              // Source file for extracting data
-              $file = 'text/select-clubteams-input.txt';
-              $handle = @fopen($file, 'r');
-              if ($handle) {
-               while (!feof($handle)) {
-                 $line = fgets($handle, 4096);
-                 $item = explode('\n', $line);
-                 echo '<option value="' . $item[0] . '">' . $item[0] . '</option>' . "\n";
-                 }
-              fclose($handle);
-              }
-            ?>
-        </datalist>
+        <div class="col-md-6">
+          <label for="fieldofwork" class="form-label">Field of work</label>
+          <input id="fieldofwork" name="fieldofwork" class="form-control" onBlur="return validateDropDown('fieldofwork');" list="datalistOptions" placeholder="Type to search...">
+          <datalist id="datalistOptions">
+            <!--<option selected="selected" disabled class="text-success">--- Choose Employment Field ---</option>-->
+              <?php
+                // Source file for extracting data
+                $file = 'text/select-clubteams-input.txt';
+                $handle = @fopen($file, 'r');
+                if ($handle) {
+                 while (!feof($handle)) {
+                   $line = fgets($handle, 4096);
+                   $item = explode('\n', $line);
+                   echo '<option value="' . $item[0] . '">' . $item[0] . '</option>' . "\n";
+                   }
+                fclose($handle);
+                }
+              ?>
+          </datalist>
+        </div>
+
+        <div class="col-md-6">
+          <label for="faveteam" class="form-label">Favourite team</label>
+          <input id="faveteam" name="faveteam" class="form-control" onBlur="return validateDropDown('faveteam');" list="datalistOptions" placeholder="Type to search...">
+          <datalist id="datalistOptions">
+            <!--<option selected="selected" disabled class="text-success">--- Choose Employment Field ---</option>-->
+              <?php
+                // Source file for extracting data
+                $file = 'text/select-clubteams-input.txt';
+                $handle = @fopen($file, 'r');
+                if ($handle) {
+                 while (!feof($handle)) {
+                   $line = fgets($handle, 4096);
+                   $item = explode('\n', $line);
+                   echo '<option value="' . $item[0] . '">' . $item[0] . '</option>' . "\n";
+                   }
+                fclose($handle);
+                }
+              ?>
+          </datalist>
+        </div>
+
+
+        <select class="form-select" aria-label="Default select example">
+          <option selected>Open this select menu</option>
+          <option value="1">One</option>
+          <option value="2">Two</option>
+          <option value="3">Three</option>
+        </select>
+
+
+        <div class="col-md-6">
+          <label for="tournwinner" class="form-label">Predicted winner</label>
+          <input id="tournwinner" name="tournwinner" class="form-control" onBlur="return validateDropDown('tournwinner');" list="datalistOptions" placeholder="Type to search...">
+          <datalist id="datalistOptions">
+            <!--<option selected="selected" disabled class="text-success">--- Choose Employment Field ---</option>-->
+              <?php
+                // Source file for extracting data
+                $file = 'text/select-wc2018teams-input.txt';
+                $handle = @fopen($file, 'r');
+                if ($handle) {
+                 while (!feof($handle)) {
+                   $line = fgets($handle, 4096);
+                   $item = explode('\n', $line);
+                   echo '<option value="' . $item[0] . '">' . $item[0] . '</option>' . "\n";
+                   }
+                fclose($handle);
+                }
+              ?>
+          </datalist>
+        </div>
 
 
         <div class="col-md-6">
@@ -639,7 +687,7 @@
             </div><!-- Avatars -->
 
 
-            <!-- Field of Work -->
+            <!-- Field of Work
             <div class="form-group">
         		<label for="fieldofwork" class="col-sm-3 control-label">Field of Work:</label>
                 <div class="col-sm-5">
@@ -662,7 +710,7 @@
             	</div>
                 <div class="col-sm-4"></div>
             </div>
-            <!-- Favourite Team -->
+            <!-- Favourite Team
             <div class="form-group">
         		<label for="faveteam" class="col-sm-3 control-label">Favourite Team:</label>
                 <div class="col-sm-5">
