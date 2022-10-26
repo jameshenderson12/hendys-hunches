@@ -1,6 +1,7 @@
 <?php
 // Start the session
 session_start();
+include 'config.php';
 ?>
 <!DOCTYPE html>
 <html lang="en" class="h-100">
