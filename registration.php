@@ -108,6 +108,8 @@
 			-webkit-overflow-scrolling: touch;
 		}
 		</style>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.1"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
     <script type="text/javascript">
     	function flagIncorrect() {
     		$(this).addClass("incorrect");
@@ -355,7 +357,7 @@
 
 			<h1>Registration</h1>
       <!--<p>Register your details below to sign up or return to the <a href="index.php">login page</a> to sign in. All fields are required to be completed.</p>-->
-      <form class="row g-3 needs-validation" novalidate>
+      <form class="row g-3 needs-validation" novalidate> <!-- id="registrationForm" name="registrationForm" class="form-horizontal" method="post" action="php/register.php" onSubmit="return validateFullForm()" -->
         <div class="col-md-6">
           <label for="firstname" class="form-label">First name</label>
           <input type="text" class="form-control" id="firstname" required>
@@ -547,23 +549,12 @@
 		</footer>
 		</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.1"></script>
-		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
+
 	</body>
 </html>
 
 
 
-
-
-
-
-
-
-
-
-
-        <form id="registrationForm" name="registrationForm" class="form-horizontal" method="post" action="php/register.php" onSubmit="return validateFullForm()">
             <!-- Username
             <div class="form-group">
             	<label for="username" class="col-sm-3 control-label">Username: </label>
@@ -659,80 +650,6 @@
                 <input type="hidden" class="form-control" id="avatarSelection" name="avatarSelection" />
                 </div>
             </div><!-- Avatars -->
-
-
-            <!-- Field of Work
-            <div class="form-group">
-        		<label for="fieldofwork" class="col-sm-3 control-label">Field of Work:</label>
-                <div class="col-sm-5">
-				<select id="fieldofwork" name="fieldofwork" class="form-control" onBlur="return validateDropDown('fieldofwork');" />
-				<option selected="selected" disabled class="text-success">--- Choose Employment Field ---</option>
-				<?php
-                    // Source file for extracting data
-                    $file = 'text/select-sectors-input.txt';
-                    $handle = @fopen($file, 'r');
-                    if ($handle) {
-                       while (!feof($handle)) {
-                       $line = fgets($handle, 4096);
-                       $item = explode('\n', $line);
-                       echo '<option value="' . $item[0] . '">' . $item[0] . '</option>' . "\n";
-                   }
-                   fclose($handle);
-                   }
-                ?>
-        		</select>
-            	</div>
-                <div class="col-sm-4"></div>
-            </div>
-            <!-- Favourite Team
-            <div class="form-group">
-        		<label for="faveteam" class="col-sm-3 control-label">Favourite Team:</label>
-                <div class="col-sm-5">
-				<select id="faveteam" name="faveteam" class="form-control" onBlur="return validateDropDown('faveteam');" />
-				<option selected="selected" disabled class="text-success">--- Your Favourite Team ---</option>
-				<?php
-                    // Source file for extracting data
-                    $file = 'text/select-clubteams-input.txt';
-                    $handle = @fopen($file, 'r');
-                    if ($handle) {
-                       while (!feof($handle)) {
-                       $line = fgets($handle, 4096);
-                       $item = explode('\n', $line);
-                       echo '<option value="' . $item[0] . '">' . $item[0] . '</option>' . "\n";
-                   }
-                   fclose($handle);
-                   }
-                ?>
-				</select>
-            	</div>
-                <div class="col-sm-4"></div>
-            </div>
-            <!-- Tournament Winner
-            <div class="form-group">
-            <label for="tournwinner" class="col-sm-3 control-label">World Cup 2018 Winner:</label>
-            <div class="col-sm-5">
-			<select id="tournwinner" name="tournwinner" class="form-control" onBlur="return validateDropDown('tournwinner');" />
-				<option selected="selected" disabled class="text-success">--- Vote The Winner ---</option>
-				<?php
-                    // Source file for extracting data
-                    $file = 'text/select-wc2018teams-input.txt';
-                    $handle = @fopen($file, 'r');
-                    if ($handle) {
-                       while (!feof($handle)) {
-                       $line = fgets($handle, 4096);
-                       $item = explode('\n', $line);
-                       echo '<option value="' . $item[0] . '">' . $item[0] . '</option>' . "\n";
-                   }
-                   fclose($handle);
-                   }
-                ?>
-	        	</select>
-                </div>
-                <div class="col-sm-4">
-                	<p class="additional-info">Please note that no points are awarded for this selection.</p>
-                </div>
-            </div>
-
             <!-- Signup/Reset Form Button
             <div class="form-group">
 	    		<label for="buttons" class="col-sm-3 control-label"></label>
@@ -741,22 +658,12 @@
           		<input type="reset" class="btn btn-default" value="Reset all" onClick="resetBorders();" />
                 </div>
             </div>
-
-          <!-- Site footer
-          <div class="footer">
-          <?php include "includes/footer.php" ?>
-          </div>
-        -->
    	</form>
 
     </div><!-- /.container -->
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-	  <!--<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>-->
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.1"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
+    <?php include "includes/footer.php" ?>
+
     <script type="text/javascript">
   		function chooseImage(imageId) {
   			var x = document.getElementById(imageId).value;

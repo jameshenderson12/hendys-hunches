@@ -1,75 +1,93 @@
-/* Login CSS */
-
+/* Custom default button */
+.btn-secondary,
+.btn-secondary:hover,
+.btn-secondary:focus {
+  color: #333;
+  text-shadow: none; /* Prevent inheritance from `body` */
+}
 body {
-  padding-top: 40px;
-  padding-bottom: 40px;
-  /*background: #222;*/
-  background: #FFF;
+  /*text-shadow: 0 .05rem .1rem rgba(0, 0, 0, .5);*/
+  /*box-shadow: inset 0 0 5rem rgba(0, 0, 0, .5);*/
+  background-image: url(img/football-stadium.jpg);
+}
+main {
+  background: rgba(10, 20, 50, 0.5);
+  border-radius: 10px;
+  padding: 1em;
+  box-shadow: inset 0 0 5rem rgba(0, 0, 0, .5);
+  text-shadow: 0 .05rem .1rem rgba(0, 0, 0, .5);
+}
+.cover-container {
+  max-width: 42em;
+}
+.nav-masthead .nav-link {
+  color: rgba(255, 255, 255, .5);
+  border-bottom: .25rem solid transparent;
+}
+.nav-masthead .nav-link:hover,
+.nav-masthead .nav-link:focus {
+  border-bottom-color: rgba(255, 255, 255, .25);
+}
+.nav-masthead .nav-link + .nav-link {
+  margin-left: 1rem;
+}
+.nav-masthead .active {
+  color: #fff;
+  border-bottom-color: #fff;
+}
+.bd-placeholder-img {
+  font-size: 1.125rem;
+  text-anchor: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+.form-check .form-check-input {
+   float: none !important;
+}
+.modal {
   color: #000;
-  /*color: #FFF;*/
 }
-
-.form-login {
-  max-width: 400px;
-  padding: 0px 15px;
-  margin: 0 auto;
+.modal li {
+  text-align: left;
 }
-.form-login .form-login-heading,
-.form-login .checkbox {
-  margin-bottom: 10px;
+.modal img {
+  text-align: center;
 }
-.form-login .checkbox {
-  font-weight: normal;
-}
-.form-login .form-control {
-  position: relative;
-  height: auto;
-  -webkit-box-sizing: border-box;
-     -moz-box-sizing: border-box;
-          box-sizing: border-box;
-  padding: 10px;
-  font-size: 16px;
-}
-.form-login .form-control:focus {
-  z-index: 2;
-}
-.form-login input[type="email"] {
-  margin-bottom: -1px;
-  border-bottom-right-radius: 0;
-  border-bottom-left-radius: 0;
-}
-.form-login input[type="password"] {
-  margin-bottom: 10px;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-}
-
-#HHterms {
-	color: #000;
-}
-
-
 @media (min-width: 768px) {
-body {
-  padding-top: 40px;
-  padding-bottom: 40px;
-  /*background:url(../img/berlin-bkg.png) center no-repeat;*/
-  /*background:url(../img/grass2.jpg) center repeat-y;*/
+  .bd-placeholder-img-lg {
+    font-size: 3.5rem;
+  }
 }
-.form-login {
-  max-width: 400px;
-  padding: 15px;
-  margin: 0 auto;
-	  /*background: #222;*/
-  background: #FFF;
-  /*background: #222;*/
-  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#006633+0,000000+100 */
-/*	background: #006633; /* Old browsers */
-/*	background: -moz-linear-gradient(top, #006633 0%, #000000 100%); /* FF3.6-15 */
-/*	background: -webkit-linear-gradient(top, #006633 0%,#000000 100%); /* Chrome10-25,Safari5.1-6 */
-/*	background: linear-gradient(to bottom, #006633 0%,#000000 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-/*	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#006633', endColorstr='#000000',GradientType=0 ); /* IE6-9 */
-  /*color: #FFF;*/
+.b-example-divider {
+  height: 3rem;
+  background-color: rgba(0, 0, 0, .1);
+  border: solid rgba(0, 0, 0, .15);
+  border-width: 1px 0;
+  box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
 }
-
+.b-example-vr {
+  flex-shrink: 0;
+  width: 1.5rem;
+  height: 100vh;
+}
+.bi {
+  vertical-align: -.125em;
+  fill: currentColor;
+}
+.nav-scroller {
+  position: relative;
+  z-index: 2;
+  height: 2.75rem;
+  overflow-y: hidden;
+}
+.nav-scroller .nav {
+  display: flex;
+  flex-wrap: nowrap;
+  padding-bottom: 1rem;
+  margin-top: -1px;
+  overflow-x: auto;
+  text-align: center;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
 }
