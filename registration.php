@@ -402,13 +402,22 @@
 
         <div class="btn-group" role="group" aria-label="Radio toggle button group">
           <input type="radio" class="btn-check" autocomplete="off" id="fk1" name="fkradio" value="<?php echo $fk1; ?>" onClick="chooseImage('fk1');">
-          <label class="btn btn-outline-primary" for="fk1"><img src="<?php echo $fk1; ?>" alt="Football kit description..." class="w-100" /></label>
+          <label class="btn btn-outline-light" for="fk1"><img src="<?php echo $fk1; ?>" alt="Football kit description..." class="w-100" /></label>
 
           <input type="radio" class="btn-check" autocomplete="off" id="fk2" name="fkradio" value="<?php echo $fk2; ?>" onClick="chooseImage('fk2');">
-          <label class="btn btn-outline-primary" for="fk2"><img src="<?php echo $fk2; ?>" alt="Football kit description..." class="w-100" /></label>
+          <label class="btn btn-outline-light" for="fk2"><img src="<?php echo $fk2; ?>" alt="Football kit description..." class="w-100" /></label>
 
           <input type="radio" class="btn-check" autocomplete="off" id="fk3" name="fkradio" value="<?php echo $fk3; ?>" onClick="chooseImage('fk3');">
-          <label class="btn btn-outline-primary" for="fk3"><img src="<?php echo $fk3; ?>" alt="Football kit description..."class="w-100" /></label>
+          <label class="btn btn-outline-light" for="fk3"><img src="<?php echo $fk3; ?>" alt="Football kit description..."class="w-100" /></label>
+
+          <input type="radio" class="btn-check" autocomplete="off" id="fk4" name="fkradio" value="<?php echo $fk4; ?>" onClick="chooseImage('fk4');">
+          <label class="btn btn-outline-light" for="fk4"><img src="<?php echo $fk4; ?>" alt="Football kit description..."class="w-100" /></label>
+
+          <input type="radio" class="btn-check" autocomplete="off" id="fk5" name="fkradio" value="<?php echo $fk5; ?>" onClick="chooseImage('fk5');">
+          <label class="btn btn-outline-light" for="fk5"><img src="<?php echo $fk5; ?>" alt="Football kit description..."class="w-100" /></label>
+
+          <input type="radio" class="btn-check" autocomplete="off" id="fk6" name="fkradio" value="<?php echo $fk6; ?>" onClick="chooseImage('fk6');">
+          <label class="btn btn-outline-light" for="fk6"><img src="<?php echo $fk6; ?>" alt="Football kit description..."class="w-100" /></label>
         </div>
         <input type="text" class="form-control" id="avatarSelection" name="avatarSelection" readonly>
 
@@ -563,24 +572,6 @@
             <div class="form-group" id="avatars">
            		<label for="avatars" class="col-sm-3 control-label">Select Avatar:</label>
                 <div class="col-sm-6">
-	        	<button type="button" class="btn btn-default avatar" id="fk1" name="<?php echo $fk1; ?>" value="<?php echo $fk1; ?>" onClick="chooseImage('fk1');">
-                <img src="<?php echo $fk1; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>
-   	        	<button type="button" class="btn btn-default avatar" id="fk2" name="<?php echo $fk2; ?>" value="<?php echo $fk2; ?>" onClick="chooseImage('fk2');">
-                <img src="<?php echo $fk2; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>
-   	        	<button type="button" class="btn btn-default avatar" id="fk3" name="<?php echo $fk3; ?>" value="<?php echo $fk3; ?>" onClick="chooseImage('fk3');">
-                <img src="<?php echo $fk3; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>
-   	        	<button type="button" class="btn btn-default avatar" id="fk4" name="<?php echo $fk4; ?>" value="<?php echo $fk4; ?>" onClick="chooseImage('fk4');">
-                <img src="<?php echo $fk4; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>
-   	        	<button type="button" class="btn btn-default avatar" id="fk5" name="<?php echo $fk5; ?>" value="<?php echo $fk5; ?>" onClick="chooseImage('fk5');">
-                <img src="<?php echo $fk5; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>
-   	        	<button type="button" class="btn btn-default avatar" id="fk6" name="<?php echo $fk6; ?>" value="<?php echo $fk6; ?>" onClick="chooseImage('fk6');">
-                <img src="<?php echo $fk6; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>
    	        	<button type="button" class="btn btn-default avatar" id="fk7" name="<?php echo $fk7; ?>" value="<?php echo $fk7; ?>" onClick="chooseImage('fk7');">
                 <img src="<?php echo $fk7; ?>" width="100%" height="100%" alt="" border="0" />
                 </button>
