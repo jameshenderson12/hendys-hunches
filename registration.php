@@ -354,7 +354,7 @@
 		<main class="px-3">
 
 			<h1>Registration</h1>
-
+      <p>Register your details below to sign up or return to the <a href="index.php">login page</a> to sign in. All fields are required to be completed.</p>
       <form class="row g-3 needs-validation" novalidate>
         <div class="col-md-6">
           <label for="firstname" class="form-label">First name</label>
@@ -399,7 +399,6 @@
           </div>
         </div>
 
-
         <div class="btn-group" role="group" aria-label="Radio toggle button group">
           <input type="radio" class="btn-check" autocomplete="off" id="fk1" name="fkradio" value="<?php echo $fk1; ?>" onClick="chooseImage('fk1');">
           <label class="btn btn-outline-light" for="fk1"><img src="<?php echo $fk1; ?>" alt="Football kit description..." class="w-100" /></label>
@@ -420,6 +419,32 @@
           <label class="btn btn-outline-light" for="fk6"><img src="<?php echo $fk6; ?>" alt="Football kit description..."class="w-100" /></label>
         </div>
         <input type="text" class="form-control" id="avatarSelection" name="avatarSelection" readonly>
+
+
+        <label for="exampleDataList" class="form-label">Datalist example</label>
+        <input class="form-control" list="datalistOptions" id="exampleDataList" placeholder="Type to search...">
+        <datalist id="datalistOptions">
+          <!--<option value="San Francisco">
+          <option value="New York">
+          <option value="Seattle">
+          <option value="Los Angeles">
+          <option value="Chicago">-->
+          <option selected="selected" disabled class="text-success">--- Choose Employment Field ---</option>
+            <?php
+              // Source file for extracting data
+              $file = 'text/select-clubteams-input.txt';
+              $handle = @fopen($file, 'r');
+              if ($handle) {
+               while (!feof($handle)) {
+                 $line = fgets($handle, 4096);
+                 $item = explode('\n', $line);
+                 echo '<option value="' . $item[0] . '">' . $item[0] . '</option>' . "\n";
+                 }
+              fclose($handle);
+              }
+            ?>
+        </datalist>
+
 
         <div class="col-md-6">
           <label for="validationCustom03" class="form-label">City</label>
@@ -447,9 +472,9 @@
         </div>
         <div class="col-12">
           <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
-            <label class="form-check-label" for="invalidCheck">
-              Agree to Hendy's Hunches <a href="#" data-bs-toggle="modal" data-bs-target="#terms">terms and conditions</a>
+            <input class="form-check-input" type="checkbox" id="disclaimer" name="disclaimer" value="disclaimer" required>
+            <label class="form-check-label" for="disclaimer">
+              By signing up, I understand and agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#terms">terms and conditions</a> of Hendy's Hunches.
             </label>
             <div class="invalid-feedback">
               You must agree before submitting.
@@ -509,7 +534,7 @@
 
 
 
-        <p>Register your details below to sign up or return to the <a href="index.php">login page</a> to sign in. All fields are required to be completed.</p>
+
 
 
 
@@ -683,14 +708,6 @@
                 </div>
                 <div class="col-sm-4">
                 	<p class="additional-info">Please note that no points are awarded for this selection.</p>
-                </div>
-            </div>
-
-            <!-- Disclaimer -->
-            <div class="form-group">
-	    		<label for="disclaimer" class="col-sm-3 control-label"></label>
-                <div class="col-sm-9">
-	        	<p><input type="checkbox" id="disclaimer" name="disclaimer" value="disclaimer">&nbsp;By signing up, I acknowledge and accept the <a href="" data-toggle="modal" data-target="#HHterms">terms and conditions</a> of Hendy's Hunches.</p>
                 </div>
             </div>
 
