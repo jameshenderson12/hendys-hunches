@@ -355,7 +355,7 @@
 
 			<h1>Registration</h1>
       <!--<p>Register your details below to sign up or return to the <a href="index.php">login page</a> to sign in. All fields are required to be completed.</p>-->
-      <form class="row g-3 needs-validation border border-white p-2 mb-2 border-opacity-25" novalidate>
+      <form class="row g-3 needs-validation" novalidate>
         <div class="col-md-6">
           <label for="firstname" class="form-label">First name</label>
           <input type="text" class="form-control" id="firstname" required>
@@ -418,8 +418,7 @@
           <input type="radio" class="btn-check" autocomplete="off" id="fk6" name="fkradio" value="<?php echo $fk6; ?>" onClick="chooseImage('fk6');">
           <label class="btn btn-outline-light" for="fk6"><img src="<?php echo $fk6; ?>" alt="Football kit description..."class="w-100" /></label>
         </div>
-        <input type="text" class="form-control" id="avatarSelection" name="avatarSelection" readonly>
-
+        <input type="text" class="hidden form-control" id="avatarSelection" name="avatarSelection" readonly>
 
         <div class="col-md-6">
           <label for="fieldofwork" class="form-label">Field of work</label>
@@ -462,15 +461,6 @@
               ?>
           </datalist>
         </div>
-
-<!--
-        <select class="form-select" aria-label="Default select example">
-          <option selected>Open this select menu</option>
-          <option value="1">One</option>
-          <option value="2">Two</option>
-          <option value="3">Three</option>
-        </select>
--->
 
         <div class="col-md-6">
           <label for="tournwinner" class="form-label">Predicted winner</label>
