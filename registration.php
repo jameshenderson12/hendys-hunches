@@ -493,7 +493,6 @@
           </datalist>
         </div>
 
-
         <div class="col-md-6">
           <label for="validationCustom03" class="form-label">City</label>
           <input type="text" class="form-control" id="validationCustom03" required>
@@ -501,6 +500,8 @@
             Please provide a valid city.
           </div>
         </div>
+
+        <!--
         <div class="col-md-3">
           <label for="validationCustom04" class="form-label">State</label>
           <select class="form-select" id="validationCustom04" required>
@@ -518,11 +519,12 @@
             Please provide a valid zip.
           </div>
         </div>
+      -->
         <div class="col-12">
           <div class="form-check">
             <input class="form-check-input" type="checkbox" id="disclaimer" name="disclaimer" value="disclaimer" required>
             <label class="form-check-label" for="disclaimer">
-              By signing up, I understand and agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#terms">terms and conditions</a> of Hendy's Hunches.
+              I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#terms">terms and conditions</a> of Hendy's Hunches.
             </label>
             <div class="invalid-feedback">
               You must agree before submitting.
