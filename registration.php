@@ -239,9 +239,10 @@
         <div class="col-md-6">
           <label for="firstname" class="form-label">First name</label>
           <input type="text" class="form-control" id="firstname" required>
+          <!--
           <div class="valid-feedback">
             Looks good!
-          </div>
+          </div>-->
           <div class="invalid-feedback">
             Please provide your first name.
           </div>
@@ -249,9 +250,10 @@
         <div class="col-md-6">
           <label for="surname" class="form-label">Last name</label>
           <input type="text" class="form-control" id="surname" required>
+          <!--
           <div class="valid-feedback">
             Looks good!
-          </div>
+          </div>-->
           <div class="invalid-feedback">
             Please provide your last name.
           </div>
@@ -259,9 +261,10 @@
         <div class="col-md-6">
           <label for="email" class="form-label">Email</label>
           <input type="email" class="form-control" id="email" required>
+          <!--
           <div class="valid-feedback">
             Looks good!
-          </div>
+          </div>-->
           <div class="invalid-feedback">
             Please provide a valid email address.
           </div>
@@ -271,28 +274,28 @@
           <input type="text" class="form-control" id="username" required>
           <span class="un-msg"></span>
           <div class="invalid-feedback">
-            Please choose a username.
+            Please provide a username.
           </div>
         </div>
         <div class="col-md-6">
           <label for="password" class="form-label">Password</label>
-          <input type="text" class="form-control" id="password" name="password" onBlur="return validatePassword();" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" onchange="form.password2.pattern = this.value;">
+          <input type="password" class="form-control" id="pwd1" name="pwd1" onBlur="return validatePassword();" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" onchange="form.pwd2.pattern = this.value;">
 <!--          <div class="valid-feedback">
             Meets criteria!
-          </div>
+          </div>-->
           <div class="invalid-feedback">
             Minimum 6 characters; at least 1 uppercase letter and 1 number.
-          </div>-->
+          </div>
         </div>
         <div class="col-md-6">
-          <label for="password2" class="form-label">Confirm Password</label>
-          <input type="text" class="form-control" id="password2" name="password2" onBlur="return validatePassword2();" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}">
+          <label for="pwd2" class="form-label">Confirm Password</label>
+          <input type="password" class="form-control" id="pwd2" name="pwd2" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}">
         <!--  <div class="valid-feedback">
             Passwords match!
           </div>
-          <div class="invalid-feedback">
+          <div id="pwd-msg" class="invalid-feedback">
             Passwords do not match.
-          </div>-->
+          </div>
         </div>
 
 
