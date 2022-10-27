@@ -3,7 +3,7 @@
 session_start();
 ?>
 <!DOCTYPE html>
-<html lang="en" class="h-100">
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -60,7 +60,7 @@ session_start();
           <hr />
         <!--<p class="lead">Pit your FIFA World Cup 2022 predictions against others for a chance to earn a prize spot or bragging rights in the rankings.</p>-->
   			<p class="lead">
-  				<a href="#" class="btn btn-lg btn-primary fw-bold border-white bg-white" type="submit"><i class="fw-bold bi bi-box-arrow-in-right"></i> Log in</a>
+  				<a href="#" class="btn btn-lg btn-primary fw-bold" type="submit"><i class="fw-bold bi bi-box-arrow-in-right"></i> Log in</a>
   			</p>
       </form>
 
@@ -95,6 +95,6 @@ session_start();
     </div>
 
 		</div>
-    
+
 	</body>
 </html>
