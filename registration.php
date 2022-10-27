@@ -286,7 +286,9 @@
 
         <div class="container text-center g-3">
           <label for="avatar" class="form-label">Select your avatar strip</label>
-
+          <div class="invalid-feedback">
+            Please select a kit avatar.
+          </div>
           <div class="row row-cols-4 row-cols-sm-6 g-1">
             <div class="col">
               <input type="radio" class="btn-check" autocomplete="off" id="fk1" name="fkradio" value="<?php echo $fk1; ?>" onClick="chooseImage('fk1');">
@@ -493,8 +495,7 @@
     </div>
 
     <footer class="mt-auto text-muted text-small">
-      <p>Predictions game based on <a href="https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/qatar2022" class="text-white">FIFA World Cup Qatar 2022™</a></p>
-      <p><?=$title?> <?=$version?> &copy; <?=$year?> <?=$developer?>.</p>
+      <p class="small fw-light">Predictions game based on <a href="https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/qatar2022" class="text-white">FIFA World Cup Qatar 2022™</a><br><?=$title?> <?=$version?> &copy; <?=$year?> <?=$developer?>.</p>
     </footer>
 		</div>
 
