@@ -47,34 +47,7 @@
     		  pwd1.focus();
     		  return false;
     		}
-    		/*
-    		// Validate the first name input
-    		var fn = document.forms["registrationForm"]["firstname"];
-    		if (fn.value == null || fn.value == "") {
-    			alert("Please enter your first name.");
-    			fn.style.border="1px solid #C33";
-    			fn.focus();
-    			return false;
-    		}
-    		// Validate the surname input
-    		var sn = document.forms["registrationForm"]["surname"];
-    		if (sn.value == null || sn.value == "") {
-    			alert("Please enter your surname.");
-    		    sn.style.border="1px solid #C33";
-    			sn.focus();
-    			return false;
-    		}
-    		// Validate the email input
-    		var x = document.forms["registrationForm"]["email"].value;
-    		var y = document.forms["registrationForm"]["email"];
-    		var atpos = x.indexOf("@");
-    		var dotpos = x.lastIndexOf(".");
-    		if (atpos < 1 || dotpos < atpos + 2 || dotpos + 2 >= x.length) {
-    			alert("Please enter a valid email address.");
-    		    y.style.border="1px solid #C33";
-    			y.focus();
-    			return false;
-    		}
+
     		// Validate the avatar selection
     		var avs = document.getElementById("avatarSelection");
     		var avt = document.getElementById("avatars");
@@ -420,7 +393,7 @@
 
         <div class="col-md-6">
           <label for="fieldofwork" class="form-label">Field of work</label>
-          <input id="fieldofwork" name="fieldofwork" class="form-control" onBlur="return validateDropDown('fieldofwork');" list="datalistOptions1" placeholder="Type to search...">
+          <input id="fieldofwork" name="fieldofwork" class="form-select" onBlur="return validateDropDown('fieldofwork');" list="datalistOptions1" placeholder="Type to search...">
           <datalist id="datalistOptions1">
             <!--<option selected>Open this select menu</option>-->
               <?php
@@ -441,7 +414,7 @@
 
         <div class="col-md-6">
           <label for="faveteam" class="form-label">Favourite team</label>
-          <input id="faveteam" name="faveteam" class="form-control" onBlur="return validateDropDown('faveteam');" list="datalistOptions2" placeholder="Type to search...">
+          <input id="faveteam" name="faveteam" class="form-select" onBlur="return validateDropDown('faveteam');" list="datalistOptions2" placeholder="Type to search...">
           <datalist id="datalistOptions2">
             <!--<option selected>Open this select menu</option>-->
               <?php
@@ -462,7 +435,7 @@
 
         <div class="col-md-6">
           <label for="tournwinner" class="form-label">Predicted winner</label>
-          <input id="tournwinner" name="tournwinner" class="form-control" onBlur="return validateDropDown('tournwinner');" list="datalistOptions3" placeholder="Type to search...">
+          <input id="tournwinner" name="tournwinner" class="form-select" onBlur="return validateDropDown('tournwinner');" list="datalistOptions3" placeholder="Type to search...">
           <datalist id="datalistOptions3">
             <!--<option selected>Open this select menu</option>-->
               <?php
@@ -493,7 +466,7 @@
           <div class="form-check">
             <input class="form-check-input" type="checkbox" id="disclaimer" name="disclaimer" value="disclaimer" required>
             <label class="form-check-label" for="disclaimer">
-              I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#terms">terms and conditions</a> of Hendy's Hunches.
+              I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#terms" class="text-white">terms and conditions</a> of Hendy's Hunches.
             </label>
             <div class="invalid-feedback">
               You must agree before submitting.
@@ -537,7 +510,7 @@
       </div>
     </div>
 
-    <footer class="mt-auto">
+    <footer class="mt-auto text-muted text-small">
       <p>Predictions game based on <a href="https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/qatar2022" class="text-white">FIFA World Cup Qatar 2022™</a></p>
       <p><?=$title?> <?=$version?> &copy; <?=$year?> <?=$developer?>.</p>
     </footer>
