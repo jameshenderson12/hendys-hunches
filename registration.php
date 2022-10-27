@@ -269,6 +269,9 @@
           <div class="valid-feedback">
             Looks good!
           </div>
+          <div class="invalid-feedback">
+            Please provide your first name.
+          </div>
         </div>
         <div class="col-md-6">
           <label for="surname" class="form-label">Last name</label>
@@ -276,12 +279,18 @@
           <div class="valid-feedback">
             Looks good!
           </div>
+          <div class="invalid-feedback">
+            Please provide your last name.
+          </div>
         </div>
         <div class="col-md-6">
           <label for="email" class="form-label">Email</label>
           <input type="email" class="form-control" id="email" required>
           <div class="valid-feedback">
             Looks good!
+          </div>
+          <div class="invalid-feedback">
+            Please provide a valid email address.
           </div>
         </div>
         <div class="col-md-6">
@@ -295,6 +304,9 @@
         <div class="col-md-6">
           <label for="password" class="form-label">Password</label>
           <input type="text" class="form-control" id="password" name="password" onBlur="return validatePassword();" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" onchange="form.password2.pattern = this.value;">
+          <div class="valid-feedback">
+            Meets criteria!
+          </div>
           <div class="invalid-feedback">
             Minimum 6 characters; at least 1 uppercase letter and 1 number.
           </div>
@@ -302,8 +314,11 @@
         <div class="col-md-6">
           <label for="password2" class="form-label">Confirm Password</label>
           <input type="text" class="form-control" id="password2" name="password2" onBlur="return validatePassword2();" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}">
+          <div class="valid-feedback">
+            Passwords match!
+          </div>
           <div class="invalid-feedback">
-            Please choose a username.
+            Passwords do not match.
           </div>
         </div>
 
@@ -384,6 +399,13 @@
               <input type="radio" class="btn-check" autocomplete="off" id="fk18" name="fkradio" value="<?php echo $fk18; ?>" onClick="chooseImage('fk18');">
               <label class="btn btn-outline-light" for="fk18"><img src="<?php echo $fk18; ?>" alt="Football kit description..." class="w-100" /></label>
             </div>
+            <div class="valid-feedback">
+              Love the kit choice!
+            </div>
+            <div class="invalid-feedback">
+              Please select a kit avatar.
+            </div>
+          </div>
           </div>
         </div>
 
@@ -448,6 +470,13 @@
                 }
               ?>
           </datalist>
+          <div class="valid-feedback">
+            Passwords match!
+          </div>
+          <div class="invalid-feedback">
+            Please select a field of work.
+          </div>
+        </div>
         </div>
 
         <div class="col-md-6">
