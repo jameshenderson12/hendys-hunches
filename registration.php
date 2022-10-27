@@ -286,9 +286,6 @@
 
         <div class="container text-center g-3">
           <label for="avatar" class="form-label">Select your avatar strip</label>
-          <div class="invalid-feedback">
-            Please select a kit avatar.
-          </div>
           <div class="row row-cols-4 row-cols-sm-6 g-1">
             <div class="col">
               <input type="radio" class="btn-check" autocomplete="off" id="fk1" name="fkradio" value="<?php echo $fk1; ?>" onClick="chooseImage('fk1');">
