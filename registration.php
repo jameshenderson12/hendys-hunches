@@ -16,6 +16,7 @@
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.1"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
     <script type="text/javascript">
+    /*
     	function flagIncorrect() {
     		$(this).addClass("incorrect");
     	}
@@ -247,32 +248,37 @@
   <body class="d-flex h-100 text-center text-bg-dark">
 
 		<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-		<header class="mb-auto">
-			<div>
-				<h3 class="float-md-start mb-0">Hendy's Hunches</h3>
-				<nav class="nav nav-masthead justify-content-center float-md-end">
-					<a class="nav-link fw-bold py-1 px-0" href="index.php">Login</a>
-					<a class="nav-link fw-bold py-1 px-0" href="forgot-password.php">Reset Password</a>
-          <a class="nav-link fw-bold py-1 px-0" href="#" data-bs-toggle="modal" data-bs-target="#terms">Terms</a>
-				</nav>
-			</div>
-		</header>
+  		<header class="mb-auto">
+  			<div>
+  				<h3 class="float-md-start mb-0">Hendy's Hunches</h3>
+  				<nav class="nav nav-masthead justify-content-center float-md-end">
+  					<a class="nav-link fw-bold py-1 px-0" href="index.php">Login</a>
+  					<a class="nav-link fw-bold py-1 px-0" href="forgot-password.php">Reset Password</a>
+            <a class="nav-link fw-bold py-1 px-0" href="#" data-bs-toggle="modal" data-bs-target="#terms">Terms</a>
+  				</nav>
+  			</div>
+  		</header>
 
 		<main class="px-3">
-
 			<h1>Registration</h1>
       <!--<p>Register your details below to sign up or return to the <a href="index.php">login page</a> to sign in. All fields are required to be completed.</p>-->
-      <form class="row g-3 needs-validation" method="post" action="php/register.php" id="registrationForm" name="registrationForm" onSubmit="return validateFullForm()" novalidate> <!-- border border-white p-2 my-2 border-opacity-25   -->
+      <form class="row g-3 needs-validation" method="post" action="php/register.php" id="registrationForm" name="registrationForm" novalidate> <!-- onSubmit="return validateFullForm()" border border-white p-2 my-2 border-opacity-25   -->
         <div class="col-md-6">
           <label for="firstname" class="form-label">First name</label>
           <input type="text" class="form-control" id="firstname" required>
+          <div class="valid-feedback">
+            Looks good!
+          </div>
           <div class="invalid-feedback">
-            Please enter your first name.
+            Please provide your first name.
           </div>
         </div>
         <div class="col-md-6">
           <label for="surname" class="form-label">Last name</label>
           <input type="text" class="form-control" id="surname" required>
+          <div class="valid-feedback">
+            Looks good!
+          </div>
           <div class="invalid-feedback">
             Please provide your last name.
           </div>
@@ -280,6 +286,9 @@
         <div class="col-md-6">
           <label for="email" class="form-label">Email</label>
           <input type="email" class="form-control" id="email" required>
+          <div class="valid-feedback">
+            Looks good!
+          </div>
           <div class="invalid-feedback">
             Please provide a valid email address.
           </div>
@@ -295,11 +304,24 @@
         <div class="col-md-6">
           <label for="password" class="form-label">Password</label>
           <input type="text" class="form-control" id="password" name="password" onBlur="return validatePassword();" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" onchange="form.password2.pattern = this.value;">
+<!--          <div class="valid-feedback">
+            Meets criteria!
+          </div>
+          <div class="invalid-feedback">
+            Minimum 6 characters; at least 1 uppercase letter and 1 number.
+          </div>-->
         </div>
         <div class="col-md-6">
           <label for="password2" class="form-label">Confirm Password</label>
           <input type="text" class="form-control" id="password2" name="password2" onBlur="return validatePassword2();" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}">
+        <!--  <div class="valid-feedback">
+            Passwords match!
+          </div>
+          <div class="invalid-feedback">
+            Passwords do not match.
+          </div>-->
         </div>
+
 
 
         <div class="container text-center g-3">
@@ -377,10 +399,16 @@
               <input type="radio" class="btn-check" autocomplete="off" id="fk18" name="fkradio" value="<?php echo $fk18; ?>" onClick="chooseImage('fk18');">
               <label class="btn btn-outline-light" for="fk18"><img src="<?php echo $fk18; ?>" alt="Football kit description..." class="w-100" /></label>
             </div>
-          </div>
+            <!--
+            <div class="valid-feedback">
+              Love the kit choice!
+            </div>
+            <div class="invalid-feedback">
+              Please select a kit avatar.
+            </div>
+          -->
           </div>
         </div>
-
 
 
 <!--
