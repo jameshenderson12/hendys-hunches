@@ -23,6 +23,7 @@
 
 $config['protocol'] = "https://";
 $config['acronym'] = "HH";
+$title = "Hendy's Hunches";
 $config['title'] = "Hendy's Hunches";
 $config['version'] = "2.1.2";
 $config['last_update'] = '26th Oct 2022';
