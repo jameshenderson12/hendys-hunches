@@ -25,6 +25,7 @@ $protocol = "https://";
 $acronym = "HH";
 $title = "Hendy's Hunches";
 $version = "2.1.2";
+$year = "2022";
 $last_update = "26th Oct 2022";
 $base_url = $protocol."www.hendyshunches.co.uk";
 $university_name = "The University of Nottingham";
