@@ -24,7 +24,6 @@
 $protocol = "https://";
 $acronym = "HH";
 $title = "Hendy's Hunches";
-$title = "Hendy's Hunches";
 $version = "2.1.2";
 $last_update = "26th Oct 2022";
 $base_url = $protocol."www.hendyshunches.co.uk";
