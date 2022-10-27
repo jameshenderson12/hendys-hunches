@@ -295,7 +295,7 @@
           </div>
           <div id="pwd-msg" class="invalid-feedback">
             Passwords do not match.
-          </div>
+          </div>-->
         </div>
 
 
