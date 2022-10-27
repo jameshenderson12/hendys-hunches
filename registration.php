@@ -261,7 +261,7 @@
 
 			<h1>Registration</h1>
       <!--<p>Register your details below to sign up or return to the <a href="index.php">login page</a> to sign in. All fields are required to be completed.</p>-->
-      <form class="needs-validation" novalidate> <!-- border border-white p-2 my-2 border-opacity-25  id="registrationForm" name="registrationForm" class="form-horizontal" method="post" action="php/register.php" onSubmit="return validateFullForm()" -->
+      <form class="row g-3 needs-validation" novalidate> <!-- border border-white p-2 my-2 border-opacity-25  id="registrationForm" name="registrationForm" class="form-horizontal" method="post" action="php/register.php" onSubmit="return validateFullForm()" -->
         <div class="col-md-6">
           <label for="firstname" class="form-label">First name</label>
           <input type="text" class="form-control" id="firstname" required>
