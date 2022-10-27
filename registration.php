@@ -266,21 +266,21 @@
         <div class="col-md-6">
           <label for="firstname" class="form-label">First name</label>
           <input type="text" class="form-control" id="firstname" required>
-          <div class="valid-feedback">
+          <div class="valid-feedback badge text-bg-success">
             Looks good!
           </div>
         </div>
         <div class="col-md-6">
           <label for="surname" class="form-label">Last name</label>
           <input type="text" class="form-control" id="surname" required>
-          <div class="valid-feedback">
+          <div class="valid-feedback badge text-bg-success">
             Looks good!
           </div>
         </div>
         <div class="col-md-6">
           <label for="email" class="form-label">Email</label>
           <input type="email" class="form-control" id="email" required>
-          <div class="valid-feedback">
+          <div class="valid-feedback badge text-bg-success">
             Looks good!
           </div>
         </div>
@@ -288,7 +288,7 @@
           <label for="username" class="form-label">Username</label>
           <input type="text" class="form-control" id="username" required>
           <span class="un-msg"></span>
-          <div class="invalid-feedback">
+          <div class="invalid-feedback badge text-bg-danger">
             Please choose a username.
           </div>
         </div>
@@ -689,7 +689,7 @@
         }, false)
       })
       })()
-    
+
   		function chooseImage(imageId) {
   			var x = document.getElementById(imageId).value;
   			document.getElementById("avatarSelection").value = x;
