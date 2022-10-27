@@ -279,8 +279,8 @@
         </div>
         <div class="col-md-6">
           <label for="password" class="form-label">Password</label>
-          <input type="password" class="form-control" id="pwd1" name="pwd1" onBlur="return validatePassword();" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" onchange="form.pwd2.pattern = this.value;">
-          <i class="bi bi-eye-slash-fill" id="togglePassword" style="margin-left: -30px; cursor: pointer;"></i>
+          <input type="password" class="form-control" id="pwd1" name="pwd1" onBlur="return validatePassword();" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" onchange="form.pwd2.pattern = this.value;" />
+          <i class="bi bi-eye-slash-fill" id="togglePassword"></i>
 <!--          <div class="valid-feedback">
             Meets criteria!
           </div>-->
@@ -657,12 +657,12 @@
       const password = document.querySelector('#pwd1');
 
       togglePassword.addEventListener('click', function (e) {
-        // toggle the type attribute
-        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-        password.setAttribute('type', type);
-        // toggle the eye slash icon
-        this.classList.toggle('bi bi-eye-fill');
-    });
+          // toggle the type attribute
+          const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+          password.setAttribute('type', type);
+          // toggle the eye / eye slash icon
+          this.classList.toggle('bi bi-eye');
+      });
 	</script>
   </body>
 </html>
