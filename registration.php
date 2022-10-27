@@ -340,6 +340,24 @@
 
           <input type="radio" class="btn-check" autocomplete="off" id="fk6" name="fkradio" value="<?php echo $fk6; ?>" onClick="chooseImage('fk6');">
           <label class="btn btn-outline-light" for="fk6"><img src="<?php echo $fk6; ?>" alt="Football kit description..."class="w-100" /></label>
+
+          <input type="radio" class="btn-check" autocomplete="off" id="fk1" name="fkradio" value="<?php echo $fk1; ?>" onClick="chooseImage('fk1');">
+          <label class="btn btn-outline-light" for="fk1"><img src="<?php echo $fk1; ?>" alt="Football kit description..." class="w-100" /></label>
+
+          <input type="radio" class="btn-check" autocomplete="off" id="fk2" name="fkradio" value="<?php echo $fk2; ?>" onClick="chooseImage('fk2');">
+          <label class="btn btn-outline-light" for="fk2"><img src="<?php echo $fk2; ?>" alt="Football kit description..." class="w-100" /></label>
+
+          <input type="radio" class="btn-check" autocomplete="off" id="fk3" name="fkradio" value="<?php echo $fk3; ?>" onClick="chooseImage('fk3');">
+          <label class="btn btn-outline-light" for="fk3"><img src="<?php echo $fk3; ?>" alt="Football kit description..."class="w-100" /></label>
+
+          <input type="radio" class="btn-check" autocomplete="off" id="fk4" name="fkradio" value="<?php echo $fk4; ?>" onClick="chooseImage('fk4');">
+          <label class="btn btn-outline-light" for="fk4"><img src="<?php echo $fk4; ?>" alt="Football kit description..."class="w-100" /></label>
+
+          <input type="radio" class="btn-check" autocomplete="off" id="fk5" name="fkradio" value="<?php echo $fk5; ?>" onClick="chooseImage('fk5');">
+          <label class="btn btn-outline-light" for="fk5"><img src="<?php echo $fk5; ?>" alt="Football kit description..."class="w-100" /></label>
+
+          <input type="radio" class="btn-check" autocomplete="off" id="fk6" name="fkradio" value="<?php echo $fk6; ?>" onClick="chooseImage('fk6');">
+          <label class="btn btn-outline-light" for="fk6"><img src="<?php echo $fk6; ?>" alt="Football kit description..."class="w-100" /></label>          
         </div>
         <input type="text" class="form-control" id="avatarSelection" name="avatarSelection" readonly hidden>
 
