@@ -325,6 +325,7 @@
 
 
         <div class="container text-center">
+          <label for="avatar" class="form-label">Select your avatar strip</label>
           <div class="row row-cols-2 row-cols-md-6 g-2 g-lg-3">
             <div class="col">
               <input type="radio" class="btn-check" autocomplete="off" id="fk1" name="fkradio" value="<?php echo $fk1; ?>" onClick="chooseImage('fk1');">
