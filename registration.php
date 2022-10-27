@@ -292,13 +292,11 @@
           <input type="password" class="form-control" id="pwd2" name="pwd2" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}">
         <!--  <div class="valid-feedback">
             Passwords match!
-          </div>
-          <div id="pwd-msg" class="invalid-feedback">
-            Passwords do not match.
           </div>-->
+          <div class="invalid-feedback">
+            Passwords do not match.
+          </div>
         </div>
-
-
 
         <div class="container text-center g-3">
           <label for="avatar" class="form-label">Select your avatar strip</label>
@@ -383,6 +381,9 @@
               Please select a kit avatar.
             </div>
           -->
+          </div>
+          <div class="invalid-feedback">
+            Please select a kit avatar.
           </div>
         </div>
 
