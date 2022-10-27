@@ -16,21 +16,6 @@
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.1"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
     <script type="text/javascript">
-      // Fetch all the forms we want to apply custom Bootstrap validation styles to
-      const forms = document.querySelectorAll('.needs-validation')
-
-      // Loop over them and prevent submission
-      Array.from(forms).forEach(form => {
-        form.addEventListener('submit', event => {
-          if (!form.checkValidity()) {
-            event.preventDefault()
-            event.stopPropagation()
-          }
-
-          form.classList.add('was-validated')
-        }, false)
-      });
-
     	function flagIncorrect() {
     		$(this).addClass("incorrect");
     	}
@@ -277,7 +262,7 @@
 
 			<h1>Registration</h1>
       <!--<p>Register your details below to sign up or return to the <a href="index.php">login page</a> to sign in. All fields are required to be completed.</p>-->
-      <form class="row g-3 needs-validation" method="post" action="php/register.php" novalidate> <!-- border border-white p-2 my-2 border-opacity-25  id="registrationForm" name="registrationForm" class="form-horizontal" method="post" action="php/register.php" onSubmit="return validateFullForm()" -->
+      <form class="row g-3 needs-validation" method="post" action="php/register.php" id="registrationForm" name="registrationForm" onSubmit="return validateFullForm()" novalidate> <!-- border border-white p-2 my-2 border-opacity-25   -->
         <div class="col-md-6">
           <label for="firstname" class="form-label">First name</label>
           <input type="text" class="form-control" id="firstname" required>
