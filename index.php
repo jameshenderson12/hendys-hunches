@@ -60,7 +60,7 @@ session_start();
           <hr />
         <!--<p class="lead">Pit your FIFA World Cup 2022 predictions against others for a chance to earn a prize spot or bragging rights in the rankings.</p>-->
   			<p class="lead">
-  				<a href="#" class="btn btn-lg btn-secondary fw-bold border-white bg-white" type="submit"><i class="fw-bold bi bi-box-arrow-in-right"></i> Log in</a>
+  				<a href="#" class="btn btn-lg btn-primary fw-bold border-white bg-white" type="submit"><i class="fw-bold bi bi-box-arrow-in-right"></i> Log in</a>
   			</p>
       </form>
 
@@ -94,10 +94,7 @@ session_start();
       </div>
     </div>
 
-
 		</div>
-
-    <!--<?php include "includes/footer.php" ?>-->
-
+    
 	</body>
 </html>
