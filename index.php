@@ -34,7 +34,7 @@ session_start();
   		</header>
 
   		<main class="px-3">
-  			<h1>Login</h1>
+  			<h1>Welcome</h1>
   			<img src="img/qatar-2022-logo.png" alt="Qatar 2022 edition of Hendy's Hunches" class="w-50 mb-3">
 
         <form id="login" role="form" method="post" action="php/login.php" class="border border-white p-2 my-2 border-opacity-25">
