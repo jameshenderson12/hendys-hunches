@@ -278,9 +278,8 @@
           </div>
         </div>
         <div class="col-md-6">
-          <label for="password" class="form-label">Password</label>
+          <label for="password" class="form-label">Password</label><i class="bi bi-eye-slash-fill" id="togglePassword"></i>
           <input type="password" class="form-control" id="pwd1" name="pwd1" onBlur="return validatePassword();" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" onchange="form.pwd2.pattern = this.value;" />
-          <i class="bi bi-eye-slash-fill" id="togglePassword"></i>
 <!--          <div class="valid-feedback">
             Meets criteria!
           </div>-->
@@ -624,8 +623,6 @@
    	</form>
 
     </div><!-- /.container -->
-
-    <?php include "includes/footer.php" ?>
 
     <script type="text/javascript">
     // Example starter JavaScript for disabling form submissions if there are invalid fields
