@@ -21,8 +21,7 @@ main {
   background-color: #EEE;
   text-shadow: none !important;
 }
-form i {
-    margin-left: -30px;
+#togglePassword {
     cursor: pointer;
 }
 .cover-container {
