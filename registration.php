@@ -280,7 +280,7 @@
         <div class="col-md-6">
           <label for="password" class="form-label">Password</label>
           <input type="password" class="form-control" id="pwd1" name="pwd1" onBlur="return validatePassword();" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" onchange="form.pwd2.pattern = this.value;">
-          <i class="bi bi-eye" id="togglePassword" style="margin-left: -30px; cursor: pointer;"></i>
+          <i class="bi bi-eye-fill" id="togglePassword" style="float: right; margin-left: -30px; cursor: pointer;"></i>
 <!--          <div class="valid-feedback">
             Meets criteria!
           </div>-->
@@ -670,7 +670,7 @@
         const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
         password.setAttribute('type', type);
         // toggle the eye slash icon
-        this.classList.toggle('bi bi-eye-slash');
+        this.classList.toggle('bi bi-eye-slash-fill');
     });
 	</script>
   </body>
