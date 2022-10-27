@@ -21,26 +21,26 @@
 // Global config variables
 //===============================
 
-$config['protocol'] = "https://";
-$config['acronym'] = "HH";
+$protocol = "https://";
+$acronym = "HH";
 $title = "Hendy's Hunches";
-$config['title'] = "Hendy's Hunches";
-$config['version'] = "2.1.2";
-$config['last_update'] = '26th Oct 2022';
-$config['base_url'] = $config['protocol'].'www.hendyshunches.co.uk';
-$config['university_name'] = 'The University of Nottingham';
-$config['school_name'] = 'School of Health Sciences';
-$config['reports_dir'] = '/reports';
-$config['backup_dir'] = '/bak';
-$config['datalists_dir'] = '/text';
-$config['sql_dir'] = '/sql';
-$config['forum_dir'] = '/mboard';
-$config['developer'] = 'James Henderson';
-$config['date_created'] = '9th Jun 2006';
-$config['date_format'] = 'd/m/Y (H:i)';
+$title = "Hendy's Hunches";
+$version = "2.1.2";
+$last_update = "26th Oct 2022";
+$base_url = $protocol."www.hendyshunches.co.uk";
+$university_name = "The University of Nottingham";
+$school_name = "School of Health Sciences";
+$reports_dir = "/reports";
+$backup_dir = "/bak";
+$datalists_dir = "/text";
+$sql_dir = "/sql";
+$forum_dir = "/mboard";
+$developer = "James Henderson";
+$date_created = "9th Jun 2006";
+$date_format = "d/m/Y (H:i)";
 
 // An array of admin users for the system
-$config['admin_user'] = array(
+$admin_user = array(
 	array("James", "Henderson"),
 	array("Stathis", "Konstantinidis"),
 	array("Matthew", "Pears")
