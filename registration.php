@@ -200,7 +200,7 @@
     		for (var i = 0; i < x.length; i++) {
     			x.elements[i].style.border="1px solid #CCC";
     		}*/
-    	}
+    	//}
   	</script>
 
     <script>
