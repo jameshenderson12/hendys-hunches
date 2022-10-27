@@ -94,7 +94,7 @@ session_start();
 
       <footer class="mt-auto">
         <p>Predictions game based on <a href="https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/qatar2022" class="text-white">FIFA World Cup Qatar 2022™</a></p>
-        <p><?php echo $title ?>.</p>
+        <p><?= $config['$title'] $config['$version'] $config['$year'] $config['$developer']; ?>.</p>
       </footer>
 
 	  </div>
