@@ -339,32 +339,71 @@
               <label class="btn btn-outline-light" for="fk3"><img src="<?php echo $fk3; ?>" alt="Football kit description..."class="w-100" /></label>
             </div>
             <div class="col">
-              <div class="p-3 border bg-light">Row column</div>
+              <input type="radio" class="btn-check" autocomplete="off" id="fk4" name="fkradio" value="<?php echo $fk4; ?>" onClick="chooseImage('fk4');">
+              <label class="btn btn-outline-light" for="fk4"><img src="<?php echo $fk4; ?>" alt="Football kit description..."class="w-100" /></label>
             </div>
             <div class="col">
-              <div class="p-3 border bg-light">Row column</div>
+              <input type="radio" class="btn-check" autocomplete="off" id="fk5" name="fkradio" value="<?php echo $fk5; ?>" onClick="chooseImage('fk5');">
+              <label class="btn btn-outline-light" for="fk5"><img src="<?php echo $fk5; ?>" alt="Football kit description..."class="w-100" /></label>
             </div>
             <div class="col">
-              <div class="p-3 border bg-light">Row column</div>
+              <input type="radio" class="btn-check" autocomplete="off" id="fk6" name="fkradio" value="<?php echo $fk6; ?>" onClick="chooseImage('fk6');">
+              <label class="btn btn-outline-light" for="fk6"><img src="<?php echo $fk6; ?>" alt="Football kit description..."class="w-100" /></label>
             </div>
             <div class="col">
-              <div class="p-3 border bg-light">Row column</div>
+              <input type="radio" class="btn-check" autocomplete="off" id="fk7" name="fkradio" value="<?php echo $fk7; ?>" onClick="chooseImage('fk7');">
+              <label class="btn btn-outline-light" for="fk7"><img src="<?php echo $fk7; ?>" alt="Football kit description..." class="w-100" /></label>
             </div>
             <div class="col">
-              <div class="p-3 border bg-light">Row column</div>
+              <input type="radio" class="btn-check" autocomplete="off" id="fk8" name="fkradio" value="<?php echo $fk8; ?>" onClick="chooseImage('fk8');">
+              <label class="btn btn-outline-light" for="fk8"><img src="<?php echo $fk8; ?>" alt="Football kit description..." class="w-100" /></label>
             </div>
             <div class="col">
-              <div class="p-3 border bg-light">Row column</div>
+              <input type="radio" class="btn-check" autocomplete="off" id="fk9" name="fkradio" value="<?php echo $fk9; ?>" onClick="chooseImage('fk9');">
+              <label class="btn btn-outline-light" for="fk9"><img src="<?php echo $fk9; ?>" alt="Football kit description..." class="w-100" /></label>
             </div>
             <div class="col">
-              <div class="p-3 border bg-light">Row column</div>
+              <input type="radio" class="btn-check" autocomplete="off" id="fk10" name="fkradio" value="<?php echo $fk10; ?>" onClick="chooseImage('fk10');">
+              <label class="btn btn-outline-light" for="fk10"><img src="<?php echo $fk10; ?>" alt="Football kit description..." class="w-100" /></label>
+            </div>
+            <div class="col">
+              <input type="radio" class="btn-check" autocomplete="off" id="fk11" name="fkradio" value="<?php echo $fk11; ?>" onClick="chooseImage('fk11');">
+              <label class="btn btn-outline-light" for="fk11"><img src="<?php echo $fk11; ?>" alt="Football kit description..." class="w-100" /></label>
+            </div>
+            <div class="col">
+              <input type="radio" class="btn-check" autocomplete="off" id="fk12" name="fkradio" value="<?php echo $fk12; ?>" onClick="chooseImage('fk12');">
+              <label class="btn btn-outline-light" for="fk12"><img src="<?php echo $fk12; ?>" alt="Football kit description..." class="w-100" /></label>
+            </div>
+            <div class="col">
+              <input type="radio" class="btn-check" autocomplete="off" id="fk13" name="fkradio" value="<?php echo $fk13; ?>" onClick="chooseImage('fk13');">
+              <label class="btn btn-outline-light" for="fk13"><img src="<?php echo $fk13; ?>" alt="Football kit description..." class="w-100" /></label>
+            </div>
+            <div class="col">
+              <input type="radio" class="btn-check" autocomplete="off" id="fk14" name="fkradio" value="<?php echo $fk14; ?>" onClick="chooseImage('fk14');">
+              <label class="btn btn-outline-light" for="fk14"><img src="<?php echo $fk14; ?>" alt="Football kit description..." class="w-100" /></label>
+            </div>
+            <div class="col">
+              <input type="radio" class="btn-check" autocomplete="off" id="fk15" name="fkradio" value="<?php echo $fk15; ?>" onClick="chooseImage('fk15');">
+              <label class="btn btn-outline-light" for="fk15"><img src="<?php echo $fk15; ?>" alt="Football kit description..." class="w-100" /></label>
+            </div>
+            <div class="col">
+              <input type="radio" class="btn-check" autocomplete="off" id="fk16" name="fkradio" value="<?php echo $fk16; ?>" onClick="chooseImage('fk16');">
+              <label class="btn btn-outline-light" for="fk16"><img src="<?php echo $fk16; ?>" alt="Football kit description..." class="w-100" /></label>
+            </div>
+            <div class="col">
+              <input type="radio" class="btn-check" autocomplete="off" id="fk17" name="fkradio" value="<?php echo $fk17; ?>" onClick="chooseImage('fk17');">
+              <label class="btn btn-outline-light" for="fk17"><img src="<?php echo $fk17; ?>" alt="Football kit description..." class="w-100" /></label>
+            </div>
+            <div class="col">
+              <input type="radio" class="btn-check" autocomplete="off" id="fk18" name="fkradio" value="<?php echo $fk18; ?>" onClick="chooseImage('fk18');">
+              <label class="btn btn-outline-light" for="fk18"><img src="<?php echo $fk18; ?>" alt="Football kit description..." class="w-100" /></label>
             </div>
           </div>
         </div>
 
 
 
-
+<!--
         <div class="btn-group" role="group" aria-label="Radio toggle button group">
           <input type="radio" class="btn-check" autocomplete="off" id="fk1" name="fkradio" value="<?php echo $fk1; ?>" onClick="chooseImage('fk1');">
           <label class="btn btn-outline-light" for="fk1"><img src="<?php echo $fk1; ?>" alt="Football kit description..." class="w-100" /></label>
@@ -375,8 +414,7 @@
           <input type="radio" class="btn-check" autocomplete="off" id="fk3" name="fkradio" value="<?php echo $fk3; ?>" onClick="chooseImage('fk3');">
           <label class="btn btn-outline-light" for="fk3"><img src="<?php echo $fk3; ?>" alt="Football kit description..."class="w-100" /></label>
 
-          <input type="radio" class="btn-check" autocomplete="off" id="fk4" name="fkradio" value="<?php echo $fk4; ?>" onClick="chooseImage('fk4');">
-          <label class="btn btn-outline-light" for="fk4"><img src="<?php echo $fk4; ?>" alt="Football kit description..."class="w-100" /></label>
+
 
           <input type="radio" class="btn-check" autocomplete="off" id="fk5" name="fkradio" value="<?php echo $fk5; ?>" onClick="chooseImage('fk5');">
           <label class="btn btn-outline-light" for="fk5"><img src="<?php echo $fk5; ?>" alt="Football kit description..."class="w-100" /></label>
@@ -402,6 +440,7 @@
           <input type="radio" class="btn-check" autocomplete="off" id="fk6" name="fkradio" value="<?php echo $fk6; ?>" onClick="chooseImage('fk6');">
           <label class="btn btn-outline-light" for="fk6"><img src="<?php echo $fk6; ?>" alt="Football kit description..."class="w-100" /></label>
         </div>
+      -->
         <input type="text" class="form-control" id="avatarSelection" name="avatarSelection" readonly hidden>
 
         <div class="col-md-6">
