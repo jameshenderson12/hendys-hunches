@@ -286,10 +286,10 @@
 
         <div class="container text-center g-3">
           <label for="avatar" class="form-label">Select your avatar strip</label>
-          <div class="invalid-feedback">
-            Please select a kit avatar.
-          </div>
-          <div class="row row-cols-4 row-cols-sm-6 g-1">
+          <div class="row row-cols-4 row-cols-sm-6 g-1 btn-group" role="group" aria-label="Basic radio toggle button group">
+            <div class="invalid-feedback">
+              Please select a kit avatar.
+            </div>            
             <div class="col">
               <input type="radio" class="btn-check" autocomplete="off" id="fk1" name="fkradio" value="<?php echo $fk1; ?>" onClick="chooseImage('fk1');">
               <label class="btn btn-outline-light" for="fk1"><img src="<?php echo $fk1; ?>" alt="Football kit description..." class="w-100" /></label>
