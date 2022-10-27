@@ -300,6 +300,9 @@
 
         <div class="container text-center g-3">
           <label for="avatar" class="form-label">Select your avatar strip</label>
+          <div class="invalid-feedback">
+            Please select a kit avatar.
+          </div>
           <div class="row row-cols-4 row-cols-sm-6 g-1">
             <div class="col">
               <input type="radio" class="btn-check" autocomplete="off" id="fk1" name="fkradio" value="<?php echo $fk1; ?>" onClick="chooseImage('fk1');">
@@ -377,9 +380,6 @@
             <div class="valid-feedback">
               Love the kit choice!
             </div>-->
-            <div class="invalid-feedback">
-              Please select a kit avatar.
-            </div>
           </div>
         </div>
 
@@ -389,6 +389,9 @@
         <div class="col-md-6">
           <label for="fieldofwork" class="form-label">Field of work</label>
           <input id="fieldofwork" name="fieldofwork" class="form-select" onBlur="return validateDropDown('fieldofwork');" list="datalistOptions1" placeholder="Type to search..." required>
+          <div class="invalid-feedback">
+            Please provide a field of work.
+          </div>
           <datalist id="datalistOptions1">
             <option selected disabled></option>
               <?php
@@ -409,9 +412,9 @@
 
         <div class="col-md-6">
           <label for="faveteam" class="form-label">Favourite team</label>
-          <input id="faveteam" name="faveteam" class="form-select" onBlur="return validateDropDown('faveteam');" list="datalistOptions2" placeholder="Type to search...">
+          <input id="faveteam" name="faveteam" class="form-select" onBlur="return validateDropDown('faveteam');" list="datalistOptions2" placeholder="Type to search..." required>
           <datalist id="datalistOptions2">
-            <!--<option selected>Open this select menu</option>-->
+            <option selected disabled></option>
               <?php
                 // Source file for extracting data
                 $file = 'text/select-clubteams-input.txt';
@@ -430,9 +433,9 @@
 
         <div class="col-md-6">
           <label for="tournwinner" class="form-label">Predicted winner</label>
-          <input id="tournwinner" name="tournwinner" class="form-select" onBlur="return validateDropDown('tournwinner');" list="datalistOptions3" placeholder="Type to search...">
+          <input id="tournwinner" name="tournwinner" class="form-select" onBlur="return validateDropDown('tournwinner');" list="datalistOptions3" placeholder="Type to search..." required>
           <datalist id="datalistOptions3">
-            <!--<option selected>Open this select menu</option>-->
+            <option selected disabled></option>
               <?php
                 // Source file for extracting data
                 $file = 'text/select-wc2018teams-input.txt';
