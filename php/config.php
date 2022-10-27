@@ -7,15 +7,14 @@
 * Date: 25/05/2021
 ***********************************/
 
-
 //===============================
 // Testing and reporting
 //===============================
 
 // Initial config values for error reporting criteria
-//ini_set('error_reporting', -1);
+ini_set('error_reporting', -1);
 //ini_set('display_errors', 1);
-//ini_set('html_errors', 1);
+ini_set('html_errors', 1);
 
 //===============================
 // Global config variables
@@ -24,7 +23,7 @@
 $protocol = "https://";
 $acronym = "HH";
 $title = "Hendy's Hunches";
-$version = "2.1.2";
+$version = "v2.1.2";
 $year = "2022";
 $last_update = "26th Oct 2022";
 $base_url = $protocol."www.hendyshunches.co.uk";
@@ -39,95 +38,156 @@ $developer = "James Henderson";
 $date_created = "9th Jun 2006";
 $date_format = "d/m/Y (H:i)";
 
-// An array of admin users for the system
-$admin_user = array(
-	array("James", "Henderson"),
-	array("Stathis", "Konstantinidis"),
-	array("Matthew", "Pears")
-	);
+$prelim_groups = 8;
+$prelim_fixtures = XX;
+$prelim_teams = 32;
+$knockout_fixtures = 16;
 
 //===============================
 // Game variables
 //===============================
 
 // Variable format groupXteamY
-$A1 = "Qatar";						$A1img = "flag-icons/24/qatar.png";
-$A2 = "Saudi Arabia";			$A2img = "flag-icons/24/saudi-arabia.png";
-$A3 = "Egypt";						$A3img = "flag-icons/24/egypt.png";
-$A4 = "Uruguay";					$A4img = "flag-icons/24/uruguay.png";
+$A1 = "Qatar";
+$A1img = "flag-icons/24/qatar.png";
+$A2 = "Saudi Arabia";
+$A2img = "flag-icons/24/saudi-arabia.png";
+$A3 = "Egypt";
+$A3img = "flag-icons/24/egypt.png";
+$A4 = "Uruguay";
+$A4img = "flag-icons/24/uruguay.png";
 
-$B1 = "Portugal"; 				$B1img = "flag-icons/24/portugal.png";
-$B2 = "Spain";						$B2img = "flag-icons/24/spain.png";
-$B3 = "Morocco";					$B3img = "flag-icons/24/morocco.png";
-$B4 = "Iran";							$B4img = "flag-icons/24/iran.png";
+$B1 = "Portugal";
+$B1img = "flag-icons/24/portugal.png";
+$B2 = "Spain";
+$B2img = "flag-icons/24/spain.png";
+$B3 = "Morocco";
+$B3img = "flag-icons/24/morocco.png";
+$B4 = "Iran";
+$B4img = "flag-icons/24/iran.png";
 
-$C1 = "France"; 					$C1img = "flag-icons/24/france.png";
-$C2 = "Australia";				$C2img = "flag-icons/24/australia.png";
-$C3 = "Peru";							$C3img = "flag-icons/24/peru.png";
-$C4 = "Denmark";					$C4img = "flag-icons/24/denmark.png";
+$C1 = "France";
+$C1img = "flag-icons/24/france.png";
+$C2 = "Australia";
+$C2img = "flag-icons/24/australia.png";
+$C3 = "Peru";
+$C3img = "flag-icons/24/peru.png";
+$C4 = "Denmark";
+$C4img = "flag-icons/24/denmark.png";
 
-$D1 = "Argentina"; 				$D1img = "flag-icons/24/argentina.png";
-$D2 = "Iceland";					$D2img = "flag-icons/24/iceland.png";
-$D3 = "Croatia";					$D3img = "flag-icons/24/croatia.png";
-$D4 = "Nigeria";					$D4img = "flag-icons/24/nigeria.png";
+$D1 = "Argentina";
+$D1img = "flag-icons/24/argentina.png";
+$D2 = "Iceland";
+$D2img = "flag-icons/24/iceland.png";
+$D3 = "Croatia";
+$D3img = "flag-icons/24/croatia.png";
+$D4 = "Nigeria";
+$D4img = "flag-icons/24/nigeria.png";
 
-$E1 = "Brazil";						$E1img = "flag-icons/24/brazil.png";
-$E2 = "Switzerland";			$E2img = "flag-icons/24/switzerland.png";
-$E3 = "Costa Rica";				$E3img = "flag-icons/24/costa-rica.png";
-$E4 = "Serbia";						$E4img = "flag-icons/24/serbia.png";
+$E1 = "Brazil";
+$E1img = "flag-icons/24/brazil.png";
+$E2 = "Switzerland";
+$E2img = "flag-icons/24/switzerland.png";
+$E3 = "Costa Rica";
+$E3img = "flag-icons/24/costa-rica.png";
+$E4 = "Serbia";
+$E4img = "flag-icons/24/serbia.png";
 
-$F1 = "Germany"; 					$F1img = "flag-icons/24/germany.png";
-$F2 = "Mexico";						$F2img = "flag-icons/24/mexico.png";
-$F3 = "Sweden";						$F3img = "flag-icons/24/sweden.png";
-$F4 = "Korea Republic";		$F4img = "flag-icons/24/korea.png";
+$F1 = "Germany";
+$F1img = "flag-icons/24/germany.png";
+$F2 = "Mexico";
+$F2img = "flag-icons/24/mexico.png";
+$F3 = "Sweden";
+$F3img = "flag-icons/24/sweden.png";
+$F4 = "Korea Republic";
+$F4img = "flag-icons/24/korea.png";
 
-$G1 = "Belgium"; 					$G1img = "flag-icons/24/belgium.png";
-$G2 = "Panama";						$G2img = "flag-icons/24/panama.png";
-$G3 = "Tunisia";					$G3img = "flag-icons/24/tunisia.png";
-$G4 = "England";					$G4img = "flag-icons/24/england.png";
+$G1 = "Belgium";
+$G1img = "flag-icons/24/belgium.png";
+$G2 = "Panama";
+$G2img = "flag-icons/24/panama.png";
+$G3 = "Tunisia";
+$G3img = "flag-icons/24/tunisia.png";
+$G4 = "England";
+$G4img = "flag-icons/24/england.png";
 
-$H1 = "Poland"; 					$H1img = "flag-icons/24/poland.png";
-$H2 = "Senegal";					$H2img = "flag-icons/24/senegal.png";
-$H3 = "Colombia";					$H3img = "flag-icons/24/colombia.png";
-$H4 = "Japan";						$H4img = "flag-icons/24/japan.png";
+$H1 = "Poland";
+$H1img = "flag-icons/24/poland.png";
+$H2 = "Senegal";
+$H2img = "flag-icons/24/senegal.png";
+$H3 = "Colombia";
+$H3img = "flag-icons/24/colombia.png";
+$H4 = "Japan";
+$H4img = "flag-icons/24/japan.png";
 
-$R1 = "France";						$R1img = "flag-icons/24/france.png";
-$R2 = "Argentina";				$R2img = "flag-icons/24/argentina.png";
-$R3 = "Uruguay";					$R3img = "flag-icons/24/uruguay.png";
-$R4 = "Portugal"; 				$R4img = "flag-icons/24/portugal.png";
-$R5 = "Spain";						$R5img = "flag-icons/24/spain.png";
-$R6 = "Russia"; 					$R6img = "flag-icons/24/russia.png";
-$R7 = "Croatia";					$R7img = "flag-icons/24/croatia.png";
-$R8 = "Denmark";					$R8img = "flag-icons/24/denmark.png";
-$R9 = "Brazil";						$R9img = "flag-icons/24/brazil.png";
-$R10 = "Mexico"; 					$R10img = "flag-icons/24/mexico.png";
-$R11 = "Belgium";					$R11img = "flag-icons/24/belgium.png";
-$R12 = "Japan"; 					$R12img = "flag-icons/24/japan.png";
-$R13 = "Sweden";					$R13img = "flag-icons/24/sweden.png";
-$R14 = "Switzerland";			$R14img = "flag-icons/24/switzerland.png";
-$R15 = "Colombia";				$R15img = "flag-icons/24/colombia.png";
-$R16 = "England";					$R16img = "flag-icons/24/england.png";
+$R1 = "";
+$R1img = "flag-icons/24/.png";
+$R2 = "";
+$R2img = "flag-icons/24/.png";
+$R3 = "";
+$R3img = "flag-icons/24/.png";
+$R4 = "";
+$R4img = "flag-icons/24/.png";
+$R5 = "";
+$R5img = "flag-icons/24/.png";
+$R6 = "";
+$R6img = "flag-icons/24/.png";
+$R7 = "";
+$R7img = "flag-icons/24/.png";
+$R8 = "";
+$R8img = "flag-icons/24/.png";
+$R9 = "";
+$R9img = "flag-icons/24/.png";
+$R10 = "";
+$R10img = "flag-icons/24/.png";
+$R11 = "";
+$R11img = "flag-icons/24/.png";
+$R12 = "";
+$R12img = "flag-icons/24/.png";
+$R13 = "";
+$R13img = "flag-icons/24/.png";
+$R14 = "";
+$R14img = "flag-icons/24/.png";
+$R15 = "";
+$R15img = "flag-icons/24/.png";
+$R16 = "";
+$R16img = "flag-icons/24/.png";
 
-$Q1 = "Uruguay";  				$Q1img = "flag-icons/24/uruguay.png";
-$Q2 = "France"; 					$Q2img = "flag-icons/24/france.png";
-$Q3 = "Brazil"; 					$Q3img = "flag-icons/24/brazil.png";
-$Q4 = "Belgium"; 					$Q4img = "flag-icons/24/belgium.png";
-$Q5 = "Sweden";						$Q5img = "flag-icons/24/sweden.png";
-$Q6 = "England";					$Q6img = "flag-icons/24/england.png";
-$Q7 = "Russia";						$Q7img = "flag-icons/24/russia.png";
-$Q8 = "Croatia"; 					$Q8img = "flag-icons/24/croatia.png";
+$Q1 = "";
+$Q1img = "flag-icons/24/.png";
+$Q2 = "";
+$Q2img = "flag-icons/24/.png";
+$Q3 = "";
+$Q3img = "flag-icons/24/.png";
+$Q4 = "";
+$Q4img = "flag-icons/24/.png";
+$Q5 = "";
+$Q5img = "flag-icons/24/.png";
+$Q6 = "";
+$Q6img = "flag-icons/24/.png";
+$Q7 = "";
+$Q7img = "flag-icons/24/.png";
+$Q8 = "";
+$Q8img = "flag-icons/24/.png";
 
-$S1 = "France"; 					$S1img = "flag-icons/24/france.png";
-$S2 = "Belgium"; 					$S2img = "flag-icons/24/belgium.png";
-$S3 = "Croatia"; 					$S3img = "flag-icons/24/croatia.png";
-$S4 = "England"; 					$S4img = "flag-icons/24/england.png";
+$S1 = "";
+$S1img = "flag-icons/24/.png";
+$S2 = "";
+$S2img = "flag-icons/24/.png";
+$S3 = "";
+$S3img = "flag-icons/24/.png";
+$S4 = "";
+$S4img = "flag-icons/24/.png";
 
-$P1 = "Belgium";					$P1img = "flag-icons/24/belgium.png";
-$P2 = "England";					$P2img = "flag-icons/24/england.png";
+$P1 = "";
+$P1img = "flag-icons/24/.png";
+$P2 = "";
+$P2img = "flag-icons/24/.png";
 
-$Fi1 = "France"; 					$Fi1img = "flag-icons/24/france.png";
-$Fi2 = "Croatia"; 				$Fi2img = "flag-icons/24/croatia.png";
-
+$Fi1 = "";
+$Fi1img = "flag-icons/24/.png";
+$Fi2 = "";
+$Fi2img = "flag-icons/24/.png";
 
 // Setup variables for kick-off times
 $_12pm = "12:00";
@@ -212,7 +272,7 @@ $venue10 = "Nizhny Novgorod Stadium, Nizhny Novgorod";
 $venue11 = "Volgograd Arena, Volgograd";
 $venue12 = "Mordovia Arena, Saransk";
 
-// Setup variables for venues
+// Setup variables for football kits
 $fk1 = "football-kits/green-white.png";
 $fk2 = "football-kits/blue-white.png";
 $fk3 = "football-kits/red-white.png";
@@ -232,7 +292,6 @@ $fk16 = "football-kits/green-white-hoops.png";
 $fk17 = "football-kits/red-grad.png";
 $fk18 = "football-kits/pink-grad.png";
 
-
 //===============================
 // Global 'helper' functions
 //===============================
@@ -248,5 +307,4 @@ function consoleMsg($data) {
         $output = implode(',', $output);
     echo "<script>console.log('Debug message: " . $output . "');</script>";
 }
-
 ?>
