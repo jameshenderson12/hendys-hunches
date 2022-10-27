@@ -280,6 +280,7 @@
         <div class="col-md-6">
           <label for="password" class="form-label">Password</label>
           <input type="password" class="form-control" id="pwd1" name="pwd1" onBlur="return validatePassword();" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" onchange="form.pwd2.pattern = this.value;">
+          <i class="bi bi-eye" id="togglePassword" style="margin-left: -30px; cursor: pointer;"></i>
 <!--          <div class="valid-feedback">
             Meets criteria!
           </div>-->
@@ -294,7 +295,7 @@
             Passwords match!
           </div>-->
           <div class="invalid-feedback">
-            Passwords do not match.
+            Passwords do not meet criteria or match.
           </div>
         </div>
 
@@ -660,6 +661,17 @@
   			var x = document.getElementById(imageId).value;
   			document.getElementById("avatarSelection").value = x;
   		}
+
+      const togglePassword = document.querySelector('#togglePassword');
+      const password = document.querySelector('#pwd1');
+
+      togglePassword.addEventListener('click', function (e) {
+        // toggle the type attribute
+        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+        password.setAttribute('type', type);
+        // toggle the eye slash icon
+        this.classList.toggle('bi bi-eye-slash');
+    });
 	</script>
   </body>
 </html>
