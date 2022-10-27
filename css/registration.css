@@ -25,9 +25,6 @@ main {
 #togglePassword {
     cursor: pointer;
 }
-label {
-  display: inline !important;
-}
 .cover-container {
   max-width: 42em;
 }
