@@ -438,7 +438,6 @@
               ?>
           </datalist>
         </div>
-        </div>
 
         <div class="col-md-6">
           <label for="faveteam" class="form-label">Favourite team</label>
