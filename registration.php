@@ -500,127 +500,12 @@
     </footer>
 		</div>
 
-
-	</body>
-</html>
-
-
-
-            <!-- Username
-            <div class="form-group">
-            	<label for="username" class="col-sm-3 control-label">Username: </label>
-                <div class="col-sm-5">
-                <input type="text" class="form-control" id="username" name="username" placeholder="Create username" />
-                </div>
-                <div class="col-sm-4"><p id="un-msg" class="additional-info"></p>
-                </div>
-            </div>
-            <!-- Password
-            <div class="form-group">
-            	<label for="password" class="col-sm-3 control-label">Password: </label>
-                <div class="col-sm-5">
-                <input type="password" class="form-control" id="password" name="password" placeholder="Create password" onBlur="return validatePassword();" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" onchange="form.password2.pattern = this.value;" />
-                </div>
-                <div class="col-sm-4">
-                	<p class="additional-info">Minimum of 6 characters; at least 1 uppercase letter and 1 number.</p>
-                </div>
-            </div>
-            <!-- Confirm Password
-            <div class="form-group">
-            	<label for="password2" class="col-sm-3 control-label">Confirm Password: </label>
-                <div class="col-sm-5">
-                <input type="password" class="form-control" id="password2" name="password2" placeholder="Confirm password" onBlur="return validatePassword2();" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" />
-                </div>
-                <div class="col-sm-4"></div>
-            </div>
-            <!-- First Name
-            <div class="form-group">
-	    		<label for="firstname" class="col-sm-3 control-label">First Name: </label>
-                <div class="col-sm-5">
-	        	<input type="text" class="form-control" id="firstname" name="firstname" placeholder="Enter your first name" onBlur="return validateName('firstname');" required />
-                </div>
-                <div class="col-sm-4"></div>
-            </div>
-            <!-- Surname
-        	<div class="form-group">
-            	<label for="surname" class="col-sm-3 control-label">Surname:</label>
-                <div class="col-sm-5">
-	        	<input type="text" class="form-control" id="surname" name="surname" placeholder="Enter your surname" onBlur="return validateName('surname');" required />
-                </div>
-                <div class="col-sm-4"></div>
-            </div>
-            <!-- Email Address
-            <div class="form-group">
-           		<label for="email" class="col-sm-3 control-label">Email:</label>
-                <div class="col-sm-5">
-	        	<input type="email" class="form-control" id="email" name="email" placeholder="Enter email address" onBlur="return validateEmail();" required />
-                </div>
-                <div class="col-sm-4"></div>
-            </div>
-			<!-- Avatar Selection
-            <div class="form-group" id="avatars">
-           		<label for="avatars" class="col-sm-3 control-label">Select Avatar:</label>
-                <div class="col-sm-6">
-   	        	<button type="button" class="btn btn-default avatar" id="fk7" name="<?php echo $fk7; ?>" value="<?php echo $fk7; ?>" onClick="chooseImage('fk7');">
-                <img src="<?php echo $fk7; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>
-   	        	<button type="button" class="btn btn-default avatar" id="fk8" name="<?php echo $fk8; ?>" value="<?php echo $fk8; ?>" onClick="chooseImage('fk8');">
-                <img src="<?php echo $fk8; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>
-   	        	<button type="button" class="btn btn-default avatar" id="fk9" name="<?php echo $fk9; ?>" value="<?php echo $fk9; ?>" onClick="chooseImage('fk9');">
-                <img src="<?php echo $fk9; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>
-                <button type="button" class="btn btn-default avatar" id="fk10" name="<?php echo $fk10; ?>" value="<?php echo $fk10; ?>" onClick="chooseImage('fk10');">
-                <img src="<?php echo $fk10; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>
-                <button type="button" class="btn btn-default avatar" id="fk11" name="<?php echo $fk11; ?>" value="<?php echo $fk11; ?>" onClick="chooseImage('fk11');">
-                <img src="<?php echo $fk11; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>
-                <button type="button" class="btn btn-default avatar" id="fk12" name="<?php echo $fk12; ?>" value="<?php echo $fk12; ?>" onClick="chooseImage('fk12');">
-                <img src="<?php echo $fk12; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>
-                <button type="button" class="btn btn-default avatar" id="fk13" name="<?php echo $fk13; ?>" value="<?php echo $fk13; ?>" onClick="chooseImage('fk13');">
-                <img src="<?php echo $fk13; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>
-                <button type="button" class="btn btn-default avatar" id="fk14" name="<?php echo $fk14; ?>" value="<?php echo $fk14; ?>" onClick="chooseImage('fk14');">
-                <img src="<?php echo $fk14; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>
-                <button type="button" class="btn btn-default avatar" id="fk15" name="<?php echo $fk15; ?>" value="<?php echo $fk15; ?>" onClick="chooseImage('fk15');">
-                <img src="<?php echo $fk15; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>
-                <button type="button" class="btn btn-default avatar" id="fk16" name="<?php echo $fk16; ?>" value="<?php echo $fk16; ?>" onClick="chooseImage('fk16');">
-                <img src="<?php echo $fk16; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>
-                <button type="button" class="btn btn-default avatar" id="fk17" name="<?php echo $fk17; ?>" value="<?php echo $fk17; ?>" onClick="chooseImage('fk17');">
-                <img src="<?php echo $fk17; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>
-                <button type="button" class="btn btn-default avatar" id="fk18" name="<?php echo $fk18; ?>" value="<?php echo $fk18; ?>" onClick="chooseImage('fk18');">
-                <img src="<?php echo $fk18; ?>" width="100%" height="100%" alt="" border="0" />
-                </button>
-                <!-- Hidden form to capture user's avatar selection
-                <input type="hidden" class="form-control" id="avatarSelection" name="avatarSelection" />
-                </div>
-            </div><!-- Avatars -->
-            <!-- Signup/Reset Form Button
-            <div class="form-group">
-	    		<label for="buttons" class="col-sm-3 control-label"></label>
-                <div class="col-sm-9">
-	        	<input type="submit" class="btn btn-primary" value="Sign me up!" name="predictionsSubmitted" />
-          		<input type="reset" class="btn btn-default" value="Reset all" onClick="resetBorders();" />
-                </div>
-            </div>
-   	</form>
-
-    </div><!-- /.container -->
-
     <script type="text/javascript">
     // Example starter JavaScript for disabling form submissions if there are invalid fields
       (() => {
       'use strict'
-
       // Fetch all the forms we want to apply custom Bootstrap validation styles to
       const forms = document.querySelectorAll('.needs-validation')
-
       // Loop over them and prevent submission
       Array.from(forms).forEach(form => {
         form.addEventListener('submit', event => {
@@ -628,7 +513,6 @@
             event.preventDefault()
             event.stopPropagation()
           }
-
           form.classList.add('was-validated')
         }, false)
       })
@@ -645,18 +529,18 @@
       const pwd2 = document.querySelector('#pwd2');
 
       togglePwd1.addEventListener('click', function (e) {
-          // toggle the type attribute
+          // Toggle the type attribute
           const type = pwd1.getAttribute('type') === 'password' ? 'text' : 'password';
           pwd1.setAttribute('type', type);
-          // toggle the eye / eye slash icon
+          // Toggle the eye / eye slash icon
           this.classList.toggle('bi-eye');
       });
 
       togglePwd2.addEventListener('click', function (e) {
-          // toggle the type attribute
+          // Toggle the type attribute
           const type = pwd2.getAttribute('type') === 'password' ? 'text' : 'password';
           pwd2.setAttribute('type', type);
-          // toggle the eye / eye slash icon
+          // Toggle the eye / eye slash icon
           this.classList.toggle('bi-eye');
       });
 	</script>
