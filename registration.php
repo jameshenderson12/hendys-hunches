@@ -266,19 +266,13 @@
         <div class="col-md-6">
           <label for="firstname" class="form-label">First name</label>
           <input type="text" class="form-control" id="firstname" required>
-          <div class="valid-feedback">
-            Looks good!
-          </div>
           <div class="invalid-feedback">
-            Please provide your first name.
+            Please enter your first name.
           </div>
         </div>
         <div class="col-md-6">
           <label for="surname" class="form-label">Last name</label>
           <input type="text" class="form-control" id="surname" required>
-          <div class="valid-feedback">
-            Looks good!
-          </div>
           <div class="invalid-feedback">
             Please provide your last name.
           </div>
@@ -286,9 +280,6 @@
         <div class="col-md-6">
           <label for="email" class="form-label">Email</label>
           <input type="email" class="form-control" id="email" required>
-          <div class="valid-feedback">
-            Looks good!
-          </div>
           <div class="invalid-feedback">
             Please provide a valid email address.
           </div>
@@ -304,24 +295,11 @@
         <div class="col-md-6">
           <label for="password" class="form-label">Password</label>
           <input type="text" class="form-control" id="password" name="password" onBlur="return validatePassword();" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" onchange="form.password2.pattern = this.value;">
-<!--          <div class="valid-feedback">
-            Meets criteria!
-          </div>
-          <div class="invalid-feedback">
-            Minimum 6 characters; at least 1 uppercase letter and 1 number.
-          </div>-->
         </div>
         <div class="col-md-6">
           <label for="password2" class="form-label">Confirm Password</label>
           <input type="text" class="form-control" id="password2" name="password2" onBlur="return validatePassword2();" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}">
-        <!--  <div class="valid-feedback">
-            Passwords match!
-          </div>
-          <div class="invalid-feedback">
-            Passwords do not match.
-          </div>-->
         </div>
-
 
 
         <div class="container text-center g-3">
@@ -399,14 +377,6 @@
               <input type="radio" class="btn-check" autocomplete="off" id="fk18" name="fkradio" value="<?php echo $fk18; ?>" onClick="chooseImage('fk18');">
               <label class="btn btn-outline-light" for="fk18"><img src="<?php echo $fk18; ?>" alt="Football kit description..." class="w-100" /></label>
             </div>
-            <!--
-            <div class="valid-feedback">
-              Love the kit choice!
-            </div>
-            <div class="invalid-feedback">
-              Please select a kit avatar.
-            </div>
-          -->
           </div>
           </div>
         </div>
@@ -415,42 +385,9 @@
 
 <!--
         <div class="btn-group" role="group" aria-label="Radio toggle button group">
-          <input type="radio" class="btn-check" autocomplete="off" id="fk1" name="fkradio" value="<?php echo $fk1; ?>" onClick="chooseImage('fk1');">
-          <label class="btn btn-outline-light" for="fk1"><img src="<?php echo $fk1; ?>" alt="Football kit description..." class="w-100" /></label>
-
-          <input type="radio" class="btn-check" autocomplete="off" id="fk2" name="fkradio" value="<?php echo $fk2; ?>" onClick="chooseImage('fk2');">
-          <label class="btn btn-outline-light" for="fk2"><img src="<?php echo $fk2; ?>" alt="Football kit description..." class="w-100" /></label>
-
-          <input type="radio" class="btn-check" autocomplete="off" id="fk3" name="fkradio" value="<?php echo $fk3; ?>" onClick="chooseImage('fk3');">
-          <label class="btn btn-outline-light" for="fk3"><img src="<?php echo $fk3; ?>" alt="Football kit description..."class="w-100" /></label>
-
-
-
-          <input type="radio" class="btn-check" autocomplete="off" id="fk5" name="fkradio" value="<?php echo $fk5; ?>" onClick="chooseImage('fk5');">
-          <label class="btn btn-outline-light" for="fk5"><img src="<?php echo $fk5; ?>" alt="Football kit description..."class="w-100" /></label>
-
-          <input type="radio" class="btn-check" autocomplete="off" id="fk6" name="fkradio" value="<?php echo $fk6; ?>" onClick="chooseImage('fk6');">
-          <label class="btn btn-outline-light" for="fk6"><img src="<?php echo $fk6; ?>" alt="Football kit description..."class="w-100" /></label>
-
-          <input type="radio" class="btn-check" autocomplete="off" id="fk1" name="fkradio" value="<?php echo $fk1; ?>" onClick="chooseImage('fk1');">
-          <label class="btn btn-outline-light" for="fk1"><img src="<?php echo $fk1; ?>" alt="Football kit description..." class="w-100" /></label>
-
-          <input type="radio" class="btn-check" autocomplete="off" id="fk2" name="fkradio" value="<?php echo $fk2; ?>" onClick="chooseImage('fk2');">
-          <label class="btn btn-outline-light" for="fk2"><img src="<?php echo $fk2; ?>" alt="Football kit description..." class="w-100" /></label>
-
-          <input type="radio" class="btn-check" autocomplete="off" id="fk3" name="fkradio" value="<?php echo $fk3; ?>" onClick="chooseImage('fk3');">
-          <label class="btn btn-outline-light" for="fk3"><img src="<?php echo $fk3; ?>" alt="Football kit description..."class="w-100" /></label>
-
-          <input type="radio" class="btn-check" autocomplete="off" id="fk4" name="fkradio" value="<?php echo $fk4; ?>" onClick="chooseImage('fk4');">
-          <label class="btn btn-outline-light" for="fk4"><img src="<?php echo $fk4; ?>" alt="Football kit description..."class="w-100" /></label>
-
-          <input type="radio" class="btn-check" autocomplete="off" id="fk5" name="fkradio" value="<?php echo $fk5; ?>" onClick="chooseImage('fk5');">
-          <label class="btn btn-outline-light" for="fk5"><img src="<?php echo $fk5; ?>" alt="Football kit description..."class="w-100" /></label>
-
-          <input type="radio" class="btn-check" autocomplete="off" id="fk6" name="fkradio" value="<?php echo $fk6; ?>" onClick="chooseImage('fk6');">
-          <label class="btn btn-outline-light" for="fk6"><img src="<?php echo $fk6; ?>" alt="Football kit description..."class="w-100" /></label>
         </div>
       -->
+
         <input type="text" class="form-control" id="avatarSelection" name="avatarSelection" readonly hidden>
 
         <div class="col-md-6">
@@ -472,14 +409,6 @@
                 }
               ?>
           </datalist>
-          <!--
-          <div class="valid-feedback">
-            Passwords match!
-          </div>
-          <div class="invalid-feedback">
-            Please select a field of work.
-          </div>
-        -->
         </div>
         </div>
 
