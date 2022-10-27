@@ -250,10 +250,6 @@
         <div class="col-md-6">
           <label for="surname" class="form-label">Last name</label>
           <input type="text" class="form-control" id="surname" required>
-          <!--
-          <div class="valid-feedback">
-            Looks good!
-          </div>-->
           <div class="invalid-feedback">
             Please provide your last name.
           </div>
@@ -261,10 +257,6 @@
         <div class="col-md-6">
           <label for="email" class="form-label">Email</label>
           <input type="email" class="form-control" id="email" required>
-          <!--
-          <div class="valid-feedback">
-            Looks good!
-          </div>-->
           <div class="invalid-feedback">
             Please provide a valid email address.
           </div>
@@ -278,21 +270,15 @@
           </div>
         </div>
         <div class="col-md-6">
-          <label for="password" class="form-label">Password</label><i class="bi bi-eye-slash-fill mx-2" id="togglePassword"></i>
+          <label for="pwd1" class="form-label">Password</label> <i class="bi bi-eye-slash-fill" id="togglePwd1"></i>
           <input type="password" class="form-control" id="pwd1" name="pwd1" onBlur="return validatePassword();" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" onchange="form.pwd2.pattern = this.value;" />
-<!--          <div class="valid-feedback">
-            Meets criteria!
-          </div>-->
           <div class="invalid-feedback">
             Minimum 6 characters; at least 1 uppercase letter and 1 number.
           </div>
         </div>
         <div class="col-md-6">
-          <label for="pwd2" class="form-label">Confirm Password</label>
+          <label for="pwd2" class="form-label">Confirm Password</label> <i class="bi bi-eye-slash-fill" id="togglePwd2"></i>
           <input type="password" class="form-control" id="pwd2" name="pwd2" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}">
-        <!--  <div class="valid-feedback">
-            Passwords match!
-          </div>-->
           <div class="invalid-feedback">
             Passwords do not meet criteria or match.
           </div>
@@ -653,13 +639,23 @@
   			document.getElementById("avatarSelection").value = x;
   		}
 
-      const togglePassword = document.querySelector('#togglePassword');
-      const password = document.querySelector('#pwd1');
+      const togglePwd1 = document.querySelector('#togglePwd1');
+      const togglePwd2 = document.querySelector('#togglePwd2');
+      const pwd1 = document.querySelector('#pwd1');
+      const pwd2 = document.querySelector('#pwd2');
 
-      togglePassword.addEventListener('click', function (e) {
+      togglePwd1.addEventListener('click', function (e) {
           // toggle the type attribute
-          const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-          password.setAttribute('type', type);
+          const type = pwd1.getAttribute('type') === 'password' ? 'text' : 'password';
+          pwd1.setAttribute('type', type);
+          // toggle the eye / eye slash icon
+          this.classList.toggle('bi-eye');
+      });
+
+      togglePwd2.addEventListener('click', function (e) {
+          // toggle the type attribute
+          const type = pwd2.getAttribute('type') === 'password' ? 'text' : 'password';
+          pwd2.setAttribute('type', type);
           // toggle the eye / eye slash icon
           this.classList.toggle('bi-eye');
       });
