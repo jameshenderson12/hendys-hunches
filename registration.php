@@ -388,9 +388,9 @@
 
         <div class="col-md-6">
           <label for="fieldofwork" class="form-label">Field of work</label>
-          <input id="fieldofwork" name="fieldofwork" class="form-select" onBlur="return validateDropDown('fieldofwork');" list="datalistOptions1" placeholder="Type to search...">
+          <input id="fieldofwork" name="fieldofwork" class="form-select" onBlur="return validateDropDown('fieldofwork');" list="datalistOptions1" placeholder="Type to search..." required>
           <datalist id="datalistOptions1">
-            <option selected="" disabled="" value=""></option>
+            <option selected disabled></option>
               <?php
                 // Source file for extracting data
                 $file = 'text/select-sectors-input.txt';
