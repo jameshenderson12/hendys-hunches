@@ -18,11 +18,15 @@ main {
   text-shadow: 0 .05rem .1rem rgba(0, 0, 0, .5);
 }
 .invalid-feedback {
-  background-color: #EEE;
+  background-color: #AAA !important;
+  color: #000 !important;
   text-shadow: none !important;
 }
 #togglePassword {
     cursor: pointer;
+}
+label {
+  display: inline !important;
 }
 .cover-container {
   max-width: 42em;
