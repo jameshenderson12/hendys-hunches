@@ -411,10 +411,8 @@
         </div>
         <hr />
         <div class="col-12 d-flex justify-content-evenly">
-          <p class="lead">
-            <button class="btn btn-lg btn-primary fw-bold" type="submit"><i class="fw-bold bi bi-hand-thumbs-up"></i> Sign me up!</button>
-            <button class="btn btn-lg btn-outline-light" type="reset" onClick="resetBorders();"><i class="fw-bold bi bi-x"></i> Reset all</button>
-          </p>
+          <button class="btn btn-lg btn-primary fw-bold" type="submit"><i class="fw-bold bi bi-hand-thumbs-up"></i> Sign me up!</button>
+          <button class="btn btn-lg btn-outline-light" type="reset" onClick="resetBorders();"><i class="fw-bold bi bi-x"></i> Reset all</button>
         </div>
       </form>
 
