@@ -325,7 +325,7 @@
 
 
         <div class="container text-center">
-          <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
+          <div class="row row-cols-2 row-cols-md-6 g-2 g-lg-3">
             <div class="col">
               <input type="radio" class="btn-check" autocomplete="off" id="fk1" name="fkradio" value="<?php echo $fk1; ?>" onClick="chooseImage('fk1');">
               <label class="btn btn-outline-light" for="fk1"><img src="<?php echo $fk1; ?>" alt="Football kit description..." class="w-100" /></label>
@@ -441,7 +441,7 @@
           <label class="btn btn-outline-light" for="fk6"><img src="<?php echo $fk6; ?>" alt="Football kit description..."class="w-100" /></label>
         </div>
       -->
-        <input type="text" class="form-control" id="avatarSelection" name="avatarSelection" readonly hidden>
+        <input type="text" class="form-control" id="avatarSelection" name="avatarSelection" readonly>
 
         <div class="col-md-6">
           <label for="fieldofwork" class="form-label">Field of work</label>
