@@ -266,21 +266,21 @@
         <div class="col-md-6">
           <label for="firstname" class="form-label">First name</label>
           <input type="text" class="form-control" id="firstname" required>
-          <div class="valid-feedback badge text-bg-success">
+          <div class="valid-feedback">
             Looks good!
           </div>
         </div>
         <div class="col-md-6">
           <label for="surname" class="form-label">Last name</label>
           <input type="text" class="form-control" id="surname" required>
-          <div class="valid-feedback badge text-bg-success">
+          <div class="valid-feedback">
             Looks good!
           </div>
         </div>
         <div class="col-md-6">
           <label for="email" class="form-label">Email</label>
           <input type="email" class="form-control" id="email" required>
-          <div class="valid-feedback badge text-bg-success">
+          <div class="valid-feedback">
             Looks good!
           </div>
         </div>
@@ -288,7 +288,7 @@
           <label for="username" class="form-label">Username</label>
           <input type="text" class="form-control" id="username" required>
           <span class="un-msg"></span>
-          <div class="invalid-feedback badge text-bg-danger">
+          <div class="invalid-feedback">
             Please choose a username.
           </div>
         </div>
@@ -296,7 +296,7 @@
           <label for="password" class="form-label">Password</label>
           <input type="text" class="form-control" id="password" name="password" onBlur="return validatePassword();" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" onchange="form.password2.pattern = this.value;">
           <div class="invalid-feedback">
-            Minimum of 6 characters; at least 1 uppercase letter and 1 number.
+            Minimum 6 characters; at least 1 uppercase letter and 1 number.
           </div>
         </div>
         <div class="col-md-6">
