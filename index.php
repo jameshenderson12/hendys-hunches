@@ -35,7 +35,7 @@ session_start();
 
   		<main class="px-3">
   			<h1>Welcome</h1>
-  			<img src="img/hh-qatar2022-logo.png" alt="Qatar 2022 edition of Hendy's Hunches" class="w-50 mb-3">
+  			<img src="img/hh-qatar2022-logo.png" alt="Qatar 2022 edition of Hendy's Hunches" class="w-75 mb-3">
 
         <form id="login" role="form" method="post" action="php/login.php" class="">
 
