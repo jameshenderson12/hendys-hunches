@@ -124,7 +124,7 @@
             Minimum 6 characters; at least 1 uppercase letter and 1 number.
           </div>
         </div>
-        <div id="pwd-msg">
+        <div id="pwdMsg">
           <p>Password must contain the following:</p>
           <ul type="none">
           <li id="length" class="invalid">Minimum <b>6 characters</b></li>
@@ -401,24 +401,23 @@
 
       var myInput = document.getElementById("pwd1");
       var letter = document.getElementById("letter");
-      var capital = document.getElementById("capital");
       var number = document.getElementById("number");
       var length = document.getElementById("length");
 
       // When the user clicks on the password field, show the  box
       myInput.onfocus = function() {
-        document.getElementById("pwd-msg").style.display = "block";
+        document.getElementById("pwdMsg").style.display = "block";
       }
       // When the user clicks outside of the password field, hide the message box
       myInput.onblur = function() {
-        document.getElementById("pwd-msg").style.display = "none";
+        document.getElementById("pwdMsg").style.display = "none";
       }
       // When the user starts to type something inside the password field
       myInput.onkeyup = function() {
         // Validate lowercase letters
         var lowerCaseLetters = /[a-z]/g;
         var upperCaseLetters = /[A-Z]/g;
-        if( (myInput.value.match(lowerCaseLetters) && (myInput.value.match(upperCaseLetters)) {
+        if( (myInput.value.match(lowerCaseLetters) && (myInput.value.match(upperCaseLetters)) )) {
           letter.classList.remove("invalid");
           letter.classList.add("valid");
         } else {
