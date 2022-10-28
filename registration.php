@@ -57,8 +57,7 @@
     		var avs = document.getElementById("avatarSelection");
     		var avt = document.getElementById("avatars");
     		if (avs.value == null || avs.value == "") {
-    			alert("Please select a football kit avatar.");
-    			avt.style.border="1px solid #C33";
+    			$('#avatarMsg').html("Please select a football kit avatar.")
     			return false;
         }
     	}
@@ -83,7 +82,7 @@
 		<main class="px-3">
 			<h1>Registration</h1>
       <!--<p>Register your details below to sign up or return to the <a href="index.php">login page</a> to sign in. All fields are required to be completed.</p>-->
-      <form class="row g-3 needs-validation" method="post" action="php/register.php" id="registrationForm" name="registrationForm" novalidate> <!-- onSubmit="return validateFullForm()" border border-white p-2 my-2 border-opacity-25   -->
+      <form class="row g-3 needs-validation" method="post" action="php/register.php" id="registrationForm" name="registrationForm" novalidate onsubmit="validateAvatar()"> <!-- onSubmit="return validateFullForm()" border border-white p-2 my-2 border-opacity-25   -->
         <div class="col-md-6">
           <label for="firstname" class="form-label">First name</label>
           <input type="text" class="form-control" id="firstname" required>
@@ -141,9 +140,6 @@
 
         <div class="container text-center g-3">
           <label for="avatar" class="form-label">Select your avatar strip</label>
-          <div class="invalid-feedback">
-            Please select a kit avatar.
-          </div>
           <div class="row row-cols-4 row-cols-sm-6 g-1">
             <div class="col">
               <input type="radio" class="btn-check" autocomplete="off" id="fk1" name="fkradio" value="<?php echo $fk1; ?>" onClick="chooseImage('fk1');" required>
@@ -216,6 +212,9 @@
             <div class="col">
               <input type="radio" class="btn-check" autocomplete="off" id="fk18" name="fkradio" value="<?php echo $fk18; ?>" onClick="chooseImage('fk18');">
               <label class="btn btn-outline-light" for="fk18"><img src="<?php echo $fk18; ?>" alt="Football kit description..." class="w-100" /></label>
+            </div>
+            <div id="avatarMsg">
+              <p>Please select a football kit avatar.</p>
             </div>
             <!--
             <div class="valid-feedback">
