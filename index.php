@@ -30,8 +30,7 @@ session_start();
   					<a class="nav-link fw-bold py-1 px-0" href="forgot-password.php">Reset Password</a>
             <a class="nav-link fw-bold py-1 px-0" href="#" data-bs-toggle="modal" data-bs-target="#terms">Terms</a>
   				</nav>
-  			</div>
-        <img src="img/hh-logo-2018.jpg" alt="Qatar 2022 edition of Hendy's Hunches" class="w-75">
+  			</div>        
   		</header>
 
   		<main class="px-3">
