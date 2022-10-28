@@ -124,6 +124,14 @@
             Minimum 6 characters; at least 1 uppercase letter and 1 number.
           </div>
         </div>
+        <div id="pwd-msg">
+          <p>Password must contain the following:</p>
+          <ul type="none">
+          <li id="length" class="invalid">Minimum <b>6 characters</b></li>
+          <li id="letter" class="invalid">1 <b>uppercase</b> and 1 <b>lowercase</b> letter</li>
+          <li id="number" class="invalid">1 <b>number</b></li>
+          </ul>
+        </div>
         <div class="col-md-6">
           <label for="pwd2" class="form-label">Confirm Password</label> <i class="bi bi-eye-slash-fill" id="togglePwd2"></i>
           <input type="password" class="form-control" id="pwd2" name="pwd2" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}">
@@ -390,6 +398,51 @@
           // Toggle the eye / eye slash icon
           this.classList.toggle('bi-eye');
       });
+
+      var myInput = document.getElementById("pwd1");
+      var letter = document.getElementById("letter");
+      var capital = document.getElementById("capital");
+      var number = document.getElementById("number");
+      var length = document.getElementById("length");
+
+      // When the user clicks on the password field, show the  box
+      myInput.onfocus = function() {
+        document.getElementById("pwd-msg").style.display = "block";
+      }
+      // When the user clicks outside of the password field, hide the message box
+      myInput.onblur = function() {
+        document.getElementById("pwd-msg").style.display = "none";
+      }
+      // When the user starts to type something inside the password field
+      myInput.onkeyup = function() {
+        // Validate lowercase letters
+        var lowerCaseLetters = /[a-z]/g;
+        var upperCaseLetters = /[A-Z]/g;
+        if( (myInput.value.match(lowerCaseLetters) && (myInput.value.match(upperCaseLetters)) {
+          letter.classList.remove("invalid");
+          letter.classList.add("valid");
+        } else {
+          letter.classList.remove("valid");
+          letter.classList.add("invalid");
+        }
+        // Validate numbers
+        var numbers = /[0-9]/g;
+        if(myInput.value.match(numbers)) {
+          number.classList.remove("invalid");
+          number.classList.add("valid");
+        } else {
+          number.classList.remove("valid");
+          number.classList.add("invalid");
+        }
+        // Validate length
+        if(myInput.value.length >= 6) {
+          length.classList.remove("invalid");
+          length.classList.add("valid");
+        } else {
+          length.classList.remove("valid");
+          length.classList.add("invalid");
+        }
+      }
 	</script>
   </body>
 </html>
