@@ -120,13 +120,15 @@
         <div class="col-md-6">
           <label for="pwd1" class="form-label">Password</label> <i class="bi bi-eye-slash-fill" id="togglePwd1"></i>
           <input type="password" class="form-control" id="pwd1" name="pwd1" onBlur="return validatePassword();" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" onchange="form.pwd2.pattern = this.value;" />
-          <div id="pwdMsg" class="invalid-feedback">
-            <p class="small">Password must contain at least:</p>
-            <ul type="none" class="small">
-            <li id="length" class="invalid">Minimum <b>6 characters</b></li>
-            <li id="letter" class="invalid">1 <b>uppercase</b> and 1 <b>lowercase</b> letter</li>
-            <li id="number" class="invalid">1 <b>number</b></li>
-            </ul>
+          <div class="invalid-feedback">
+            Password does not meet criteria.
+            <div id="pwdMsg">
+              <ul type="none" class="small">
+                <li id="length" class="invalid">Minimum <b>6 characters</b></li>
+                <li id="letter" class="invalid">1 <b>uppercase</b> and 1 <b>lowercase</b> letter</li>
+                <li id="number" class="invalid">1 <b>number</b></li>
+              </ul>
+            </div>
           </div>
         </div>
         <div class="col-md-6">
