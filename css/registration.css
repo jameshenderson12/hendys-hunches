@@ -46,16 +46,16 @@ main {
 .valid:before {
   color: green;
   position: relative;
-  left: -35px;
+  left: -15px;
   content: "✔";
 }
-/* Add a black text color and an "x" when the requirements are wrong */
+/* Add a red text color and an "x" when the requirements are wrong */
 .invalid {
-  color: black;
+  color: red;
 }
 .invalid:before {
   position: relative;
-  left: -35px;
+  left: -15px;
   color: red;
   content: "✖";
 }
