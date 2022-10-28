@@ -29,30 +29,32 @@ main {
 #pwdMsg {
   display:none;
   background-color: #AAA !important;
-  color: #000 !important;
+  color: #000;
   position: relative;
-  padding: 10px;
-  margin-top: 10px;
+  margin-top: 5px;
   text-align: left;
   text-shadow: none !important;
+  border-radius: 5px;
 }
 #pwdMsg p {
   padding: 0px 5px;
 }
 /* Add a green text color and a checkmark when the requirements are right */
 .valid {
-  color: green;
+  color: green !important;
 }
-.valid:before {  
+.valid:before {
+  color: green;
   position: relative;
   left: -15px;
   content: "✔";
 }
 /* Add a red text color and an "x" when the requirements are wrong */
 .invalid {
-  color: red;
+  color: red !important;
 }
 .invalid:before {
+  color: red;
   position: relative;
   left: -15px;
   content: "✖";
