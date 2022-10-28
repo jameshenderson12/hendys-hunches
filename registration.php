@@ -120,10 +120,7 @@
         <div class="col-md-6">
           <label for="pwd1" class="form-label">Password</label> <i class="bi bi-eye-slash-fill" id="togglePwd1"></i>
           <input type="password" class="form-control" id="pwd1" name="pwd1" onBlur="return validatePassword();" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" onchange="form.pwd2.pattern = this.value;" />
-          <div class="invalid-feedback">
-            Minimum 6 characters; at least 1 uppercase letter and 1 number.
-          </div>
-          <div id="pwdMsg">
+          <div id="pwdMsg" class="invalid-feedback">
             <p class="small">Password must contain at least:</p>
             <ul type="none" class="small">
             <li id="length" class="invalid">Minimum <b>6 characters</b></li>
@@ -224,8 +221,6 @@
             </div>-->
           </div>
         </div>
-
-
         <input type="text" class="form-control" id="avatarSelection" name="avatarSelection" readonly hidden>
 
         <div class="col-md-6">
@@ -353,24 +348,6 @@
     <footer class="mt-auto">
       <p class="small fw-light">Predictions game based on <a href="https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/qatar2022" class="text-white">FIFA World Cup Qatar 2022™</a><br><?=$title?> <?=$version?> &copy; <?=$year?> <?=$developer?>.</p>
     </footer>
-
-
-    <div class="container">
-      <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
-        <div class="col-md-4 d-flex align-items-center">
-          <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
-            <svg class="bi" width="30" height="24"><use xlink:href="#bootstrap"></use></svg>
-          </a>
-          <span class="mb-3 mb-md-0 text-muted">© 2022 Company, Inc</span>
-        </div>
-
-        <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
-          <li class="ms-3"><a class="text-muted" href="#"><svg class="bi" width="24" height="24"><use xlink:href="#twitter"></use></svg></a></li>
-          <li class="ms-3"><a class="text-muted" href="#"><svg class="bi" width="24" height="24"><use xlink:href="#instagram"></use></svg></a></li>
-          <li class="ms-3"><a class="text-muted" href="#"><svg class="bi" width="24" height="24"><use xlink:href="#facebook"></use></svg></a></li>
-        </ul>
-      </footer>
-    </div>
 
 		</div>
 
