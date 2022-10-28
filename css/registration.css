@@ -26,7 +26,7 @@ main {
     cursor: pointer;
 }
 /* The message box is shown when the user clicks on the password field */
-#pwdMsg {
+#pwdMsg, #avatarMsg {
   display:none;
   background-color: #AAA !important;
   color: #000;
