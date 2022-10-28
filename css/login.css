@@ -52,7 +52,7 @@ main {
   text-align: left;
 }
 .modal img {
-  text-align: center;
+  text-align: center !important;
 }
 @media (min-width: 768px) {
   .bd-placeholder-img-lg {
