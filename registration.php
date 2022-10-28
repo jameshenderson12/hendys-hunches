@@ -252,6 +252,9 @@
         <div class="col-md-6">
           <label for="faveteam" class="form-label">Favourite team</label>
           <input id="faveteam" name="faveteam" class="form-select" onBlur="return validateDropDown('faveteam');" list="datalistOptions2" placeholder="Type to search..." required>
+          <div class="invalid-feedback">
+            Tell us your team or select 'none'.
+          </div>
           <datalist id="datalistOptions2">
             <option selected disabled></option>
               <?php
@@ -273,6 +276,9 @@
         <div class="col-md-6">
           <label for="tournwinner" class="form-label">Predicted winner</label>
           <input id="tournwinner" name="tournwinner" class="form-select" onBlur="return validateDropDown('tournwinner');" list="datalistOptions3" placeholder="Type to search..." required>
+          <div class="invalid-feedback">
+            Tell us who will win FIFA World Cup 2022.
+          </div>
           <datalist id="datalistOptions3">
             <option selected disabled></option>
               <?php
