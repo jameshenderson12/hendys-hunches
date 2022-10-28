@@ -146,7 +146,7 @@
           </div>
           <div class="row row-cols-4 row-cols-sm-6 g-1">
             <div class="col">
-              <input type="radio" class="btn-check" autocomplete="off" id="fk1" name="fkradio" value="<?php echo $fk1; ?>" onClick="chooseImage('fk1');">
+              <input type="radio" class="btn-check" autocomplete="off" id="fk1" name="fkradio" value="<?php echo $fk1; ?>" onClick="chooseImage('fk1');" required>
               <label class="btn btn-outline-light" for="fk1"><img src="<?php echo $fk1; ?>" alt="Football kit description..." class="w-100" /></label>
             </div>
             <div class="col">
@@ -229,7 +229,7 @@
           <label for="fieldofwork" class="form-label">Field of work</label>
           <input id="fieldofwork" name="fieldofwork" class="form-select" onBlur="return validateDropDown('fieldofwork');" list="datalistOptions1" placeholder="Type to search..." required>
           <div class="invalid-feedback">
-            Please provide a field of work.
+            Please tell us your field of work.
           </div>
           <datalist id="datalistOptions1">
             <option selected disabled></option>
@@ -250,10 +250,18 @@
         </div>
 
         <div class="col-md-6">
+          <label for="validationCustom03" class="form-label">Location</label>
+          <input type="text" class="form-control" id="validationCustom03" required>
+          <div class="invalid-feedback">
+            Please tell us your nearest city.
+          </div>
+        </div>
+
+        <div class="col-md-6">
           <label for="faveteam" class="form-label">Favourite team</label>
           <input id="faveteam" name="faveteam" class="form-select" onBlur="return validateDropDown('faveteam');" list="datalistOptions2" placeholder="Type to search..." required>
           <div class="invalid-feedback">
-            Tell us your team or select 'none'.
+            Please tell us your team.
           </div>
           <datalist id="datalistOptions2">
             <option selected disabled></option>
@@ -277,7 +285,7 @@
           <label for="tournwinner" class="form-label">Predicted winner</label>
           <input id="tournwinner" name="tournwinner" class="form-select" onBlur="return validateDropDown('tournwinner');" list="datalistOptions3" placeholder="Type to search..." required>
           <div class="invalid-feedback">
-            Tell us who will win FIFA World Cup 2022.
+            Please tell us who'll win the World Cup.
           </div>
           <datalist id="datalistOptions3">
             <option selected disabled></option>
@@ -295,14 +303,6 @@
                 }
               ?>
           </datalist>
-        </div>
-
-        <div class="col-md-6">
-          <label for="validationCustom03" class="form-label">City</label>
-          <input type="text" class="form-control" id="validationCustom03" required>
-          <div class="invalid-feedback">
-            Please provide a valid city.
-          </div>
         </div>
 
         <div class="col-12">
