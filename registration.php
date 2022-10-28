@@ -124,8 +124,8 @@
             Minimum 6 characters; at least 1 uppercase letter and 1 number.
           </div>
           <div id="pwdMsg">
-            <p>Password must contain the following:</p>
-            <ul type="none">
+            <p class="small">Password must contain at least:</p>
+            <ul type="none" class="small">
             <li id="length" class="invalid">Minimum <b>6 characters</b></li>
             <li id="letter" class="invalid">1 <b>uppercase</b> and 1 <b>lowercase</b> letter</li>
             <li id="number" class="invalid">1 <b>number</b></li>
