@@ -123,14 +123,14 @@
           <div class="invalid-feedback">
             Minimum 6 characters; at least 1 uppercase letter and 1 number.
           </div>
-        </div>
-        <div id="pwdMsg">
-          <p>Password must contain the following:</p>
-          <ul type="none">
-          <li id="length" class="invalid">Minimum <b>6 characters</b></li>
-          <li id="letter" class="invalid">1 <b>uppercase</b> and 1 <b>lowercase</b> letter</li>
-          <li id="number" class="invalid">1 <b>number</b></li>
-          </ul>
+          <div id="pwdMsg">
+            <p>Password must contain the following:</p>
+            <ul type="none">
+            <li id="length" class="invalid">Minimum <b>6 characters</b></li>
+            <li id="letter" class="invalid">1 <b>uppercase</b> and 1 <b>lowercase</b> letter</li>
+            <li id="number" class="invalid">1 <b>number</b></li>
+            </ul>
+          </div>
         </div>
         <div class="col-md-6">
           <label for="pwd2" class="form-label">Confirm Password</label> <i class="bi bi-eye-slash-fill" id="togglePwd2"></i>
@@ -353,6 +353,25 @@
     <footer class="mt-auto">
       <p class="small fw-light">Predictions game based on <a href="https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/qatar2022" class="text-white">FIFA World Cup Qatar 2022™</a><br><?=$title?> <?=$version?> &copy; <?=$year?> <?=$developer?>.</p>
     </footer>
+
+
+    <div class="container">
+      <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+        <div class="col-md-4 d-flex align-items-center">
+          <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
+            <svg class="bi" width="30" height="24"><use xlink:href="#bootstrap"></use></svg>
+          </a>
+          <span class="mb-3 mb-md-0 text-muted">© 2022 Company, Inc</span>
+        </div>
+
+        <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+          <li class="ms-3"><a class="text-muted" href="#"><svg class="bi" width="24" height="24"><use xlink:href="#twitter"></use></svg></a></li>
+          <li class="ms-3"><a class="text-muted" href="#"><svg class="bi" width="24" height="24"><use xlink:href="#instagram"></use></svg></a></li>
+          <li class="ms-3"><a class="text-muted" href="#"><svg class="bi" width="24" height="24"><use xlink:href="#facebook"></use></svg></a></li>
+        </ul>
+      </footer>
+    </div>
+
 		</div>
 
     <script type="text/javascript">
