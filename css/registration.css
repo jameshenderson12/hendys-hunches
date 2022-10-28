@@ -28,17 +28,16 @@ main {
 /* The message box is shown when the user clicks on the password field */
 #pwdMsg {
   display:none;
-  background: #f1f1f1;
-  color: #000;
+  background-color: #AAA !important;
+  color: #000 !important;
   position: relative;
-  /*padding: 2px;*/
+  padding: 10px;
   margin-top: 10px;
   text-align: left;
   text-shadow: none !important;
 }
 #pwdMsg p {
-  /*padding: 10px 35px;*/
-  font-size: 10px;
+  padding: 10px;
 }
 /* Add a green text color and a checkmark when the requirements are right */
 .valid {
