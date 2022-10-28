@@ -31,11 +31,12 @@ session_start();
             <a class="nav-link fw-bold py-1 px-0" href="#" data-bs-toggle="modal" data-bs-target="#terms">Terms</a>
   				</nav>
   			</div>
+        <img src="img/hh-logo-2018.jpg" alt="Qatar 2022 edition of Hendy's Hunches" class="w-75">
   		</header>
 
   		<main class="px-3">
   			<h1>Welcome</h1>
-  			<img src="img/hh-qatar2022-logo.png" alt="Qatar 2022 edition of Hendy's Hunches" class="w-100 mb-3">
+  			<img src="img/qatar-2022-logo.png" alt="Qatar 2022 edition of Hendy's Hunches" class="w-50 mb-3">
 
         <form id="login" role="form" method="post" action="php/login.php" class="">
 
