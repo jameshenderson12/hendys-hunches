@@ -54,10 +54,9 @@
       }
       function validateAvatar() {
     		// Validate the avatar selection
-    		var avs = document.getElementById("avatarSelection");
-    		var avt = document.getElementById("avatars");
+    		var avs = document.getElementById("avatar");
     		if (avs.value == null || avs.value == "") {
-    			$('#avatarMsg').html("Please select a football kit avatar.")
+    			$('#avatarMsg').html("<p>Please select a football kit avatar.</p>")
     			return false;
         }
     	}
@@ -218,13 +217,7 @@
               <input type="radio" class="btn-check" autocomplete="off" id="fk18" name="fkradio" value="<?php echo $fk18; ?>" onClick="chooseImage('fk18');">
               <label class="btn btn-outline-light" for="fk18"><img src="<?php echo $fk18; ?>" alt="Football kit description..." class="w-100" /></label>
             </div>
-            <div id="avatarMsg">
-              <p>Please select a football kit avatar.</p>
-            </div>
-            <!--
-            <div class="valid-feedback">
-              Love the kit choice!
-            </div>-->
+            <div id="avatarMsg"></div>
           </div>
         </div>
         <input type="text" class="form-control" id="avatar" name="avatar" readonly hidden>
