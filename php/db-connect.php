@@ -1,7 +1,7 @@
 <?php
 	// Setup global variables
-	$dbusername = "hh_james_adm";
-	$dbpassword = "Q8CwYWmkG8pCwcM";
+	$dbusername = "hh_stduser_app";
+	$dbpassword = "ddJ1FrlbX?Us";
 	$database = "hh_wc2022_live";
 	$server = "92.205.14.36";
 
