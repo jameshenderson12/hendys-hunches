@@ -224,7 +224,7 @@
 
         <div class="col-md-6">
           <label for="fieldofwork" class="form-label">Field of work</label>
-          <input id="fieldofwork" name="fieldofwork" class="form-select" onBlur="return validateDropDown('fieldofwork');" list="datalistOptions1" placeholder="Type to search..." required>
+          <input id="fieldofwork" name="fieldofwork" class="form-select" list="datalistOptions1" placeholder="Type to search..." required>
           <div class="invalid-feedback">
             Please tell us your field of work.
           </div>
@@ -247,8 +247,8 @@
         </div>
 
         <div class="col-md-6">
-          <label for="location" class="form-label">Rough Location</label>
-          <input id="location" name="location" class="form-select" onBlur="return validateDropDown('location');" list="datalistOptions4" placeholder="Type to search..." required>
+          <label for="location" class="form-label">Rough location</label>
+          <input id="location" name="location" class="form-select" list="datalistOptions4" placeholder="Type to search..." required>
           <div class="invalid-feedback">
             Please tell us your nearest city.
           </div>
@@ -256,7 +256,7 @@
             <option selected disabled></option>
               <?php
                 // Source file for extracting data
-                $file = 'text/select-location-input.txt';
+                $file = 'text/select-ukcities-input.txt';
                 $handle = @fopen($file, 'r');
                 if ($handle) {
                  while (!feof($handle)) {
@@ -272,7 +272,7 @@
 
         <div class="col-md-6">
           <label for="faveteam" class="form-label">Favourite team</label>
-          <input id="faveteam" name="faveteam" class="form-select" onBlur="return validateDropDown('faveteam');" list="datalistOptions2" placeholder="Type to search..." required>
+          <input id="faveteam" name="faveteam" class="form-select" list="datalistOptions2" placeholder="Type to search..." required>
           <div class="invalid-feedback">
             Please tell us your team.
           </div>
@@ -296,7 +296,7 @@
 
         <div class="col-md-6">
           <label for="tournwinner" class="form-label">Predicted winner</label>
-          <input id="tournwinner" name="tournwinner" class="form-select" onBlur="return validateDropDown('tournwinner');" list="datalistOptions3" placeholder="Type to search..." required>
+          <input id="tournwinner" name="tournwinner" class="form-select" list="datalistOptions3" placeholder="Type to search..." required>
           <div class="invalid-feedback">
             Please tell us who'll win the World Cup.
           </div>
