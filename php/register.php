@@ -4,7 +4,7 @@
 	$surname = ucfirst($_POST['surname']);
 	$email = $_POST['email'];
 	$username = $_POST['username'];
-	$password = $_POST['password'];
+	$password = $_POST['pwd1'];
 	$avatar = $_POST['avatar'];
 	$fieldofwork = $_POST['fieldofwork'];
 	$location = $_POST['location'];
