@@ -11,7 +11,7 @@
 	$faveteam = filter_var($_POST['faveteam'], FILTER_SANITIZE_STRING);
 	$tournwinner = filter_var($_POST['tournwinner'], FILTER_SANITIZE_STRING);
 
-	include 'php/db-connect.php';
+	include 'db-connect.php';
 
 	// Initial query to set intial positional values
 	$sql1 = "SELECT count(*) AS totalusers FROM live_user_information";
