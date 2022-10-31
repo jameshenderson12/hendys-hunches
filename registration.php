@@ -86,7 +86,7 @@
 		<main class="px-3">
 			<h1>Registration</h1>
       <!--<p>Register your details below to sign up or return to the <a href="index.php">login page</a> to sign in. All fields are required to be completed.</p>-->
-      <form class="row g-3 needs-validation" method="post" action="php/register.php" id="registrationForm" name="registrationForm" novalidate onsubmit="validateAvatar()"> <!-- onSubmit="return validateFullForm()" border border-white p-2 my-2 border-opacity-25   -->
+      <form class="row g-3 needs-validation" method="post" action="php/register.php" id="registrationForm" name="registrationForm" novalidate> <!--  onsubmit="validateAvatar()" onSubmit="return validateFullForm()" border border-white p-2 my-2 border-opacity-25   -->
         <div class="col-md-6">
           <label for="firstname" class="form-label">First name</label>
           <input type="text" class="form-control" id="firstname" name="firstname" required>
