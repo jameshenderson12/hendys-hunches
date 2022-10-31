@@ -94,40 +94,68 @@ main {
 .modal img {
   text-align: center;
 }
-.spinner {
-	height:60px;
-	width:60px;
-	margin:0px auto;
-	position:relative;
-	-webkit-animation: rotation .6s infinite linear;
-	-moz-animation: rotation .6s infinite linear;
-	-o-animation: rotation .6s infinite linear;
-	animation: rotation .6s infinite linear;
-	border-left:6px solid rgba(0,174,239,.15);
-	border-right:6px solid rgba(0,174,239,.15);
-	border-bottom:6px solid rgba(0,174,239,.15);
-	border-top:6px solid rgba(0,174,239,.8);
-	border-radius:100%;
+
+*{
+	padding: 0;
+	margin: 0;
+	box-sizing: border-box;
 }
-#spacer {
-	padding-bottom: 40px;
+body{
+	display: flex;
+	justify-content: center;
+	overflow: hidden;
 }
-@-webkit-keyframes rotation {
-from {-webkit-transform: rotate(0deg);}
-to {-webkit-transform: rotate(359deg);}
+.spinner{
+  display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+  width: 360px;
+  height: 100vh;
+	position: relative;
 }
-@-moz-keyframes rotation {
-from {-moz-transform: rotate(0deg);}
-to {-moz-transform: rotate(359deg);}
+.balls{
+	display: flex;
+	height: 100%;
+	width: 100%;
+	position: absolute;
 }
-@-o-keyframes rotation {
-from {-o-transform: rotate(0deg);}
-to {-o-transform: rotate(359deg);}
+.ball{
+	position: absolute;
+	top: -50px;
+	width: 50px;
+	height: 50px;
+	background: peru;
+	border-radius: 50%;
+	margin: 0 20px;
+	animation: ball 4s infinite;
 }
-@keyframes rotation {
-from {transform: rotate(0deg);}
-to {transform: rotate(359deg);}
+
+.ball--1{ background-image: linear-gradient(to bottom , #FFE93E, #FF952A);}
+.ball--2{ background-image: linear-gradient(to bottom , #FF009E, #FF0038);}
+.ball--3{ background-image: linear-gradient(to bottom , #00F4FE, #00BDFB);}
+.ball--4{ background-image: linear-gradient(to bottom , #FC00F9, #B500F9);}
+
+.balls-1 .ball--1{ left: 20px;  animation-delay: 0; }
+.balls-1 .ball--2{ left: 100px;  animation-delay: .05s; }
+.balls-1 .ball--3{ left: 180px;  animation-delay: .1s; }
+.balls-1 .ball--4{ left: 260px;  animation-delay: .15s; }
+
+.balls-2 .ball--1{ left: 20px;  animation-delay: 2s; }
+.balls-2 .ball--2{ left: 100px;  animation-delay: 2.05s; }
+.balls-2 .ball--3{ left: 180px;  animation-delay: 2.1s; }
+.balls-2 .ball--4{ left: 260px;  animation-delay: 2.15s; }
+
+@keyframes ball {
+	0%, 25%{ top: -50px; }
+	35%{ top: calc(60% - 50px ); }
+	40%{ top: calc(45% - 50px ); }
+	45%{ top: calc(55% - 50px ); }
+	50%, 70%{ top: calc(50% - 25px); }
+	80%, 100%{ top: 100%; }
 }
+
+
 @media (min-width: 768px) {
   .bd-placeholder-img-lg {
     font-size: 3.5rem;
