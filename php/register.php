@@ -64,18 +64,19 @@
 
 		<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
 
-      <h1>Hendy's Hunches: Registration</h1>
+			<main class="px-3">
+				<h1>Registration</h1>
+      	<h3>You have successfully registered!</h3>
+	      <p>Thank you for signing up to play Hendy's Hunches.</p>
+	      <p>You will now be automatically redirected back to the login page.</p>
+	      <p>If you are not redirected automatically, please <a href='../index.php'>click here</a>.</p>
 
-      <h3>You have successfully registered!</h3>
+				<div class="spinner"></div>
 
-      <p>Thank you for signing up to play Hendy's Hunches.</p>
-      <p>You will now be automatically redirected back to the login page.</p>
-      <p>If you are not redirected automatically, please <a href='../index.php'>click here</a>.</p>
-<!--
-      <div class="spinner"></div>
+      	<div id="spacer"></div>
 
-      <div id="spacer"></div>
--->
+			</main>
+
 			<footer class="mt-auto">
 	      <p class="small fw-light">Predictions game based on <a href="https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/qatar2022" class="text-white">FIFA World Cup Qatar 2022™</a><br><?=$title?> <?=$version?> &copy; <?=$year?> <?=$developer?>.</p>
 	    </footer>
