@@ -3,13 +3,13 @@
 	$firstname = ucfirst($_POST['firstname']);
 	$surname = ucfirst($_POST['surname']);
 	$email = $_POST['email'];
-	$username = filter_var($_POST['username'], FILTER_SANITIZE_STRING);
-	$password = filter_var($_POST['password'], FILTER_SANITIZE_STRING);
+	$username = $_POST['username'];
+	$password = $_POST['password'];
 	$avatar = $_POST['avatar'];
-	$fieldofwork = filter_var($_POST['fieldofwork'], FILTER_SANITIZE_STRING);
-	$location = filter_var($_POST['location'], FILTER_SANITIZE_STRING);
-	$faveteam = filter_var($_POST['faveteam'], FILTER_SANITIZE_STRING);
-	$tournwinner = filter_var($_POST['tournwinner'], FILTER_SANITIZE_STRING);
+	$fieldofwork = $_POST['fieldofwork'];
+	$location = $_POST['location'];
+	$faveteam = $_POST['faveteam'];
+	$tournwinner = $_POST['tournwinner'];
 
 	include 'db-connect.php';
 

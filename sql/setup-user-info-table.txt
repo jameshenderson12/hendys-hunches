@@ -7,6 +7,7 @@ CREATE TABLE live_user_information (
     email CHAR(50) NOT NULL,
 		avatar CHAR(50) NOT NULL,
     fieldofwork CHAR(50) NOT NULL,
+		location CHAR(50) NOT NULL,
     faveteam CHAR(50) NOT NULL,
     tournwinner CHAR(50) NOT NULL,
 		startpos SMALLINT(6) NOT NULL,
