@@ -74,7 +74,7 @@
 				</div>
 			</header>
 
-			<main class="px-3 h-50">
+			<main class="px-3">
 				<h1>Registration</h1>
       	<h3>You have successfully registered!</h3>
 	      <p>Thank you for signing up to play Hendy's Hunches.</p>
