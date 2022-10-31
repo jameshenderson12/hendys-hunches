@@ -227,7 +227,7 @@
             </div>-->
           </div>
         </div>
-        <input type="text" class="form-control" id="avatarSelection" name="avatarSelection" readonly hidden>
+        <input type="text" class="form-control" id="avatar" name="avatar" readonly hidden>
 
         <div class="col-md-6">
           <label for="fieldofwork" class="form-label">Field of work</label>
@@ -254,11 +254,27 @@
         </div>
 
         <div class="col-md-6">
-          <label for="validationCustom03" class="form-label">Location</label>
-          <input type="text" class="form-control" id="validationCustom03" required>
+          <label for="location" class="form-label">Rough Location</label>
+          <input id="location" name="location" class="form-select" onBlur="return validateDropDown('location');" list="datalistOptions4" placeholder="Type to search..." required>
           <div class="invalid-feedback">
             Please tell us your nearest city.
           </div>
+          <datalist id="datalistOptions4">
+            <option selected disabled></option>
+              <?php
+                // Source file for extracting data
+                $file = 'text/select-location-input.txt';
+                $handle = @fopen($file, 'r');
+                if ($handle) {
+                 while (!feof($handle)) {
+                   $line = fgets($handle, 4096);
+                   $item = explode('\n', $line);
+                   echo '<option value="' . $item[0] . '">' . $item[0] . '</option>' . "\n";
+                   }
+                fclose($handle);
+                }
+              ?>
+          </datalist>
         </div>
 
         <div class="col-md-6">
