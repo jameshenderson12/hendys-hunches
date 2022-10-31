@@ -39,7 +39,7 @@ $date_created = "9th Jun 2006";
 $date_format = "d/m/Y (H:i)";
 
 $prelim_groups = 8;
-$prelim_fixtures = XX;
+$prelim_fixtures = 48;
 $prelim_teams = 32;
 $knockout_fixtures = 16;
 
