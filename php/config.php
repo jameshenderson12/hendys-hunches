@@ -23,7 +23,7 @@ ini_set('html_errors', 1);
 $protocol = "https://";
 $acronym = "HH";
 $title = "Hendy's Hunches";
-$version = "v2.1.3";
+$version = "v2.1.4";
 $year = "2022";
 $last_update = "28th Oct 2022";
 $base_url = $protocol."www.hendyshunches.co.uk";
