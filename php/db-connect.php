@@ -1,10 +1,10 @@
 <?php
 	// Setup global variables
-	$dbusername = "jamesc2_3";
-	$dbpassword = "igraFEbO12";
-	$database = "jamesc2_3";
-	$server = "db2";
-	
+	$dbusername = "hh_jacohe12_adm";
+	$dbpassword = "Q8CwYWmkG8pCwcM";
+	$database = "hh_wc2022_live";
+	$server = "92.205.14.36";
+
 	// Create DB connection
 	$con = mysqli_connect($server, $dbusername, $dbpassword, $database);
 
