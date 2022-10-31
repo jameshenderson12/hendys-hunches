@@ -63,7 +63,17 @@
 	<body class="d-flex h-100 text-center text-bg-dark">
 
 		<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-
+			<header class="mb-auto">
+				<div>
+					<h3 class="float-md-start mb-0">Hendy's Hunches</h3>
+					<nav class="nav nav-masthead justify-content-center float-md-end">
+						<a class="nav-link fw-bold py-1 px-0" href="index.php">Login</a>
+						<a class="nav-link fw-bold py-1 px-0" href="forgot-password.php">Reset Password</a>
+						<a class="nav-link fw-bold py-1 px-0" href="#" data-bs-toggle="modal" data-bs-target="#terms">Terms</a>
+					</nav>
+				</div>
+			</header>
+			
 			<main class="px-3">
 				<h1>Registration</h1>
       	<h3>You have successfully registered!</h3>
