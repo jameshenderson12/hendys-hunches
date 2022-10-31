@@ -1,6 +1,6 @@
 <?php
 	// Setup global variables
-	$dbusername = "hh_jacohe12_adm";
+	$dbusername = "hh_james_adm";
 	$dbpassword = "Q8CwYWmkG8pCwcM";
 	$database = "hh_wc2022_live";
 	$server = "92.205.14.36";
