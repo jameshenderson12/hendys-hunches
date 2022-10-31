@@ -89,7 +89,7 @@
       <form class="row g-3 needs-validation" method="post" action="php/register.php" id="registrationForm" name="registrationForm" novalidate onsubmit="validateAvatar()"> <!-- onSubmit="return validateFullForm()" border border-white p-2 my-2 border-opacity-25   -->
         <div class="col-md-6">
           <label for="firstname" class="form-label">First name</label>
-          <input type="text" class="form-control" id="firstname" required>
+          <input type="text" class="form-control" id="firstname" name="firstname" required>
           <!--
           <div class="valid-feedback">
             Looks good!
@@ -100,21 +100,21 @@
         </div>
         <div class="col-md-6">
           <label for="surname" class="form-label">Last name</label>
-          <input type="text" class="form-control" id="surname" required>
+          <input type="text" class="form-control" id="surname" name="surname" required>
           <div class="invalid-feedback">
             Please provide your last name.
           </div>
         </div>
         <div class="col-md-6">
           <label for="email" class="form-label">Email</label>
-          <input type="email" class="form-control" id="email" required>
+          <input type="email" class="form-control" id="email" name="email" required>
           <div class="invalid-feedback">
             Please provide a valid email address.
           </div>
         </div>
         <div class="col-md-6">
           <label for="username" class="form-label">Username</label>
-          <input type="text" class="form-control" id="username" required>
+          <input type="text" class="form-control" id="username" name="username" required>
           <span class="un-msg"></span>
           <div class="invalid-feedback">
             Please provide a username.
