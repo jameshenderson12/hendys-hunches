@@ -392,7 +392,7 @@
 
   		function chooseImage(imageId) {
   			var x = document.getElementById(imageId).value;
-  			document.getElementById("avatarSelection").value = x;
+  			document.getElementById("avatar").value = x;
   		}
 
       const togglePwd1 = document.querySelector('#togglePwd1');
