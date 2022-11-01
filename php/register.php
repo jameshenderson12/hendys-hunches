@@ -117,9 +117,7 @@
 					</svg>
 				</div>
 			-->
-				<div class="box">
-					<div class="loader2"></div>					
-				</div>
+				<div class="loader2"></div>
 
 			</main>
 
