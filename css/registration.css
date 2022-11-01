@@ -100,21 +100,12 @@ main {
   text-align: center;
 }
 
-body{
-  background: #AAA;
-  text-align: center;
-  font-family: 'Comfortaa', cursive;
-}
 svg{
   width: 100px;
   height: 100px;
   margin: 20px;
   display:inline-block;
 }
-
-
-
-
 
 @media (min-width: 768px) {
   .bd-placeholder-img-lg {
