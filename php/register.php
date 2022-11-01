@@ -80,19 +80,20 @@
 	      <p>Thank you for signing up to play Hendy's Hunches.</p>
 	      <p>You will now be automatically redirected back to the login page.</p>
 	      <p>If you are not redirected automatically, please <a href='../index.php'>click here</a>.</p>
-
-		    <div class="balls balls-1">
-				<div class="ball ball--1"></div>
-		        <div class="ball ball--2"></div>
-		        <div class="ball ball--3"></div>
-		        <div class="ball ball--4"></div>
-		    </div>
-		    <div class="balls balls-2">
-				<div class="ball ball--1"></div>
-		        <div class="ball ball--2"></div>
-		        <div class="ball ball--3"></div>
-		        <div class="ball ball--4"></div>
-		    </div>
+				<div class="justify-content-center">
+			    <div class="balls balls-1">
+					<div class="ball ball--1"></div>
+			        <div class="ball ball--2"></div>
+			        <div class="ball ball--3"></div>
+			        <div class="ball ball--4"></div>
+			    </div>
+			    <div class="balls balls-2">
+					<div class="ball ball--1"></div>
+			        <div class="ball ball--2"></div>
+			        <div class="ball ball--3"></div>
+			        <div class="ball ball--4"></div>
+			    </div>
+				</div>
 
 
 			</main>
