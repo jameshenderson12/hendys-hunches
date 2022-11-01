@@ -97,7 +97,9 @@ main {
 .modal img {
   text-align: center;
 }
-.loader {
+
+/* -------------- loader1 -------------- */
+.loader1 {
   display: flex;
   justify-content: center;
   width: 100%;
