@@ -1,4 +1,4 @@
-@import url(https://fonts.googleapis.com/css?family=Comfortaa:400,700,300);
+/*@import url(https://fonts.googleapis.com/css?family=Comfortaa:400,700,300);*/
 /* Custom default button */
 .btn-secondary,
 .btn-secondary:hover,
@@ -13,7 +13,7 @@ body {
   display: flex;
 	justify-content: center;
 	overflow: hidden;
-  font-family: 'Comfortaa', cursive;
+  /*font-family: 'Comfortaa', cursive;*/
 }
 main {
   background: rgba(10, 20, 50, 0.5);
