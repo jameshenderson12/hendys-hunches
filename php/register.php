@@ -48,6 +48,7 @@
 <html lang="en" class="h-100">
   <head>
     <meta charset="utf-8">
+		<meta http-equiv="refresh" content="3; url=../index.php"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Hendy's Hunches: Predictions Game">
     <meta name="author" content="James Henderson">
@@ -85,7 +86,7 @@
 				<!-- Loader 5 -->
 				<div class="loader text-center">
 					<svg version="1.1" id="L5" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-					  viewBox="0 0 100 100" enable-background="new 0 0 0 0" xml:space="preserve">
+					  viewBox="0 0 60 60" enable-background="new 0 0 0 0" xml:space="preserve">
 					  <circle fill="#fff" stroke="none" cx="6" cy="50" r="6">
 					    <animateTransform
 					       attributeName="transform"
