@@ -97,7 +97,10 @@ main {
 .modal img {
   text-align: center;
 }
-
+.loader {
+  text-align: center !important;
+  align-items: center !important;
+}
 svg{
   margin: 0px auto !important;
   display:inline-block;
