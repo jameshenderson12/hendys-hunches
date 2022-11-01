@@ -132,8 +132,8 @@ svg{
 	opacity: 1;
 	-webkit-transform-origin:  100% 0%;
 			transform-origin:  100% 0% ;
-	-webkit-animation: loader2 10s ease-in-out infinite;
-			animation: loader2 10s ease-in-out infinite;
+	-webkit-animation: loader2 5s ease-in-out infinite;
+			animation: loader2 5s ease-in-out infinite;
 }
 .loader2:after{
 	content: "LOADING ...";
