@@ -111,7 +111,7 @@ svg{
 
 /* -------------- loader2 -------------- */
 .loader2 {
-  margin: 40px;
+  margin: 0px 40px;
 	position: relative;
 	width: 150px;
 	height: 20px;
