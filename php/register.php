@@ -74,13 +74,16 @@
 				</div>
 			</header>
 
-			<main class="px-3 spinner">
+			<main class="px-3">
+
+				<div class="spinner justify-content-center">
+
 				<h1>Registration</h1>
       	<h3>You have successfully registered!</h3>
 	      <p>Thank you for signing up to play Hendy's Hunches.</p>
 	      <p>You will now be automatically redirected back to the login page.</p>
 	      <p>If you are not redirected automatically, please <a href='../index.php'>click here</a>.</p>
-				<div class="justify-content-center">
+
 			    <div class="balls balls-1">
 					<div class="ball ball--1"></div>
 			        <div class="ball ball--2"></div>
