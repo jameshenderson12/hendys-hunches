@@ -1,3 +1,4 @@
+@import url(https://fonts.googleapis.com/css?family=Comfortaa:400,700,300);
 /* Custom default button */
 .btn-secondary,
 .btn-secondary:hover,
@@ -12,6 +13,7 @@ body {
   display: flex;
 	justify-content: center;
 	overflow: hidden;
+  font-family: 'Comfortaa', cursive;
 }
 main {
   background: rgba(10, 20, 50, 0.5);
@@ -98,129 +100,17 @@ main {
   text-align: center;
 }
 
-@bgcolor:#2FAC9B;
-@border-radius: 0px;
-@span-w-h: 15px;
-
-*{margin:0; padding: 0; box-sizing: border-box;}
-body,html{
-	margin: 10px auto;
-	text-align: center;
-	background: #1c1c1d;
+body{
+  background: #AAA;
+  text-align: center;
+  font-family: 'Comfortaa', cursive;
 }
-*{ color:#666;}
-span {
-	display: inline-block;
-	height: @span-w-h;
-	width:@span-w-h;
-	background: @bgcolor;
-	border-radius: @border-radius;
- }
-.border-radius{border-radius: 500px;}
-
-*[id*="loader-"]{ margin-bottom: 30px;}
-//loop
-.generate-span1(5);
-.generate-span1(@n, @i: 1) when (@i =< @n) {
-	#loader-1 span:nth-child(@{i}) {
-	.border-radius();
-	animation:scale   1s (@i * 0.1s) infinite cubic-bezier(0.600, -0.280, 0.735, 0.045);
-  }
-  .generate-span1(@n, (@i + 1));
+svg{
+  width: 100px;
+  height: 100px;
+  margin: 20px;
+  display:inline-block;
 }
-.generate-span2(5);
-.generate-span2(@n, @i: 1) when (@i =< @n) {
-	#loader-2 span:nth-child(@{i}){
-		animation:rotateY   4s (@i * 0.3s) infinite cubic-bezier(0.650, 0.030, 0.735, 0.045);
-  }
-  .generate-span2(@n, (@i + 1));
-}
-.generate-span3(5);
-.generate-span3(@n, @i: 1) when (@i =< @n) {
-	#loader-3 span:nth-child(@{i}){
-		animation:rotateX   2s (@i * 0.1s) infinite cubic-bezier(0.650, 0.030, 0.735, 0.045);
-
-  }
-  .generate-span3(@n, (@i + 1));
-}
-.generate-span4(5);
-.generate-span4(@n, @i: 1) when (@i =< @n) {
-	#loader-4 span:nth-child(@{i}){
-		.border-radius();
-		animation:push 1s (@i * 0.05s) infinite cubic-bezier(0.005, 0.560, 0.580, 1.590);
-
-  }
-  .generate-span4(@n, (@i + 1));
-}
-.generate-span5(10);
-.generate-span5(@n, @i: 1) when (@i =< @n) {
-	#loader-5 span:nth-child(@{i}){
-		.border-radius();
-		transform-origin:50% 0%;
-		animation:rotateZ 1s (@i * 0.05s) infinite cubic-bezier(0.005, 0.560, 0.580, 1.590);
-		width: (@span-w-h/6);
-		height: (@span-w-h*2);
-		margin:0 (@span-w-h/6);
-  }
-  .generate-span5(@n, (@i + 1));
-}
-.generate-span6(5);
-.generate-span6(@n, @i: 1) when (@i =< @n) {
-	#loader-6 span:nth-child(@{i}){
-		transform-origin:0 50%;
-		transform-perspective:(100px);
-		animation:cuve 1s (@i * 0.5s) infinite ;
-  }
-  .generate-span6(@n, (@i + 1));
-}
-.generate-span7(20);
-.generate-span7(@n, @i: 1) when (@i =< @n) {
-	#loader-7 span:nth-child(@{i}){
-		animation:temp 1s (@i * 0.05s) infinite cubic-bezier(0.005, 0.560, 0.580, 1.590);
-		width: (@span-w-h/2);
-		height: (@span-w-h/2);
-		margin:0 2px;
-  }
-  .generate-span7(@n, (@i + 1));
-}
-@keyframes scale{
-	0%{ transform:scale(0.0);}
-	25%{ transform:scale(0.9,0.9); background:lighten(@bgcolor, 30%) }
-	50%{ transform:scale(1,1); margin:0 3px; background:@bgcolor; }
-	100%{ transform:scale(0.0);}
-}
-@keyframes rotateY{
-	0%{ transform:rotateY(0deg)}
-	50%{ transform:rotateY(90deg); background:lighten(@bgcolor, 30%);  }
-	100%{ transform:rotateY(0deg)}
-}
-@keyframes rotateX{
-	0%{ transform:rotateX(0deg)}
-	50%{ transform:rotateX(90deg) scale(0.5,0.5); background:lighten(@bgcolor, 30%); }
-	100%{ transform:rotateX(0deg)}
-}
-@keyframes push{
-	0%{ transform:translateX(0px) scale(0.9,0.6)}
-	50%{ transform:translateY(-20px) scale(0.7,1.1); background:lighten(@bgcolor, 20%);  }
-	100%{ transform:translateX(0px) scale(0.9,0.6)}
-}
-@keyframes rotateZ{
-	0%{transform:rotateZ(-20deg)}
-	50%{ transform:rotateZ(20deg) scaleY(1.2);   background:lighten(@bgcolor, 20%);  }
-	100%{transform:rotateZ(-20deg)}
-}
-@keyframes cuve{
-	0%		{ transform:rotateY(-90deg) perspective(50px); background:darken(@bgcolor, 20%);}
-	50%		{ transform:rotateY(0deg); background:lighten(@bgcolor, 20%);  }
-	100%	{ transform:rotateY(90deg) perspective(50px); transform-origin:100% 50%; background:darken(@bgcolor, 20%);}
-}
-@keyframes temp{
-	0%		{}
-	50%		{ transform: scale(1,5);  background:darken(@bgcolor, 20%);}
-	100%	{}
-}
-
-
 
 
 
