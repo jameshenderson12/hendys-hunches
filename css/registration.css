@@ -108,6 +108,7 @@ main {
   height: 100px;
 }
 svg{
+  margin: 20px 0px;  
   display:inline-block;
 }
 
