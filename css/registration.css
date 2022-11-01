@@ -102,8 +102,7 @@ main {
 	justify-content: center;
 	align-items: center;
 	flex-direction: column;
-  width: 360px;
-  height: 100vh;
+  height: 40vh;
 	position: relative;
   overflow: hidden;
 }
