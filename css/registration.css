@@ -14,7 +14,6 @@ body {
   display: flex;
 	justify-content: center;
 	overflow: hidden;
-  font-family: 'Lato', 'Helvetica Neue';
 }
 main {
   background: rgba(10, 20, 50, 0.5);

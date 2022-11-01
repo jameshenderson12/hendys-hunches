@@ -48,7 +48,7 @@
 <html lang="en" class="h-100">
   <head>
     <meta charset="utf-8">
-		<!--<meta http-equiv="refresh" content="3; url=../index.php"/>-->
+		<meta http-equiv="refresh" content="3; url=../index.php"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Hendy's Hunches: Predictions Game">
     <meta name="author" content="James Henderson">
@@ -117,7 +117,9 @@
 					</svg>
 				</div>
 			-->
-				<div class="loader2"></div>
+				<div class="box">
+					<div class="loader2"></div>					
+				</div>
 
 			</main>
 
