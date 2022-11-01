@@ -84,7 +84,7 @@
 	      <p>If you are not redirected automatically, please <a href='../index.php'>click here</a>.</p>
 
 				<!-- Loader 5 -->
-				<div class="loader text-center">
+				<div class="loader1 text-center">
 					<svg version="1.1" id="L5" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 					  viewBox="0 0 60 60" enable-background="new 0 0 0 0" xml:space="preserve">
 					  <circle fill="#fff" stroke="none" cx="6" cy="50" r="6">
@@ -118,8 +118,8 @@
 				</div>
 
 				<div class="box">
-					<div class="loader4"></div>
-					<p>loader 4</p>
+					<div class="loader2"></div>
+					<p>loader 2</p>
 				</div>
 
 			</main>
