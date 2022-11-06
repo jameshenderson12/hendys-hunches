@@ -216,7 +216,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
         <td class="date-venue">Match 1<br>Group A</td>
 	    <td class="left-team">
         <img src="<?php echo $A1img; ?>" alt="<?php echo $A1; ?>" title="<?php echo $A1; ?>"><label for="score1_p"><?php abbrTeam($A1); ?></label></td>
-      	<td><input type="text" id="score1_p" name="score1_p" class="left-score score-field form-control input-sm" onBlur="return validateScore('score1_p');" value="<?php retrieveScorePrediction(1); ?>" /></td>
+      	<td><input type="text" id="score1_p" name="score1_p" class="left-score score-field form-control input-sm" /></td>
       	<td align="center">v</td>
       	<td><input type="text" id="score2_p" name="score2_p" class="right-score score-field form-control input-sm" onBlur="return validateScore('score2_p');" value="<?php retrieveScorePrediction(2); ?>" /></td>
       	<td class="right-team">
