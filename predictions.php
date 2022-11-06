@@ -91,7 +91,11 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 
 		            <li class="nav-item dropdown">
 		              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-		                <img src="img/scores.jpg" alt="Profile icon" class="img-fluid" width="50px;">
+		                <img src="img/scores.jpg" alt="Profile icon" class="img-fluid rounded" width="20px;">
+										<?php
+											// Echo session variables that were set on previous page
+											echo " . $_SESSION['firstname'] . " " . $_SESSION['surname'] . ";
+										?>
 		              </a>
 		              <ul class="dropdown-menu">
 		                <li><a class="dropdown-item" href="#">Action</a></li>
