@@ -62,6 +62,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark" aria-label="Offcanvas navbar large">
 		    <div class="container">
+					<img src="img/hh-favicon-2018.jpg" class="img-responsive" style="margin: 0px 20px 0px; height:50px">
 		      <a class="navbar-brand" href="#">Hendy's Hunches</a>
 		      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar2" aria-controls="offcanvasNavbar2">
 		        <span class="navbar-toggler-icon"></span>
@@ -113,73 +114,9 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		      </div>
 		    </div>
 		  </nav>
-			<?php
-				// Echo session variables that were set on previous page
-				echo "<span id='login'><span style='color: white'><p>Logged in as: <span class='bi bi-user'></span>&nbsp;" . $_SESSION["firstname"] . " " . $_SESSION["surname"] . " (<a href='php/logout.php'>Logout</a>)</p></span></span>";
-			 ?>
 
-    <!-- Navigation menu for lg, md display -->
-    <nav class="navbar navbar-inverse navbar-fixed-top col-md-12 hidden-xs">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <!--<a class="navbar-brand" href="#">Project name</a>-->
-          <img src="img/hh-favicon-2018.jpg" class="img-responsive" style="margin: 0px 20px 0px; height:50px">
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav navbar-left" style="margin-left: 15px;">
-            <li><a href="dashboard.php">Home</a></li>
-            <li class="active"><a href="predictions.php">My Predictions</a></li>
-            <li><a href="rankings.php">Rankings</a></li>
-            <li><a href="howitworks.php">How It Works</a></li>
-			<li><a href="about.php">About</a></li>
-          </ul>
-          <!--
-          <form class="navbar-form navbar-right">
-            <input type="text" class="form-control" placeholder="Search...">
-          </form>-->
-        </div>
-        <div class="col-md-12">
-           <?php
-			// Echo session variables that were set on previous page
-			echo "<span id='login'><span style='color: white'><p>Logged in as: <span class='glyphicon glyphicon-user'></span>&nbsp;<span style='font-weight:bold'>" . $_SESSION["firstname"] . " " . $_SESSION["surname"] . "</span> ( <a href='php/logout.php'>Logout</a> )</p></span></span>";
-          ?>
-        </div>
-      </div>
-    </nav>
 
-    <!-- Navigation menu for xs display -->
-    <nav class="navbar navbar-inverse navbar-fixed-top col-md-12 visible-xs hidden-lg hidden-md">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar2" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <!--<a class="navbar-brand" href="#">Project name</a>-->
-          <img src="img/hh-favicon-2018.jpg" class="img-responsive" style="margin: 0px 20px 0px; height:50px">
-        </div>
-        <div id="navbar2" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav navbar-left">
-            <li><a href="dashboard.php"><span class="glyphicon glyphicon-home" aria-hidden="true"></span>&nbsp;&nbsp;Home</a></li>
-            <li class="active"><a href="predictions.php"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>&nbsp;&nbsp;My Predictions</a></li>
-            <li><a href="rankings.php"><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>&nbsp;&nbsp;Rankings</a></li>
-            <li><a href="howitworks.php"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>&nbsp;&nbsp;How It Works</a></li>
-			<li><a href="about.php"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>&nbsp;&nbsp;About</a></li>
-            <li><a href="php/logout.php"><span class='glyphicon glyphicon-user' aria-hidden="true"></span>&nbsp;&nbsp;Logout</a></li>
-          </ul>
-        </div>
-      </div>
-    </nav>
-
-	<div id="main-section" class="col-md-10 col-md-offset-1">
+	<main>
       <h1 class="page-header">My Predictions</h1>
       <!--<p class="lead">Can you correctly predict your way to victory?</p>-->
       <p>To make your predictions, enter a score value into each box below. Remember to hit the 'Update my predictions' button to save your scores.</p>
