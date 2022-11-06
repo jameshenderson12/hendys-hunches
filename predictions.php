@@ -214,14 +214,14 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
         </tr>-->
       	<tr id="match1">
         <td class="date-venue">Match 1<br>Group A</td>
-	    <td class="left-team">
-        <img src="<?php echo $A1img; ?>" alt="<?php echo $A1; ?>" title="<?php echo $A1; ?>"></td>
+	    	<td class="left-team">
+        <img src="<?php echo $A1img; ?>" alt="<?php echo $A1; ?>" title="<?php echo $A1; ?>"><?php echo $A1; ?></td>
       	<td><input type="text" id="score1_p" name="score1_p" class="left-score score-field form-control input-sm" /></td>
       	<td align="center">v</td>
       	<td><input type="text" id="score2_p" name="score2_p" class="right-score score-field form-control input-sm" /></td>
       	<td class="right-team">
-        <img src="<?php echo $A2img; ?>" alt="<?php echo $A2; ?>" title="<?php echo $A2; ?>"></td>
-      	<td class="date-venue"><?php echo "$_4pm, $_14Jun, $venue1"; ?></td>
+        <img src="<?php echo $A2img; ?>" alt="<?php echo $A2; ?>" title="<?php echo $A2; ?>"><?php echo $A2; ?></td>
+      	<td class="date-venue"><?php echo "$_1pm, $_20Nov, $venue1"; ?></td>
       	</tr>
 
       	<tr>
