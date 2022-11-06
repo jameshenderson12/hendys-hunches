@@ -88,7 +88,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 								<li class="nav-item">
 									<a class="nav-link" href="#">About</a>
 								</li>
-								<!--
+
 		            <li class="nav-item dropdown">
 		              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 		                Dropdown
@@ -102,14 +102,12 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		                <li><a class="dropdown-item" href="#">Something else here</a></li>
 		              </ul>
 		            </li>
-							-->
+							
 		          </ul>
-								<div class="col-md-12">
 								<?php
 						 			// Echo session variables that were set on previous page
-						 			echo "<span id='login'><span style='color: white'><p>Logged in as: <span class='bi bi-user'></span>&nbsp;" . $_SESSION["firstname"] . " " . $_SESSION["surname"] . " ( <a href='php/logout.php'>Logout</a> )</p></span></span>";
+						 			echo "<span id='login'><span style='color: white'><p>Logged in as: <span class='bi bi-user'></span>&nbsp;" . $_SESSION["firstname"] . " " . $_SESSION["surname"] . " (<a href='php/logout.php'>Logout</a>)</p></span></span>";
 						     ?>
-							 </div>
 		        </div>
 		      </div>
 		    </div>
