@@ -104,15 +104,15 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		            </li>
 
 		          </ul>
-								<?php
-						 			// Echo session variables that were set on previous page
-						 			echo "<span id='login'><span style='color: white'><p>Logged in as: <span class='bi bi-user'></span>&nbsp;" . $_SESSION["firstname"] . " " . $_SESSION["surname"] . " (<a href='php/logout.php'>Logout</a>)</p></span></span>";
-						     ?>
+
 		        </div>
 		      </div>
 		    </div>
 		  </nav>
-
+			<?php
+				// Echo session variables that were set on previous page
+				echo "<span id='login'><span style='color: white'><p>Logged in as: <span class='bi bi-user'></span>&nbsp;" . $_SESSION["firstname"] . " " . $_SESSION["surname"] . " (<a href='php/logout.php'>Logout</a>)</p></span></span>";
+			 ?>
 
     <!-- Navigation menu for lg, md display -->
     <nav class="navbar navbar-inverse navbar-fixed-top col-md-12 hidden-xs">
