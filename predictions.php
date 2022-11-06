@@ -21,74 +21,9 @@ $sec = "3600";
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.1"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
-    <style>
-		/*
-	label {
-		font-size: 1em;
-	}
-	.left-score {
-		float: left;
-		width: 40px;
-		text-align: center;
-	}
-	.right-score {
-		float: right;
-		width: 40px;
-		text-align: center;
-	}
-	.left-team {
-		text-align: left;
-	}
-	.left-team img {
-		float: left;
-		margin-right: 10px;
-	}
-	.table .right-team {
-		text-align: right;
-	}
-	.right-team img {
-		float: right;
-		margin-left: 10px;
-	}
-	.date-venue {
-		margin-left: 50px;
-		font-size: 9px;
-	}
-
-	/* Code to remove knockout fixture inputs...
-	tr:nth-child(37) input, tr:nth-child(38) input, tr:nth-child(39) input, tr:nth-child(40) input, tr:nth-child(41) input, tr:nth-child(42) input, tr:nth-child(43) input, tr:nth-child(44) input, tr:nth-child(45) input, tr:nth-child(46) input, tr:nth-child(47) input, tr:nth-child(48) input, tr:nth-child(49) input, tr:nth-child(50) input, tr:nth-child(51) input { display: none; }
-	*/
-
-	/*tr:nth-child(51) input { display: none; }	*/
-/*
-	@media only screen and (max-width: 500px) {
-		#tagxedo { display: none; }
-		table td:nth-child(1), table td:nth-child(7),
-		table th:nth-child(1), table th:nth-child(7) { display: none; }
-		.starter-template { padding: 0px; }
-		#top-tip { display: none; }
-	}
-	@media only screen and (max-width: 320px) {
-		#top-tip { display: none; }
-		.left-team img {
-			margin-right: 25px;
-		}
-		.right-team img {
-			margin-left: 25px;
-		}
-	}*/
-	</style>
-
-    <!-- Just for debugging purposes. Don't actually copy this line! -->
-    <!--[if lt IE 9]><script src="../../docs-assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
-    <![endif]-->
 
     <script type="text/javascript">
+		/*
 		function validateFullForm() {
 			// Validate the match score inputs
 			var x = document.getElementsByTagName("input");
@@ -121,7 +56,7 @@ $sec = "3600";
 			for (var i = 0; i < x.length; i++) {
 				x.elements[i].style.border="1px solid #CCC";
 			}
-		}
+		}*/
 	</script>
 
   </head>
