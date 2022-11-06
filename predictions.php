@@ -4,8 +4,6 @@ session_start();
 if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	header ("Location: index.php");
 }
-$page = $_SERVER['PHP_SELF'];
-$sec = "3600";
 ?>
 <!DOCTYPE html>
 <html lang="en" class="h-100">
