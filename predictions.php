@@ -91,7 +91,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 
 		            <li class="nav-item dropdown">
 		              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-		                <img src="img/logo2018.jpg" alt="Profile icon">
+		                <img src="img/scores.jpg" alt="Profile icon" class="img-fluid" width="50px;">
 		              </a>
 		              <ul class="dropdown-menu">
 		                <li><a class="dropdown-item" href="#">Action</a></li>
@@ -99,7 +99,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		                <li>
 		                  <hr class="dropdown-divider">
 		                </li>
-		                <li><a class="dropdown-item" href="#">Something else here</a></li>
+		                <li><a class="dropdown-item" href="php/logout.php">Logout</a></li>
 		              </ul>
 		            </li>
 
