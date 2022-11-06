@@ -60,6 +60,60 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 
   <body>
 
+		<nav class="navbar navbar-expand-lg navbar-dark bg-dark" aria-label="Offcanvas navbar large">
+		    <div class="container">
+		      <a class="navbar-brand" href="#">Hendy's Hunches</a>
+		      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar2" aria-controls="offcanvasNavbar2">
+		        <span class="navbar-toggler-icon"></span>
+		      </button>
+		      <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasNavbar2" aria-labelledby="offcanvasNavbar2Label">
+		        <div class="offcanvas-header">
+		          <h5 class="offcanvas-title" id="offcanvasNavbar2Label">Offcanvas</h5>
+		          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+		        </div>
+		        <div class="offcanvas-body">
+		          <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+		            <li class="nav-item">
+		              <a class="nav-link active" aria-current="page" href="#">Home</a>
+		            </li>
+		            <li class="nav-item">
+		              <a class="nav-link" href="#">My Predictions</a>
+		            </li>
+								<li class="nav-item">
+		              <a class="nav-link" href="#">Rankings</a>
+		            </li>
+								<li class="nav-item">
+		              <a class="nav-link" href="#">How It Works</a>
+		            </li>
+								<li class="nav-item">
+									<a class="nav-link" href="#">About</a>
+								</li>
+								<!--
+		            <li class="nav-item dropdown">
+		              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+		                Dropdown
+		              </a>
+		              <ul class="dropdown-menu">
+		                <li><a class="dropdown-item" href="#">Action</a></li>
+		                <li><a class="dropdown-item" href="#">Another action</a></li>
+		                <li>
+		                  <hr class="dropdown-divider">
+		                </li>
+		                <li><a class="dropdown-item" href="#">Something else here</a></li>
+		              </ul>
+		            </li>
+							-->
+		          </ul>
+								<?php
+						 			// Echo session variables that were set on previous page
+						 			echo "<span id='login'><span style='color: white'><p>Logged in as: <span class='bi bi-user'></span>&nbsp;" . $_SESSION["firstname"] . " " . $_SESSION["surname"] . " ( <a href='php/logout.php'>Logout</a> )</p></span></span>";
+						     ?>
+		        </div>
+		      </div>
+		    </div>
+		  </nav>
+
+
     <!-- Navigation menu for lg, md display -->
     <nav class="navbar navbar-inverse navbar-fixed-top col-md-12 hidden-xs">
       <div class="container-fluid">
