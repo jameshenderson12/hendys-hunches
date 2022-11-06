@@ -94,7 +94,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		                <img src="img/scores.jpg" alt="Profile icon" class="img-fluid rounded" width="20px;">
 										<?php
 											// Echo session variables that were set on previous page
-											echo " . $_SESSION['firstname'] . " " . $_SESSION['surname'] . ";
+											echo "$_SESSION['firstname'] $_SESSION['surname']";
 										?>
 		              </a>
 		              <ul class="dropdown-menu">
