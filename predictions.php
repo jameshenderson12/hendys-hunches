@@ -228,11 +228,11 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 				<tr id="match1">
         <td>1</td>
 	    	<td><?php echo $A1; ?></td>
-        <td><img src="<?php echo $A1img; ?>" alt="<?php echo $A1; ?>" title="<?php echo $A1; ?>"><?php echo $A1; ?></td>
+        <td><img src="<?php echo $A1img; ?>" alt="<?php echo $A1; ?>" title="<?php echo $A1; ?>"></td>
       	<td><input type="text" id="score1_p" name="score1_p" class="form-control" /></td>
       	<td align="center">v</td>
       	<td><input type="text" id="score2_p" name="score2_p" class="form-control" /></td>
-				<td><img src="<?php echo $A2img; ?>" alt="<?php echo $A2; ?>" title="<?php echo $A2; ?>"><?php echo $A2; ?></td>
+				<td><img src="<?php echo $A2img; ?>" alt="<?php echo $A2; ?>" title="<?php echo $A2; ?>"></td>
       	<td><?php echo $A2; ?></td>
       	<td class="date-venue"><?php echo "$_16, $_20Nov, $venue1"; ?></td>
       	</tr>
