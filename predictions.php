@@ -58,8 +58,9 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	</script>
 	<style>
 	body {
-		font-family: "Trirong" !important;
+		font-family: "Trirong";
 	}
+	</style>
   </head>
 
   <body>
