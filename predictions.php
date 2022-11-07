@@ -61,7 +61,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
   <body>
 
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark" aria-label="Offcanvas navbar large">
-		    <div class="container-fluid">
+		    <div class="container">
 					<img src="img/hh-favicon-2018.jpg" class="img-responsive" style="margin: 0px 20px 0px; height:50px">
 		      <a class="navbar-brand" href="#">Hendy's Hunches</a>
 		      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar2" aria-controls="offcanvasNavbar2">
