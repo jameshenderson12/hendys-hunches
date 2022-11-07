@@ -93,14 +93,14 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 
 		            <li class="nav-item dropdown">
 		              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-		                <img src="img/scores.jpg" alt="Profile icon" class="img-fluid rounded mr-2" width="20px;">
+		                <img src="img/scores.jpg" alt="Profile icon" class="img-fluid rounded mx-1" width="25px;">
 										<?php
 											// Echo session variables that were set on previous page
 											echo $_SESSION["firstname"];
 										?>
 		              </a>
 		              <ul class="dropdown-menu">
-		                <li><a class="dropdown-item" href="#">Action</a></li>
+		                <li><a class="dropdown-item" href="change-password.php">Change Password</a></li>
 		                <li><a class="dropdown-item" href="#">Another action</a></li>
 		                <li>
 		                  <hr class="dropdown-divider">
@@ -117,8 +117,8 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		  </nav>
 
 
-	<main>
-      <h1 class="page-header">My Predictions</h1>
+	<main class="px-3">
+      <h1>My Predictions</h1>
       <!--<p class="lead">Can you correctly predict your way to victory?</p>-->
       <p>To make your predictions, enter a score value into each box below. Remember to hit the 'Update my predictions' button to save your scores.</p>
 
