@@ -201,7 +201,6 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		</div>
 
 	  	<table class="table table-striped">
-        <!--
         <tr>
         <th width="10%">Info</th>
         <th width="18%">Home</th>
@@ -211,7 +210,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
         <th width="18%">Away</th>
         <th colspan="5" width="60%"></th>
         <th width="30%">KO &amp; Venue</th>
-        </tr>-->
+        </tr>
       	<tr id="match1">
         <td class="date-venue">Match 1<br>Group A</td>
 	    	<td class="left-team">
