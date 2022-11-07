@@ -230,7 +230,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	    	<td><?php echo $A1; ?></td>
         <td><img src="<?php echo $A1img; ?>" alt="<?php echo $A1; ?>" title="<?php echo $A1; ?>"></td>
       	<td><input type="text" id="score1_p" name="score1_p" class="form-control" /></td>
-      	<td align="center">v<br>3</td>
+      	<td align="center">v<br><span class="badge bg-secondary">3</span></td>
       	<td><input type="text" id="score2_p" name="score2_p" class="form-control" /></td>
 				<td><img src="<?php echo $A2img; ?>" alt="<?php echo $A2; ?>" title="<?php echo $A2; ?>"></td>
       	<td><?php echo $A2; ?></td>
