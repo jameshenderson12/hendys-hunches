@@ -200,7 +200,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 
 		</div>
 
-	  	<table class="table table-striped">
+	  	<table class="table table-sm">
         <tr>
         <th width="10%">Info</th>
         <th width="18%">Home</th>
