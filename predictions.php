@@ -129,7 +129,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		  <li>Predictions for knockout fixtures are based on result after 90 minutes only</li>
       </ul>
       <a name="matches"></a><!--anchor point for filters-->
-      <form id="predictionForm" name="predictionForm" class="form-horizontal" action="submit.php" method="POST" onSubmit="#">
+      <form id="predictionForm" name="predictionForm" class="form-horizontal" action="submit.php" method="POST">
       <div class="row">
         <div class="col-xs-12">
 
