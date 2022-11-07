@@ -191,7 +191,6 @@ $Fi2img = "flag-icons/24/.png";
 
 // Setup variables for kick-off times
 // AST (UTC+3)
-
 $_10 = "10:00";
 $_13 = "13:00";
 $_15 = "15:00";
