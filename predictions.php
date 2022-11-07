@@ -94,7 +94,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 
 		            <li class="nav-item dropdown">
 		              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-		                <img src="img/scores.jpg" alt="Profile icon" class="img-fluid rounded mx-1" width="25px;">
+		                <img src="img/scores.jpg" alt="Profile icon" class="img-fluid rounded-circle mx-1" width="25px;">
 										<?php
 											// Echo session variables that were set on previous page
 											echo $_SESSION["firstname"];
@@ -118,11 +118,10 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		  </nav>
 
 
-	<main class="container px-4 py-5">
+	<main class="container px-4 py-4">
       <h1>My Predictions</h1>
       <!--<p class="lead">Can you correctly predict your way to victory?</p>-->
       <p>To make your predictions, enter a score value into each box below. Remember to hit the 'Update my predictions' button to save your scores.</p>
-
       <ul>
 		  <li>You can change predictions for any game until 1 hour before its kick-off</li>
           <li>You can filter on fixtures from each round</li>
@@ -151,7 +150,6 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
               <li id="groupF"><a href="#matches" onClick="showOnly('F')">Group F</a></li>
             </ul>
           </div>-->
-
 
           <div class="btn-group" role="group">
             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
