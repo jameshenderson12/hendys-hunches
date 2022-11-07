@@ -117,7 +117,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		  </nav>
 
 
-	<main class="px-3">
+	<main class="container px-4 py-5">
       <h1>My Predictions</h1>
       <!--<p class="lead">Can you correctly predict your way to victory?</p>-->
       <p>To make your predictions, enter a score value into each box below. Remember to hit the 'Update my predictions' button to save your scores.</p>
