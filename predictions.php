@@ -212,7 +212,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
         <th colspan="5" width="60%"></th>
         <th width="30%">KO &amp; Venue</th>
         </tr>
-				-->
+
 				<tr>
         <th>Match</th>
         <th>Home Team</th>
@@ -224,7 +224,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
         <th>Away Team</th>
         <th></th>
         </tr>
-
+-->
 				<tr id="match1">
         <td>1</td>
 	    	<td><?php echo $A1; ?></td>
