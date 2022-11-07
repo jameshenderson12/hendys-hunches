@@ -192,42 +192,42 @@ $Fi2img = "flag-icons/24/.png";
 // Setup variables for kick-off times
 // AST (UTC+3)
 
-$_10 = "10:00 GMT";
-$_13 = "13:00 GMT";
-$_15 = "15:00 GMT";
-$_16 = "16:00 GMT";
-$_19 = "19:00 GMT";
+$_10 = "10:00";
+$_13 = "13:00";
+$_15 = "15:00";
+$_16 = "16:00";
+$_19 = "19:00";
 
 // Setup variables for kick-off dates
-$_20Nov = "20 November";
-$_21Nov = "21 November";
-$_22Nov = "22 November";
-$_23Nov = "23 November";
-$_24Nov = "24 November";
-$_25Nov = "25 November";
-$_26Nov = "26 November";
-$_27Nov = "27 November";
-$_28Nov = "28 November";
-$_29Nov = "29 November";
-$_30Nov = "30 November";
-$_01Dec = "01 December";
-$_02Dec = "02 December";
-$_03Dec = "03 December";
-$_04Dec = "04 December";
-$_05Dec = "05 December";
-$_06Dec = "06 December";
-$_07Dec = "07 December";
-$_08Dec = "08 December";
-$_09Dec = "09 December";
-$_10Dec = "10 December";
-$_11Dec = "11 December";
-$_12Dec = "12 December";
-$_13Dec = "13 December";
-$_14Dec = "14 December";
-$_15Dec = "15 December";
-$_16Dec = "16 December";
-$_17Dec = "17 December";
-$_18Dec = "18 December";
+$_20Nov = "20 NOV";
+$_21Nov = "21 NOV";
+$_22Nov = "22 NOV";
+$_23Nov = "23 NOV";
+$_24Nov = "24 NOV";
+$_25Nov = "25 NOV";
+$_26Nov = "26 NOV";
+$_27Nov = "27 NOV";
+$_28Nov = "28 NOV";
+$_29Nov = "29 NOV";
+$_30Nov = "30 NOV";
+$_01Dec = "01 DEC";
+$_02Dec = "02 DEC";
+$_03Dec = "03 DEC";
+$_04Dec = "04 DEC";
+$_05Dec = "05 DEC";
+$_06Dec = "06 DEC";
+$_07Dec = "07 DEC";
+$_08Dec = "08 DEC";
+$_09Dec = "09 DEC";
+$_10Dec = "10 DEC";
+$_11Dec = "11 DEC";
+$_12Dec = "12 DEC";
+$_13Dec = "13 DEC";
+$_14Dec = "14 DEC";
+$_15Dec = "15 DEC";
+$_16Dec = "16 DEC";
+$_17Dec = "17 DEC";
+$_18Dec = "18 DEC";
 
 // Setup variables for venues
 $venue1 = "Al Bayt Stadium";
