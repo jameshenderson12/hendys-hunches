@@ -15,7 +15,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		<title>Hendy's Hunches: Predictions</title>
     <?php include "php/config.php" ?>
 		<link rel="shortcut icon" href="ico/favicon.ico">
-		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fjalla+One|Libre+Baskerville|Ubuntu|Lora">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu|Lora">
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
 		<link rel="stylesheet" href="css/default.css">
@@ -59,10 +59,10 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	</script>
 	<style>
 	body {
-		font-family: 'Libre Baskerville';
+		font-family: 'Lora';
 	}
 	h1, h2, h3 {
-		font-family: 'Fjalla One';
+		font-family: 'Ubuntu';
 	}
 	td:nth-child(2) {
 		text-align: right;
