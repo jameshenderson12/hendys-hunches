@@ -57,7 +57,14 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 			}
 		}
 	</script>
+	<style>
+	body {
 
+	}
+	td:nth-child(2) {
+		text-align: right;
+	}
+	</style>
   </head>
 
   <body>
