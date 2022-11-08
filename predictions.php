@@ -258,36 +258,34 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
         <td class="small text-muted">Grp A</td>
 	    	<td><?php echo $A3; ?></td>
         <td><img src="<?php echo $A3img; ?>" alt="<?php echo $A3; ?>" title="<?php echo $A3; ?>"></td>
-      	<td><input type="text" id="score1_p" name="score1_p" class="form-control" /></td>
+      	<td><input type="text" id="score3_p" name="score3_p" class="form-control" /></td>
       	<td align="center">v<br><span class="badge bg-light text-primary">02</span></td>
-      	<td><input type="text" id="score2_p" name="score2_p" class="form-control" /></td>
+      	<td><input type="text" id="score4_p" name="score4_p" class="form-control" /></td>
 				<td><img src="<?php echo $A4img; ?>" alt="<?php echo $A4; ?>" title="<?php echo $A4; ?>"></td>
       	<td><?php echo $A4; ?></td>
+      	<td class="date-venue small text-muted"><?php echo "$_13, $_21Nov, $year <br> $venue3"; ?></td>
+      	</tr>
+				<tr id="match3">
+				<td class="small text-muted">Grp B</td>
+	    	<td><?php echo $B1; ?></td>
+        <td><img src="<?php echo $B1img; ?>" alt="<?php echo $B1; ?>" title="<?php echo $B1; ?>"></td>
+      	<td><input type="text" id="score5_p" name="score5_p" class="form-control" /></td>
+      	<td align="center">v<br><span class="badge bg-light text-primary">03</span></td>
+      	<td><input type="text" id="score6_p" name="score6_p" class="form-control" /></td>
+				<td><img src="<?php echo $B2img; ?>" alt="<?php echo $B2; ?>" title="<?php echo $B2; ?>"></td>
+      	<td><?php echo $B2; ?></td>
       	<td class="date-venue small text-muted"><?php echo "$_13, $_21Nov, $year <br> $venue2"; ?></td>
       	</tr>
-				<!--
-      	<tr id="match1">
-        <td class="date-venue">Match 1<br>Group A</td>
-	    	<td class="left-team">
-        <img src="<?php echo $A1img; ?>" alt="<?php echo $A1; ?>" title="<?php echo $A1; ?>"><?php echo $A1; ?></td>
-      	<td><input type="text" id="score1_p" name="score1_p" class="left-score score-field form-control input-sm" /></td>
-      	<td align="center">v</td>
-      	<td><input type="text" id="score2_p" name="score2_p" class="right-score score-field form-control input-sm" /></td>
-      	<td class="right-team">
-        <img src="<?php echo $A2img; ?>" alt="<?php echo $A2; ?>" title="<?php echo $A2; ?>"><?php echo $A2; ?></td>
-      	<td class="date-venue"><?php echo "$_1pm, $_20Nov, $venue1"; ?></td>
-      	</tr>
--->
-      	<tr>
-        <td class="date-venue">Match 2<br>Group A</td>
-      	<td class="left-team">
-        <img src="<?php echo $A3img; ?>" alt="<?php echo $A3; ?>" title="<?php echo $A3; ?>"><label for="score3_p"><?php abbrTeam($A3); ?></label></td>
-      	<td><input type="text" id="score3_p" name="score3_p" class="left-score score-field form-control input-sm" onBlur="return validateScore('score3_p');" value="<?php retrieveScorePrediction(3); ?>" /></td>
-      	<td align="center">v</td>
-      	<td><input type="text" id="score4_p" name="score4_p" class="right-score score-field form-control input-sm" onBlur="return validateScore('score4_p');" value="<?php retrieveScorePrediction(4); ?>" /></td>
-      	<td class="right-team">
-        <img src="<?php echo $A4img; ?>" alt="<?php echo $A4; ?>" title="<?php echo $A4; ?>"><label for="score4_p"><?php abbrTeam($A4); ?></label></td>
-      	<td class="date-venue"><?php echo "$_1pm, $_15Jun, $venue2"; ?></td>
+				<tr id="match3">
+				<td class="small text-muted">Grp B</td>
+	    	<td><?php echo $B3; ?></td>
+        <td><img src="<?php echo $B3img; ?>" alt="<?php echo $B3; ?>" title="<?php echo $B3; ?>"></td>
+      	<td><input type="text" id="score7_p" name="score7_p" class="form-control" /></td>
+      	<td align="center">v<br><span class="badge bg-light text-primary">03</span></td>
+      	<td><input type="text" id="score8_p" name="score8_p" class="form-control" /></td>
+				<td><img src="<?php echo $B4img; ?>" alt="<?php echo $B4; ?>" title="<?php echo $B4; ?>"></td>
+      	<td><?php echo $B4; ?></td>
+      	<td class="date-venue small text-muted"><?php echo "$_19, $_21Nov, $year <br> $venue4"; ?></td>
       	</tr>
 
       	<tr>
