@@ -62,7 +62,7 @@ $B1img = "flag-icons/24/england.png";
 $B2 = "Iran";
 $B2img = "flag-icons/24/iran.png";
 $B3 = "USA";
-$B3img = "flag-icons/24/usa.png";
+$B3img = "flag-icons/24/united-states.png";
 $B4 = "Wales";
 $B4img = "flag-icons/24/wales.png";
 
@@ -85,7 +85,7 @@ $D4 = "Tunisia";
 $D4img = "flag-icons/24/tunisia.png";
 
 $E1 = "Spain";
-$E1img = "flag-icons/24/displayPersonalInfo.png";
+$E1img = "flag-icons/24/spain.png";
 $E2 = "Costa Rica";
 $E2img = "flag-icons/24/costa-rica.png";
 $E3 = "Germany";
