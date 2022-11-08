@@ -67,7 +67,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	table {
 		width: 100%;
 	}
-	td:nth-child(2) {
+	td:nth-child(2), td:nth-child(7) {
 		text-align: right;
 	}
 	td:nth-child(4), td:nth-child(5), td:nth-child(6) {
