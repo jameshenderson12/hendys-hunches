@@ -68,7 +68,6 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		width: 40px;
 		height: 40px;
 		font-size: larger;
-}
 	}
 	</style>
   </head>
@@ -84,7 +83,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		      </button>
 		      <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasNavbar2" aria-labelledby="offcanvasNavbar2Label">
 		        <div class="offcanvas-header">
-		          <h5 class="offcanvas-title" id="offcanvasNavbar2Label">Offcanvas</h5>
+		          <h5 class="offcanvas-title" id="offcanvasNavbar2Label">Hendy's Hunches</h5>
 		          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
 		        </div>
 		        <div class="offcanvas-body">
