@@ -236,6 +236,17 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
       	<td><?php echo $A2; ?></td>
       	<td class="date-venue small text-muted"><?php echo "$_16, $_20Nov, $year <br> $venue1"; ?></td>
       	</tr>
+				<tr id="match2">
+        <td class="small text-muted">Grp A</td>
+	    	<td><?php echo $A3; ?></td>
+        <td><img src="<?php echo $A3img; ?>" alt="<?php echo $A3; ?>" title="<?php echo $A3; ?>"></td>
+      	<td><input type="text" id="score1_p" name="score1_p" class="form-control" /></td>
+      	<td align="center">v<br><span class="badge bg-light text-primary">02</span></td>
+      	<td><input type="text" id="score2_p" name="score2_p" class="form-control" /></td>
+				<td><img src="<?php echo $A4img; ?>" alt="<?php echo $A4; ?>" title="<?php echo $A4; ?>"></td>
+      	<td><?php echo $A4; ?></td>
+      	<td class="date-venue small text-muted"><?php echo "$_13, $_21Nov, $year <br> $venue2"; ?></td>
+      	</tr>
 				<!--
       	<tr id="match1">
         <td class="date-venue">Match 1<br>Group A</td>
