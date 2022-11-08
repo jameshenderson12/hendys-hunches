@@ -64,6 +64,9 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	h1, h2, h3 {
 		font-family: 'Ubuntu';
 	}
+	table {
+		width: 100%;
+	}
 	td:nth-child(2) {
 		text-align: right;
 	}
@@ -71,7 +74,6 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		width: 5%;
 		min-width: 40px;
 		text-align: center;
-    vertical-align: middle;  
 	}
 	input {
 		font-size: larger;
