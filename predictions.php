@@ -64,6 +64,9 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	td:nth-child(2) {
 		text-align: right;
 	}
+	td input {
+		width: 10px;
+	}
 	</style>
   </head>
 
