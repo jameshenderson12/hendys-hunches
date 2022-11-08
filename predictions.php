@@ -65,7 +65,10 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		text-align: right;
 	}
 	input {
-		width: 50px;
+		width: 40px;
+		height: 40px;
+		font-size: larger;
+}
 	}
 	</style>
   </head>
