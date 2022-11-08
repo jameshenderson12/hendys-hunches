@@ -263,7 +263,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
       	<td><input type="text" id="score4_p" name="score4_p" class="form-control" /></td>
 				<td><img src="<?php echo $A4img; ?>" alt="<?php echo $A4; ?>" title="<?php echo $A4; ?>"></td>
       	<td><?php echo $A4; ?></td>
-      	<td class="date-venue small text-muted"><?php echo "$_13, $_21Nov, $year <br> $venue3"; ?></td>
+      	<td class="date-venue small text-muted"><?php echo "$_16, $_21Nov, $year <br> $venue3"; ?></td>
       	</tr>
 				<tr id="match3">
 				<td class="small text-muted">Grp B</td>
