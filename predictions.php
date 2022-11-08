@@ -70,7 +70,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	td:nth-child(2) {
 		text-align: right;
 	}
-	td:nth-child(4), td:nth-child(6) {
+	td:nth-child(4), td:nth-child(5), td:nth-child(6) {
 		width: 5%;
 		min-width: 40px;
 		text-align: center;
@@ -221,7 +221,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 
 		</div>
 
-	  	<table class="table table-sm">
+	  	<table class="table table-sm table-bordered">
 				<!--
         <tr>
         <th width="10%">Info</th>
