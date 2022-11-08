@@ -70,8 +70,8 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	td:nth-child(4), td:nth-child(6) {
 		width: 5%;
 		min-width: 40px;
-		display: flex;
-		justify-content: center;
+		text-align: center;
+    vertical-align: middle;  
 	}
 	input {
 		font-size: larger;
