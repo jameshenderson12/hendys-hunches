@@ -145,13 +145,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	<main class="container px-4 py-4">
       <h1>My Predictions</h1>
       <!--<p class="lead">Can you correctly predict your way to victory?</p>-->
-      <p>To make your predictions, enter a score value into each box below. Remember to hit the 'Update my predictions' button to save your scores.</p>
-      <ul>
-		  <li>You can change predictions for any game until 1 hour before its kick-off</li>
-          <li>You can filter on fixtures from each round</li>
-      	  <li>Unentered predictions will result in 0 points being awarded</li>
-		  <li>Predictions for knockout fixtures are based on result after 90 minutes only</li>
-      </ul>
+      <p>To make your predictions, enter a score value into each box below. Remember to hit the 'Update my predictions' button to submit.</p>
       <a name="matches"></a><!--anchor point for filters-->
       <form id="predictionForm" name="predictionForm" class="form-horizontal" action="submit.php" method="POST">
       <div class="row">
