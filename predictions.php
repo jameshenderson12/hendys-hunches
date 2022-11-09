@@ -248,7 +248,9 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 														//console.log(x);
 														//console.log(y);
 														var homeTeamFlag = toLowerCase(value.HomeTeam);
+														console.log(homeTeamFlag);
 														var awayTeamFlag = toLowerCase(value.AwayTeam);
+														console.log(awayTeamFlag);
                             fixture += '<tr>';
 														fixture += '<td class="small text-muted">' + value.Group + '</td>';
                             fixture += '<td>' + value.HomeTeam + '</td>';
