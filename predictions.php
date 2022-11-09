@@ -249,8 +249,8 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 														//console.log(y);
 														var homeTeam = value.HomeTeam;
 														var awayTeam = value.AwayTeam;
-														var homeTeamFlag = "flag-icons/24/" + homeTeam.toLowerCase() + ".png";
-														var awayTeamFlag = "flag-icons/24/" + awayTeam.toLowerCase() + ".png";
+														var homeTeamFlag = "flag-icons/24/" + homeTeam.toLowerCase().replaceAll(' ', '-') + ".png";
+														var awayTeamFlag = "flag-icons/24/" + awayTeam.toLowerCase().replaceAll(' ', '-') + ".png";
 														console.log(homeTeamFlag);
 														console.log(awayTeamFlag);
                             fixture += '<tr>';
