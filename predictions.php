@@ -244,7 +244,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
                         $.each(data, function (key, value) {
                             //CONSTRUCTION OF ROWS HAVING
                             // DATA FROM JSON OBJECT
-														for(x = 0; x < 49; x++) {
+														for(var x = 0; x < 49; x++) {
 															console.log(x);
                             fixture += '<tr>';
 														fixture += '<td class="small text-muted">' + value.Group + '</td>';
