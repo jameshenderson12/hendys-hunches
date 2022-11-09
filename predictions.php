@@ -252,7 +252,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 														fixture += '<td><input type="text" id="score2_p" name="score2_p" class="form-control" /></td>';
 														fixture += '<td>FLAG</td>';
                             fixture += '<td>' + value.AwayTeam + '</td>';
-                            fixture += '<td class="small text-muted"> ' + value.DateUtc + '<br>' + value.Location + '</td>';
+                            fixture += '<td class="small text-muted"> ' + date.toDateString(value.DateUtc); + '<br>' + value.Location + '</td>';
                             fixture += '</tr>';
                         });
                         //INSERTING ROWS INTO TABLE
