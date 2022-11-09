@@ -239,18 +239,15 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
                     $.getJSON("json/fifa-world-cup-2022-fixtures.json",
                     	function (data) {
                         var fixture = '';
-												var x = 0;
                         // ITERATING THROUGH OBJECTS
                         $.each(data, function (key, value) {
                             //CONSTRUCTION OF ROWS HAVING
                             // DATA FROM JSON OBJECT
-														x++;
-														console.log(x);
                             fixture += '<tr>';
 														fixture += '<td class="small text-muted">' + value.Group + '</td>';
                             fixture += '<td>' + value.HomeTeam + '</td>';
 														fixture += '<td>FLAG</td>';
-														fixture += '<td><input type="text" id="score'x'_p" name="score'x'_p" class="form-control" /></td>';
+														fixture += '<td><input type="text" id="score' + ((value.MatchNumber * 2) - 1) + '_p" name="score' + (value.MatchNumber * 2) + '_p" class="form-control" /></td>';
 														fixture += '<td align="center">v<br><span class="badge bg-light text-primary">' + value.MatchNumber + '</span></td>';
 														fixture += '<td><input type="text" id="score2_p" name="score2_p" class="form-control" /></td>';
 														fixture += '<td>FLAG</td>';
@@ -262,7 +259,6 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
                       $('#table').append(fixture);
                     });
                 });
-
             </script>
 
 
