@@ -221,7 +221,6 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 
 
 		<section>
-        <h1>GeeksForGeeks</h1>
 
         <!-- TABLE CONSTRUCTION-->
         <table id="table" class="table table-sm">
@@ -230,7 +229,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
                 <th>Match No.</th>
                 <th>Home Team</th>
                 <th>Away Team</th>
-                <th>Location</th>
+                <th>Date/Location</th>
             </tr>
 
             <script>
@@ -248,8 +247,11 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
                             fixture += '<tr>';
                             fixture += '<td>' + value.MatchNumber + '</td>';
                             fixture += '<td>' + value.HomeTeam + '</td>';
+														fixture += '<td><input type="text" id="score1_p" name="score1_p" class="form-control" /></td>';
+														fixture += '<td>v</td>';
+														fixture += '<td><input type="text" id="score2_p" name="score2_p" class="form-control" /></td>';
                             fixture += '<td>' + value.AwayTeam + '</td>';
-                            fixture += '<td>' + value.Location + '</td>';
+                            fixture += '<td> ' + value.DateUtc + '<br>' + value.Location + '</td>';
                             fixture += '</tr>';
                         });
                         //INSERTING ROWS INTO TABLE
