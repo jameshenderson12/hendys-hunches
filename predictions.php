@@ -240,6 +240,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
                     	function (data) {
                         var fixture = '';
 												for(x = 0; x < 49; x++) {
+													console.log(x);
                         // ITERATING THROUGH OBJECTS
                         $.each(data, function (key, value) {
                             //CONSTRUCTION OF ROWS HAVING
