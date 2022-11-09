@@ -249,15 +249,14 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 														//console.log(y);
 														var homeTeam = value.HomeTeam;
 														var awayTeam = value.AwayTeam;
-														var homeTeamFlag = "flag-icons/24/" + homeTeam.toLowerCase(); + ".png";
+														var homeTeamFlag = "flag-icons/24/" + homeTeam.toLowerCase() + ".png";
+														var awayTeamFlag = "flag-icons/24/" + awayTeam.toLowerCase() + ".png";
 														console.log(homeTeamFlag);
-														var awayTeamFlag = toLowerCase(value.AwayTeam);
-														var awayTeamFlag = "flag-icons/24/" + awayTeam.toLowerCase(); + ".png";
 														console.log(awayTeamFlag);
                             fixture += '<tr>';
 														fixture += '<td class="small text-muted">' + value.Group + '</td>';
                             fixture += '<td>' + value.HomeTeam + '</td>';
-														fixture += '<td><img src="flag-icons/24/' + homeTeamFlag + '.png" alt="Flag of ' + value.HomeTeam + '" title="Flag of ' + value.HomeTeam + '"></td>';
+														fixture += '<td><img src="'homeTeamFlag'" alt="Flag of 'homeTeam'" title="Flag of 'homeTeam'"></td>';
 														fixture += '<td><input type="text" id="score' + x + '_p" name="score' + x + '_p" class="form-control" /></td>';
 														fixture += '<td align="center">v<br><span class="badge bg-light text-primary">' + value.MatchNumber + '</span></td>';
 														fixture += '<td><input type="text" id="score' + y + '_p" name="score' + y + '_p" class="form-control" /></td>';
