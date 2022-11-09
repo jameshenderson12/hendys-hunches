@@ -218,7 +218,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 
 		</div>
 
-	  	<table class="table table-sm table-bordered">
+	  	<table class="table table-sm">
 
 				<tr id="match1">
 	        <td class="small text-muted">Grp A</td>
