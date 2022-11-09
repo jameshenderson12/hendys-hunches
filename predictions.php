@@ -258,8 +258,8 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
                             fixture += '<td>' + value.AwayTeam + '</td>';
                             fixture += '<td class="small text-muted"> ' + value.DateUtc + '<br>' + value.Location + '</td>';
                             fixture += '</tr>';
-														x+2;
-														y+2;
+														x+=2;
+														y+=2;
                         });
                       //INSERTING ROWS INTO TABLE
                       $('#table').append(fixture);
