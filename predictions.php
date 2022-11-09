@@ -219,9 +219,6 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		</div>
 
 
-
-		<section>
-
         <!-- TABLE CONSTRUCTION-->
         <table id="table" class="table table-sm">
             <!-- HEADING FORMATION -->
@@ -263,7 +260,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
                     });
                 });
             </script>
-    </section>
+
 
 <!--
 	  	<table class="table table-sm">
