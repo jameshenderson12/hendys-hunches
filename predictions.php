@@ -355,13 +355,15 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					<td><img src="<?php echo $B4img; ?>" alt="<?php echo $B4; ?>" title="<?php echo $B4; ?>"></td>
 	      	<td><?php echo $B4; ?></td>
 	      	<td class="date-venue small text-muted"><?php echo "$_19, $_21Nov, $year <br> $venue4"; ?></td>
-      	</tr>
-			</table>-->
+      	</tr>-->
+			</table>
 
         <div id="submit-footer" class="navbar navbar-default navbar-fixed-bottom col-md-10 col-md-offset-1">
+            <div class="pull-right">
             <!-- Results being processed - updating temporarily unavailable... -->
             <input type="submit" class="navbar-btn btn btn-primary" value="Update my predictions" name="predictionsSubmitted" />
             <a class="navbar-btn btn btn-default" href="#top" role="button">Return to top</a>
+            </div>
         </div>
 
         </div><!--col-md-12-->
@@ -370,7 +372,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 
       <!-- Site footer -->
       <div class="footer">
-      	<?php include "includes/footer.php" ?>
+      <?php include "includes/footer.php" ?>
       </div>
 
 
