@@ -249,11 +249,11 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
                             fixture += '<tr>';
 														fixture += '<td class="small text-muted">' + value.Group + '</td>';
                             fixture += '<td>' + value.HomeTeam + '</td>';
-														fixture += '<td><img src="<?php echo $A1img; ?>" alt="<?php echo $A1; ?>" title="<?php echo $A1; ?></td>';
+														//fixture += '<td><img src="<?php echo $A1img; ?>" alt="<?php echo $A1; ?>" title="<?php echo $A1; ?></td>';
 														fixture += '<td><input type="text" id="score1_p" name="score1_p" class="form-control" /></td>';
 														fixture += '<td>v<br><span class="badge bg-light text-primary">' + value.MatchNumber + '</span></td>';
 														fixture += '<td><input type="text" id="score2_p" name="score2_p" class="form-control" /></td>';
-														fixture += '<td><img src="<?php echo $A2img; ?>" alt="<?php echo $A2; ?>" title="<?php echo $A2; ?>"></td>';
+														//fixture += '<td><img src="<?php echo $A2img; ?>" alt="<?php echo $A2; ?>" title="<?php echo $A2; ?>"></td>';
                             fixture += '<td>' + value.AwayTeam + '</td>';
                             fixture += '<td class="small text-muted"> ' + value.DateUtc + '<br>' + value.Location + '</td>';
                             fixture += '</tr>';
