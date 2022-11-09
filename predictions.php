@@ -320,39 +320,39 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	      	<td><input type="text" id="score10_p" name="score10_p" class="form-control" /></td>
 					<td><img src="<?php echo $C2img; ?>" alt="<?php echo $C2; ?>" title="<?php echo $C2; ?>"></td>
 	      	<td><?php echo $C2; ?></td>
-	      	<td class="date-venue small text-muted"><?php echo "$_13, $_21Nov, $year <br> $venue2"; ?></td>
+	      	<td class="date-venue small text-muted"><?php echo "$_10, $_22Nov, $year <br> $venue6"; ?></td>
       	</tr>
 				<tr id="match6">
-					<td class="small text-muted">Grp B</td>
-		    	<td><?php echo $B3; ?></td>
-	        <td><img src="<?php echo $B3img; ?>" alt="<?php echo $B3; ?>" title="<?php echo $B3; ?>"></td>
-	      	<td><input type="text" id="score7_p" name="score7_p" class="form-control" /></td>
-	      	<td align="center">v<br><span class="badge bg-light text-primary">03</span></td>
-	      	<td><input type="text" id="score8_p" name="score8_p" class="form-control" /></td>
-					<td><img src="<?php echo $B4img; ?>" alt="<?php echo $B4; ?>" title="<?php echo $B4; ?>"></td>
-	      	<td><?php echo $B4; ?></td>
-	      	<td class="date-venue small text-muted"><?php echo "$_19, $_21Nov, $year <br> $venue4"; ?></td>
+					<td class="small text-muted">Grp D</td>
+		    	<td><?php echo $D1; ?></td>
+	        <td><img src="<?php echo $D1img; ?>" alt="<?php echo $D1; ?>" title="<?php echo $D1; ?>"></td>
+	      	<td><input type="text" id="score11_p" name="score11_p" class="form-control" /></td>
+	      	<td align="center">v<br><span class="badge bg-light text-primary">06</span></td>
+	      	<td><input type="text" id="score12_p" name="score12_p" class="form-control" /></td>
+					<td><img src="<?php echo $D2img; ?>" alt="<?php echo $D2; ?>" title="<?php echo $D2; ?>"></td>
+	      	<td><?php echo $D2; ?></td>
+	      	<td class="date-venue small text-muted"><?php echo "$_13, $_22Nov, $year <br> $venue8"; ?></td>
       	</tr>
 				<tr id="match7">
-					<td class="small text-muted">Grp B</td>
-		    	<td><?php echo $B1; ?></td>
-	        <td><img src="<?php echo $B1img; ?>" alt="<?php echo $B1; ?>" title="<?php echo $B1; ?>"></td>
-	      	<td><input type="text" id="score5_p" name="score5_p" class="form-control" /></td>
-	      	<td align="center">v<br><span class="badge bg-light text-primary">03</span></td>
-	      	<td><input type="text" id="score6_p" name="score6_p" class="form-control" /></td>
-					<td><img src="<?php echo $B2img; ?>" alt="<?php echo $B2; ?>" title="<?php echo $B2; ?>"></td>
-	      	<td><?php echo $B2; ?></td>
-	      	<td class="date-venue small text-muted"><?php echo "$_13, $_21Nov, $year <br> $venue2"; ?></td>
+					<td class="small text-muted">Grp C</td>
+		    	<td><?php echo $C3; ?></td>
+	        <td><img src="<?php echo $C3img; ?>" alt="<?php echo $C3; ?>" title="<?php echo $C3; ?>"></td>
+	      	<td><input type="text" id="score13_p" name="score13_p" class="form-control" /></td>
+	      	<td align="center">v<br><span class="badge bg-light text-primary">07</span></td>
+	      	<td><input type="text" id="score14_p" name="score14_p" class="form-control" /></td>
+					<td><img src="<?php echo $C4img; ?>" alt="<?php echo $C4; ?>" title="<?php echo $C4; ?>"></td>
+	      	<td><?php echo $C4; ?></td>
+	      	<td class="date-venue small text-muted"><?php echo "$_16, $_22Nov, $year <br> $venue7"; ?></td>
       	</tr>
 				<tr id="match8">
-					<td class="small text-muted">Grp B</td>
-		    	<td><?php echo $B3; ?></td>
-	        <td><img src="<?php echo $B3img; ?>" alt="<?php echo $B3; ?>" title="<?php echo $B3; ?>"></td>
-	      	<td><input type="text" id="score7_p" name="score7_p" class="form-control" /></td>
-	      	<td align="center">v<br><span class="badge bg-light text-primary">03</span></td>
-	      	<td><input type="text" id="score8_p" name="score8_p" class="form-control" /></td>
-					<td><img src="<?php echo $B4img; ?>" alt="<?php echo $B4; ?>" title="<?php echo $B4; ?>"></td>
-	      	<td><?php echo $B4; ?></td>
+					<td class="small text-muted">Grp D</td>
+		    	<td><?php echo $D3; ?></td>
+	        <td><img src="<?php echo $D3img; ?>" alt="<?php echo $D3; ?>" title="<?php echo $D3; ?>"></td>
+	      	<td><input type="text" id="score15_p" name="score15_p" class="form-control" /></td>
+	      	<td align="center">v<br><span class="badge bg-light text-primary">08</span></td>
+	      	<td><input type="text" id="score16_p" name="score16_p" class="form-control" /></td>
+					<td><img src="<?php echo $D4img; ?>" alt="<?php echo $D4; ?>" title="<?php echo $D4; ?>"></td>
+	      	<td><?php echo $D4; ?></td>
 	      	<td class="date-venue small text-muted"><?php echo "$_19, $_21Nov, $year <br> $venue4"; ?></td>
       	</tr>-->
 			</table>
