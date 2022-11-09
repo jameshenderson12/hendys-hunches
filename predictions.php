@@ -266,7 +266,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
             </script>
 
 
-
+<!--
 	  	<table class="table table-sm">
 
 				<tr id="match1">
@@ -357,7 +357,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	      	<td><?php echo $D4; ?></td>
 	      	<td class="date-venue small text-muted"><?php echo "$_19, $_21Nov, $year <br> $venue4"; ?></td>
       	</tr>
-			</table>
+			</table>-->
 
         <div id="submit-footer" class="navbar navbar-default navbar-fixed-bottom col-md-10 col-md-offset-1">
             <div class="pull-right">
