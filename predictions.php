@@ -250,7 +250,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 														fixture += '<td class="small text-muted">' + value.Group + '</td>';
                             fixture += '<td>' + value.HomeTeam + '</td>';
 														fixture += '<td>FLAG</td>';
-														fixture += '<td><input type="text" id="score'x'_p" name="score'x'_p" class="form-control" /></td>';
+														fixture += '<td><input type="text" id="score' + x + '_p" name="score' + x + '_p" class="form-control" /></td>';
 														fixture += '<td align="center">v<br><span class="badge bg-light text-primary">' + value.MatchNumber + '</span></td>';
 														fixture += '<td><input type="text" id="score2_p" name="score2_p" class="form-control" /></td>';
 														fixture += '<td>FLAG</td>';
