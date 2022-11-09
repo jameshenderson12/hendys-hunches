@@ -305,22 +305,21 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		    	<td><?php echo $B3; ?></td>
 	        <td><img src="<?php echo $B3img; ?>" alt="<?php echo $B3; ?>" title="<?php echo $B3; ?>"></td>
 	      	<td><input type="text" id="score7_p" name="score7_p" class="form-control" /></td>
-	      	<td align="center">v<br><span class="badge bg-light text-primary">03</span></td>
+	      	<td align="center">v<br><span class="badge bg-light text-primary">04</span></td>
 	      	<td><input type="text" id="score8_p" name="score8_p" class="form-control" /></td>
 					<td><img src="<?php echo $B4img; ?>" alt="<?php echo $B4; ?>" title="<?php echo $B4; ?>"></td>
 	      	<td><?php echo $B4; ?></td>
 	      	<td class="date-venue small text-muted"><?php echo "$_19, $_21Nov, $year <br> $venue4"; ?></td>
       	</tr>
-				<!--
 				<tr id="match5">
-					<td class="small text-muted">Grp B</td>
-		    	<td><?php echo $B1; ?></td>
-	        <td><img src="<?php echo $B1img; ?>" alt="<?php echo $B1; ?>" title="<?php echo $B1; ?>"></td>
-	      	<td><input type="text" id="score5_p" name="score5_p" class="form-control" /></td>
-	      	<td align="center">v<br><span class="badge bg-light text-primary">03</span></td>
-	      	<td><input type="text" id="score6_p" name="score6_p" class="form-control" /></td>
-					<td><img src="<?php echo $B2img; ?>" alt="<?php echo $B2; ?>" title="<?php echo $B2; ?>"></td>
-	      	<td><?php echo $B2; ?></td>
+					<td class="small text-muted">Grp C</td>
+		    	<td><?php echo $C1; ?></td>
+	        <td><img src="<?php echo $C1img; ?>" alt="<?php echo $C1; ?>" title="<?php echo $C1; ?>"></td>
+	      	<td><input type="text" id="score9_p" name="score9_p" class="form-control" /></td>
+	      	<td align="center">v<br><span class="badge bg-light text-primary">05</span></td>
+	      	<td><input type="text" id="score10_p" name="score10_p" class="form-control" /></td>
+					<td><img src="<?php echo $C2img; ?>" alt="<?php echo $C2; ?>" title="<?php echo $C2; ?>"></td>
+	      	<td><?php echo $C2; ?></td>
 	      	<td class="date-venue small text-muted"><?php echo "$_13, $_21Nov, $year <br> $venue2"; ?></td>
       	</tr>
 				<tr id="match6">
@@ -361,8 +360,8 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
         <div id="submit-footer" class="navbar navbar-default navbar-fixed-bottom col-md-10 col-md-offset-1">
             <div class="pull-right">
             <!-- Results being processed - updating temporarily unavailable... -->
-            <input type="submit" class="navbar-btn btn btn-primary" value="Update my predictions" name="predictionsSubmitted" />
-            <a class="navbar-btn btn btn-default" href="#top" role="button">Return to top</a>
+            <input type="submit" class="navbar-btn btn btn-primary" value="Submit my predictions" name="predictionsSubmitted" />
+            <a class="navbar-btn btn btn-light" href="#top" role="button">Return to top</a>
             </div>
         </div>
 
@@ -387,106 +386,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 				t = s[1].replace(/:/g, "");
 			return d[2] + d[1] + d[0] + t;
 		}
-/*
-		$(document).ready(function(e) {
 
-			// Create an array of 'lockdown' dates and times to disable specific fields
-			var lockdown = ["14-06-2018 16:00:00", <!--Fixture 1-->
-							"15-06-2018 12:00:00", <!--Fixture 2-->
-							"15-06-2018 15:00:00", <!--Fixture 3-->
-							"15-06-2018 18:00:00", <!--Fixture 4-->
-							"16-06-2018 10:00:00", <!--Fixture 5-->
-							"16-06-2018 13:00:00", <!--Fixture 6-->
-							"16-06-2018 16:00:00", <!--Fixture 7-->
-							"16-06-2018 19:00:00", <!--Fixture 8-->
-							"17-06-2018 12:00:00", <!--Fixture 9-->
-							"17-06-2018 15:00:00", <!--Fixture 10-->
-							"17-06-2018 18:00:00", <!--Fixture 11-->
-							"18-06-2018 12:00:00", <!--Fixture 12-->
-							"18-06-2018 15:00:00", <!--Fixture 13-->
-							"18-06-2018 18:00:00", <!--Fixture 14-->
-							"19-06-2018 12:00:00", <!--Fixture 15-->
-							"19-06-2018 15:00:00", <!--Fixture 16-->
-							"19-06-2018 18:00:00", <!--Fixture 17-->
-							"20-06-2018 12:00:00", <!--Fixture 18-->
-							"20-06-2018 15:00:00", <!--Fixture 19-->
-							"20-06-2018 18:00:00", <!--Fixture 20-->
-							"21-06-2018 12:00:00", <!--Fixture 21-->
-							"21-06-2018 15:00:00", <!--Fixture 22-->
-							"21-06-2018 18:00:00", <!--Fixture 23-->
-							"22-06-2018 12:00:00", <!--Fixture 24-->
-							"22-06-2018 15:00:00", <!--Fixture 25-->
-							"22-06-2018 18:00:00", <!--Fixture 26-->
-							"23-06-2018 12:00:00", <!--Fixture 27-->
-							"23-06-2018 15:00:00", <!--Fixture 28-->
-							"23-06-2018 18:00:00", <!--Fixture 29-->
-							"24-06-2018 12:00:00", <!--Fixture 30-->
-							"24-06-2018 15:00:00", <!--Fixture 31-->
-							"24-06-2018 18:00:00", <!--Fixture 32-->
-							"25-06-2018 14:00:00", <!--Fixture 33-->
-							"25-06-2018 14:00:00", <!--Fixture 34-->
-							"25-06-2018 18:00:00", <!--Fixture 35-->
-							"25-06-2018 18:00:00", <!--Fixture 36-->
-							"26-06-2018 14:00:00", <!--Fixture 37-->
-							"26-06-2018 14:00:00", <!--Fixture 38-->
-							"26-06-2018 18:00:00", <!--Fixture 39-->
-							"26-06-2018 18:00:00", <!--Fixture 40-->
-							"27-06-2018 14:00:00", <!--Fixture 41-->
-							"27-06-2018 14:00:00", <!--Fixture 42-->
-							"27-06-2018 18:00:00", <!--Fixture 43-->
-							"27-06-2018 18:00:00", <!--Fixture 44-->
-							"28-06-2018 14:00:00", <!--Fixture 45-->
-							"28-06-2018 14:00:00", <!--Fixture 46-->
-							"28-06-2018 18:00:00", <!--Fixture 47-->
-							"28-06-2018 18:00:00", <!--Fixture 48-->
-							"30-06-2018 14:00:00", <!--Fixture 49-->
-							"30-06-2018 18:00:00", <!--Fixture 50-->
-							"01-07-2018 14:00:00", <!--Fixture 51-->
-							"01-07-2018 18:00:00", <!--Fixture 52-->
-							"02-07-2018 14:00:00", <!--Fixture 53-->
-							"02-07-2018 18:00:00", <!--Fixture 54-->
-							"03-07-2018 14:00:00", <!--Fixture 55-->
-							"03-07-2018 18:00:00", <!--Fixture 56-->
-							"06-07-2018 14:00:00", <!--Fixture 57-->
-							"06-07-2018 18:00:00", <!--Fixture 58-->
-							"07-07-2018 14:00:00", <!--Fixture 59-->
-							"07-07-2018 18:00:00", <!--Fixture 60-->
-							"10-07-2018 18:00:00", <!--Fixture 61-->
-							"11-07-2018 18:00:00", <!--Fixture 62-->
-							"14-07-2018 14:00:00", <!--Fixture 63-->
-							"15-07-2018 15:00:00"  <!--Fixture 64-->
-							];
-
-			for (i=1, j=2, k=0; i<129, j<129; i+=2, j+=2, k++) {
-				/// i and j < values = (number of matches * 2) + 1
-
-				// Port current server date/time to JS variable
-				var currTime = "<?php print date("d-m-Y H:i:s") ?>";
-				var x = "#score"+[i]+"_p";  // i = 1 3 5 7
-				var y = "#score"+[j]+"_p";  // j = 2 4 6 8
-				var z = "#updateBtn"+[k+1];
-				//alert(currTime);
-
-				if (parseDate(currTime) >= parseDate(lockdown[k])) {
-					// Use alert to step through sequence
-					//alert("Yes, current time has passed set value!");
-					//$(x).prop("disabled", true);
-					$(x).prop("readOnly", true);
-					$(y).prop("readOnly", true);
-					$(z).hide();
-				}
-				else {
-					// Use alert to step through sequence
-					//alert("No, current time has not passed set value!");
-					/*$(x).prop("enabled", true);
-					$(y).prop("enabled", true);
-					$(z).prop("enabled", true);
-					$(xFixed).hide();
-					$(yFixed).hide();
-				}
-			}
-        });
-*/
 		function showOnly(GoS) {
 			/* GoS = Group or Stage
 			if (GoS == "All") {
