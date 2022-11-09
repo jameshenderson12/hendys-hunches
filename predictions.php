@@ -219,19 +219,20 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		</div>
 
 
-        <!-- TABLE CONSTRUCTION-->
+        <!-- TABLE CONSTRUCTION
         <table id="table" class="table table-sm">
-            <!-- HEADING FORMATION -->
+            <!-- HEADING FORMATION
             <tr>
 							<!--
                 <th>Match No.</th>
                 <th>Home Team</th>
                 <th>Away Team</th>
                 <th>Date/Location</th>
-							-->
-            </tr>
 
+            </tr>
+					-->
             <script>
+						/*
                 $(document).ready(function () {
 
                     // FETCHING DATA FROM JSON FILE
@@ -252,17 +253,18 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 														fixture += '<td><input type="text" id="score2_p" name="score2_p" class="form-control" /></td>';
 														fixture += '<td>FLAG</td>';
                             fixture += '<td>' + value.AwayTeam + '</td>';
-                            fixture += '<td class="small text-muted"> ' + date.toDateString(value.DateUtc); + '<br>' + value.Location + '</td>';
+                            fixture += '<td class="small text-muted"> ' + value.DateUtc + '<br>' + value.Location + '</td>';
                             fixture += '</tr>';
                         });
                         //INSERTING ROWS INTO TABLE
                         $('#table').append(fixture);
                     });
                 });
+								*/
             </script>
 
 
-<!--
+
 	  	<table class="table table-sm">
 
 				<tr id="match1">
