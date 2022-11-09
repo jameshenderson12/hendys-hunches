@@ -226,10 +226,12 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
         <table id="table" class="table table-sm">
             <!-- HEADING FORMATION -->
             <tr>
+							<!--
                 <th>Match No.</th>
                 <th>Home Team</th>
                 <th>Away Team</th>
                 <th>Date/Location</th>
+							-->
             </tr>
 
             <script>
@@ -245,7 +247,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
                             //CONSTRUCTION OF ROWS HAVING
                             // DATA FROM JSON OBJECT
                             fixture += '<tr>';
-                            fixture += '<td>' + value.MatchNumber + '</td>';
+                            //fixture += '<td>' + value.MatchNumber + '</td>';
                             fixture += '<td>' + value.HomeTeam + '</td>';
 														fixture += '<td><input type="text" id="score1_p" name="score1_p" class="form-control" /></td>';
 														fixture += '<td>v</td>';
