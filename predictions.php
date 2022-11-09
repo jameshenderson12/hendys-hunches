@@ -247,9 +247,12 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
                             // DATA FROM JSON OBJECT
 														//console.log(x);
 														//console.log(y);
-														var homeTeamFlag = toLowerCase(value.HomeTeam);
+														var homeTeam = value.HomeTeam;
+														var awayTeam = value.AwayTeam;
+														var homeTeamFlag = "flag-icons/24/" + homeTeam.toLowerCase(); + ".png";
 														console.log(homeTeamFlag);
 														var awayTeamFlag = toLowerCase(value.AwayTeam);
+														var awayTeamFlag = "flag-icons/24/" + awayTeam.toLowerCase(); + ".png";
 														console.log(awayTeamFlag);
                             fixture += '<tr>';
 														fixture += '<td class="small text-muted">' + value.Group + '</td>';
