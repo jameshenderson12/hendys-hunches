@@ -224,13 +224,13 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
         <h1>GeeksForGeeks</h1>
 
         <!-- TABLE CONSTRUCTION-->
-        <table id='table'>
+        <table id="table" class="table table-sm">
             <!-- HEADING FORMATION -->
             <tr>
-                <th>GFG UserHandle</th>
-                <th>Practice Problems</th>
-                <th>Coding Score</th>
-                <th>GFG Articles</th>
+                <th>Match No.</th>
+                <th>Home Team</th>
+                <th>Away Team</th>
+                <th>Location</th>
             </tr>
 
             <script>
@@ -258,12 +258,6 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
                 });
             </script>
     </section>
-
-		<table id="table" class="table table-sm">
-		</table>
-
-
-
 
 <!--
 	  	<table class="table table-sm">
