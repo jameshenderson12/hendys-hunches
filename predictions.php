@@ -359,11 +359,9 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 			</table>-->
 
         <div id="submit-footer" class="navbar navbar-default navbar-fixed-bottom col-md-10 col-md-offset-1">
-            <div class="pull-right">
             <!-- Results being processed - updating temporarily unavailable... -->
             <input type="submit" class="navbar-btn btn btn-primary" value="Update my predictions" name="predictionsSubmitted" />
             <a class="navbar-btn btn btn-default" href="#top" role="button">Return to top</a>
-            </div>
         </div>
 
         </div><!--col-md-12-->
@@ -372,7 +370,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 
       <!-- Site footer -->
       <div class="footer">
-      <?php include "includes/footer.php" ?>
+      	<?php include "includes/footer.php" ?>
       </div>
 
 
