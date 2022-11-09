@@ -218,6 +218,54 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 
 		</div>
 
+
+
+		<section>
+        <h1>GeeksForGeeks</h1>
+
+        <!-- TABLE CONSTRUCTION-->
+        <table id='table'>
+            <!-- HEADING FORMATION -->
+            <tr>
+                <th>GFG UserHandle</th>
+                <th>Practice Problems</th>
+                <th>Coding Score</th>
+                <th>GFG Articles</th>
+            </tr>
+
+            <script>
+                $(document).ready(function () {
+
+                    // FETCHING DATA FROM JSON FILE
+                    $.getJSON("json/fifa-world-cup-2022-fixtures.json",
+                    	function (data) {
+                        var fixture = '';
+
+                        // ITERATING THROUGH OBJECTS
+                        $.each(data, function (key, value) {
+                            //CONSTRUCTION OF ROWS HAVING
+                            // DATA FROM JSON OBJECT
+                            fixture += '<tr>';
+                            fixture += '<td>' + value.MatchNumber + '</td>';
+                            fixture += '<td>' + value.HomeTeam + '</td>';
+                            fixture += '<td>' + value.AwayTeam + '</td>';
+                            fixture += '<td>' + value.Location + '</td>';
+                            fixture += '</tr>';
+                        });
+                        //INSERTING ROWS INTO TABLE
+                        $('#table').append(fixture);
+                    });
+                });
+            </script>
+    </section>
+
+		<table id="table" class="table table-sm">
+		</table>
+
+
+
+
+<!--
 	  	<table class="table table-sm">
 
 				<tr id="match1">
@@ -308,8 +356,8 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					<td><img src="<?php echo $B4img; ?>" alt="<?php echo $B4; ?>" title="<?php echo $B4; ?>"></td>
 	      	<td><?php echo $B4; ?></td>
 	      	<td class="date-venue small text-muted"><?php echo "$_19, $_21Nov, $year <br> $venue4"; ?></td>
-      	</tr>-->
-       	</table>
+      	</tr>
+			</table>-->
 
         <div id="submit-footer" class="navbar navbar-default navbar-fixed-bottom col-md-10 col-md-offset-1">
             <div class="pull-right">
