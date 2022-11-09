@@ -244,19 +244,19 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
                         $.each(data, function (key, value) {
                             //CONSTRUCTION OF ROWS HAVING
                             // DATA FROM JSON OBJECT
+														x++;
 														console.log(x);
                             fixture += '<tr>';
 														fixture += '<td class="small text-muted">' + value.Group + '</td>';
                             fixture += '<td>' + value.HomeTeam + '</td>';
 														fixture += '<td>FLAG</td>';
-														fixture += '<td><input type="text" id="score'+x+'_p" name="score'+x+'_p" class="form-control" /></td>';
+														fixture += '<td><input type="text" id="score"'+x+'"_p" name="score"'+x+'"_p" class="form-control" /></td>';
 														fixture += '<td align="center">v<br><span class="badge bg-light text-primary">' + value.MatchNumber + '</span></td>';
 														fixture += '<td><input type="text" id="score2_p" name="score2_p" class="form-control" /></td>';
 														fixture += '<td>FLAG</td>';
                             fixture += '<td>' + value.AwayTeam + '</td>';
                             fixture += '<td class="small text-muted"> ' + value.DateUtc + '<br>' + value.Location + '</td>';
                             fixture += '</tr>';
-														x++;
                         });
                       //INSERTING ROWS INTO TABLE
                       $('#table').append(fixture);
