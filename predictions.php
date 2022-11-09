@@ -219,7 +219,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		</div>
 
 
-        <!-- TABLE CONSTRUCTION
+        <!-- TABLE CONSTRUCTION -->
         <table id="table" class="table table-sm">
             <!-- HEADING FORMATION
             <tr>
@@ -355,8 +355,8 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					<td><img src="<?php echo $D4img; ?>" alt="<?php echo $D4; ?>" title="<?php echo $D4; ?>"></td>
 	      	<td><?php echo $D4; ?></td>
 	      	<td class="date-venue small text-muted"><?php echo "$_19, $_21Nov, $year <br> $venue4"; ?></td>
-      	</tr>
-			</table>-->
+      	</tr>-->
+			</table>
 
         <div id="submit-footer" class="navbar navbar-default navbar-fixed-bottom col-md-10 col-md-offset-1">
             <div class="pull-right">
