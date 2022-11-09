@@ -232,14 +232,14 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
             </tr>
 					-->
             <script>
-						/*
+
                 $(document).ready(function () {
 
                     // FETCHING DATA FROM JSON FILE
                     $.getJSON("json/fifa-world-cup-2022-fixtures.json",
                     	function (data) {
                         var fixture = '';
-
+												for(x = 0; x < 49; x++) {
                         // ITERATING THROUGH OBJECTS
                         $.each(data, function (key, value) {
                             //CONSTRUCTION OF ROWS HAVING
@@ -248,7 +248,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 														fixture += '<td class="small text-muted">' + value.Group + '</td>';
                             fixture += '<td>' + value.HomeTeam + '</td>';
 														fixture += '<td>FLAG</td>';
-														fixture += '<td><input type="text" id="score1_p" name="score1_p" class="form-control" /></td>';
+														fixture += '<td><input type="text" id="score'+x+'_p" name="score'+x+'_p" class="form-control" /></td>';
 														fixture += '<td align="center">v<br><span class="badge bg-light text-primary">' + value.MatchNumber + '</span></td>';
 														fixture += '<td><input type="text" id="score2_p" name="score2_p" class="form-control" /></td>';
 														fixture += '<td>FLAG</td>';
@@ -256,11 +256,12 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
                             fixture += '<td class="small text-muted"> ' + value.DateUtc + '<br>' + value.Location + '</td>';
                             fixture += '</tr>';
                         });
-                        //INSERTING ROWS INTO TABLE
-                        $('#table').append(fixture);
+											}
+                      //INSERTING ROWS INTO TABLE
+                      $('#table').append(fixture);
                     });
                 });
-								*/
+
             </script>
 
 
