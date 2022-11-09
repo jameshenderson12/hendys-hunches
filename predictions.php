@@ -219,7 +219,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		</div>
 
 
-        <!-- TABLE CONSTRUCTION
+        <!-- TABLE CONSTRUCTION -->
         <table id="table" class="table table-sm">
             <!-- HEADING FORMATION
             <tr>
@@ -248,7 +248,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 														fixture += '<td class="small text-muted">' + value.Group + '</td>';
                             fixture += '<td>' + value.HomeTeam + '</td>';
 														fixture += '<td>FLAG</td>';
-														//fixture += '<td><input type="text" id="score' + ((value.MatchNumber * 2) - 1) + '_p" name="score' + (value.MatchNumber * 2) + '_p" class="form-control" /></td>';
+														fixture += '<td><input type="text" id="score' + ((value.MatchNumber * 2) - 1) + '_p" name="score' + (value.MatchNumber * 2) + '_p" class="form-control" /></td>';
 														fixture += '<td align="center">v<br><span class="badge bg-light text-primary">' + value.MatchNumber + '</span></td>';
 														fixture += '<td><input type="text" id="score2_p" name="score2_p" class="form-control" /></td>';
 														fixture += '<td>FLAG</td>';
@@ -353,8 +353,8 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					<td><img src="<?php echo $D4img; ?>" alt="<?php echo $D4; ?>" title="<?php echo $D4; ?>"></td>
 	      	<td><?php echo $D4; ?></td>
 	      	<td class="date-venue small text-muted"><?php echo "$_19, $_21Nov, $year <br> $venue4"; ?></td>
-      	</tr>
-			</table>-->
+      	</tr>-->
+			</table>
 
         <div id="submit-footer" class="navbar navbar-default navbar-fixed-bottom col-md-10 col-md-offset-1">
             <div class="pull-right">
