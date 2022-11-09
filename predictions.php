@@ -153,7 +153,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 
         <div class="btn-group" role="group" aria-label="Fixture Filters">
           <button id="all" type="button" class="btn btn-default" onClick="showOnly('All')">All Matches</button>
-          <!--
+
           <div class="btn-group" role="group">
             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Group
@@ -167,7 +167,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
               <li id="groupE"><a href="#matches" onClick="showOnly('E')">Group E</a></li>
               <li id="groupF"><a href="#matches" onClick="showOnly('F')">Group F</a></li>
             </ul>
-          </div>-->
+          </div>
 
           <div class="btn-group" role="group">
             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -220,7 +220,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 
 
         <!-- TABLE CONSTRUCTION -->
-        <table id="table" class="table table-sm">
+        <table id="table" class="table table-sm table-striped">
             <!-- HEADING FORMATION
             <tr>
 							<!--
