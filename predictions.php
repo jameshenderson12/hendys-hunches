@@ -242,7 +242,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 												for(x = 0; x < 49; x++) {
 													console.log(x);
                         // ITERATING THROUGH OBJECTS
-                        $.each(data, function (key, value) {
+                        $.each(data, function (key, value, x) {
                             //CONSTRUCTION OF ROWS HAVING
                             // DATA FROM JSON OBJECT
                             fixture += '<tr>';
