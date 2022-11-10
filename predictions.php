@@ -175,7 +175,8 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 														var awayTeam = value.AwayTeam;
 														var homeTeamFlag = "flag-icons/24/" + homeTeam.toLowerCase().replaceAll(' ', '-') + ".png";
 														var awayTeamFlag = "flag-icons/24/" + awayTeam.toLowerCase().replaceAll(' ', '-') + ".png";
-														var dateTime = parseDate(value.DateUtc);
+														var dateTime = value.DateUtc;
+														var formattedDateTime = dateTime.toDateString();
                             fixture += '<tr>';
 														fixture += '<td class="small text-muted">' + value.Group + '</td>';
                             fixture += '<td>' + value.HomeTeam + '</td>';
@@ -185,7 +186,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 														fixture += '<td><input type="text" id="score' + y + '_p" name="score' + y + '_p" class="form-control" /></td>';
 														fixture += '<td><img src="' + awayTeamFlag + '" alt="Flag of ' + awayTeam + '" title="Flag of ' + awayTeam + '"></td>';
                             fixture += '<td>' + value.AwayTeam + '</td>';
-                            fixture += '<td class="small text-muted"> ' + dateTime + '<br>' + value.Location + '</td>';
+                            fixture += '<td class="small text-muted"> ' + formattedDateTime + '<br>' + value.Location + '</td>';
                             fixture += '</tr>';
 														x+=2;
 														y+=2;
