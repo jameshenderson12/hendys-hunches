@@ -179,7 +179,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 														const [dateValues, timeValues] = str.split(' ');
 														const [year, month, day] = dateValues.split('-');
 														const [hours, minutes] = timeValues.split(':');
-														const date = new Date(+year, +month - 1, +day, +hours, +minutes).toLocaleString();
+														const date = new Date(+year, +month - 1, +day, +hours, +minutes).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 														console.log(date);
                             fixture += '<tr>';
 														fixture += '<td class="small text-muted">' + value.Group + '</td>';
