@@ -175,9 +175,9 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 														var awayTeam = value.AwayTeam;
 														var homeTeamFlag = "flag-icons/24/" + homeTeam.toLowerCase().replaceAll(' ', '-') + ".png";
 														var awayTeamFlag = "flag-icons/24/" + awayTeam.toLowerCase().replaceAll(' ', '-') + ".png";
-														var str = value.DateUtc;
+														const str = value.DateUtc;
 														const [dateValues, timeValues] = str.split(' ');
-														const [month, day, year] = dateValues.split('-');
+														const [year, month, day] = dateValues.split('-');
 														const [hours, minutes] = timeValues.split(':');
 														const date = new Date(+year, +month - 1, +day, +hours, +minutes);
 														console.log(date);
