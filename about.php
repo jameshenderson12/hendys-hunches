@@ -115,7 +115,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 
 					<div class="col-sm-12 col-md-4">
 						<div class="card">
-					  	<img src="img/wc2006-ss.png" alt="World Cup 2006 Game Image" class="card-img-top">
+					  	<img src="img/euro2016-site-v3.png" alt="Euro 2016 Game Image" class="card-img-top">
 						  <div class="card-body">
 						    <h5 class="card-title">Euro 2016</h5>
 						    <p class="card-text">Determined to build on the success of the World Cup 2014 version, feedback and positive suggestions has seen significant improvements. Not all changes are widely visible as a lot of the 'under the hood' mechanics have been reworked. Some of the most major improvements include a statistics dashboard, improved rankings system, better in-game communication methods and the ability to make changes to a prediction close up until its match kick-off. All of this and more now sits behind a new and secure login facility. There is always room for improvement so I'm happy to take any comments people have for what could be in a future version. Who will finish in the top places?</p>
