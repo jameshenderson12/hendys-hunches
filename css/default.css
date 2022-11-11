@@ -1,5 +1,10 @@
 body {
   background-image: url(../img/football-stadium.jpg);
+  font-family: 'Lora';
+}
+
+h1, h2, h3 {
+  font-family: 'Ubuntu';
 }
 
 main {
