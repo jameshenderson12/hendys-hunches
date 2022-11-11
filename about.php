@@ -84,6 +84,30 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		      <p>A special mention of thanks to my very supportive wife, EJ, whose patience has been much appreciated in the hours of our time I've dedicated to this project!</p>
 		      <div class="row">
 		      <div class="col-sm-12 col-md-4">
+						<div class="card" style="width: 18rem;">
+					  	<img src="img/wc2006-ss.png" alt="World Cup 2006 Game Image" class="card-img-top">
+						  <div class="card-body">
+						    <h5 class="card-title">World Cup 2006</h5>
+						    <p class="card-text">The first origins of Hendy's Hunches - complete with no game name and no supporting website! It was a very monotonous process which consisted simply of sending friends a basic spreadsheet template, having them input their scores for each game and return it to me before the competition began. It was flaky at best although it did seem to be well perceived by those who had taken part. I'd spend a couple of hours a day trauling through each player's spreadsheet and manually calculating points before sending a daily email update of a table with scores and rankings. Despite the tedious effort, it left me thinking that it would be great to repeat the event again some time in the future.</p>
+						  </div>
+						  <ul class="list-group list-group-flush">
+						    <li class="list-group-item"><strong>Winners:</strong> Steven Lough/James Henderson</li>
+						    <li class="list-group-item"><strong>Runner-Up:</strong> Kirsty Yarnold</li>
+						    <li class="list-group-item"><strong>Third Place:</strong> Julien Alégre/Andrew Lough</li>
+						  </ul>
+							<!--
+						  <div class="card-body">
+						    <a href="#" class="card-link">Card link</a>
+						    <a href="#" class="card-link">Another link</a>
+						  </div>
+						-->
+						</div>
+					</div>
+
+
+
+
+<!--
 		        <div class="thumbnail">
 		          <img src="img/wc2006-ss.png" alt="World Cup 2006 Game Image">
 		          <div class="caption">
@@ -96,7 +120,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		          </div>
 		        </div>
 		      </div>
-
+-->
 		      <div class="col-sm-12 col-md-4">
 		        <div class="thumbnail">
 		          <img src="img/wc2014-site.png" alt="World Cup 2014 Game Image">

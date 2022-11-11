@@ -81,8 +81,8 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	      <p class="lead">Lead text...</p>
 				<p>The below indicates how best to approach this game and summarises each page:</p>
 	      <ol>
-	      <li>Register to play (you're already registered! <span class="glyphicon glyphicon-thumbs-up"></span>)</li>
-	      <li>Login using your registered username and password (you're already logged in! <span class="glyphicon glyphicon-thumbs-up"></span>)</li>
+	      <li>Register to play (you're already registered! <span class="bi bi-check2-square text-success"></span>)</li>
+	      <li>Login using your registered username and password (you're already logged in! <span class="bi bi-check2-square text-success"></span>)</li>
 	      <li>Go to the 'My Predictions' page to start recording/updating your predictions</li>
 	      <li>Check the 'Rankings' page shortly after each match to see where you and your colleagues, friends or family stand</li>
 	      </ol>
