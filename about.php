@@ -84,7 +84,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		      <p>A special mention of thanks to my very supportive wife, EJ, whose patience has been much appreciated in the hours of our time I've dedicated to this project!</p>
 		      <div class="row">
 		      <div class="col-sm-12 col-md-4">
-						<div class="card" style="width: 18rem;">
+						<div class="card">
 					  	<img src="img/wc2006-ss.png" alt="World Cup 2006 Game Image" class="card-img-top">
 						  <div class="card-body">
 						    <h5 class="card-title">World Cup 2006</h5>
@@ -99,7 +99,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					</div>
 
 					<div class="col-sm-12 col-md-4">
-						<div class="card" style="width: 18rem;">
+						<div class="card">
 					  	<img src="img/wc2014-site.png" alt="World Cup 2014 Game Image" class="card-img-top">
 						  <div class="card-body">
 						    <h5 class="card-title">World Cup 2014</h5>
@@ -114,7 +114,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					</div>
 
 					<div class="col-sm-12 col-md-4">
-						<div class="card" style="width: 18rem;">
+						<div class="card">
 					  	<img src="img/wc2006-ss.png" alt="World Cup 2006 Game Image" class="card-img-top">
 						  <div class="card-body">
 						    <h5 class="card-title">Euro 2016</h5>
