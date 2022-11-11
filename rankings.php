@@ -78,8 +78,10 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 
 			<main class="container px-4 py-4">
 	      <h1>Rankings</h1>
+				<!--
 	      <p class="lead">Lead text...</p>
 	      <p>Normal text...</p>
+			-->
 	      <div class="row">
       	</div><!--row-->
 			</main>
