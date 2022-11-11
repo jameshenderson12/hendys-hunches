@@ -91,64 +91,42 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 						    <p class="card-text">The first origins of Hendy's Hunches - complete with no game name and no supporting website! It was a very monotonous process which consisted simply of sending friends a basic spreadsheet template, having them input their scores for each game and return it to me before the competition began. It was flaky at best although it did seem to be well perceived by those who had taken part. I'd spend a couple of hours a day trauling through each player's spreadsheet and manually calculating points before sending a daily email update of a table with scores and rankings. Despite the tedious effort, it left me thinking that it would be great to repeat the event again some time in the future.</p>
 						  </div>
 						  <ul class="list-group list-group-flush">
-						    <li class="list-group-item"><strong>Winners:</strong> Steven Lough/James Henderson</li>
-						    <li class="list-group-item"><strong>Runner-Up:</strong> Kirsty Yarnold</li>
-						    <li class="list-group-item"><strong>Third Place:</strong> Julien Alégre/Andrew Lough</li>
+						    <li class="list-group-item"><strong>1st:</strong> Steven Lough/James Henderson</li>
+						    <li class="list-group-item"><strong>2nd:</strong> Kirsty Yarnold</li>
+						    <li class="list-group-item"><strong>3rd:</strong> Julien Alégre/Andrew Lough</li>
 						  </ul>
-							<!--
-						  <div class="card-body">
-						    <a href="#" class="card-link">Card link</a>
-						    <a href="#" class="card-link">Another link</a>
-						  </div>
-						-->
 						</div>
 					</div>
 
+					<div class="col-sm-12 col-md-4">
+						<div class="card" style="width: 18rem;">
+					  	<img src="img/wc2014-site.png" alt="World Cup 2014 Game Image" class="card-img-top">
+						  <div class="card-body">
+						    <h5 class="card-title">World Cup 2014</h5>
+						    <p class="card-text">In need of dusting off my programming skills, I thought it would be good to replicate the fun of the game for 2006 - only bigger and better. The hardest things I had to decide on were 1) what format a site would take for it (look and feel), 2) what each player could expect to do (on a basic level), and 3) a points mechanism that would be fair and present good competition. Users were pointed to an online form which they completed all predictions (only for the group stages) in one go. Then, after each game I would enter results into a page and points were given automatically based on players' predictions against a result. A table of rankings kept everyone's points tally. Not too pretty but efficient.</p>
+						  </div>
+						  <ul class="list-group list-group-flush">
+						    <li class="list-group-item"><strong>1st:</strong> Andrew Booth</li>
+						    <li class="list-group-item"><strong>2nd:</strong> Nigel Plant</li>
+						    <li class="list-group-item"><strong>3rd:</strong> Luke Fecowycz</li>
+						  </ul>
+						</div>
+					</div>
 
-
-
-<!--
-		        <div class="thumbnail">
-		          <img src="img/wc2006-ss.png" alt="World Cup 2006 Game Image">
-		          <div class="caption">
-		            <h4>World Cup 2006</h4>
-		            <p>The first origins of Hendy's Hunches - complete with no game name and no supporting website! It was a very monotonous process which consisted simply of sending friends a basic spreadsheet template, having them input their scores for each game and return it to me before the competition began. It was flaky at best although it did seem to be well perceived by those who had taken part. I'd spend a couple of hours a day trauling through each player's spreadsheet and manually calculating points before sending a daily email update of a table with scores and rankings. Despite the tedious effort, it left me thinking that it would be great to repeat the event again some time in the future.</p>
-		            <p><strong>Winners:</strong> Steven Lough/James Henderson</p>
-		            <p><strong>Runner-Up:</strong> Kirsty Yarnold</p>
-		            <p><strong>Third Place:</strong> Julien Alégre/Andrew Lough</p>
-		            <p><strong>Last Place:</strong> Dan Gordon</p>
-		          </div>
-		        </div>
-		      </div>
--->
-		      <div class="col-sm-12 col-md-4">
-		        <div class="thumbnail">
-		          <img src="img/wc2014-site.png" alt="World Cup 2014 Game Image">
-		          <div class="caption">
-		            <h4>World Cup 2014</h4>
-		            <p>In need of dusting off my programming skills, I thought it would be good to replicate the fun of the game for 2006 - only bigger and better. The hardest things I had to decide on were 1) what format a site would take for it (look and feel), 2) what each player could expect to do (on a basic level), and 3) a points mechanism that would be fair and present good competition. Users were pointed to an online form which they completed all predictions (only for the group stages) in one go. Then, after each game I would enter results into a page and points were given automatically based on players' predictions against a result. A table of rankings kept everyone's points tally. Not too pretty but efficient.</p>
-		            <p><strong>Winner:</strong> Andrew Booth</p>
-		            <p><strong>Runner-Up:</strong> Nigel Plant</p>
-		            <p><strong>Third Place:</strong> Luke Fecowycz</p>
-		            <p><strong>Last Place:</strong> Alison Naish</p>
-		          </div>
-		        </div>
-		      </div>
-
-		      <div class="col-sm-12 col-md-4">
-		        <div class="thumbnail">
-		          <img src="img/euro2016-site-v3.png" alt="Euro 2016 Game Image">
-		          <div class="caption">
-		            <h4>Euro 2016</h4>
-		            <p>Determined to build on the success of the World Cup 2014 version, feedback and positive suggestions has seen significant improvements. Not all changes are widely visible as a lot of the 'under the hood' mechanics have been reworked. Some of the most major improvements include a statistics dashboard, improved rankings system, better in-game communication methods and the ability to make changes to a prediction close up until its match kick-off. All of this and more now sits behind a new and secure login facility. There is always room for improvement so I'm happy to take any comments people have for what could be in a future version. Who will finish in the top places?</p>
-		            <p><strong>Winner:</strong> Jonathan Lamley</p>
-		            <p><strong>Runner-Up:</strong> Sam McGuigan</p>
-		            <p><strong>Third Place:</strong> Steve Butt/Kirsty Yarnold</p>
-		            <p><strong>Last Place:</strong> Jono Hilton</p>
-		          </div>
-		        </div>
-		      </div>
-
+					<div class="col-sm-12 col-md-4">
+						<div class="card" style="width: 18rem;">
+					  	<img src="img/wc2006-ss.png" alt="World Cup 2006 Game Image" class="card-img-top">
+						  <div class="card-body">
+						    <h5 class="card-title">Euro 2016</h5>
+						    <p class="card-text">Determined to build on the success of the World Cup 2014 version, feedback and positive suggestions has seen significant improvements. Not all changes are widely visible as a lot of the 'under the hood' mechanics have been reworked. Some of the most major improvements include a statistics dashboard, improved rankings system, better in-game communication methods and the ability to make changes to a prediction close up until its match kick-off. All of this and more now sits behind a new and secure login facility. There is always room for improvement so I'm happy to take any comments people have for what could be in a future version. Who will finish in the top places?</p>
+						  </div>
+						  <ul class="list-group list-group-flush">
+						    <li class="list-group-item"><strong>1st:</strong> Jonathan Lamley</li>
+						    <li class="list-group-item"><strong>2nd:</strong> Sam McGuigan</li>
+						    <li class="list-group-item"><strong>3rd:</strong> Steve Butt/Kirsty Yarnold</li>
+						  </ul>
+						</div>
+					</div>										
 		    </div>
 
 		    <a class="btn btn-default" href="#top" role="button">Return to top</a>
