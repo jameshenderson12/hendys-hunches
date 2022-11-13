@@ -212,10 +212,11 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
       </div><!--row-->
    	</form>
 
-      <!-- Site footer -->
-      <div class="footer">
-      <?php include "includes/footer.php" ?>
-      </div>
+		<!-- Site footer -->
+		<footer class="mt-auto">
+			<hr>
+			<p class="small fw-light">Predictions game based on <a href="https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/qatar2022">FIFA World Cup Qatar 2022™</a><br><?=$title?> <?=$version?> &copy; <?=$year?> <?=$developer?>.</p>
+		</footer>
 
     <script type="text/javascript">
 			function parseDate(str) {

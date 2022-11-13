@@ -7,8 +7,8 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 ?>
 <?php
 	include 'php/process.php';
-	submitPredictions();  
-?>        
+	submitPredictions();
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -18,7 +18,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="description" content="Hendy's Hunches: Predictions Game">
 	<meta name="author" content="James Henderson">
-    <?php include "php/config.php" ?> 
+    <?php include "php/config.php" ?>
     <link rel="shortcut icon" href="ico/favicon.ico">
 
     <title>Hendy's Hunches: Predictions Submitted</title>
@@ -43,22 +43,22 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		border-top:6px solid rgba(0,174,239,.8);
 		border-radius:100%;
 	}
-	
+
 	@-webkit-keyframes rotation {
 	from {-webkit-transform: rotate(0deg);}
 	to {-webkit-transform: rotate(359deg);}
 	}
-	
+
 	@-moz-keyframes rotation {
 	from {-moz-transform: rotate(0deg);}
 	to {-moz-transform: rotate(359deg);}
 	}
-	
+
 	@-o-keyframes rotation {
 	from {-o-transform: rotate(0deg);}
 	to {-o-transform: rotate(359deg);}
 	}
-	
+
 	@keyframes rotation {
 	from {transform: rotate(0deg);}
 	to {transform: rotate(359deg);}
@@ -76,7 +76,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
   </head>
 
   <body>
-  
+
     <!-- Navigation menu for lg, md display -->
     <nav class="navbar navbar-inverse navbar-fixed-top col-md-12 hidden-xs">
       <div class="container-fluid">
@@ -96,22 +96,22 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
             <li class="active"><a href="predictions.php">My Predictions</a></li>
             <li><a href="rankings.php">Rankings</a></li>
             <li><a href="howitworks.php">How It Works</a></li>
-			<li><a href="about.php">About</a></li>                        
+			<li><a href="about.php">About</a></li>
           </ul>
           <!--
           <form class="navbar-form navbar-right">
             <input type="text" class="form-control" placeholder="Search...">
           </form>-->
         </div>
-        <div class="col-md-12">   
-           <?php		 
+        <div class="col-md-12">
+           <?php
 			// Echo session variables that were set on previous page
 			echo "<span id='login'><span style='color: white'><p>Logged in as: <span class='glyphicon glyphicon-user'></span>&nbsp;<span style='font-weight:bold'>" . $_SESSION["firstname"] . " " . $_SESSION["surname"] . "</span> ( <a href='php/logout.php'>Logout</a> )</p></span></span>";
           ?>
         </div>
       </div>
     </nav>
-    
+
     <!-- Navigation menu for xs display -->
     <nav class="navbar navbar-inverse navbar-fixed-top col-md-12 visible-xs hidden-lg hidden-md">
       <div class="container-fluid">
@@ -131,8 +131,8 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
             <li class="active"><a href="predictions.php"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>&nbsp;&nbsp;My Predictions</a></li>
             <li><a href="rankings.php"><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>&nbsp;&nbsp;Rankings</a></li>
             <li><a href="howitworks.php"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>&nbsp;&nbsp;How It Works</a></li>
-			<li><a href="about.php"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>&nbsp;&nbsp;About</a></li>            
-            <li><a href="php/logout.php"><span class='glyphicon glyphicon-user' aria-hidden="true"></span>&nbsp;&nbsp;Logout</a></li>                        
+			<li><a href="about.php"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>&nbsp;&nbsp;About</a></li>
+            <li><a href="php/logout.php"><span class='glyphicon glyphicon-user' aria-hidden="true"></span>&nbsp;&nbsp;Logout</a></li>
           </ul>
         </div>
       </div>
@@ -146,13 +146,13 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
     <p><span class="label label-success">SUCCESS</span> <strong>Predictions updated.</strong></p>
 	<p>Thank you for updating your predictions. You will now be returned to your predictions page.</p>
 	<div class="spinner"></div>
-     
-     
-      <!-- Site footer -->
-      <div class="footer">
-      <?php include "includes/footer.php" ?>
-      </div>       
-     
+
+	<!-- Site footer -->
+	<footer class="mt-auto">
+		<hr>
+		<p class="small fw-light">Predictions game based on <a href="https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/qatar2022">FIFA World Cup Qatar 2022™</a><br><?=$title?> <?=$version?> &copy; <?=$year?> <?=$developer?>.</p>
+	</footer>
+
     </div><!-- /.container -->
 
     <!-- Bootstrap core JavaScript
