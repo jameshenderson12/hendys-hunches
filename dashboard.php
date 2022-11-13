@@ -78,8 +78,9 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 
 			<main class="container px-4 py-4">
 	      <h1>Your Dashboard</h1>
-	      <p class="lead">Lead text...</p>
-	      <p>Normal text...</p>
+	      <p class="lead">This is your dashboard to track your progress.</p>
+		      <p>COMING SOON</p>
+					<p>For now, please <a href="predictions.php">submit your predictions</a> for the group stage fixtures!</p>
 	      <div class="row">
       	</div><!--row-->
 			</main>
