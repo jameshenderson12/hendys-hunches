@@ -123,12 +123,11 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	      <tr class="danger"><td>3 - 3</td><td>2 - 1</td><td>Incorrect outcome and no scores predicted</td><td>0</td></tr>
 	      </table>
 	    <a class="btn btn-default" href="#top" role="button">Return to top</a>
-			</main>
-
-      <!-- Site footer -->
+			<!-- Site footer -->
 			<footer class="mt-auto">
-	      <p class="small fw-light">Predictions game based on <a href="https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/qatar2022" class="text-white">FIFA World Cup Qatar 2022™</a><br><?=$title?> <?=$version?> &copy; <?=$year?> <?=$developer?>.</p>
-	    </footer>
+				<p class="small fw-light">Predictions game based on <a href="https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/qatar2022">FIFA World Cup Qatar 2022™</a><br><?=$title?> <?=$version?> &copy; <?=$year?> <?=$developer?>.</p>
+			</footer>			
+			</main>
 
     </div><!-- /.main-section -->
 

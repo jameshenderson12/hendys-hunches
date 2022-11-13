@@ -77,8 +77,8 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		  </nav>
 
 			<main class="container px-4 py-4">
-	      <h1>Your Dashboard</h1>
-	      <p class="lead">This is your dashboard to track your progress.</p>
+	      <h1>My Dashboard</h1>
+	      <p class="lead">Use the dashboard to track your progress.</p>
 		      <p>COMING SOON</p>
 					<p>For now, please <a href="predictions.php">submit your predictions</a> for the group stage fixtures!</p>
 	      <div class="row">
@@ -86,7 +86,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 				<!-- Site footer -->
 				<footer class="mt-auto">
 					<hr>
-		      <p class="small fw-light">Predictions game based on <a href="https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/qatar2022" class="text-white">FIFA World Cup Qatar 2022™</a><br><?=$title?> <?=$version?> &copy; <?=$year?> <?=$developer?>.</p>
+		      <p class="small fw-light">Predictions game based on <a href="https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/qatar2022">FIFA World Cup Qatar 2022™</a><br><?=$title?> <?=$version?> &copy; <?=$year?> <?=$developer?>.</p>
 		    </footer>
 			</main>
 
