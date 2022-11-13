@@ -83,13 +83,14 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					<p>For now, please <a href="predictions.php">submit your predictions</a> for the group stage fixtures!</p>
 	      <div class="row">
       	</div><!--row-->
+				<!-- Site footer -->
+				<footer class="mt-auto">
+					<hr style="color: #FFF; width: 3px;">
+		      <p class="small fw-light">Predictions game based on <a href="https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/qatar2022" class="text-white">FIFA World Cup Qatar 2022™</a><br><?=$title?> <?=$version?> &copy; <?=$year?> <?=$developer?>.</p>
+		    </footer>				
 			</main>
 
-      <!-- Site footer -->
-			<footer class="mt-auto">
-				<hr style="color: #FFF; width: 3px;">
-	      <p class="small fw-light">Predictions game based on <a href="https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/qatar2022" class="text-white">FIFA World Cup Qatar 2022™</a><br><?=$title?> <?=$version?> &copy; <?=$year?> <?=$developer?>.</p>
-	    </footer>
+
 
     </div><!-- /.main-section -->
 
