@@ -9,8 +9,7 @@
 }
 body {
   background-image: url(../img/football-stadium.jpg);
-  display: flex;
-	justify-content: center;
+  background-size: cover;
 }
 main {
   background: rgba(10, 20, 50, 0.5);
