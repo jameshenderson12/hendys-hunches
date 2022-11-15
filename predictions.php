@@ -80,6 +80,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	}
 	input {
 		font-size: larger;
+		text-align: center;
 	}
 	</style>
   </head>
