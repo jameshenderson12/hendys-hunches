@@ -80,7 +80,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	      <h1>My Dashboard</h1>
 	      <p class="lead">Use the dashboard to track your progress.</p>
 		      <p>COMING SOON</p>
-					<p>For now, please <a href="predictions.php">submit your predictions</a> for the group stage fixtures!</p>
+					<p>For now, please <a href="predictions.php">submit your predictions</a> for the 48 group stage fixtures!</p>
 	      <div class="row">
       	</div><!--row-->
 				<!-- Site footer -->

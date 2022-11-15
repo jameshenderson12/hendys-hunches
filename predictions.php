@@ -146,22 +146,14 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	<main class="container px-4 py-4">
       <h1>My Predictions</h1>
       <!--<p class="lead">Can you correctly predict your way to victory?</p>-->
-      <p>To make your predictions, enter a score value into each box below. Remember to hit the 'Update my predictions' button to submit.</p>
+      <p>To make your predictions, enter a score value into each box below and hit the 'Submit my predictions' button.</p>
+			<p class="alert alert-warning">Note: Take care as, once submitted, they cannot be amended.</p>
       <a name="matches"></a><!--anchor point for filters-->
       <form id="predictionForm" name="predictionForm" class="form-horizontal" action="submit.php" method="POST">
       <div class="row">
 
         <!-- Placeholder for JSON table construction -->
         <table id="table" class="table table-sm table-striped">
-            <!--
-            <tr>
-							<!--
-                <th>Match No.</th>
-                <th>Home Team</th>
-                <th>Away Team</th>
-                <th>Date/Location</th>
-            </tr>
-					-->
             <script>
                 $(document).ready(function () {
                     // Fetch data from JSON file
@@ -215,9 +207,8 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 
 		<!-- Site footer -->
 		<footer class="mt-auto">
-			<hr>
-			<p class="small fw-light">Predictions game based on <a href="https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/qatar2022">FIFA World Cup Qatar 2022™</a><br><?=$title?> <?=$version?> &copy; <?=$year?> <?=$developer?>.</p>
-		</footer>
+      <p class="small fw-light">Predictions game based on <a href="https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/qatar2022" class="text-white">FIFA World Cup Qatar 2022™</a><br><?=$title?> <?=$version?> &copy; <?=$year?> <?=$developer?>.</p>
+    </footer>
 
     <script type="text/javascript">
 			function parseDate(str) {
