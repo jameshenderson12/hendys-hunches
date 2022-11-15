@@ -147,7 +147,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
       <h1>My Predictions</h1>
       <!--<p class="lead">Can you correctly predict your way to victory?</p>-->
       <p>To make your predictions, enter a score value into each box below and hit the 'Submit my predictions' button.</p>
-			<p class="alert alert-warning">Note: Take care as, once submitted, they cannot be amended.</p>
+			<p class="alert alert-warning"><strong>Note:</strong> Please take care as, once submitted, they cannot be amended.</p>
       <a name="matches"></a><!--anchor point for filters-->
       <form id="predictionForm" name="predictionForm" class="form-horizontal" action="submit.php" method="POST">
       <div class="row">
