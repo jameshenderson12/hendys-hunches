@@ -157,7 +157,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					                <div class="card-footer text-center py-2">
 					                  <a class="btn btn-link btn-sm" href="my-profile.html">View Profile </a>
 					                </div>
-					              </div>					
+					              </div>
       	</div><!--row-->
 				<!-- Site footer -->
 				<footer class="mt-auto">
