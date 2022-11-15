@@ -59,7 +59,7 @@ session_start();
             <hr />
           <!--<p class="lead">Pit your FIFA World Cup 2022 predictions against others for a chance to earn a prize spot or bragging rights in the rankings.</p>-->
     			<p class="lead">
-    				<button class="btn btn-lg btn-primary fw-bold" type="submit"><i class="fw-bold bi bi-box-arrow-in-right"></i> Log in</button>
+    				<button class="btn btn-lg btn-primary" type="submit"><i class="fw-bold bi bi-box-arrow-in-right"></i> Log in</button>
     			</p>
         </form>
   		</main>
