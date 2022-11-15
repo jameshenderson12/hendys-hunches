@@ -1,15 +1,12 @@
 @import url(https://fonts.googleapis.com/css?family=Lato:300);
 
-/* Custom default button */
-.btn-secondary,
-.btn-secondary:hover,
-.btn-secondary:focus {
-  color: #333;
-  text-shadow: none; /* Prevent inheritance from `body` */
-}
 body {
   background-image: url(../img/football-stadium.jpg);
-  background-size: cover;
+  background-color: #CCCCCC; /* Used if the image is unavailable */
+  /*height: 500px; /* You must set a specified height */
+  background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* Do not repeat the image */
+  background-size: cover; /* Resize the background image to cover the entire container */
 }
 main {
   background: rgba(10, 20, 50, 0.5);
