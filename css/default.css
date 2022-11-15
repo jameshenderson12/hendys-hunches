@@ -13,7 +13,7 @@ main {
   min-height: 400px;
 }
 
-footer {
+footer p {
   margin: 0 auto;
   text-align: right !important;
 }
