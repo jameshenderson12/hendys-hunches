@@ -268,11 +268,12 @@ function returnAvatar() {
 	include 'db-connect.php';
 
 	// Get team information from the DB	counting occurrences too
-	$sql_getavatar = "SELECT avatar FROM live_user_information WHERE username = '".$_SESSION["username"]."'";
+	$sql_getavatar = "SELECT firstname, avatar FROM live_user_information WHERE username = '".$_SESSION["username"]."'";
 	$getavatar = mysqli_query($con, $sql_getavatar);
-	$avatarid = mysqli_fetch_assoc($getavatar);
-	$avatar = $avatarid["avatar"];
-	print("<img src='$avatar' id='avatar' class='img-fluid rounded-circle mx-1' alt='User Avatar' name='User Avatar' width='30'>");
+	$userid = mysqli_fetch_assoc($getavatar);
+	$firstname = $userid["firstname"];
+	$avatar = $userid["avatar"];
+	print("<img src='$avatar' id='avatar' class='img-fluid rounded-circle mx-1' alt='User Avatar' name='User Avatar' width='25'> $firstname");
 }
 
 // Display an alert style message
