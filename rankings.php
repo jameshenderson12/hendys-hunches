@@ -87,9 +87,11 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					<div class="col-xs-12">
 		      	<!-- Display table of rankings from process.php -->
 						<?php displayRankings(); ?>
-		        <div class="well well-sm">
+						<!--
+						<div class="well well-sm">
 		        <?php displayInfo(); ?>
 		        </div>
+					-->
 		        <a class="btn btn-light" href="#top" role="button">Return to top</a>
 		      </div>
       	</div><!--row-->
