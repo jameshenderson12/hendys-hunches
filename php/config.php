@@ -263,6 +263,13 @@ $fk18 = "football-kits/pink-grad.png";
 // Global 'helper' functions
 //===============================
 
+function displayFooter() {
+	echo '<footer class="mt-auto">
+					<hr>
+	      	<p class="small fw-light">Predictions game based on <a href="https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/qatar2022">FIFA World Cup 2022™</a><br><?=$title?> <?=$version?> &copy; <?=$year?> <?=$developer?>.</p>
+	    	</footer>';
+}
+
 // Display an alert style message
 function alertMsg($msg) {
 	echo "<script type='text/javascript'>alert('Alert message: " . $msg . "');</script>";

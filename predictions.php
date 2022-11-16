@@ -207,8 +207,10 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 
 		<!-- Site footer -->
 		<footer class="mt-auto">
-      <p class="small fw-light">Predictions game based on <a href="https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/qatar2022" class="text-white">FIFA World Cup Qatar 2022™</a><br><?=$title?> <?=$version?> &copy; <?=$year?> <?=$developer?>.</p>
+			<hr>
+      <p class="small fw-light">Predictions game based on <a href="https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/qatar2022">FIFA World Cup Qatar 2022™</a><br><?=$title?> <?=$version?> &copy; <?=$year?> <?=$developer?>.</p>
     </footer>
+	</main>
 
     <script type="text/javascript">
 			function parseDate(str) {
@@ -218,5 +220,6 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 				return d[2] + d[1] + d[0] + t;
 			}
 		</script>
-  </body>
+
+	</body>
 </html>
