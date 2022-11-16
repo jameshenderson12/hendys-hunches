@@ -39,7 +39,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		        <div class="offcanvas-body">
 		          <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
 		            <li class="nav-item">
-		              <a class="nav-link active" href="dashboard.php">Home</a>
+		              <a class="nav-link" href="dashboard.php">Home</a>
 		            </li>
 		            <li class="nav-item">
 		              <a class="nav-link" href="predictions.php">My Predictions</a>
@@ -51,7 +51,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		              <a class="nav-link" href="howitworks.php">How It Works</a>
 		            </li>
 								<li class="nav-item">
-									<a class="nav-link" aria-current="page" href="about.php">About</a>
+									<a class="nav-link active" aria-current="page" href="about.php">About</a>
 								</li>
 		            <li class="nav-item dropdown">
 		              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">

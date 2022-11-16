@@ -39,7 +39,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		        <div class="offcanvas-body">
 		          <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
 		            <li class="nav-item">
-		              <a class="nav-link active" aria-current="page" href="dashboard.php">Home</a>
+		              <a class="nav-link" href="dashboard.php">Home</a>
 		            </li>
 		            <li class="nav-item">
 		              <a class="nav-link" href="predictions.php">My Predictions</a>
@@ -48,7 +48,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		              <a class="nav-link" href="rankings.php">Rankings</a>
 		            </li>
 								<li class="nav-item">
-		              <a class="nav-link" href="howitworks.php">How It Works</a>
+		              <a class="nav-link active" aria-current="page" href="howitworks.php">How It Works</a>
 		            </li>
 								<li class="nav-item">
 									<a class="nav-link" href="about.php">About</a>
@@ -83,7 +83,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	      <ol>
 	      <li>Register to play (you're already registered! <span class="bi bi-check2-square text-success"></span>)</li>
 	      <li>Login using your registered username and password (you're already logged in! <span class="bi bi-check2-square text-success"></span>)</li>
-	      <li>Go to the 'My Predictions' page to start recording/updating your predictions</li>
+	      <li>Go to the 'My Predictions' page to fill out your predictions</li>
 	      <li>Check the 'Rankings' page shortly after each match to see where you and your colleagues, friends or family stand</li>
 	      </ol>
 
