@@ -5,7 +5,7 @@ function retrieveScorePrediction($num) {
 	include 'php/db-connect.php';
 	// Create a query to return a user's specific predictions
 	$sql_getscore = "SELECT * FROM live_user_predictions WHERE id='{$_SESSION['id']}'";
-	// Execute the query and return the results or display an appropriate error message					                                   
+	// Execute the query and return the results or display an appropriate error message
 	$userpred = mysqli_query($con, $sql_getscore) or die(mysqli_error());
 	// Output score value
     while($row = mysqli_fetch_assoc($userpred)) {
@@ -18,7 +18,7 @@ function retrieveScoreResult($num) {
 	include 'php/db-connect.php';
 	// Create a query to return a user's specific predictions
 	$sql_getscore = "SELECT * FROM live_match_results";
-	// Execute the query and return the results or display an appropriate error message					                                   
+	// Execute the query and return the results or display an appropriate error message
 	$result = mysqli_query($con, $sql_getscore) or die(mysqli_error());
 	// Output score value
     if($row = mysqli_fetch_assoc($result)) {
@@ -29,12 +29,12 @@ function retrieveScoreResult($num) {
 	}
 }
 
-function displayRankings() {	
+function displayRankings() {
 	// Connect to the database
 	include 'php/db-connect.php';
-	
-	// Set up SQL query to retrieve data from database tables		
-	$sql_maketable = "SELECT live_user_information.id, live_user_information.firstname, live_user_information.surname, live_user_information.faveteam, live_user_information.startpos, live_user_information.currpos, live_user_information.lastpos, live_user_predictions.points_total, 
+
+	// Set up SQL query to retrieve data from database tables
+	$sql_maketable = "SELECT live_user_information.id, live_user_information.firstname, live_user_information.surname, live_user_information.faveteam, live_user_information.startpos, live_user_information.currpos, live_user_information.lastpos, live_user_predictions.points_total,
 						FIND_IN_SET(points_total, (
 							SELECT GROUP_CONCAT( DISTINCT points_total
 							ORDER BY points_total DESC )
@@ -42,19 +42,19 @@ function displayRankings() {
 						) AS rank
 						FROM live_user_information
 						INNER JOIN live_user_predictions ON live_user_information.id = live_user_predictions.id
-						ORDER BY rank ASC, surname ASC";      
-	
-	$sql_matchresults = "SELECT * FROM live_match_results";					
+						ORDER BY rank ASC, surname ASC";
+
+	$sql_matchresults = "SELECT * FROM live_match_results";
 
 	// Execute the query and return the results or display an appropriate error message
 	$table = mysqli_query($con, $sql_maketable) or die(mysqli_error());
 	// Execute the query to see if match results table contains any data
-	$result = mysqli_query($con, $sql_matchresults) or die(mysqli_error());	
-				
-	// Start creating the table to display the returned values            
+	$result = mysqli_query($con, $sql_matchresults) or die(mysqli_error());
+
+	// Start creating the table to display the returned values
 	print "<table class='table table-striped' style='background-color:#FFF'>";
 	print "<tr><th width='10%'></th><th width='10%'>Rank</th><th width='10%'></th><th width='30%'>Name</th><th width='40%'>Favourite Team</th><th width='10%'>Points</th></tr>";
-		
+
 	while ($row = mysqli_fetch_assoc($table)) {
 
 		// Check if match results table contains any data
@@ -65,40 +65,40 @@ function displayRankings() {
 		else {
 			// Set rank value to rank position once match data exists
 			$rank = $row["rank"];
-		}								
-										
-		// Determine if move is upwards, downwards or the same and calculate the difference between current and previous ranking				
+		}
+
+		// Determine if move is upwards, downwards or the same and calculate the difference between current and previous ranking
 		if ($row["lastpos"] > $row["currpos"]) {
 			$diff = $row["lastpos"] - $row["currpos"];
 			$move = "<span style='color: green;'>&#x25B2;</span>";
 		}
 		if ($row["lastpos"] < $row["currpos"]) {
-			$diff = $row["currpos"] - $row["lastpos"];					
+			$diff = $row["currpos"] - $row["lastpos"];
 			$move = "<span style='color: red;'>&#x25BC;</span>";
 		}
 		if ($row["lastpos"] == $row["currpos"]) {
 			$diff = 0;
-			$move = "<span style='color: #888;'>&#x25B6;</span>"; 
-		}			
-										
-		print "<tr>";			
+			$move = "<span style='color: #888;'>&#x25B6;</span>";
+		}
+
+		print "<tr>";
 		// Ensure both name variables being with upper case letters
 		$uppCaseFN = ucfirst($row["firstname"]);
 		$uppCaseSN = ucfirst($row["surname"]);
-		
-		// Display the table complete with all data variables	
+
+		// Display the table complete with all data variables
 		printf ("<td></td>");
 		printf ("<td><strong>%s</strong> <span class='text-muted'>(%s)</span></td>", $rank, $row["lastpos"]);
-		printf ("<td>%s %s</td>", $move, $diff);								
-		printf ("<td><a href='user.php?id=%s'>%s %s</a></td>", $row["id"], $uppCaseFN, $uppCaseSN);		
+		printf ("<td>%s %s</td>", $move, $diff);
+		printf ("<td><a href='user.php?id=%s'>%s %s</a></td>", $row["id"], $uppCaseFN, $uppCaseSN);
 		printf ("<td>%s</td>", $row["faveteam"]);
-		printf ("<td>%s</td>", $row["points_total"]);				
-		print "</tr>";		
+		printf ("<td>%s</td>", $row["points_total"]);
+		print "</tr>";
 	}
-	// Complete the physical table layout					
+	// Complete the physical table layout
 	print "</tr>";
-	print "</table>"; 
-	
+	print "</table>";
+
 	// Close the database connection
 	mysqli_close($con);
 }
@@ -106,21 +106,21 @@ function displayRankings() {
 function displayTeamData() {
 	// Create DB connection
 	include 'php/db-connect.php';
-	
+
 	// Get team information from the DB	counting occurrences too
 	$sql_getteams = "SELECT faveteam, count(faveteam) AS occs FROM live_user_information GROUP BY faveteam LIMIT 0, 300";
 
 	// Obtain the SQL query result
 	$result = mysqli_query($con, $sql_getteams) or die(mysqli_error());
-	
+
 	// Carry out the following for each result item
-	while($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {	
-		// Remove all carriage returns and new lines from array values	
+	while($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
+		// Remove all carriage returns and new lines from array values
 		$team = str_replace("\r\n", "", $row["faveteam"]);
 		$occs = str_replace("\r\n", "", $row["occs"]);
-					
+
 		// Now put the values into a 'clean' array for output
-		//$arr = vsprintf("['%s', %d],", array($team, $occs));	
+		//$arr = vsprintf("['%s', %d],", array($team, $occs));
 		$arr = vsprintf("[%d,'%s'],", array($occs, $team));
 		// Output array data
 		echo $arr;
@@ -130,50 +130,24 @@ function displayTeamData() {
 	// Close DB connection
 	mysqli_close($con);
 }
-	
+
 function displayNationData() {
 	// Create DB connection
 	include 'php/db-connect.php';
-	
+
 	// Get team information from the DB	counting occurrences too
 	$sql_getnations = "SELECT tournwinner, count(tournwinner) AS occs FROM live_user_information GROUP BY tournwinner LIMIT 0, 300";
 
 	// Obtain the SQL query result
 	$result = mysqli_query($con, $sql_getnations) or die(mysqli_error());
-	
-	// Carry out the following for each result item
-	while($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {	
-		// Remove all carriage returns and new lines from array values	
-		$nation = str_replace("\r\n", "", $row["tournwinner"]);
-		$occs = str_replace("\r\n", "", $row["occs"]);	
-		// Now put the values into a 'clean' array for output
-		$arr = vsprintf("['%d',%s],", array($occs, $nation));	
-		// Output array data
-		echo $arr;
-	}
-	// Free result set
-	mysqli_free_result($result);
-	// Close DB connection
-	mysqli_close($con);
-}	
 
-function displayNationDatav2() {
-	// Create DB connection
-	include 'php/db-connect.php';
-	
-	// Get team information from the DB	counting occurrences too
-	$sql_getnations = "SELECT tournwinner, count(tournwinner) AS occs FROM live_user_information GROUP BY tournwinner LIMIT 0, 300";
-
-	// Obtain the SQL query result
-	$result = mysqli_query($con, $sql_getnations) or die(mysqli_error());
-	
 	// Carry out the following for each result item
-	while($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {	
-		// Remove all carriage returns and new lines from array values	
+	while($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
+		// Remove all carriage returns and new lines from array values
 		$nation = str_replace("\r\n", "", $row["tournwinner"]);
-		$occs = str_replace("\r\n", "", $row["occs"]);	
+		$occs = str_replace("\r\n", "", $row["occs"]);
 		// Now put the values into a 'clean' array for output
-		$arr = vsprintf("[%d,'%s'],", array($occs, $nation));	
+		$arr = vsprintf("['%d',%s],", array($occs, $nation));
 		// Output array data
 		echo $arr;
 	}
@@ -182,18 +156,44 @@ function displayNationDatav2() {
 	// Close DB connection
 	mysqli_close($con);
 }
-		
+
+function displayNationDatav2() {
+	// Create DB connection
+	include 'php/db-connect.php';
+
+	// Get team information from the DB	counting occurrences too
+	$sql_getnations = "SELECT tournwinner, count(tournwinner) AS occs FROM live_user_information GROUP BY tournwinner LIMIT 0, 300";
+
+	// Obtain the SQL query result
+	$result = mysqli_query($con, $sql_getnations) or die(mysqli_error());
+
+	// Carry out the following for each result item
+	while($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
+		// Remove all carriage returns and new lines from array values
+		$nation = str_replace("\r\n", "", $row["tournwinner"]);
+		$occs = str_replace("\r\n", "", $row["occs"]);
+		// Now put the values into a 'clean' array for output
+		$arr = vsprintf("[%d,'%s'],", array($occs, $nation));
+		// Output array data
+		echo $arr;
+	}
+	// Free result set
+	mysqli_free_result($result);
+	// Close DB connection
+	mysqli_close($con);
+}
+
 function displayLatestInformation() {
 	// Create DB connection
 	//include 'php/db-connect.php';
-	
+
 	// Get team information from the DB	counting occurrences too
-	//$sql_getlatest5 = "SELECT firstname, surname, fieldofwork, signupdate FROM live_user_information ORDER BY signupdate DESC LIMIT 0, 5";	
-	//$sql_countusers = "SELECT count(*) AS totalusers FROM live_user_information";	
-	
+	//$sql_getlatest5 = "SELECT firstname, surname, fieldofwork, signupdate FROM live_user_information ORDER BY signupdate DESC LIMIT 0, 5";
+	//$sql_countusers = "SELECT count(*) AS totalusers FROM live_user_information";
+
 	// Execute the query and return the result or display appropriate error message
 	//$totalusers = mysqli_query($con, $sql_countusers) or die(mysqli_error());
-	// For each instance of the returned result		
+	// For each instance of the returned result
 	/*
 	while ($row = mysqli_fetch_assoc($totalusers)) {
 		$countoftotalusers = $row["totalusers"];
@@ -224,30 +224,30 @@ function displayLatestInformation() {
 	print("</table>");
 	print("<p>Awarded to those who occupy these ranks after the full 64 games. Monies will be shared where joint ranks occur.</p>");
 	//print("<p><strong>Remaining games</strong>: 1</p>");
-	
-	/* WINNING MESSAGES 
+
+	/* WINNING MESSAGES
  	print("<p><strong>Game complete:</strong><br>Thank you all for your participation!</p>");
 	print("<p><strong>Prize winners:</strong></p>");
 	print("<ul type='none'>");
 	print("<li><img src='img/gold_ros.png' height='20px' alt='Gold rosette' />Jonathan Lamley (£80)</li>");
 	print("<li><img src='img/silver_ros.png' height='20px' alt='Silver rosette' />Sam McGuigan (£50)</li>");
 	print("<li><img src='img/bronze_ros.png' height='20px' alt='Bronze rosette' />Steve Butt (£15)</li>");
-	print("<li><img src='img/bronze_ros.png' height='20px' alt='Bronze rosette' />Kirsty Yarnold (£15)</li>");	
+	print("<li><img src='img/bronze_ros.png' height='20px' alt='Bronze rosette' />Kirsty Yarnold (£15)</li>");
 	print("</ul>");
-	
-	print("<p><strong>Feedback opportunity:</strong><br>Have your say on Hendy's Hunches! I'd be grateful if you could spare 2 mins to <a href='https://www.surveymonkey.co.uk/r/BQP9FGQ'>complete this quick survey</a>.</p>");	
-	*/	
-		
+
+	print("<p><strong>Feedback opportunity:</strong><br>Have your say on Hendy's Hunches! I'd be grateful if you could spare 2 mins to <a href='https://www.surveymonkey.co.uk/r/BQP9FGQ'>complete this quick survey</a>.</p>");
+	*/
+
 	// Obtain the SQL query result
 	//$result = mysqli_query($con, $sql_getlatest5) or die(mysqli_error());
-	
+
 	// Carry out the following for each result item
 	/*
 	printf("<strong>Recent signups:\n</strong>");
 	printf("<ul>");
-	while($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {	
-		// Remove all carriage returns and new lines from array values	
-		$field = str_replace("\r\n", '', $row["fieldofwork"]);	
+	while($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
+		// Remove all carriage returns and new lines from array values
+		$field = str_replace("\r\n", '', $row["fieldofwork"]);
 		// Now output the values into a list for display
 		printf ("<li>%s %s (%s)</li>", $row["firstname"], $row["surname"], $field);
 	}
@@ -257,18 +257,18 @@ function displayLatestInformation() {
 	// Close DB connection
 	mysqli_close($con);
 	*/
-}		
+}
 
 function displayCharityInformation() {
 	// Create DB connection
 	//include 'php/db-connect.php';
-	
+
 	// Get donation information from the DB	(counting occurrences)
-	//$sql_countusers = "SELECT count(*) AS totalusers FROM live_user_information";	
-	
+	//$sql_countusers = "SELECT count(*) AS totalusers FROM live_user_information";
+
 	// Execute the query and return the result or display appropriate error message
 	//$totalusers = mysqli_query($con, $sql_countusers) or die(mysqli_error());
-	/* For each instance of the returned result		
+	/* For each instance of the returned result
 	while ($row = mysqli_fetch_assoc($totalusers)) {
 		$countoftotalusers = $row["totalusers"];
 		$donation = ($countoftotalusers * 2);
@@ -283,45 +283,45 @@ function displayCharityInformation() {
 	print("<li>equip <font size='+1'>5</font> campaigners with CALM materials <span class='label label-primary'>or</span></li>");
 	print("<li>run their website for <font size='+1'>24</font> hours <span class='label label-primary'>or</span></li>");
 	print("<li>one of each of these combined!</li>");
-	//print("<li></li>");	
+	//print("<li></li>");
 	print("</ul>");
 	print("<p class='text-right'><font size='-2'>*22&#37; of your entry fees</font></p>");
 	//print("<img src='img/calm-values.png' class='img-responsive'>");
 	// Free result set
 	//mysqli_free_result($totalusers);
 	// Close DB connection
-	//mysqli_close($con);	
+	//mysqli_close($con);
 }
 
 function displayTopRankings() {
 	// Create DB connection
 	include 'php/db-connect.php';
-	
+
 	// Get team information from the DB	counting occurrences too
 	$sql_gettop5 = "SELECT firstname, surname, points_total FROM live_user_predictions ORDER BY points_total DESC, surname ASC LIMIT 0, 5";
 	// Check if any results have been recorded
-	$sql_findmatches = "SELECT * FROM live_match_results";	
-	
+	$sql_findmatches = "SELECT * FROM live_match_results";
+
 	// Obtain the SQL query results
-	$result1 = mysqli_query($con, $sql_gettop5) or die(mysqli_error());	
-	$result2 = mysqli_query($con, $sql_findmatches) or die(mysqli_error());	
-	
+	$result1 = mysqli_query($con, $sql_gettop5) or die(mysqli_error());
+	$result2 = mysqli_query($con, $sql_findmatches) or die(mysqli_error());
+
 	// Carry out the following for each result item
 	printf("<strong>Top 5 players:\n</strong>");
-	printf("<ul>");	
-	
+	printf("<ul>");
+
 	if (mysqli_num_rows($result2) == 0) {
-		// Remove all carriage returns and new lines from array values	
+		// Remove all carriage returns and new lines from array values
 		printf("<li>No results available yet</li>");
 	}
-	else {			
-		while($row = mysqli_fetch_array($result1, MYSQLI_ASSOC)) {	
-			// Remove all carriage returns and new lines from array values	
-			$points = str_replace("\r\n", '', $row["points_total"]);	
+	else {
+		while($row = mysqli_fetch_array($result1, MYSQLI_ASSOC)) {
+			// Remove all carriage returns and new lines from array values
+			$points = str_replace("\r\n", '', $row["points_total"]);
 			// Now output the values into a list for display
 			printf ("<li>%s %s (%s points)</li>", $row["firstname"], $row["surname"], $points);
 		}
-	}		
+	}
 	printf("</ul>");
 	// Free result set
 	mysqli_free_result($result1);
@@ -329,11 +329,11 @@ function displayTopRankings() {
 	// Close DB connection
 	mysqli_close($con);
 }
-	
+
 function displayBottomRankings() {
 	// Create DB connection
 	include 'php/db-connect.php';
-	
+
 	// Get team information from the DB	counting occurrences too
 	$sql_getbottom5 = "SELECT * FROM (SELECT firstname, surname, points_total FROM live_user_predictions ORDER BY points_total ASC, surname DESC LIMIT 0, 5) TmpTable ORDER BY points_total DESC, surname ASC";
 	// Check if any results have been recorded
@@ -342,24 +342,24 @@ function displayBottomRankings() {
 	// Obtain the SQL query results
 	$result1 = mysqli_query($con, $sql_getbottom5) or die(mysqli_error());
 	$result2 = mysqli_query($con, $sql_findmatches) or die(mysqli_error());
-	
+
 	// Carry out the following for each result item
 	printf("<strong>Bottom 5 players:\n</strong>");
 	printf("<ul>");
-	
+
 	if (mysqli_num_rows($result2) == 0) {
-		// Remove all carriage returns and new lines from array values	
+		// Remove all carriage returns and new lines from array values
 		printf("<li>No results available yet</li>");
 	}
 	else {
-		while($row = mysqli_fetch_array($result1, MYSQLI_ASSOC)) {	
-			// Remove all carriage returns and new lines from array values	
-			$points = str_replace("\r\n", '', $row["points_total"]);	
+		while($row = mysqli_fetch_array($result1, MYSQLI_ASSOC)) {
+			// Remove all carriage returns and new lines from array values
+			$points = str_replace("\r\n", '', $row["points_total"]);
 			// Now output the values into a list for display
 			printf ("<li>%s %s (%s points)</li>", $row["firstname"], $row["surname"], $points);
 		}
 	}
-	printf("</ul>");	
+	printf("</ul>");
 	// Free result set
 	mysqli_free_result($result1);
 	mysqli_free_result($result2);
@@ -370,23 +370,23 @@ function displayBottomRankings() {
 function displayBestMovers() {
 	// Create DB connection
 	include 'php/db-connect.php';
-	
+
 	// Get team information from the DB	counting occurrences too
 	$sql_getbestmovers = "SELECT firstname, surname, lastpos-currpos AS diff FROM live_user_information WHERE (lastpos-currpos) > 0 ORDER BY diff DESC, surname ASC LIMIT 0, 5";
 
 	// Obtain the SQL query result
 	$result = mysqli_query($con, $sql_getbestmovers) or die(mysqli_error());
-	
+
 	// Carry out the following for each result item
 	printf("<strong>Current best movers:\n</strong>");
 	printf("<ul>");
-	
+
 	if (mysqli_num_rows($result) == 0) {
-		// Remove all carriage returns and new lines from array values	
+		// Remove all carriage returns and new lines from array values
 		printf("<li>No results available yet</li>");
-	}	
-	
-	while($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {	
+	}
+
+	while($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 		// Output the values into a list for display
 		printf ("<li>%s %s <span style='color: green;' class='glyphicon glyphicon-circle-arrow-up'></span> %s</li>", $row["firstname"], $row["surname"], $row["diff"]);
 	}
@@ -400,23 +400,23 @@ function displayBestMovers() {
 function displayWorstMovers() {
 	// Create DB connection
 	include 'php/db-connect.php';
-	
+
 	// Get team information from the DB	counting occurrences too
 	$sql_getworstmovers = "SELECT firstname, surname, currpos-lastpos AS diff FROM live_user_information WHERE (currpos-lastpos) > 0 ORDER BY diff DESC, surname ASC LIMIT 0, 5";
 
 	// Obtain the SQL query result
 	$result = mysqli_query($con, $sql_getworstmovers) or die(mysqli_error());
-	
+
 	// Carry out the following for each result item
 	printf("<strong>Current worst movers:\n</strong>");
 	printf("<ul>");
-	
+
 	if (mysqli_num_rows($result) == 0) {
-		// Remove all carriage returns and new lines from array values	
+		// Remove all carriage returns and new lines from array values
 		printf("<li>No results available yet</li>");
 	}
-		
-	while($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {	
+
+	while($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 		// Output the values into a list for display
 		printf ("<li>%s %s <span style='color: red;' class='glyphicon glyphicon-circle-arrow-down'></span> %s</li>", $row["firstname"], $row["surname"], $row["diff"]);
 	}
@@ -427,99 +427,100 @@ function displayWorstMovers() {
 	mysqli_close($con);
 }
 
-function displayTodaysFixtures() {	
+function displayTodaysFixtures() {
 	// Create DB connection
 	include 'php/db-connect.php';
-	
+
 	// Get team information from the DB	counting occurrences too
 	$sql_gettodaysgames = "SELECT * FROM live_match_schedule WHERE date = CURDATE()";
-	
+
 	// Obtain the SQL query result and set corresponding result variables
 	$gamedata = mysqli_query($con, $sql_gettodaysgames);
-	
+
 	$today = date("jS F, Y");
 	printf ("<p class='text-center'>%s</p>", $today);
-	
+
 	while($row = mysqli_fetch_assoc($gamedata)) {
 		// Assign variables for printing
 		$HT = strtoupper($row['hometeam']);
 		$AT = strtoupper($row['awayteam']);
 		$htabb = substr($HT,0,3);
-		$atabb = substr($AT,0,3);				
+		$atabb = substr($AT,0,3);
 		$kotime = $row['kotime'];
 		$venue = $row['venue'];
 		$hs = $row['homescore'];
 		$as = $row['awayscore'];
-		
+
 		if((is_null($hs)) || (is_null($as))) {
 			$hs = '';
 			$as = '';
 		}
-				
+
 		printf ("<div class='text-center'><img src=".$row['hometeamimg']." alt='Nation Flag' name='Nation Flag' style=''> <strong>%s</strong> <span class='label label-default'>%s</span> v <span class='label label-default'>%s</span> <strong>%s</strong> <img src=".$row['awayteamimg']." alt='Nation Flag' name='Nation Flag' style=''><br/><span style='font-size: 11px;'>(%s @ %s)<br><br></span></div>", $htabb, $hs, $as, $atabb, $kotime, $venue);
    	}
-	
+
 	if (mysqli_num_rows($gamedata) == 0) {
-		// Remove all carriage returns and new lines from array values	
+		// Remove all carriage returns and new lines from array values
 		printf("<p class='text-center'><strong>No matches today</strong></p>");
 	}
-	
+
 	// Free result set
 	mysqli_free_result($gamedata);
 	// Close DB connection
-	mysqli_close($con);			
+	mysqli_close($con);
 }
 
 function ordinal($number) {
 	$ends = array('th','st','nd','rd','th','th','th','th','th','th');
 	if ($number == "N/A") {
 		return $number;
-	}	
+	}
 	if ((($number % 100) >= 11) && (($number%100) <= 13))
 		return $number. 'th';
 	else
 		return $number. $ends[$number % 10];
 }
 
-function displayPersonalInfo() {	
+function displayPersonalInfo() {
 	// Create DB connection
 	include 'php/db-connect.php';
-	
+
 	// Get team information from the DB	counting occurrences too
-	$sql_getprofileinfo1 = "SELECT avatar, faveteam, fieldofwork, tournwinner, signupdate, haspaid, currpos, wc2014rank, eu2016rank FROM live_user_information WHERE username = '".$_SESSION["username"]."'";
+	$sql_getprofileinfo1 = "SELECT avatar, faveteam, fieldofwork, location, tournwinner, signupdate, haspaid, currpos, wc2014rank, eu2016rank FROM live_user_information WHERE username = '".$_SESSION["username"]."'";
 	$sql_getprofileinfo2 = "SELECT lastupdate, points_total FROM live_user_predictions WHERE username = '".$_SESSION["username"]."'";
-	
+
 	// Obtain the SQL query result and set corresponding result variables
 	$result1 = mysqli_query($con, $sql_getprofileinfo1);
 	$userdata1 = mysqli_fetch_assoc($result1);
 	$result2 = mysqli_query($con, $sql_getprofileinfo2);
 	$userdata2 = mysqli_fetch_assoc($result2);
-	// Assign returned data to variables	
+	// Assign returned data to variables
 	$uppCaseFN = ucfirst($userdata1["firstname"]);
 	$uppCaseSN = ucfirst($userdata1["surname"]);
 	$avatar = $userdata1["avatar"];
 	$fieldofwork = $userdata1["fieldofwork"];
+	$location = $userdata1["location"];
 	$faveteam = $userdata1["faveteam"];
 	$tournwinner = $userdata1["tournwinner"];
 	$originalsignupdate = $userdata1["signupdate"];
 	$haspaid = $userdata1["haspaid"];
 	$currpos = ordinal($userdata1["currpos"]);
 	$wc2014rank = ordinal($userdata1["wc2014rank"]);
-	$eu2016rank = ordinal($userdata1["eu2016rank"]);	
+	$eu2016rank = ordinal($userdata1["eu2016rank"]);
 	$pointstotal = $userdata2["points_total"];
 	$convertedDate = date("l jS \of F", strtotime($originalsignupdate));
 	//$matchresult = mysqli_fetch_assoc(mysqli_query($con, $sql_getresults));
 
 	// If table contains no data, then display 'not available message'
 	if ((mysqli_num_rows($result1) == 0) || (mysqli_num_rows($result2) == 0)) {
-		// Remove all carriage returns and new lines from array values	
+		// Remove all carriage returns and new lines from array values
 		printf("<br><p class='text-center'><strong>No information available yet</strong><br>(Until a <a href='predictions.php'>prediction is made</a>)</p><br><br><br>");
 	}
 	// Else display the user's available data
-	else {				
+	else {
 		print("<img src='$avatar' id='avatar' class='img-responsive img-rounded img-thumbnail center-block' alt='User Avatar' name='User Avatar' width='70' style='margin-top:-35px'>");
 		printf("<p class='text-center' style='font-size: 1.3em;'><strong>" . $_SESSION["firstname"] . " " . $_SESSION["surname"] . "</strong></p>");
-		printf("<p class='text-center 'style='font-size: 1.5em; color: #222;'><strong>%s&nbsp;&nbsp;<span style='color:#CCC;'>|</span>&nbsp;&nbsp;%spts</strong></p>", $currpos, $pointstotal);		
+		printf("<p class='text-center 'style='font-size: 1.5em; color: #222;'><strong>%s&nbsp;&nbsp;<span style='color:#CCC;'>|</span>&nbsp;&nbsp;%spts</strong></p>", $currpos, $pointstotal);
 		print("<ul class='text-left' style='margin-left:5px; padding:0px; list-style-type:none;'>");
 		printf("<li><span class='glyphicon glyphicon-heart' aria-hidden='true'></span>&nbsp;&nbsp;Fan of %s</li>", $faveteam);
 		printf("<li><span class='glyphicon glyphicon-book' aria-hidden='true'></span>&nbsp;&nbsp;Works in %s</li>", $fieldofwork);
@@ -534,6 +535,6 @@ function displayPersonalInfo() {
 	// Free result set
 	mysqli_free_result($result);
 	// Close DB connection
-	mysqli_close($con);	
+	mysqli_close($con);
 }
 ?>

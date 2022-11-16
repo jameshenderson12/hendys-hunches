@@ -263,6 +263,18 @@ $fk18 = "football-kits/pink-grad.png";
 // Global 'helper' functions
 //===============================
 
+function returnAvatar() {
+	// Create DB connection
+	include 'db-connect.php';
+
+	// Get team information from the DB	counting occurrences too
+	$sql_getavatar = "SELECT avatar FROM live_user_information WHERE username = '".$_SESSION["username"]."'";
+	$getavatar = mysqli_query($con, $sql_getavatar);
+	$avatar = mysqli_fetch_assoc($getavatar);
+	$avatar = $userdata1["avatar"];
+	print("<img src='$avatar' id='avatar' class='img-fluid rounded-circle mx-1' alt='User Avatar' name='User Avatar' width='30'>");
+}
+
 // Display an alert style message
 function alertMsg($msg) {
 	echo "<script type='text/javascript'>alert('Alert message: " . $msg . "');</script>";

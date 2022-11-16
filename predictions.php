@@ -119,11 +119,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 
 		            <li class="nav-item dropdown">
 		              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-		                <img src="img/scores.jpg" alt="Profile icon" class="img-fluid rounded-circle mx-1" width="25px;">
-										<?php
-											// Echo session variables that were set on previous page
-											echo $_SESSION["firstname"];
-										?>
+										<?php returnAvatar();	?>
 		              </a>
 		              <ul class="dropdown-menu">
 		                <li><a class="dropdown-item" href="change-password.php">Change Password</a></li>
