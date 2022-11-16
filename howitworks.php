@@ -88,11 +88,11 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	      </ol>
 
 
-	      <div class="card"><p><strong>Home:</strong> A dashboard allowing players to interact via message board and Twitter feed. Also contains all the latest statistics for the site during each day of the competition. It may appear a bit bare to begin with until players sign up and the first match begins.</p></div>
-	      <div class="card"><p><strong>My Predictions: </strong> To make your predictions, enter a score value into each box below. You can change score values for a game up until 1 hour before its kick-off. After which, the scores are “locked down” and won’t be editable. Remember to hit the 'Update my predictions' button to save your scores. Any game that doesn’t have a prediction will be awarded a default 0 points.</p></div>
-	      <div class="card"><p><strong>Rankings:</strong> After the result of every match, the rankings table will add points to players scores (depending on their predictions) and update players positions automatically. Players can then check their progress against everyone else. To see the possibilities for how points are awarded, based on predictions, see the 'Scoring' section below. Please be patient in allowing a little time shortly after each match for positions to be updated. You will not appear in the rankings table until you have submitted at least 1 prediction.</p></div>
-	      <div class="card"><p><strong>How It Works:</strong> Details of how to play and scoring information.</p></div>
-	      <div class="card"><p><strong>About:</strong> A light-hearted look at the background to the game.</p></div>
+	      <div class="card col-md-4"><p><strong>Home:</strong> A dashboard allowing players to interact via message board and Twitter feed. Also contains all the latest statistics for the site during each day of the competition. It may appear a bit bare to begin with until players sign up and the first match begins.</p></div>
+	      <div class="card col-md-4"><p><strong>My Predictions: </strong> To make your predictions, enter a score value into each box below. You can change score values for a game up until 1 hour before its kick-off. After which, the scores are “locked down” and won’t be editable. Remember to hit the 'Update my predictions' button to save your scores. Any game that doesn’t have a prediction will be awarded a default 0 points.</p></div>
+	      <div class="card col-md-4"><p><strong>Rankings:</strong> After the result of every match, the rankings table will add points to players scores (depending on their predictions) and update players positions automatically. Players can then check their progress against everyone else. To see the possibilities for how points are awarded, based on predictions, see the 'Scoring' section below. Please be patient in allowing a little time shortly after each match for positions to be updated. You will not appear in the rankings table until you have submitted at least 1 prediction.</p></div>
+	      <div class="card col-md-6"><p><strong>How It Works:</strong> Details of how to play and scoring information.</p></div>
+	      <div class="card col-md-6"><p><strong>About:</strong> A light-hearted look at the background to the game.</p></div>
 
 				<h2>Scoring</h2>
 	      <p>For any match, you can be awarded either 0, 1, 2, 3 or 7 points.</p>
