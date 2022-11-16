@@ -8,10 +8,9 @@ h1, h2, h3 {
 }
 
 a[href^="#top"] {
-  display: flex;
-  align-items: flex-end;
+  display: flex !important;
+  align-items: flex-end !important;
 }
-
 
 main {
 	background-color: #FFF;
