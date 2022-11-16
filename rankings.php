@@ -78,11 +78,19 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 
 			<main class="container px-4 py-4">
 	      <h1>Rankings</h1>
-				<!--
+
 	      <p class="lead">Lead text...</p>
-	      <p>Normal text...</p>
-			-->
+	      <p>You will enter into the rankings when you have submitted your predictions.</p>
+
 	      <div class="row">
+					<div class="col-xs-12">
+		      	<!-- Display table of rankings from process.php -->
+						<?php displayRankings(); ?>
+		        <div class="well well-sm">
+		        <?php displayInfo(); ?>
+		        </div>
+		        <a class="btn btn-light" href="#top" role="button">Return to top</a>
+		      </div>
       	</div><!--row-->
 				<!-- Site footer -->
 				<footer class="mt-auto">
