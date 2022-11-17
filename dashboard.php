@@ -14,7 +14,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
     <meta name="author" content="James Henderson">
 		<title>Hendy's Hunches: Dashboard</title>
     <?php include "php/config.php" ?>
-		<?php include "php/dashboard-items.php" ?>
+		<!--<?php include "php/dashboard-items.php" ?>-->
 		<link rel="shortcut icon" href="ico/favicon.ico">
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu|Lora">
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
