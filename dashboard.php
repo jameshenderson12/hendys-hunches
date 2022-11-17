@@ -103,7 +103,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
                     <h5 class="mb-0"> <a href="#!">Sam Lanson </a> </h5>
                     <small>Web Developer at Webestica</small>
                     <p class="mt-3">I'd love to change the world, but they won’t give me the source code.</p>
-
+										<?php displayPersonalInfo(); ?>
                     <!-- User stat START -->
                     <div class="hstack gap-2 gap-xl-3 justify-content-center">
                       <!-- User stat item -->
@@ -166,34 +166,11 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
               </div>
               <!-- Card END -->
 
-              <!-- Helper link START -->
-              <ul class="nav small mt-4 justify-content-center lh-1">
-                <li class="nav-item">
-                  <a class="nav-link" href="my-profile-about.html">About</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="settings.html">Settings</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" target="_blank" href="https://support.webestica.com/login">Support </a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" target="_blank" href="docs/index.html">Docs </a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="help.html">Help</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="privacy-and-terms.html">Privacy &amp; terms</a>
-                </li>
-              </ul>
-              <!-- Helper link END -->
-              <!-- Copyright -->
-              <p class="small text-center mt-1">©2022 <a class="text-body" target="_blank" href="https://www.webestica.com/"> Webestica </a></p>
             </div>
           </div>
         </nav>
 					</div>
+
 					<div class="col-md-8 col-lg-6">
 					</div>
 					<div class="col-lg-3">
