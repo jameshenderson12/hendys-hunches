@@ -74,7 +74,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 
 			<main class="container px-4 py-4">
 	      <h1>How It Works</h1>
-	      <p class="lead">Check your progress against others.</p>
+	      <p class="lead">A detailed overview of how the game works.</p>
 				<p>The below indicates how best to approach this game and summarises each page:</p>
 	      <ol>
 	      <li>Register to play (you're already registered! <span class="bi bi-check2-square text-success"></span>)</li>
