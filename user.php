@@ -184,7 +184,5 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 				<p class="small fw-light">Predictions game based on <a href="https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/qatar2022">FIFA World Cup 2022™</a><br><?=$title?> <?=$version?> &copy; <?=$year?> <?=$developer?>.</p>
 			</footer>
 
-    </div><!-- /.main-section -->
-
   </body>
 </html>
