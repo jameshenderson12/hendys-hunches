@@ -76,7 +76,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 			<main class="container px-4 py-4">
 	      <h1>Rankings</h1>
 
-	      <p class="lead">Lead text...</p>
+	      <p class="lead">Check your progress against others</p>
 	      <p>You will enter into the rankings when you have submitted your predictions.</p>
 
 	      <div class="row">
