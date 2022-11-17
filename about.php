@@ -58,8 +58,8 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 										<?php returnAvatar();	?>
 									</a>
 		              <ul class="dropdown-menu">
-		                <li><a class="dropdown-item" href="change-password.php">Change Password</a></li>
-		                <li><a class="dropdown-item" href="#">Another action</a></li>
+		                <li><a class="dropdown-item" href="change-password.php">Change password</a></li>
+		                <!--<li><a class="dropdown-item" href="#">Another action</a></li>-->
 		                <li>
 		                  <hr class="dropdown-divider">
 		                </li>
