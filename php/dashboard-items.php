@@ -481,6 +481,34 @@ function ordinal($number) {
 		return $number. $ends[$number % 10];
 }
 
+function returnProfileData() {
+	// Create DB connection
+	include 'php/db-connect.php';
+
+	// Get team information from the DB	counting occurrences too
+	$sql_getprofileinfo1 = "SELECT avatar, faveteam, fieldofwork, location, tournwinner, signupdate, haspaid, currpos FROM live_user_information WHERE username = '".$_SESSION["username"]."'";
+	$sql_getprofileinfo2 = "SELECT points_total FROM live_user_predictions_groups WHERE username = '".$_SESSION["username"]."'";
+
+	// Obtain the SQL query result and set corresponding result variables
+	$result1 = mysqli_query($con, $sql_getprofileinfo1);
+	$userdata1 = mysqli_fetch_assoc($result1);
+	$result2 = mysqli_query($con, $sql_getprofileinfo2);
+	$userdata2 = mysqli_fetch_assoc($result2);
+	// Assign returned data to variables
+	$uppCaseFN = ucfirst($userdata1["firstname"]);
+	$uppCaseSN = ucfirst($userdata1["surname"]);
+	$avatar = $userdata1["avatar"];
+	$fieldofwork = $userdata1["fieldofwork"];
+	$location = $userdata1["location"];
+	$faveteam = $userdata1["faveteam"];
+	$tournwinner = $userdata1["tournwinner"];
+	$originalsignupdate = $userdata1["signupdate"];
+	$haspaid = $userdata1["haspaid"];
+	$currpos = ordinal($userdata1["currpos"]);
+	$pointstotal = $userdata2["points_total"];
+	$convertedDate = date("l jS \of F", strtotime($originalsignupdate));
+}
+
 function displayPersonalInfo() {
 	// Create DB connection
 	include 'php/db-connect.php';
