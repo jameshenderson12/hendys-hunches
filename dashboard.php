@@ -145,7 +145,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
               <!-- Card START -->
               <div class="card overflow-hidden">
                 <!-- Cover image -->
-                <div class="h-50px" style="background-image:url(assets/images/bg/01.jpg); background-position: center; background-size: cover; background-repeat: no-repeat;"></div>
+                <div class="h-50px" style="background-image:url(img/01.jpg); background-position: center; background-size: cover; background-repeat: no-repeat;"></div>
                   <!-- Card body START -->
                   <div class="card-body pt-0">
                     <div class="text-center">
