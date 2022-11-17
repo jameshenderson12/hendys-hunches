@@ -4,6 +4,60 @@ session_start();
 if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	header ("Location: index.php");
 }
+
+	// Create DB connection
+	include 'php/db-connect.php';
+
+	// Get team information from the DB	counting occurrences too
+	$sql_getprofileinfo1 = "SELECT avatar, faveteam, fieldofwork, location, tournwinner, signupdate, haspaid, currpos FROM live_user_information WHERE username = '".$_SESSION["username"]."'";
+	$sql_getprofileinfo2 = "SELECT lastupdate, points_total FROM live_user_predictions_groups WHERE username = '".$_SESSION["username"]."'";
+
+	// Obtain the SQL query result and set corresponding result variables
+	$result1 = mysqli_query($con, $sql_getprofileinfo1);
+	$userdata1 = mysqli_fetch_assoc($result1);
+	$result2 = mysqli_query($con, $sql_getprofileinfo2);
+	$userdata2 = mysqli_fetch_assoc($result2);
+	// Assign returned data to variables
+	$uppCaseFN = ucfirst($userdata1["firstname"]);
+	$uppCaseSN = ucfirst($userdata1["surname"]);
+	$avatar = $userdata1["avatar"];
+	$fieldofwork = $userdata1["fieldofwork"];
+	$location = $userdata1["location"];
+	$faveteam = $userdata1["faveteam"];
+	$tournwinner = $userdata1["tournwinner"];
+	$originalsignupdate = $userdata1["signupdate"];
+	$haspaid = $userdata1["haspaid"];
+	$currpos = ordinal($userdata1["currpos"]);
+	$pointstotal = $userdata2["points_total"];
+	$convertedDate = date("l jS \of F", strtotime($originalsignupdate));
+	//$matchresult = mysqli_fetch_assoc(mysqli_query($con, $sql_getresults));
+
+	/* If table contains no data, then display 'not available message'
+	if ((mysqli_num_rows($result1) == 0) || (mysqli_num_rows($result2) == 0)) {
+		// Remove all carriage returns and new lines from array values
+		printf("<br><p class='text-center'><strong>No information available yet</strong><br>(Until a <a href='predictions.php'>prediction is made</a>)</p><br><br><br>");
+	}
+	// Else display the user's available data
+	else {
+		print("<img src='$avatar' id='avatar' class='img-responsive img-rounded img-thumbnail center-block' alt='User Avatar' name='User Avatar' width='70' style='margin-top:-35px'>");
+		printf("<p class='text-center' style='font-size: 1.3em;'><strong>" . $_SESSION["firstname"] . " " . $_SESSION["surname"] . "</strong></p>");
+		printf("<p class='text-center 'style='font-size: 1.5em; color: #222;'><strong>%s&nbsp;&nbsp;<span style='color:#CCC;'>|</span>&nbsp;&nbsp;%spts</strong></p>", $currpos, $pointstotal);
+		print("<ul class='text-left' style='margin-left:5px; padding:0px; list-style-type:none;'>");
+		printf("<li><span class='glyphicon glyphicon-heart' aria-hidden='true'></span>&nbsp;&nbsp;Fan of %s</li>", $faveteam);
+		printf("<li><span class='glyphicon glyphicon-book' aria-hidden='true'></span>&nbsp;&nbsp;Works in %s</li>", $fieldofwork);
+		printf("<li><span class='glyphicon glyphicon-comment' aria-hidden='true'></span>&nbsp;&nbsp;Thinks %s will win</li>", $tournwinner);
+//		printf("<li><span class='glyphicon glyphicon-calendar' aria-hidden='true'></span>&nbsp;&nbsp;Signed up on %s</li>", $convertedDate);
+		printf("<li><span class='glyphicon glyphicon-pushpin' aria-hidden='true'></span>&nbsp;&nbsp%s (WC2014), %s (EURO2016)</li>", $wc2014rank, $eu2016rank);
+		printf("<li><span class='glyphicon glyphicon-gbp' aria-hidden='true'></span>&nbsp;&nbsp;Paid to play? %s</li>", $haspaid);
+		print("</ul>");
+		print("<p class='text-center'><a href='change-password.php'>Change password</a></p>");
+		//print("<p class='pull-right'><a href='rankings.php'>See current rankings...</a></p>");
+	}*/
+	// Free result set
+	mysqli_free_result($result);
+	// Close DB connection
+	mysqli_close($con);
+}
 ?>
 <!DOCTYPE html>
 <html lang="en" class="h-100">
@@ -103,7 +157,6 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
                     <h5 class="mb-0"> <a href="#!"><?php echo $uppCaseFN $uppCaseSN ?></a> </h5>
                     <small>Web Developer at Webestica</small>
                     <p class="mt-3">I'd love to change the world, but they won’t give me the source code.</p>
-										<?php displayPersonalInfo(); ?>
                     <!-- User stat START -->
                     <div class="hstack gap-2 gap-xl-3 justify-content-center">
                       <!-- User stat item -->
