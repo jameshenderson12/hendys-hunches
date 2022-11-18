@@ -177,16 +177,16 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	      <div class="row">
 					<div class="col-md-3">
 					<div class="card">
-					  <img src="<?php echo $avatar ?>" id="avatar" class="img-fluid" alt="User Avatar" name="User Avatar" width="120">
+					  <img src="<?php echo $avatar ?>" id="avatar" class="img-fluid mx-auto" alt="User Avatar" name="User Avatar" width="120">
 					  <div class="card-body">
-					    <h5 class="card-title"><?php print "$uppCaseFN $uppCaseSN ($location)" ?></h5>
-					    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+					    <h5 class="card-title"><?php print "$uppCaseFN $uppCaseSN" ?></h5>
+					    <p class="card-text"><?php printf ("%s thinks %s will win FIFA World Cup 2022.", $uppCaseFN, $tournwinner); ?></p>
 					  </div>
 					  <ul class="list-group list-group-flush">
 					    <li class="list-group-item"><?php printf ("%s thinks %s will win FIFA World Cup 2022.", $uppCaseFN, $tournwinner); ?></li>
-					    <li class="list-group-item"><?php printf ("<strong>Favourite Team:</strong> %s", $faveteam); ?></li>
-					    <li class="list-group-item"><?php printf ("<strong>Location:</strong> %s", $location); ?></li>
-							<li class="list-group-item"><?php printf ("<strong>Field of Work:</strong> %s", $fieldofwork); ?></li>
+					    <li class="list-group-item"><?php printf ("<strong>Favourite Team:</strong><br> %s", $faveteam); ?></li>
+					    <li class="list-group-item"><?php printf ("<strong>Location:</strong><br> %s", $location); ?></li>
+							<li class="list-group-item"><?php printf ("<strong>Field of Work:</strong><br> %s", $fieldofwork); ?></li>
 					  </ul>
 					  <div class="card-body">
 					    <a href="#" class="card-link">Return to Rankings</a>
