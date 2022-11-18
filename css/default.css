@@ -23,6 +23,10 @@ main {
   min-height: 400px;
 }
 
+#rankpoints {
+  text-align: center !important;
+}
+
 footer p {
   margin: 0 auto;
   text-align: right !important;
