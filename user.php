@@ -179,7 +179,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					<div class="card">
 					  <img src="<?php echo $avatar ?>" id="avatar" class="img-fluid mx-auto p-2" alt="User Avatar" name="User Avatar" width="100">
 					  <div class="card-body">
-					    <h5 class="card-title" style="text-align: center; font-weight: bolder; margin-top:-10px;"><?php printf("%s<span class='mx-2' style='color:#CCC;'>|</span>%s pts", $currentpos, $pointstotal); ?></h5>
+					    <h5 class="card-title" style="text-align: center; font-weight: bolder; margin:-15px 0px;"><?php printf("%s<span class='mx-2' style='color:#CCC;'>|</span>%s pts", $currentpos, $pointstotal); ?></h5>
 					    <!--<p class="card-text"><?php printf ("%s thinks %s will win FIFA World Cup 2022.", $uppCaseFN, $tournwinner); ?></p>-->
 					  </div>
 					  <ul class="list-group list-group-flush">
@@ -233,7 +233,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 																	const date = new Date(+year, +month - 1, +day, +hours, +minutes).toLocaleString().slice(0, -3);
 			                            fixture += '<tr>';
 																	fixture += '<td class="small text-muted d-none d-md-block">' + value.Group + '</td>';
-			                            fixture += '<td class="text-right">' + value.HomeTeam + '</td>';
+			                            fixture += '<td class="" style="text-align: right">' + value.HomeTeam + '</td>';
 																	fixture += '<td><img src="' + homeTeamFlag + '" alt="Flag of ' + homeTeam + '" title="Flag of ' + homeTeam + '"></td>';
 																	fixture += '<td align="center">v<br><span class="badge bg-light text-primary">' + value.MatchNumber + '</span></td>';
 																	fixture += '<td><img src="' + awayTeamFlag + '" alt="Flag of ' + awayTeam + '" title="Flag of ' + awayTeam + '"></td>';
