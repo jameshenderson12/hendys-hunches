@@ -23,7 +23,7 @@ main {
   min-height: 400px;
 }
 
-#rankpoints {
+h5 .card-title {
   text-align: center !important;
 }
 
