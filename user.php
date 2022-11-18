@@ -179,11 +179,10 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					<div class="card">
 					  <img src="<?php echo $avatar ?>" id="avatar" class="img-fluid mx-auto" alt="User Avatar" name="User Avatar" width="120">
 					  <div class="card-body">
-					    <h5 class="card-title"><?php printf("<span class='mx-2' style='color:#CCC;'>|</span>%s pts", $currentpos, $pointstotal); ?></h5>
+					    <h5 class="card-title mx-auto"><?php printf("<span class='mx-2' style='color:#CCC;'>|</span>%s pts", $currentpos, $pointstotal); ?></h5>
 					    <p class="card-text"><?php printf ("%s thinks %s will win FIFA World Cup 2022.", $uppCaseFN, $tournwinner); ?></p>
 					  </div>
-					  <ul class="list-group list-group-flush">
-					    <li class="list-group-item"><?php printf ("%s thinks %s will win FIFA World Cup 2022.", $uppCaseFN, $tournwinner); ?></li>
+					  <ul class="list-group list-group-flush">					    
 					    <li class="list-group-item"><?php printf ("<strong>Favourite Team:</strong><br> %s", $faveteam); ?></li>
 					    <li class="list-group-item"><?php printf ("<strong>Location:</strong><br> %s", $location); ?></li>
 							<li class="list-group-item"><?php printf ("<strong>Field of Work:</strong><br> %s", $fieldofwork); ?></li>
