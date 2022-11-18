@@ -179,10 +179,12 @@ if(isset($_GET['u']) && isset($_GET['p'])){
 
   		<main class="px-3">
   			<!--<h1>Welcome</h1>-->
+<!--
   			<img src="img/qatar-2022-logo.png" alt="Qatar 2022 edition of Hendy's Hunches" class="w-50 mb-3">
+
         <h1>Hendy's Hunches: Forgotten Password</h1>
         <p>Enter your email address for password reset or return to the <a href="index.php">login page</a> to sign in.</p>
-
+-->
         <form id="forgotPassForm" name="forgotPassForm" onSubmit="return false;" class="">
 
             <div class="mb-3 row d-flex justify-content-center">
@@ -194,7 +196,6 @@ if(isset($_GET['u']) && isset($_GET['p'])){
             </div>
 
             <hr />
-          <!--<p class="lead">Pit your FIFA World Cup 2022 predictions against others for a chance to earn a prize spot or bragging rights in the rankings.</p>-->
             <input type="button" id="forgotpassbtn" class="btn btn-primary" value="Generate temporary password" onClick="forgotPass();" />
         </form>
 
