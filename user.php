@@ -224,9 +224,6 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 															?>
 			                        // Iterate through objects
 			                        $.each(data, function (key, value) {
-																	<?php
-																		for ($x=1; $x<97; $x+=2) {																			
-																	?>
 																	var homeTeam = value.HomeTeam;
 																	var awayTeam = value.AwayTeam;
 																	var homeTeamFlag = "flag-icons/24/" + homeTeam.toLowerCase().replaceAll(' ', '-') + ".png";
@@ -248,7 +245,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 													        fixture += '<td align="center"><?php if($matchids[0]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[0]."_r"], $matchresult["score".$evengameno[0]."_r"]); } else echo "N / A"; ?></td>';
 													      	fixture += '<td align="center"><?php if($matchids[0]) { echo $matchpoints[0]; } else { echo "-"; } ?></td>';
 			                            fixture += '</tr>';
-																	<?php } ?>
+																	<?php $x = ($x * 2 + 1); ?>
 			                        });
 			                      // Insert rows into table
 			                      $('#table').append(fixture);
