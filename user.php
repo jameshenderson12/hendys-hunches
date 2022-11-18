@@ -206,8 +206,6 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					        <th></th>
 					        <th></th>
 					        <th></th>
-					        <th></th>
-					        <th></th>
 									<th></th>
 					        <th align="center" width="">Prediction</th>
 					        <th align="center" width="">Result</th>
@@ -234,7 +232,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 																	const date = new Date(+year, +month - 1, +day, +hours, +minutes).toLocaleString().slice(0, -3);
 			                            fixture += '<tr>';
 																	fixture += '<td class="small text-muted d-none d-md-block">' + value.Group + '</td>';
-			                            fixture += '<td>' + value.HomeTeam + '</td>';
+			                            fixture += '<td class="text-center">' + value.HomeTeam + '</td>';
 																	fixture += '<td><img src="' + homeTeamFlag + '" alt="Flag of ' + homeTeam + '" title="Flag of ' + homeTeam + '"></td>';
 																	fixture += '<td align="center">v<br><span class="badge bg-light text-primary">' + value.MatchNumber + '</span></td>';
 																	fixture += '<td><img src="' + awayTeamFlag + '" alt="Flag of ' + awayTeam + '" title="Flag of ' + awayTeam + '"></td>';
