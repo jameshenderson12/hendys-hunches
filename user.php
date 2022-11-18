@@ -175,7 +175,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 				<h1 class="page-header">Predictions by <?php print "$uppCaseFN $uppCaseSN" ?></h1>
         <p>You're currently viewing predictions by <?php print "$uppCaseFN $uppCaseSN" ?>. Return to the <a href="rankings.php">rankings</a> table.</p>
 	      <div class="row">
-
+					<div class="col-md-3">
 					<div class="card">
 					  <img src="<?php echo $avatar ?>" id="avatar" class="img-fluid" alt="User Avatar" name="User Avatar" width="120">
 					  <div class="card-body">
@@ -183,30 +183,21 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
 					  </div>
 					  <ul class="list-group list-group-flush">
-					    <li class="list-group-item">An item</li>
-					    <li class="list-group-item">A second item</li>
-					    <li class="list-group-item">A third item</li>
+					    <li class="list-group-item"><?php printf ("%s thinks %s will win FIFA World Cup 2022.", $uppCaseFN, $tournwinner); ?></li>
+					    <li class="list-group-item"><?php printf ("<strong>Favourite Team:</strong> %s", $faveteam); ?></li>
+					    <li class="list-group-item"><?php printf ("<strong>Location:</strong> %s", $location); ?></li>
+							<li class="list-group-item"><?php printf ("<strong>Field of Work:</strong> %s", $fieldofwork); ?></li>
 					  </ul>
 					  <div class="card-body">
-					    <a href="#" class="card-link">Card link</a>
-					    <a href="#" class="card-link">Another link</a>
+					    <a href="#" class="card-link">Return to Rankings</a>
+					    <!--<a href="#" class="card-link">Another link</a>-->
 					  </div>
 					</div>
-
-
-
+				</div>
+				<div class="col-md-9">
 					<div class="card">
-						<div class="card-body">
-                <img src="<?php echo $avatar ?>" id="avatar" class="img-fluid" alt="User Avatar" name="User Avatar" width="120" style="margin: 0 auto; padding: 10px;">
-                <?php printf("<p class='text-center 'style='font-size: 1.5em; color: #222;'><strong>%s&nbsp;&nbsp;<span style='color:#CCC;'>|</span>&nbsp;&nbsp;%spts</strong></p>", $currentpos, $pointstotal); ?>
-                <p><?php printf ("%s thinks %s will win FIFA World Cup 2022.", $uppCaseFN, $tournwinner); ?></p>
-                <p><?php printf ("<strong>Favourite Team:</strong> %s", $faveteam); ?></p>
-								<p><?php printf ("<strong>Location:</strong> %s", $location); ?></p>
-                <p><?php printf ("<strong>Field of Work:</strong> %s", $fieldofwork); ?></p>
-                <a href='rankings.php' class='btn btn-default'>Return to rankings table</a>
-              </div>
-						</div>
 					</div>
+				</div>
       	</div><!--row-->
 			</main>
 
