@@ -248,8 +248,8 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 													      	fixture += '<td align="center"><?php if($matchids[0]) { echo $matchpoints[0]; } else { echo "-"; } ?></td>';
 			                            fixture += '</tr>';
 																	<?php
-																		$x+=2;
-																		$y+=2;
+																		$x+2;
+																		$y+2;
 																	?>
 																	x+=2;
 																	y+=2;
