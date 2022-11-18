@@ -223,13 +223,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 																$y = 2;
 															?>
 			                        // Iterate through objects
-			                        $.each(data, function (key, value) {
-																	<?php
-																		for ($x = 1; $x < 97; $x++) {
-																			$x = ($x * 2 + 1);  // 3
-																			$y = ($x * 2 + 2);  // 4
-																		}
-																	?>
+			                        $.each(data, function (key, value) {													
 																	var homeTeam = value.HomeTeam;
 																	var awayTeam = value.AwayTeam;
 																	var homeTeamFlag = "flag-icons/24/" + homeTeam.toLowerCase().replaceAll(' ', '-') + ".png";
