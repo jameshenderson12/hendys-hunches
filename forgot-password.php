@@ -181,10 +181,10 @@ if(isset($_GET['u']) && isset($_GET['p'])){
   			<!--<h1>Welcome</h1>-->
 <!--
   			<img src="img/qatar-2022-logo.png" alt="Qatar 2022 edition of Hendy's Hunches" class="w-50 mb-3">
-
-        <h1>Hendy's Hunches: Forgotten Password</h1>
-        <p>Enter your email address for password reset or return to the <a href="index.php">login page</a> to sign in.</p>
 -->
+        <h1>Forgotten Password</h1>
+        <p>Enter your email address for password reset or return to the <a href="index.php">login page</a> to sign in.</p>
+
         <form id="forgotPassForm" name="forgotPassForm" onSubmit="return false;" class="">
 
             <div class="mb-3 row d-flex justify-content-center">
