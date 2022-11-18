@@ -247,6 +247,10 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 													        fixture += '<td align="center"><?php if($matchids[0]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[0]."_r"], $matchresult["score".$evengameno[0]."_r"]); } else echo "N / A"; ?></td>';
 													      	fixture += '<td align="center"><?php if($matchids[0]) { echo $matchpoints[0]; } else { echo "-"; } ?></td>';
 			                            fixture += '</tr>';
+																	<?php
+																		$x+=2;
+																		$y+=2;
+																	?>
 																	x+=2;
 																	y+=2;
 			                        });
