@@ -218,13 +218,11 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 			                    $.getJSON("json/fifa-world-cup-2022-fixtures-groups.json",
 			                    	function (data) {
 			                        var fixture = '';
-															<?php
-																$x = 1;
-																$y = 2;
+															var	x = 1;
+															var y = 2;
 															?>
 			                        // Iterate through objects
 			                        $.each(data, function (key, value) {
-																 <?php $x++ ?>
 																	var homeTeam = value.HomeTeam;
 																	var awayTeam = value.AwayTeam;
 																	var homeTeamFlag = "flag-icons/24/" + homeTeam.toLowerCase().replaceAll(' ', '-') + ".png";
@@ -242,10 +240,13 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 																	fixture += '<td><img src="' + awayTeamFlag + '" alt="Flag of ' + awayTeam + '" title="Flag of ' + awayTeam + '"></td>';
 			                            fixture += '<td>' + value.AwayTeam + '</td>';
 			                            fixture += '<td class="small text-muted d-none d-md-block">' + date + '</td>';
-																	fixture += '<td align="center"><span class="prediction"><?php echo $userdata["score".$x."_p"]; ?> - <?php echo $userdata["score".$y."_p"] ?></span></td>';
+																	fixture += '<td align="center"><span class="prediction"><?php echo $userdata["score10_p"]; ?> - <?php echo $userdata["score".$y."_p"] ?></span></td>';
 													        fixture += '<td align="center"><?php if($matchids[0]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[0]."_r"], $matchresult["score".$evengameno[0]."_r"]); } else echo "N / A"; ?></td>';
 													      	fixture += '<td align="center"><?php if($matchids[0]) { echo $matchpoints[0]; } else { echo "-"; } ?></td>';
 			                            fixture += '</tr>';
+																	x+=2;
+																	y+=2;
+																	"score' + x + '_p";
 			                        });
 			                      // Insert rows into table
 			                      $('#table').append(fixture);
