@@ -142,12 +142,12 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					$pvalue = mysqli_fetch_assoc(mysqli_query($con, $sql_getspecid));
 					$rvalue = mysqli_fetch_assoc(mysqli_query($con, $sql_getresults));
 
-					for ($gameno=1; $gameno<129; $gameno+=2) {
+					for ($gameno=1; $gameno<97; $gameno+=2) {
 							$oddgameno[] = $gameno;
 							$evengameno[] = $gameno + 1;
 					}
 
-					for ($i=0; $i<=64; $i++) {
+					for ($i=0; $i<=48; $i++) {
 							$matchpoints[$i] = 0;
 
 							if( is_numeric($pvalue["score".$oddgameno[$i]."_p"]) && is_numeric($pvalue["score".$evengameno[$i]."_p"]) ) {
@@ -175,6 +175,22 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 				<h1 class="page-header">Opponent Predictions: <?php print "$uppCaseFN $uppCaseSN" ?></h1>
         <p>You're currently viewing predictions by <?php print "$uppCaseFN $uppCaseSN" ?>. Return to the <a href="rankings.php">rankings</a> table.</p>
 	      <div class="row">
+					<div class="card">
+						<div class="card-body">
+							<div class="col-md-2 col-xs-12">
+                <img src="<?php echo $avatar ?>" id="avatar" class="img-responsive" alt="User Avatar" name="User Avatar" width="120" style="margin: 0 auto; padding: 10px;">
+                <?php printf("<p class='text-center 'style='font-size: 1.5em; color: #222;'><strong>%s&nbsp;&nbsp;<span style='color:#CCC;'>|</span>&nbsp;&nbsp;%spts</strong></p>", $currentpos, $pointstotal); ?>
+              </div>
+              <div class="col-md-10 col-xs-12">
+                <p><?php printf ("%s thinks %s will win the 2018 FIFA World Cup.", $uppCaseFN, $tournwinner); ?></p>
+                <p><?php printf ("<strong>Favourite Team:</strong> %s", $faveteam); ?></p>
+                <p><?php printf ("<strong>Field of Work:</strong> %s", $fieldofwork); ?></p>
+                <p><?php printf ("<strong>Previous Ranks:</strong> %s (WC2014), %s (EURO2016)", $wc2014rank, $eu2016rank); ?></p>
+                <p><?php printf ("<strong>Last Updated:</strong> %s", $lastupdated); ?></p>
+                <a href='rankings.php' class='btn btn-default'>Return to rankings table</a>
+              </div>
+						</div>
+					</div>
       	</div><!--row-->
 			</main>
 
