@@ -179,7 +179,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					<div class="card">
 					  <img src="<?php echo $avatar ?>" id="avatar" class="img-fluid mx-auto" alt="User Avatar" name="User Avatar" width="120">
 					  <div class="card-body">
-					    <h5 class="card-title mx-auto"><?php printf("%s<span class='mx-2' style='color:#CCC;'>|</span>%s pts", $currentpos, $pointstotal); ?></h5>
+					    <h5 class="card-title" id="rankpoints"><?php printf("%s<span class='mx-2' style='color:#CCC;'>|</span>%s pts", $currentpos, $pointstotal); ?></h5>
 					    <p class="card-text"><?php printf ("%s thinks %s will win FIFA World Cup 2022.", $uppCaseFN, $tournwinner); ?></p>
 					  </div>
 					  <ul class="list-group list-group-flush">
@@ -202,7 +202,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 				<footer class="mt-auto">
 					<hr>
 					<p class="small fw-light">Predictions game based on <a href="https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/qatar2022">FIFA World Cup 2022™</a><br><?=$title?> <?=$version?> &copy; <?=$year?> <?=$developer?>.</p>
-				</footer>				
+				</footer>
 			</main>
 
   </body>
