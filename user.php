@@ -177,12 +177,13 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	      <div class="row">
 					<div class="col-md-3">
 					<div class="card">
-					  <img src="<?php echo $avatar ?>" id="avatar" class="img-fluid mx-auto" alt="User Avatar" name="User Avatar" width="120">
+					  <img src="<?php echo $avatar ?>" id="avatar" class="img-fluid mx-auto p-2" alt="User Avatar" name="User Avatar" width="120">
 					  <div class="card-body">
 					    <h5 class="card-title" style="text-align: center; font-weight: bolder;"><?php printf("%s<span class='mx-2' style='color:#CCC;'>|</span>%s pts", $currentpos, $pointstotal); ?></h5>
-					    <p class="card-text"><?php printf ("%s thinks %s will win FIFA World Cup 2022.", $uppCaseFN, $tournwinner); ?></p>
+					    <!--<p class="card-text"><?php printf ("%s thinks %s will win FIFA World Cup 2022.", $uppCaseFN, $tournwinner); ?></p>-->
 					  </div>
 					  <ul class="list-group list-group-flush">
+							<li class="list-group-item"><?php printf ("<strong>Backed To Win:</strong><br> %s", $tournwinner); ?></li>
 					    <li class="list-group-item"><?php printf ("<strong>Favourite Team:</strong><br> %s", $faveteam); ?></li>
 					    <li class="list-group-item"><?php printf ("<strong>Location:</strong><br> %s", $location); ?></li>
 							<li class="list-group-item"><?php printf ("<strong>Field of Work:</strong><br> %s", $fieldofwork); ?></li>
