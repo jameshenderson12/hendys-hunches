@@ -232,7 +232,6 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 																	const [year, month, day] = dateValues.split('-');
 																	const [hours, minutes] = timeValues.split(':');
 																	const date = new Date(+year, +month - 1, +day, +hours, +minutes).toLocaleString().slice(0, -3);
-																	console.log(date);
 			                            fixture += '<tr>';
 																	fixture += '<td class="small text-muted d-none d-md-block">' + value.Group + '</td>';
 			                            fixture += '<td>' + value.HomeTeam + '</td>';
@@ -242,8 +241,8 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 																	fixture += '<td><input type="text" id="score' + y + '_p" name="score' + y + '_p" class="form-control" /></td>';
 																	fixture += '<td><img src="' + awayTeamFlag + '" alt="Flag of ' + awayTeam + '" title="Flag of ' + awayTeam + '"></td>';
 			                            fixture += '<td>' + value.AwayTeam + '</td>';
-			                            fixture += '<td class="small text-muted d-none d-md-block"> ' + date + '<br>' + value.Location + '</td>';
-																	fixture += '<td align="center"><span class="prediction"><?php echo $userdata['"score' + x + '_p"'] ?> - <?php echo $userdata['score2_p'] ?></span></td>';
+			                            fixture += '<td class="small text-muted d-none d-md-block">' + date + '</td>';
+																	fixture += '<td align="center"><span class="prediction"><?php echo $userdata['"score' + x + '_p"'] ?> - <?php echo $userdata['"score' + y + '_p"'] ?></span></td>';
 													        fixture += '<td align="center"><?php if($matchids[0]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[0]."_r"], $matchresult["score".$evengameno[0]."_r"]); } else echo "N / A"; ?></td>';
 													      	fixture += '<td align="center"><?php if($matchids[0]) { echo $matchpoints[0]; } else { echo "-"; } ?></td>';
 			                            fixture += '</tr>';
