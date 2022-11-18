@@ -172,9 +172,29 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 			 ?>
 
 			<main class="container px-4 py-4">
-				<h1 class="page-header">Opponent Predictions: <?php print "$uppCaseFN $uppCaseSN" ?></h1>
+				<h1 class="page-header">Predictions by <?php print "$uppCaseFN $uppCaseSN" ?></h1>
         <p>You're currently viewing predictions by <?php print "$uppCaseFN $uppCaseSN" ?>. Return to the <a href="rankings.php">rankings</a> table.</p>
 	      <div class="row">
+
+					<div class="card">
+					  <img src="<?php echo $avatar ?>" id="avatar" class="img-fluid" alt="User Avatar" name="User Avatar" width="120">
+					  <div class="card-body">
+					    <h5 class="card-title"><?php print "$uppCaseFN $uppCaseSN ($location)" ?></h5>
+					    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+					  </div>
+					  <ul class="list-group list-group-flush">
+					    <li class="list-group-item">An item</li>
+					    <li class="list-group-item">A second item</li>
+					    <li class="list-group-item">A third item</li>
+					  </ul>
+					  <div class="card-body">
+					    <a href="#" class="card-link">Card link</a>
+					    <a href="#" class="card-link">Another link</a>
+					  </div>
+					</div>
+
+
+
 					<div class="card">
 						<div class="card-body">
                 <img src="<?php echo $avatar ?>" id="avatar" class="img-fluid" alt="User Avatar" name="User Avatar" width="120" style="margin: 0 auto; padding: 10px;">
@@ -182,7 +202,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
                 <p><?php printf ("%s thinks %s will win FIFA World Cup 2022.", $uppCaseFN, $tournwinner); ?></p>
                 <p><?php printf ("<strong>Favourite Team:</strong> %s", $faveteam); ?></p>
 								<p><?php printf ("<strong>Location:</strong> %s", $location); ?></p>
-                <p><?php printf ("<strong>Field of Work:</strong> %s", $fieldofwork); ?></p>                                
+                <p><?php printf ("<strong>Field of Work:</strong> %s", $fieldofwork); ?></p>
                 <a href='rankings.php' class='btn btn-default'>Return to rankings table</a>
               </div>
 						</div>
