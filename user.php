@@ -183,10 +183,10 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					    <!--<p class="card-text"><?php printf ("%s thinks %s will win FIFA World Cup 2022.", $uppCaseFN, $tournwinner); ?></p>-->
 					  </div>
 					  <ul class="list-group list-group-flush">
-							<li class="list-group-item"><?php printf ("<strong>Backed To Win:</strong><br> %s", $tournwinner); ?></li>
-					    <li class="list-group-item"><?php printf ("<strong>Favourite Team:</strong><br> %s", $faveteam); ?></li>
+							<li class="list-group-item"><?php printf ("<strong>Backed to win:</strong><br> %s", $tournwinner); ?></li>
+					    <li class="list-group-item"><?php printf ("<strong>Favourite team:</strong><br> %s", $faveteam); ?></li>
 					    <li class="list-group-item"><?php printf ("<strong>Location:</strong><br> %s", $location); ?></li>
-							<li class="list-group-item"><?php printf ("<strong>Field of Work:</strong><br> %s", $fieldofwork); ?></li>
+							<li class="list-group-item"><?php printf ("<strong>Field of work:</strong><br> %s", $fieldofwork); ?></li>
 					  </ul>
 					  <div class="card-body">
 					    <a href="#" class="card-link">Return to Rankings</a>
