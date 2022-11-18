@@ -196,6 +196,68 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 				<div class="col-md-9">
 					<div class="card">
 						<div class="card-body">
+
+							<!-- Placeholder for JSON table construction -->
+			        <table id="table" class="table table-sm table-striped">
+								<tr>
+									<th></th>
+					        <th></th>
+					        <th></th>
+					        <th></th>
+					        <th></th>
+					        <th></th>
+					        <th></th>
+					        <th></th>
+									<th></th>
+					        <th align="center" width="">Prediction</th>
+					        <th align="center" width="">Result</th>
+					        <th align="center" width="10%">Points</th>
+				        </tr>
+			            <script>
+			                $(document).ready(function () {
+			                    // Fetch data from JSON file
+			                    $.getJSON("json/fifa-world-cup-2022-fixtures-groups.json",
+			                    	function (data) {
+			                        var fixture = '';
+															var x = 1;
+															var y = 2;
+			                        // Iterate through objects
+			                        $.each(data, function (key, value) {
+																	var homeTeam = value.HomeTeam;
+																	var awayTeam = value.AwayTeam;
+																	var homeTeamFlag = "flag-icons/24/" + homeTeam.toLowerCase().replaceAll(' ', '-') + ".png";
+																	var awayTeamFlag = "flag-icons/24/" + awayTeam.toLowerCase().replaceAll(' ', '-') + ".png";
+																	const str = value.DateUtc;
+																	const [dateValues, timeValues] = str.split(' ');
+																	const [year, month, day] = dateValues.split('-');
+																	const [hours, minutes] = timeValues.split(':');
+																	const date = new Date(+year, +month - 1, +day, +hours, +minutes).toLocaleString().slice(0, -3);
+																	console.log(date);
+			                            fixture += '<tr>';
+																	fixture += '<td class="small text-muted d-none d-md-block">' + value.Group + '</td>';
+			                            fixture += '<td>' + value.HomeTeam + '</td>';
+																	fixture += '<td><img src="' + homeTeamFlag + '" alt="Flag of ' + homeTeam + '" title="Flag of ' + homeTeam + '"></td>';
+																	fixture += '<td><input type="text" id="score' + x + '_p" name="score' + x + '_p" class="form-control" /></td>';
+																	fixture += '<td align="center">v<br><span class="badge bg-light text-primary">' + value.MatchNumber + '</span></td>';
+																	fixture += '<td><input type="text" id="score' + y + '_p" name="score' + y + '_p" class="form-control" /></td>';
+																	fixture += '<td><img src="' + awayTeamFlag + '" alt="Flag of ' + awayTeam + '" title="Flag of ' + awayTeam + '"></td>';
+			                            fixture += '<td>' + value.AwayTeam + '</td>';
+			                            fixture += '<td class="small text-muted d-none d-md-block"> ' + date + '<br>' + value.Location + '</td>';
+																	fixture += '<td align="center"><span class="prediction"><?php echo $userdata['score1_p'] ?> - <?php echo $userdata['score2_p'] ?></span></td>';
+													        fixture += '<td align="center"><?php if($matchids[0]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[0]."_r"], $matchresult["score".$evengameno[0]."_r"]); } else echo "N / A"; ?></td>';
+													      	fixture += '<td align="center"><?php if($matchids[0]) { echo $matchpoints[0]; } else { echo "-"; } ?></td>';
+			                            fixture += '</tr>';
+																	x+=2;
+																	y+=2;
+			                        });
+			                      // Insert rows into table
+			                      $('#table').append(fixture);
+			                    });
+			                });
+			            </script>
+						</table>
+
+
 							<table class="table table-striped" style="background-color: #FFF;">
 			        <tr>
 				        <th width="6%"></th>
@@ -207,11 +269,11 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 				        <th align="center" width="10%">Points</th>
 			        </tr>
 			      	<tr>
-								<td class="date-venue">Match 1<br>Group A</td>
-				    		<td class="left-team">
+								<td class="small text-muted">Match 1<br>Group A</td>
+
 				        <img src="<?php echo $A1img; ?>" alt="<?php echo $A1; ?>" title="<?php echo $A1; ?>"><label for="score1_p"><?php echo $A1; ?></label></td>
-				        <td align="center"><span>v</span></td>
-								<td class="right-team">
+				        <td>v</td>
+
 				        <img src="<?php echo $A2img; ?>" alt="<?php echo $A2; ?>" title="<?php echo $A2; ?>"><label for="score2_p"><?php echo $A2; ?></label></td>
 				      	<td align="center"><span class="prediction"><?php echo $userdata['score1_p'] ?> - <?php echo $userdata['score2_p'] ?></span></td>
 				        <td align="center"><?php if($matchids[0]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[0]."_r"], $matchresult["score".$evengameno[0]."_r"]); } else echo "N / A"; ?></td>
