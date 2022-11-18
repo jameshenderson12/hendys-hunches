@@ -177,16 +177,12 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	      <div class="row">
 					<div class="card">
 						<div class="card-body">
-							<div class="col-md-2 col-xs-12">
-                <img src="<?php echo $avatar ?>" id="avatar" class="img-responsive" alt="User Avatar" name="User Avatar" width="120" style="margin: 0 auto; padding: 10px;">
+                <img src="<?php echo $avatar ?>" id="avatar" class="img-fluid" alt="User Avatar" name="User Avatar" width="120" style="margin: 0 auto; padding: 10px;">
                 <?php printf("<p class='text-center 'style='font-size: 1.5em; color: #222;'><strong>%s&nbsp;&nbsp;<span style='color:#CCC;'>|</span>&nbsp;&nbsp;%spts</strong></p>", $currentpos, $pointstotal); ?>
-              </div>
-              <div class="col-md-10 col-xs-12">
-                <p><?php printf ("%s thinks %s will win the 2018 FIFA World Cup.", $uppCaseFN, $tournwinner); ?></p>
+                <p><?php printf ("%s thinks %s will win FIFA World Cup 2022.", $uppCaseFN, $tournwinner); ?></p>
                 <p><?php printf ("<strong>Favourite Team:</strong> %s", $faveteam); ?></p>
-                <p><?php printf ("<strong>Field of Work:</strong> %s", $fieldofwork); ?></p>
-                <p><?php printf ("<strong>Previous Ranks:</strong> %s (WC2014), %s (EURO2016)", $wc2014rank, $eu2016rank); ?></p>
-                <p><?php printf ("<strong>Last Updated:</strong> %s", $lastupdated); ?></p>
+								<p><?php printf ("<strong>Location:</strong> %s", $location); ?></p>
+                <p><?php printf ("<strong>Field of Work:</strong> %s", $fieldofwork); ?></p>                                
                 <a href='rankings.php' class='btn btn-default'>Return to rankings table</a>
               </div>
 						</div>
