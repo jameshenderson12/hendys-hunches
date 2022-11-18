@@ -173,7 +173,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 
 			<main class="container px-4 py-4">
 				<h1 class="page-header">Predictions by <?php print "$uppCaseFN $uppCaseSN" ?></h1>
-        <p>You're currently viewing predictions by <?php print "$uppCaseFN $uppCaseSN" ?>. Return to the <a href="rankings.php">rankings</a> table.</p>
+        <p>Currently viewing predictions by <?php print "$uppCaseFN $uppCaseSN" ?>. Return to the <a href="rankings.php">rankings</a> table.</p>
 	      <div class="row">
 					<div class="col-md-3">
 					<div class="card">
@@ -198,13 +198,12 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					</div>
 				</div>
       	</div><!--row-->
+				<!-- Site footer -->
+				<footer class="mt-auto">
+					<hr>
+					<p class="small fw-light">Predictions game based on <a href="https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/qatar2022">FIFA World Cup 2022™</a><br><?=$title?> <?=$version?> &copy; <?=$year?> <?=$developer?>.</p>
+				</footer>				
 			</main>
-
-			<!-- Site footer -->
-			<footer class="mt-auto">
-				<hr>
-				<p class="small fw-light">Predictions game based on <a href="https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/qatar2022">FIFA World Cup 2022™</a><br><?=$title?> <?=$version?> &copy; <?=$year?> <?=$developer?>.</p>
-			</footer>
 
   </body>
 </html>
