@@ -217,7 +217,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 			                    // Fetch data from JSON file
 			                    $.getJSON("json/fifa-world-cup-2022-fixtures-groups.json",
 			                    	function (data) {
-			                        var fixture = '';														
+			                        var fixture = '';
 															<?php
 																$x = 1;
 																$y = 2;
@@ -246,8 +246,8 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 													      	fixture += '<td align="center"><?php if($matchids[0]) { echo $matchpoints[0]; } else { echo "-"; } ?></td>';
 			                            fixture += '</tr>';
 																	<?php
-																		$x++2;
-																		$y++2;
+																		+2$x;
+																		+2$y;
 																	?>
 			                        });
 			                      // Insert rows into table
