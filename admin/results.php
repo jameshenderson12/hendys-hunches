@@ -66,31 +66,31 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		        <div class="offcanvas-body">
 		          <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
 		            <li class="nav-item">
-		              <a class="nav-link active" aria-current="page" href="dashboard.php">Home</a>
+		              <a class="nav-link active" aria-current="page" href="../dashboard.php">Home</a>
 		            </li>
 		            <li class="nav-item">
-		              <a class="nav-link" href="predictions.php">My Predictions</a>
+		              <a class="nav-link" href="../predictions.php">My Predictions</a>
 		            </li>
 								<li class="nav-item">
-		              <a class="nav-link" href="rankings.php">Rankings</a>
+		              <a class="nav-link" href="../rankings.php">Rankings</a>
 		            </li>
 								<li class="nav-item">
-		              <a class="nav-link" href="howitworks.php">How It Works</a>
+		              <a class="nav-link" href="../howitworks.php">How It Works</a>
 		            </li>
 								<li class="nav-item">
-									<a class="nav-link" href="about.php">About</a>
+									<a class="nav-link" href="../about.php">About</a>
 								</li>
 		            <li class="nav-item dropdown">
 									<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 										<?php returnAvatar();	?>
 		              </a>
 		              <ul class="dropdown-menu">
-		                <li><a class="dropdown-item" href="change-password.php">Change Password</a></li>
+		                <li><a class="dropdown-item" href="../change-password.php">Change Password</a></li>
 		                <li><a class="dropdown-item" href="#">Another action</a></li>
 		                <li>
 		                  <hr class="dropdown-divider">
 		                </li>
-		                <li><a class="dropdown-item" href="php/logout.php">Logout</a></li>
+		                <li><a class="dropdown-item" href="../php/logout.php">Logout</a></li>
 		              </ul>
 		            </li>
 		          </ul>
@@ -125,7 +125,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 			$matchids[] = $row['match_id'];
 		}
 
-		for ($i=0; $i<48; $i++) {
+		for ($i=0; $i<49; $i++) {
 			if ($matchids[$i]) {
 				$matchstatus[$i] = 'True';
 				// Return existing match values from DB
