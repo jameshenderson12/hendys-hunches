@@ -1,5 +1,5 @@
 <?php
-	// Setup global variables
+	// Setup DB global variables
 	$dbusername = "hh_stduser_app";
 	$dbpassword = "ddJ1FrlbX?Us";
 	$database = "hh_wc2022_live";
