@@ -142,7 +142,6 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		<main class="container px-4 py-4">
 			<h1>Match Results (Admin)</h1>
 			<p class="lead" style="color: red">This page is used to record the match results by administrator only.</p>
-			<p>Normal text...</p>
 			<div class="row">
 				<div class="col-xs-12">
         <form id="resultForm" action="../php/insert-result.php" method="POST">
@@ -161,8 +160,8 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	                        $.each(data, function (key, value) {
 															var homeTeam = value.HomeTeam;
 															var awayTeam = value.AwayTeam;
-															var homeTeamFlag = "flag-icons/24/" + homeTeam.toLowerCase().replaceAll(' ', '-') + ".png";
-															var awayTeamFlag = "flag-icons/24/" + awayTeam.toLowerCase().replaceAll(' ', '-') + ".png";
+															var homeTeamFlag = "../flag-icons/24/" + homeTeam.toLowerCase().replaceAll(' ', '-') + ".png";
+															var awayTeamFlag = "../flag-icons/24/" + awayTeam.toLowerCase().replaceAll(' ', '-') + ".png";
 															const str = value.DateUtc;
 															const [dateValues, timeValues] = str.split(' ');
 															const [year, month, day] = dateValues.split('-');
@@ -177,7 +176,8 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 															fixture += '<td><input type="text" id="score' + y + '_r" name="score' + y + '_r" class="form-control" /></td>';
 															fixture += '<td><img src="' + awayTeamFlag + '" alt="Flag of ' + awayTeam + '" title="Flag of ' + awayTeam + '"></td>';
 	                            fixture += '<td>' + value.AwayTeam + '</td>';
-	                            fixture += '<td class="small text-muted d-none d-md-block"> ' + date + '<br>' + value.Location + '</td>';
+	                            fixture += '<td class="small text-muted d-none d-md-block"> ' + date + '</td>';
+															fixture += '<td class="date-venue">Match Recorded: <?php echo $matchstatus[$i]; ?></td>';
 	                            fixture += '</tr>';
 															x+=2;
 															y+=2;
@@ -188,7 +188,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	                });
 	            </script>
 						</table>
-						<input type="submit" class="btn btn-default" value="Submit Results" />
+						<input type="submit" class="btn btn-primary" value="Submit Results" />
 						<input type="reset" class="btn btn-default" value="Reset All" />
 						</form>
 						</div><!--col-md-12-->
