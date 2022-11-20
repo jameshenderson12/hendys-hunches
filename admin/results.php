@@ -14,11 +14,11 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
     <meta name="author" content="James Henderson">
 		<title>Hendy's Hunches: Results</title>
     <?php include "php/config.php" ?>
-		<link rel="shortcut icon" href="ico/favicon.ico">
+		<link rel="shortcut icon" href="../ico/favicon.ico">
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu|Lora">
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
-		<link rel="stylesheet" href="css/default.css">
+		<link rel="stylesheet" href="../css/default.css">
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.1"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
   </head>
@@ -26,7 +26,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	<body>
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark" aria-label="Offcanvas navbar large">
 		    <div class="container">
-					<img src="img/hh-favicon-2018.jpg" class="img-responsive" style="margin: 0px 20px 0px; height:50px">
+					<img src="../img/hh-favicon-2018.jpg" class="img-responsive" style="margin: 0px 20px 0px; height:50px">
 		      <a class="navbar-brand" href="#">Hendy's Hunches</a>
 		      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar2" aria-controls="offcanvasNavbar2">
 		        <span class="navbar-toggler-icon"></span>
@@ -54,12 +54,8 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 									<a class="nav-link" href="about.php">About</a>
 								</li>
 		            <li class="nav-item dropdown">
-		              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-		                <img src="img/scores.jpg" alt="Profile icon" class="img-fluid rounded-circle mx-1" width="25px;">
-										<?php
-											// Echo session variables that were set on previous page
-											echo $_SESSION["firstname"];
-										?>
+									<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+										<?php returnAvatar();	?>
 		              </a>
 		              <ul class="dropdown-menu">
 		                <li><a class="dropdown-item" href="change-password.php">Change Password</a></li>
