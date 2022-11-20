@@ -253,7 +253,7 @@ function retrieveAwayResult($num) {
 		echo $row["score".$away."_r"];
    	}
 }
-
+/*
 function updatePredictions() {
 	// Connect to the database
 	include 'php/db-connect.php';
@@ -271,7 +271,7 @@ function updatePredictions() {
 	mysqli_query($con, $sql_update) or die('Error: ' . mysqli_error($con));
 	mysqli_close($con);
 }
-
+*/
 function insertPredictions() {
 	// Connect to the database
 	include 'php/db-connect.php';
