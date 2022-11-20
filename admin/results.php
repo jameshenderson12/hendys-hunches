@@ -21,6 +21,33 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		<link rel="stylesheet" href="../css/default.css">
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.1"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
+
+		<style>
+		body {
+			font-family: 'Lora';
+		}
+		h1, h2, h3 {
+			font-family: 'Ubuntu';
+		}
+		table {
+			width: 100%;
+		}
+		td:nth-child(2), td:nth-child(7) {
+			text-align: right;
+		}
+		td:nth-child(4), td:nth-child(6) {
+			width: 5%;
+			min-width: 40px;
+			text-align: center;
+		}
+		td:nth-child(5) {
+			width: 3%;
+		}
+		input {
+			font-size: larger;
+			text-align: center;
+		}
+		</style>
   </head>
 
 	<body>
