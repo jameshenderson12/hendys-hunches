@@ -5,7 +5,7 @@ AuthType Basic
 AuthName "Administration Access"
 
 # This you must edit.  It is the absolute path to the .htpasswd file.
-AuthUserFile /public_html/hendyshunches.co.uk/.htpasswd
+AuthUserFile /.htpasswd
 
 # This allows any user from inside the .htpasswd file to access the
 # content if they provide the proper username and password.
