@@ -364,11 +364,11 @@ function displayRankings() {
 		// Determine if move is upwards, downwards or the same and calculate the difference between current and previous ranking
 		if ($row["lastpos"] > $row["currpos"]) {
 			$diff = $row["lastpos"] - $row["currpos"];
-			$move = "<span style='color: green;' class='glyphicon glyphicon-circle-arrow-up'></span>";
+			$move = "<i class='bi bi-arrow-up-circle-fill text-success'></i>";
 		}
 		if ($row["lastpos"] < $row["currpos"]) {
 			$diff = $row["currpos"] - $row["lastpos"];
-			$move = "<span style='color: red;' class='glyphicon glyphicon-circle-arrow-down'></span>";
+			$move = "<i class='bi bi-arrow-down-circle-fill text-danger'></i>";
 		}
 		if ($row["lastpos"] == $row["currpos"]) {
 			$diff = 0;
