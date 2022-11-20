@@ -168,7 +168,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 															const [hours, minutes] = timeValues.split(':');
 															const date = new Date(+year, +month - 1, +day, +hours, +minutes).toLocaleString().slice(0, -3);
 	                            fixture += '<tr>';
-															fixture += '<td class="small text-muted d-none d-md-block">' + value.Group + '</td>';
+															fixture += '<td class="small text-muted">' + value.Group + '</td>';
 	                            fixture += '<td>' + value.HomeTeam + '</td>';
 															fixture += '<td><img src="' + homeTeamFlag + '" alt="Flag of ' + homeTeam + '" title="Flag of ' + homeTeam + '"></td>';
 															fixture += '<td><input type="text" id="score' + x + '_r" name="score' + x + '_r" class="form-control" /></td>';
@@ -176,7 +176,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 															fixture += '<td><input type="text" id="score' + y + '_r" name="score' + y + '_r" class="form-control" /></td>';
 															fixture += '<td><img src="' + awayTeamFlag + '" alt="Flag of ' + awayTeam + '" title="Flag of ' + awayTeam + '"></td>';
 	                            fixture += '<td>' + value.AwayTeam + '</td>';
-	                            fixture += '<td class="small text-muted d-none d-md-block"> ' + date + '</td>';
+	                            fixture += '<td class="small text-muted"> ' + date + '</td>';
 															fixture += '<td class="date-venue">Match Recorded: <?php echo $matchstatus[$i]; ?></td>';
 	                            fixture += '</tr>';
 															x+=2;
