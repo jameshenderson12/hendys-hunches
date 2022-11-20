@@ -372,7 +372,7 @@ function displayRankings() {
 		}
 		if ($row["lastpos"] == $row["currpos"]) {
 			$diff = 0;
-			$move = "<span style='color: #888;' class='glyphicon glyphicon-circle-arrow-right'></span>";
+			$move = "<i class='bi bi-arrow-right-circle-fill text-secondary'></i>";
 		}
 
 		print "<tr>";
