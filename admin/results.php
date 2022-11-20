@@ -120,20 +120,6 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 				<div class="col-xs-12">
         <form id="resultForm" action="../php/insert-result.php" method="POST">
 
-			</div><!--row-->
-		</main>
-
-
-		<div id="main" class="col-md-12">
-        <h1 class="page-header">Match Results (Admin)</h1>
-        <p class="lead" style="color: red">This page is used to record the match results by administrator only.</p>
-
-        <h2>Sequence of Results</h2>
-
-        <div class="row">
-        <div class="col-xs-12">
-        <form id="resultForm" action="../php/insert-result.php" method="POST">
-
 					<!-- Placeholder for JSON table construction -->
 	        <table id="table" class="table table-sm table-striped">
 	            <script>
@@ -174,35 +160,23 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	                    });
 	                });
 	            </script>
-				</table>
+						</table>
+						<input type="submit" class="btn btn-default" value="Submit Results" />
+						<input type="reset" class="btn btn-default" value="Reset All" />
+						</form>
+						</div><!--col-md-12-->
+					</div><!--row-->
+				<!-- Site footer -->
+				<footer class="mt-auto">
+					<hr>
+					<p class="small fw-light">Predictions game based on <a href="https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/qatar2022">FIFA World Cup 2022™</a><br><?=$title?> <?=$version?> &copy; <?=$year?> <?=$developer?>.</p>
+				</footer>
+			</main>
+<!--
+		<td class="date-venue">Match Recorded: <?php echo $matchstatus[0]; ?></td>
+		<td class="update-button"><input type="submit" id="updateBtn1" class="btn btn-success btn-sm" value="Update this result" /></td>
+		</tr>
+-->
 
-
-
-
-      	<td class="date-venue">Match Recorded: <?php echo $matchstatus[0]; ?></td>
-        <td class="update-button"><input type="submit" id="updateBtn1" class="btn btn-success btn-sm" value="Update this result" /></td>
-      	</tr>
-
-      	</table>
-      	<input type="submit" class="btn btn-default" value="Submit Results" />
-      	<input type="reset" class="btn btn-default" value="Reset All" />
-        </form>
-        </div><!--col-md-12-->
-      </div><!--row-->
-
-      </div><!--starter-template-->
-
-      <!-- Site footer -->
-      <div class="footer">
-      <?php include "../includes/footer.php" ?>
-      </div>
-
-    </div><!-- /.container -->
-
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-    <script src="../js/bootstrap.min.js"></script>
   </body>
 </html>
