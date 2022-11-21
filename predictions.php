@@ -4,6 +4,7 @@ session_start();
 if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	header ("Location: index.php");
 }
+//checkSubmitted();
 ?>
 <!DOCTYPE html>
 <html lang="en" class="h-100">
