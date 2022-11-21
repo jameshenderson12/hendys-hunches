@@ -16,7 +16,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	  gtag('js', new Date());
 
 	  gtag('config', 'UA-119623195-1');
-	</script>	  
+	</script>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -28,14 +28,14 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
-    
+
     <!-- Custom styles for this template -->
     <link href="css/custom.css" rel="stylesheet">
     <link class="include" rel="stylesheet" type="text/css" href="css/jquery.jqplot.min.css" />
 	<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.2.min.js"></script>
-	
+
 	<?php include 'php/dashboard-items.php'; ?>
-    
+
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
@@ -43,8 +43,8 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
     <![endif]-->
   </head>
 
-  <body>	
-  
+  <body>
+
     <!-- Navigation menu for lg, md display -->
     <nav class="navbar navbar-inverse navbar-fixed-top col-md-12 hidden-xs">
       <div class="container-fluid">
@@ -61,25 +61,25 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-left" style="margin-left: 15px;">
             <li class="active"><a href="dashboard.php">Home</a></li>
-            <li><a href="predictions.php">My Predictions</a></li>
+            <li><a href="predictions.php">Submit Predictions</a></li>
             <li><a href="rankings.php">Rankings</a></li>
             <li><a href="howitworks.php">How It Works</a></li>
-			<li><a href="about.php">About</a></li>                        
+			<li><a href="about.php">About</a></li>
           </ul>
           <!--
           <form class="navbar-form navbar-right">
             <input type="text" class="form-control" placeholder="Search...">
           </form>-->
         </div>
-        <div class="col-md-12">   
-           <?php		 
+        <div class="col-md-12">
+           <?php
 			// Echo session variables that were set on previous page
 			echo "<span id='login'><span style='color: white'><p>Logged in as: <span class='glyphicon glyphicon-user'></span>&nbsp;<span style='font-weight:bold'>" . $_SESSION["firstname"] . " " . $_SESSION["surname"] . "</span> ( <a href='php/logout.php'>Logout</a> )</p></span></span>";
           ?>
         </div>
       </div>
     </nav>
-    
+
     <!-- Navigation menu for xs display -->
     <nav class="navbar navbar-inverse navbar-fixed-top col-md-12 visible-xs hidden-lg hidden-md">
       <div class="container-fluid">
@@ -99,38 +99,38 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
             <li><a href="predictions.php"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>&nbsp;&nbsp;My Predictions</a></li>
             <li><a href="rankings.php"><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>&nbsp;&nbsp;Rankings</a></li>
             <li><a href="howitworks.php"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>&nbsp;&nbsp;How It Works</a></li>
-			<li><a href="about.php"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>&nbsp;&nbsp;About</a></li>            
-            <li><a href="php/logout.php"><span class='glyphicon glyphicon-user' aria-hidden="true"></span>&nbsp;&nbsp;Logout</a></li>                        
+			<li><a href="about.php"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>&nbsp;&nbsp;About</a></li>
+            <li><a href="php/logout.php"><span class='glyphicon glyphicon-user' aria-hidden="true"></span>&nbsp;&nbsp;Logout</a></li>
           </ul>
         </div>
       </div>
     </nav>
-    
+
 
 		<div id="main" class="col-md-12">
           <!--<h1 class="page-header hidden">Home</h1>-->
           <!--<div class="col-md-12 alert alert-warning"></div>-->
-          
+
           <!--
           <div class="alert alert-danger alert-dismissible" role="alert">
     	      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         	  <strong>Please Note:</strong> Keep your login details handy as you will soon be able to predict for the knockout fixtures.
 	      </div>
           -->
-          <!--          
+          <!--
           <div class="alert alert-warning alert-dismissible" role="alert">
     	      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         	  <strong>Note:</strong> Those yet to pay their entrance fee can you please do so ASAP. Thank you.
-	      </div>                    
+	      </div>
           -->
           <div class="alert alert-success alert-dismissible" role="alert">
     	      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         	  Congratulations to <strong>Nick Chandler</strong> (1st), <strong>Snigdha Dutta</strong> and <strong>Sonia Fernandez</strong> (2nd), <strong>Daniel Waite</strong> (3rd), <strong>Paul Hendrick</strong> (4th) and <strong>Rebecca Reeves</strong> (5th) as prize winners!
-	      </div>         
-                
+	      </div>
+
            <!-- First Column (3 Span) -->
            <div class="col-md-4 col-lg-3">
-                
+
             	<div id="profile">
                 	<div class="panel panel-success">
                			<div class="panel-heading">My Profile</div>
@@ -140,11 +140,11 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
                     			</div>
                         		<div id="personal-info" class="col-md-12">
                         			<?php displayPersonalInfo(); ?>
-                        		</div>                                
+                        		</div>
                             </div><!-- panel-body -->
 	      	        </div><!-- panel -->
     			</div><!-- profile -->
-                
+
                 <div id="todays-games">
             		<div class="panel panel-success">
                			<div class="panel-heading">Today's Matches</div>
@@ -153,7 +153,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	                		</div><!-- panel-body -->
 	      	        </div><!-- panel -->
     			</div><!-- today's games -->
-                                
+
             	<div id="latest-recruits">
             	<!--<img data-src="holder.js/200x200/auto/sky" class="img-responsive" alt="Generic placeholder thumbnail">-->
             		<div class="panel panel-success">
@@ -163,25 +163,25 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	                		</div><!-- panel-body -->
 	      			</div><!-- panel -->
     			</div><!-- latest recruits -->
-                			               
+
             	<!--<div id="top-supported" class="hidden-xs">
             		<div class="panel panel-success">
                			<div class="panel-heading">Players' Favourite Teams</div>
-                			<div class="panel-body text-left">                            	
+                			<div class="panel-body text-left">
               					<div id="chart3" style="height:100%; width:100%;"></div>
-	                		</div><!-- panel-body 
-	      	        	</div><!-- panel 
+	                		</div><!-- panel-body
+	      	        	</div><!-- panel
     			</div><!-- top supported teams -->
-                               
-            	<div id="charity">            	
+
+            	<div id="charity">
             		<div class="panel panel-success">
                			<div class="panel-heading">Charity Donation (CALM)</div>
                 			<div class="panel-body text-left">
               					<!--<img src="img/calm-logo-dark-blue.png" class="img-responsive">-->
-                                <?php displayCharityInformation(); ?>                                
+                                <?php displayCharityInformation(); ?>
 	                		</div><!-- panel-body -->
 	      			</div><!-- panel -->
-    			</div><!-- charity -->  
+    			</div><!-- charity -->
 
             	<div id="voted-winner" class="hidden-xs">
            		<div class="panel panel-success">
@@ -190,35 +190,35 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
               					<div id="chart2" style="height:100%; width:100%;"></div>
 	                		</div><!-- panel-body -->
 	      	        	</div><!-- panel -->
-    			</div><!-- voted winner -->                             
-                                                                           
-			</div><!-- First Column (3 Span) -->             
+    			</div><!-- voted winner -->
+
+			</div><!-- First Column (3 Span) -->
 
 
 
 			<!-- Second Column (6 Span) -->
-			<div class="col-md-8 col-lg-6">                                         
-                <!--                 
+			<div class="col-md-8 col-lg-6">
+                <!--
                 <div id="twitter-feed">
 					<div class="panel panel-success">
                			<div class="panel-heading">Latest News from Social Media</div>
                 			<div class="panel-body text-center">
-                            
+
                             <!-- Facebook Timeline Widget
 <div class="fb-page" data-href="https://www.facebook.com/uefaeuro" data-tabs="timeline" data-width="500" data-height="550" data-small-header="true" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="false"><blockquote cite="https://www.facebook.com/uefaeuro" class="fb-xfbml-parse-ignore"><a href="https://www.facebook.com/uefaeuro">UEFA EURO</a></blockquote></div> -->
-                            
+
               					<!-- Twitter Timeline Widget
                                 <a class="twitter-timeline"  href="https://twitter.com/UEFAEURO" data-widget-id="737917608683507712" data-chrome="noheader nofooter noborders">Tweets by @Euro16Updates</a>
                                 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>-->
-                                
+
                                 <!--
                                 <a class="twitter-timeline" data-lang="en" data-height="500" data-theme="light" href="https://twitter.com/FIFAWorldCup" data-chrome="noheader nofooter noborders">Tweets by FIFAWorldCup</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
-                                                                                         
-	                		</div><!-- panel-body 
+
+	                		</div><!-- panel-body
 	      	        </div><!-- panel
     			</div><!-- Social media feed -->
-                
-                
+
+
             	<div id="msg-board">
                 	<div class="panel panel-success">
                			<div class="panel-heading">The Hendy's Hunches Banter Board</div>
@@ -227,15 +227,15 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 								<!--<p class="well well-sm" style="margin: 10px; padding: 10px;">Message board available soon...</p>-->
                             </div><!-- panel-body -->
 	      	        </div><!-- panel -->
-    			</div><!-- msg-board -->                                                                                                              
+    			</div><!-- msg-board -->
 
 			</div><!-- Second Column (6 Span) -->
-            
+
 
 
 			<!-- Third Column (3 Span) -->
 			<div class="col-md-8 col-lg-3">
-            
+
             	<div id="best-movers">
             		<div class="panel panel-success">
                			<div class="panel-heading">Latest Best Moves</div>
@@ -244,7 +244,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	                		</div><!-- panel-body -->
 	      	        </div><!-- panel -->
     			</div><!-- best movers -->
-                
+
             	<div id="worst-movers">
             		<div class="panel panel-success">
                			<div class="panel-heading">Latest Worst Moves</div>
@@ -252,8 +252,8 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
               					<?php displayWorstMovers(); ?>
 	                		</div><!-- panel-body -->
 	      	        </div><!-- panel -->
-    			</div><!-- worst movers -->                             
-            			
+    			</div><!-- worst movers -->
+
             	<div id="twitter-feed">
             		<div class="panel panel-success">
                			<div class="panel-heading">Latest Social News</div>
@@ -261,32 +261,32 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
               					<a class="twitter-timeline" data-lang="en" data-height="600" data-theme="light" href="https://twitter.com/FIFAWorldCup" data-chrome="noheader nofooter noborders">Tweets by FIFAWorldCup</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 	                		</div><!-- panel-body -->
 	      	        </div><!-- panel -->
-    			</div><!-- twitter feed -->				
-				
+    			</div><!-- twitter feed -->
+
             	<!--<div id="top-rankings">
             		<div class="panel panel-success">
                			<div class="panel-heading">Top Players</div>
                 			<div class="panel-body text-left">
               					<?php displayTopRankings(); ?>
-	                		</div><!-- panel-body 
-	      	        </div><!-- panel 
+	                		</div><!-- panel-body
+	      	        </div><!-- panel
     			</div><!-- top rankings -->
-            
+
             	<!--<div id="bottom-rankings">
             	<!--<img src="holder.js/200x200/auto/sky" class="img-responsive" alt="">
             	<div class="panel panel-success">
                		<div class="panel-heading">Bottom Players</div>
                 		<div class="panel-body text-left">
 			            	<?php displayBottomRankings(); ?>
-	                	</div><!-- panel-body 
-	      	        </div><!-- panel 
-    			</div><!-- bottom rankings -->                                                                                    
-                        
+	                	</div><!-- panel-body
+	      	        </div><!-- panel
+    			</div><!-- bottom rankings -->
+
             </div><!-- Third Column (3 Span) -->
-  
-                                    
+
+
 <script type="text/javascript">
-  // Example of data input required...    
+  // Example of data input required...
     var teams = [
     	[1, 'Aberdeen'],[1, 'Accrington Stanley'],[1, 'AFC Wimbledon'],[3, 'Arsenal'],[1, 'Aston Villa'],[1, 'Coventry City'],[1, 'Cowdenbeath'],
 		[6, 'Derby County'],[2, 'Everton'],[1, 'Gillingham'],[2, 'Heart of Midlothian'],[5, 'Hibernian'],[4, 'Leicester City'],[4, 'Liverpool'],
@@ -294,7 +294,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		[4, 'Notts County'],[1, 'Oxford United'],[2, 'Rangers'],[1, 'Stockport County'],[1, 'Sheffield Wednesday'],
 		[1, 'Tottenham Hotspur'],[1, 'Wigan Athletic']
   	];
-	
+
 	var nations = [
 		/*[2, 'Argentina'],[1, 'Australia'],[1, 'Belgium'],[9, 'Brazil'], [1, 'Colombia'],[2, 'England'],[9, 'France'],[10, 'Germany'],[4, 'Portugal'],[1, 'Russia'],[7, 'Spain']*/
 		[11, 'Spain'],[1, 'Russia'],[5, 'Portugal'],[1, 'Nigeria'],[18, 'Germany'],[10, 'France'],[3, 'England'],[1, 'Croatia'],[1, 'Colombia'],[14, 'Brazil'],[2, 'Belgium'],[1, 'Australia'],[3, 'Argentina']
@@ -335,23 +335,23 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
                 }
             }
         });
-    });		
+    });
 </script>
 
 <script type="text/javascript">
-   window.onorientationchange = function() { 
-        var orientation = window.orientation; 
-            switch(orientation) { 
-                case 0: window.location.reload(); 
-                break; 
-                case 90: window.location.reload(); 
-                break; 
-                case -90: window.location.reload(); 
-                break; } 
-    };	
+   window.onorientationchange = function() {
+        var orientation = window.orientation;
+            switch(orientation) {
+                case 0: window.location.reload();
+                break;
+                case 90: window.location.reload();
+                break;
+                case -90: window.location.reload();
+                break; }
+    };
 </script>
 
-          
+
     </div><!-- main-section -->
 
 
@@ -361,7 +361,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	<script class="include" language="javascript" type="text/javascript" src="js/jqplot.barRenderer.min.js"></script>
 	<script class="include" language="javascript" type="text/javascript" src="js/jqplot.categoryAxisRenderer.min.js"></script>
     <script type="text/javascript" src="js/jqplot.pointLabels.min.js"></script>
-    
+
     <!-- iFrame resize libraries -->
     <script class="include" language="javascript" type="text/javascript" src="js/iframeResizer.min.js"></script>
 
@@ -381,7 +381,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					$('p#callback').html(
 						'<b>Frame ID:</b> '    + messageData.iframe.id +
 						' <b>Height:</b> '     + messageData.height +
-						' <b>Width:</b> '      + messageData.width + 
+						' <b>Width:</b> '      + messageData.width +
 						' <b>Event type:</b> ' + messageData.type
 					);
 				},
@@ -410,7 +410,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
   fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));</script>-->
 
-<!-- Feedback Script for Modal 
+<!-- Feedback Script for Modal
 
 <script>(function(t,e,o,s){var c,n,i;t.SMCX=t.SMCX||[],e.getElementById(s)||(c=e.getElementsByTagName(o),n=c[c.length-1],i=e.createElement(o),i.type="text/javascript",i.async=!0,i.id=s,i.src=["https:"===location.protocol?"https://":"http://","widget.surveymonkey.com/collect/website/js/W61d_2BmwqZfNBspJ6JwJcUkAroZxf5iT0EYiVRY_2BCdFPN9CtYX48a6LjNDKgIm2li.js"].join(""),n.parentNode.insertBefore(i,n))})(window,document,"script","smcx-sdk");</script><a style="font: 12px Helvetica, sans-serif; color: #999; text-decoration: none;" href=https://www.surveymonkey.com/mp/customer-satisfaction-surveys/> Create your own user feedback survey </a>
 

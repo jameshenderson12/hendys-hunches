@@ -60,7 +60,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-left" style="margin-left: 15px;">
             <li><a href="dashboard.php">Home</a></li>
-            <li><a href="predictions.php">My Predictions</a></li>
+            <li><a href="predictions.php">Submit Predictions</a></li>
             <li><a href="rankings.php">Rankings</a></li>
             <li class="active"><a href="howitworks.php">How It Works</a></li>
             <li><a href="about.php">About</a></li>                        

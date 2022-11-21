@@ -106,7 +106,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		              <a class="nav-link" href="dashboard.php">Home</a>
 		            </li>
 		            <li class="nav-item">
-		              <a class="nav-link active" aria-current="page" href="predictions.php">My Predictions</a>
+		              <a class="nav-link active" aria-current="page" href="predictions.php">Submit Predictions</a>
 		            </li>
 								<li class="nav-item">
 		              <a class="nav-link" href="rankings.php">Rankings</a>
