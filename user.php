@@ -210,7 +210,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 									<th></th>
 					        <th align="center" width="">Prediction</th>
 					        <th align="center" width="">Result</th>
-					        <th align="center" width="10%">Points</th>								
+					        <th align="center" width="10%">Points</th>
 				        </tr>
 			            <script>
 			                $(document).ready(function () {
@@ -233,16 +233,16 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 																	const [hours, minutes] = timeValues.split(':');
 																	const date = new Date(+year, +month - 1, +day, +hours, +minutes).toLocaleString().slice(0, -3);
 			                            fixture += '<tr>';
-																	fixture += '<td class="small text-muted d-none d-md-block">' + value.Group + '</td>';
+																	fixture += '<td class="small text-muted d-none d-md-block">' + value.Group + '<br></td>';
 			                            fixture += '<td style="text-align: right">' + value.HomeTeam + '</td>';
 																	fixture += '<td><img src="' + homeTeamFlag + '" alt="Flag of ' + homeTeam + '" title="Flag of ' + homeTeam + '"></td>';
 																	fixture += '<td align="center">v<br><span class="badge bg-light text-primary">' + value.MatchNumber + '</span></td>';
 																	fixture += '<td><img src="' + awayTeamFlag + '" alt="Flag of ' + awayTeam + '" title="Flag of ' + awayTeam + '"></td>';
 			                            fixture += '<td>' + value.AwayTeam + '</td>';
-			                            fixture += '<td class="small text-muted d-none d-md-block">' + date + '</td>';
+			                            fixture += '<td class="small text-muted d-none d-md-block">' + date + '<br></td>';
 																	fixture += '<td align="center"><span class="prediction"><?php echo $userdata["score".$x."_p"]; ?> - <?php echo $userdata["score".$y."_p"] ?></span></td>';
-													        fixture += '<td align="center"><?php if($matchids[z]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[z]."_r"], $matchresult["score".$evengameno[z]."_r"]); } else echo "N / A"; ?></td>';
-													      	fixture += '<td align="center"><?php if($matchids[z]) { echo $matchpoints[z]; } else { echo "-"; } ?></td>';
+													        fixture += '<td align="center"><?php if($matchids[0]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[0]."_r"], $matchresult["score".$evengameno[0]."_r"]); } else echo "N/A"; ?></td>';
+													      	fixture += '<td align="center"><?php if($matchids[0]) { echo $matchpoints[0]; } else { echo "-"; } ?></td>';
 			                            fixture += '</tr>';
 																	x+=2;
 																	y+=2;
