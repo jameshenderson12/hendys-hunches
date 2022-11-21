@@ -85,7 +85,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	</style>
   </head>
 
-  <body onload="checkSubmitted()">
+  <body onload="<?php checkSubmitted(); ?>">
 
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark" aria-label="Offcanvas navbar large">
 		    <div class="container">
