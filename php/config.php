@@ -284,7 +284,7 @@ function checkSubmitted() {
 	$sql_predstatus = "SELECT EXISTS(SELECT username FROM live_user_predictions_groups WHERE username = '".$_SESSION["username"]."')";
 	$predstatus = mysqli_query($con, $sql_predstatus);
 	if ($predstatus = 1) {
-		consoleMsg("You have already submitted");
+		consoleMsg($predstatus);
 		print("<p class='alert alert-success p-4'><span class='bi bi-check2-square text-success'></span> It appears that you have already submitted your predictions for this round. Good luck.</p>");
 	}
 	//print("<img src='$avatar' id='avatar' class='img-fluid rounded-circle mx-1' alt='User Avatar' name='User Avatar' width='25'> $firstname");
