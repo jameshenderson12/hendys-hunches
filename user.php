@@ -28,12 +28,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		td:nth-child(2) {
 			text-align: right;
 		}
-		td:nth-child(4), td:nth-child(6) {
-			width: 5%;
-			min-width: 40px;
-			text-align: center;
-		}
-		td:nth-child(5) {
+		td:nth-child(4) {
 			width: 3%;
 		}
 		</style>
