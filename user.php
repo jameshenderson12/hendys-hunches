@@ -218,9 +218,9 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 							    <td align="center"><span>v</span></td>
 									<td><img src="<?php echo $A2img; ?>" alt="<?php echo $A2; ?>" title="<?php echo $A2; ?>"></td>
 									<td class="right-team"><label for="score2_p"><?php echo $A2; ?></label></td>
-									<td align="center"><span class="prediction"><?php echo $userdata['score1_p'] ?> - <?php echo $userdata['score2_p'] ?></span></td>
-							    <td align="center"><?php if($matchids[0]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[0]."_r"], $matchresult["score".$evengameno[0]."_r"]); } else echo "N/A"; ?></td>
-							    <td align="center"><?php if($matchids[0]) { echo $matchpoints[0]; } else { echo "-"; } ?></td>
+									<td><span class="prediction"><?php echo $userdata['score1_p'] ?> - <?php echo $userdata['score2_p'] ?></span></td>
+							    <td><?php if($matchids[0]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[0]."_r"], $matchresult["score".$evengameno[0]."_r"]); } else echo "N/A"; ?></td>
+							    <td><?php if($matchids[0]) { echo $matchpoints[0]; } else { echo "-"; } ?></td>
 				      	</tr>
 						</table>
 
