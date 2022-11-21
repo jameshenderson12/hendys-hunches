@@ -14,7 +14,6 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
     <meta name="author" content="James Henderson">
 		<title>Hendy's Hunches: Dashboard</title>
     <?php include "php/config.php" ?>
-		<?php include "php/dashboard-items.php" ?>		
 		<link rel="shortcut icon" href="ico/favicon.ico">
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu|Lora">
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
@@ -129,7 +128,6 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 									<li class="list-group-item"><?php printf ("<strong>Field of work:</strong><br> %s", $fieldofwork); ?></li>
 								</ul>
 								<div class="card-body">
-									<a href="#" class="card-link">View Rankings</a>
 									<a href="#" class="card-link">View My Predictions</a>
 								</div>
 							</div>
@@ -137,6 +135,38 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 						<div class="col-md-8 col-lg-6">
 						</div>
 						<div class="col-lg-3">
+							<div class="card">
+								<?php
+								// Create DB connection
+								include 'php/db-connect.php';
+
+								// Get team information from the DB	counting occurrences too
+								$sql_getbestmovers = "SELECT firstname, surname, lastpos-currpos AS diff FROM live_user_information WHERE (lastpos-currpos) > 0 ORDER BY diff DESC, surname ASC LIMIT 0, 5";
+
+								// Obtain the SQL query result
+								$result = mysqli_query($con, $sql_getbestmovers) or die(mysqli_error());
+
+								// Carry out the following for each result item
+								printf("<strong>Current best movers:\n</strong>");
+								printf("<ul>");
+
+								if (mysqli_num_rows($result) == 0) {
+									// Remove all carriage returns and new lines from array values
+									printf("<li>No results available yet</li>");
+								}
+
+								while($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
+									// Output the values into a list for display
+									printf ("<li>%s %s <span style='color: green;' class='glyphicon glyphicon-circle-arrow-up'></span> %s</li>", $row["firstname"], $row["surname"], $row["diff"]);
+								}
+								printf("</ul>");
+								// Free result set
+								mysqli_free_result($result);
+								// Close DB connection
+								mysqli_close($con);
+							}
+							?>
+							</div>
 						</div>
       		</div><!--row-->
 				<!-- Site footer -->
