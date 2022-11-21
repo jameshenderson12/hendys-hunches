@@ -223,6 +223,8 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 															var z = 0;
 			                        // Iterate through objects
 			                        $.each(data, function (key, value) {
+																	var hid = "score"+x+"_p";
+																	var aid = "score"+y+"_p";
 																	var homeTeam = value.HomeTeam;
 																	var awayTeam = value.AwayTeam;
 																	var homeTeamFlag = "flag-icons/24/" + homeTeam.toLowerCase().replaceAll(' ', '-') + ".png";
@@ -240,7 +242,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 																	fixture += '<td><img src="' + awayTeamFlag + '" alt="Flag of ' + awayTeam + '" title="Flag of ' + awayTeam + '"></td>';
 			                            fixture += '<td>' + value.AwayTeam + '</td>';
 			                            fixture += '<td class="small text-muted d-none d-md-block">' + date + '<br></td>';
-																	fixture += '<td align="center"><span class="prediction"><?php echo $userdata["score".$x."_p"]; ?> - <?php echo $userdata["score".$y."_p"] ?></span></td>';
+																	fixture += '<td align="center"><span class="prediction"><?php echo $userdata[hid]; ?> - <?php echo $userdata[aid] ?></span></td>';
 													        fixture += '<td align="center"><?php if($matchids[z]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[z]."_r"], $matchresult["score".$evengameno[z]."_r"]); } else echo "N / A"; ?></td>';
 													      	fixture += '<td align="center"><?php if($matchids[z]) { echo $matchpoints[z]; } else { echo "-"; } ?></td>';
 			                            fixture += '</tr>';
