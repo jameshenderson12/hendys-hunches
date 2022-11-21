@@ -207,9 +207,9 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					        <th></th>
 					        <th></th>
 					        <th></th>
-					        <th align="center" width="">Prediction</th>
-					        <th align="center" width="">Result</th>
-					        <th align="center" width="10%">Points</th>
+					        <th width="">Prediction</th>
+					        <th width="">Result</th>
+					        <th width="10%">Points</th>
 				        </tr>
 								<tr>
 									<td class="small text-muted d-none d-md-block">Group A<br>21/11/2022</td>
