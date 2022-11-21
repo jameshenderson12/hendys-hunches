@@ -141,7 +141,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
       <h1>Test Predictions</h1>
       <!--<p class="lead">Can you correctly predict your way to victory?</p>-->
       <p>To make your predictions, enter a score value into each box below and hit the 'Submit my predictions' button.</p>
-			<p class="alert alert-warning"><strong>Note:</strong> You must predict all 48 fixtures before submitting! You only need to do this once.</p>
+			<p class="alert alert-warning" id="submitMsg"><strong>Note:</strong> You must predict all 48 fixtures before submitting! You only need to do this once.</p>
 			<?php checkSubmitted(); ?>
       <a name="matches"></a><!--anchor point for filters-->
       <form id="predictionForm" name="predictionForm" class="form-horizontal" action="submit.php" method="POST">
