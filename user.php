@@ -212,6 +212,18 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					        <th align="center" width="">Result</th>
 					        <th align="center" width="10%">Points</th>
 				        </tr>
+								<tr>
+									<td class="date-venue">Match 1<br>Group A</td>
+								  <td class="left-team">
+							    <img src="<?php echo $A1img; ?>" alt="<?php echo $A1; ?>" title="<?php echo $A1; ?>"><label for="score1_p"><?php echo $A1; ?></label></td>
+							    <td align="center"><span>v</span></td>
+									<td class="right-team">
+							    <img src="<?php echo $A2img; ?>" alt="<?php echo $A2; ?>" title="<?php echo $A2; ?>"><label for="score2_p"><?php echo $A2; ?></label></td>
+							    <td align="center"><span class="prediction"><?php echo $userdata['score1_p'] ?> - <?php echo $userdata['score2_p'] ?></span></td>
+							    <td align="center"><?php if($matchids[0]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[0]."_r"], $matchresult["score".$evengameno[0]."_r"]); } else echo "N / A"; ?></td>
+							    <td align="center"><?php if($matchids[0]) { echo $matchpoints[0]; } else { echo "-"; } ?></td>
+				      	</tr>
+								<!--
 			            <script>
 			                $(document).ready(function () {
 			                    // Fetch data from JSON file
@@ -242,8 +254,8 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 																	fixture += '<td><img src="' + awayTeamFlag + '" alt="Flag of ' + awayTeam + '" title="Flag of ' + awayTeam + '"></td>';
 			                            fixture += '<td>' + value.AwayTeam + '</td>';
 			                            fixture += '<td class="small text-muted d-none d-md-block">' + date + '<br></td>';
-																	fixture += '<td align="center"><span class="prediction"><?php echo $userdata[hid]; ?> - <?php echo $userdata[aid] ?></span></td>';
-													        fixture += '<td align="center"><?php if($matchids[z]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[z]."_r"], $matchresult["score".$evengameno[z]."_r"]); } else echo "N / A"; ?></td>';
+																	fixture += '<td align="center"><span class="prediction"><?php echo $userdata[]; ?> - <?php echo $userdata[] ?></span></td>';
+													        fixture += '<td align="center"><?php if($matchids[z]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[z]."_r"], $matchresult["score".$evengameno[z]."_r"]); } else echo "N/A"; ?></td>';
 													      	fixture += '<td align="center"><?php if($matchids[z]) { echo $matchpoints[z]; } else { echo "-"; } ?></td>';
 			                            fixture += '</tr>';
 																	x+=2;
