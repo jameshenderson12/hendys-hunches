@@ -13,6 +13,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
     <meta name="description" content="Hendy's Hunches: Predictions Game">
     <meta name="author" content="James Henderson">
 		<title>Hendy's Hunches: Dashboard</title>
+		<?php include "php/dashboard-items.php" ?>
     <?php include "php/config.php" ?>
 		<link rel="shortcut icon" href="ico/favicon.ico">
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu|Lora">
