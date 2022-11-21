@@ -29,11 +29,17 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 			text-align: right;
 			width: 10%;
 		}
-		td:nth-child(6), td:nth-child(7), td:nth-child(8) {
+		td:nth-child(6), td:nth-child(9) {
 			width: 10%;
+		}
+		td:nth-child(7), td:nth-child(8) {
+			width: 15%;
 		}
 		td:nth-child(4) {
 			width: 3%;
+		}
+		td:nth-child(3), td:nth-child(5) {
+			width: 5%;
 		}
 		</style>
   </head>
