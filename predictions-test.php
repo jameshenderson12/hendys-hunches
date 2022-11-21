@@ -13,7 +13,7 @@ checkSubmitted();
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Hendy's Hunches: Predictions Game">
     <meta name="author" content="James Henderson">
-		<title>Hendy's Hunches: Predictions</title>
+		<title>Hendy's Hunches: Test Predictions</title>
     <?php include "php/config.php" ?>
 		<link rel="shortcut icon" href="ico/favicon.ico">
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu|Lora">
@@ -139,7 +139,7 @@ checkSubmitted();
 
 
 	<main class="container px-4 py-4">
-      <h1>My Predictions</h1>
+      <h1>Test Predictions</h1>
       <!--<p class="lead">Can you correctly predict your way to victory?</p>-->
       <p>To make your predictions, enter a score value into each box below and hit the 'Submit my predictions' button.</p>
 			<p class="alert alert-warning"><strong>Note:</strong> You must predict all 48 fixtures before submitting! You only need to do this once.</p>
