@@ -285,7 +285,7 @@ function checkSubmitted() {
 	$predstatus = mysqli_query($con, $sql_predstatus);
 	if ($predstatus = 1) {
 		consoleMsg("You've already submitted");
-		print("<p class='alert alert-success p-5'> $firstname, it looks like you have already submitted your predictions for this round.</p>");
+		//print("<p class='alert alert-success p-5'> $firstname, it looks like you have already submitted your predictions for this round.</p>");
 	}
 	//print("<img src='$avatar' id='avatar' class='img-fluid rounded-circle mx-1' alt='User Avatar' name='User Avatar' width='25'> $firstname");
 }
