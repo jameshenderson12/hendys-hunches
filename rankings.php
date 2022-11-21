@@ -77,7 +77,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	      <h1>Rankings</h1>
 
 	      <p class="lead">Check your progress against others</p>
-	      <p>You will enter into the rankings when you have submitted your predictions.</p>
+	      <p>Select any player to view their information and predictions.</p>
 
 	      <div class="row">
 					<div class="col-xs-12">
