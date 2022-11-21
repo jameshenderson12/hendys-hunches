@@ -85,7 +85,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	</style>
   </head>
 
-  <body onload="<?php checkSubmitted(); ?>">
+  <body>
 
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark" aria-label="Offcanvas navbar large">
 		    <div class="container">
@@ -142,6 +142,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
       <!--<p class="lead">Can you correctly predict your way to victory?</p>-->
       <p>To make your predictions, enter a score value into each box below and hit the 'Submit my predictions' button.</p>
 			<p class="alert alert-warning"><strong>Note:</strong> You must predict all 48 fixtures before submitting! You only need to do this once.</p>
+			<?php checkSubmitted(); ?>
       <a name="matches"></a><!--anchor point for filters-->
       <form id="predictionForm" name="predictionForm" class="form-horizontal" action="submit.php" method="POST">
       <div class="row">
@@ -167,7 +168,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 														const [year, month, day] = dateValues.split('-');
 														const [hours, minutes] = timeValues.split(':');
 														const date = new Date(+year, +month - 1, +day, +hours, +minutes).toLocaleString().slice(0, -3);
-														console.log(date);
+														//console.log(date);
                             fixture += '<tr>';
 														fixture += '<td class="small text-muted d-none d-md-block">' + value.Group + '</td>';
                             fixture += '<td>' + value.HomeTeam + '</td>';
