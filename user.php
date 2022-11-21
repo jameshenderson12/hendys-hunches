@@ -201,7 +201,6 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 							<!-- Placeholder for JSON table construction -->
 			        <table id="table" class="table table-sm table-striped">
 								<tr>
-									<!--
 									<th></th>
 					        <th></th>
 					        <th></th>
@@ -211,8 +210,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 									<th></th>
 					        <th align="center" width="">Prediction</th>
 					        <th align="center" width="">Result</th>
-					        <th align="center" width="10%">Points</th>
-								-->
+					        <th align="center" width="10%">Points</th>								
 				        </tr>
 			            <script>
 			                $(document).ready(function () {
@@ -222,7 +220,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 			                        var fixture = '';
 															var	x = 1;
 															var y = 2;
-															var z = 0;														
+															var z = 0;
 			                        // Iterate through objects
 			                        $.each(data, function (key, value) {
 																	var homeTeam = value.HomeTeam;
