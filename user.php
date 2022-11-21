@@ -201,6 +201,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 							<!-- Placeholder for JSON table construction -->
 			        <table id="table" class="table table-sm table-striped">
 								<tr>
+									<!--
 									<th></th>
 					        <th></th>
 					        <th></th>
@@ -211,6 +212,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					        <th align="center" width="">Prediction</th>
 					        <th align="center" width="">Result</th>
 					        <th align="center" width="10%">Points</th>
+								-->
 				        </tr>
 			            <script>
 			                $(document).ready(function () {
@@ -220,7 +222,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 			                        var fixture = '';
 															var	x = 1;
 															var y = 2;
-															var z = 1;
+															var z = 0;
 															?>
 			                        // Iterate through objects
 			                        $.each(data, function (key, value) {
@@ -243,7 +245,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 			                            fixture += '<td class="small text-muted d-none d-md-block">' + date + '</td>';
 																	//fixture += '<td align="center"><span class="prediction"><?php echo $userdata["score".$x."_p"]; ?> - <?php echo $userdata["score".$y."_p"] ?></span></td>';
 													        //fixture += '<td align="center"><?php if($matchids[z]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[z]."_r"], $matchresult["score".$evengameno[z]."_r"]); } else echo "N / A"; ?></td>';
-													      	fixture += '<td align="center"><?php if($matchids[z]) { echo $matchpoints[z]; } else { echo "-"; } ?></td>';
+													      	//fixture += '<td align="center"><?php if($matchids[z]) { echo $matchpoints[z]; } else { echo "-"; } ?></td>';
 			                            fixture += '</tr>';
 																	x+=2;
 																	y+=2;
