@@ -242,7 +242,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 			                            fixture += '<td>' + value.AwayTeam + '</td>';
 			                            fixture += '<td class="small text-muted d-none d-md-block">' + date + '</td>';
 																	//fixture += '<td align="center"><span class="prediction"><?php echo $userdata["score".$x."_p"]; ?> - <?php echo $userdata["score".$y."_p"] ?></span></td>';
-													        fixture += '<td align="center"><?php if($matchids[z]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[z]."_r"], $matchresult["score".$evengameno[z]."_r"]); } else echo "N / A"; ?></td>';
+													        //fixture += '<td align="center"><?php if($matchids[z]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[z]."_r"], $matchresult["score".$evengameno[z]."_r"]); } else echo "N / A"; ?></td>';
 													      	fixture += '<td align="center"><?php if($matchids[z]) { echo $matchpoints[z]; } else { echo "-"; } ?></td>';
 			                            fixture += '</tr>';
 																	x+=2;
