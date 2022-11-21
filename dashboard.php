@@ -78,7 +78,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	      <p class="lead">Use the dashboard to track your progress.</p>
 					<div class="alert alert-secondary">
 						<h3>C'mon James, where's my updated score?</h3>
-						<p>The site is pending an update which includes information added to the dashboard and the ability to view yours and others' predictions via the rankings page. However, it is anticipated this update will be applied this evening and therefore scores from today's matches will be updated after all games have been played. This will occur for today only. In future days, results will be updated as soon as possible after the match has ended.</p>
+						<p>The site is pending an update which includes information added to the dashboard and the ability to view yours and others' predictions via the rankings page. However, it is anticipated this update will be applied this evening and therefore scores from today's matches will be updated after all games have been played. This will occur for today only. In future days, results will be updated as soon as possible after the match has ended. Thanks for your patience while things get up and running.</p>
 					</div>
 					<div class="row g-4">
 						<div class="col-lg-3">
