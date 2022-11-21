@@ -142,10 +142,24 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
       <!--<p class="lead">Can you correctly predict your way to victory?</p>-->
       <p>To make your predictions, enter a score value into each box below and hit the 'Submit my predictions' button.</p>
 			<p class="alert alert-warning" id="submitMsg"><strong>Note:</strong> You must predict all 48 fixtures before submitting! You only need to do this once.</p>
-			<?php checkSubmitted(); ?>
+
+			<?php
+				// Create DB connection
+				include 'php/db-connect.php';
+				$un = $_SESSION["username"];
+				// Get team information from the DB	counting occurrences too
+				$sql_predstatus = "SELECT EXISTS SELECT username FROM live_user_predictions_groups WHERE username = $un";
+				$predstatus = mysqli_query($con, $sql_predstatus);
+				if ($predstatus = 1) {
+					consoleMsg($predstatus);
+					echo("<p class='alert alert-success p-4'><span class='bi bi-check2-square text-success'></span> It appears that you have already submitted your predictions for this round. Good luck.</p>");
+				}
+				//print("<img src='$avatar' id='avatar' class='img-fluid rounded-circle mx-1' alt='User Avatar' name='User Avatar' width='25'> $firstname");
+				?>
+
       <a name="matches"></a><!--anchor point for filters-->
       <form id="predictionForm" name="predictionForm" class="form-horizontal" action="submit.php" method="POST">
-      <div class="row" id="<?php echo $predstatus ?>">
+      <div class="row">
 
         <!-- Placeholder for JSON table construction -->
         <table id="table" class="table table-sm table-striped">
