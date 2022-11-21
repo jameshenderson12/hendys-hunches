@@ -281,9 +281,9 @@ function checkSubmitted() {
 	include 'php/db-connect.php';
 
 	// Get team information from the DB	counting occurrences too
-	$sql_predstatus = "SELECT EXISTS (SELECT username FROM live_user_predictions_groups WHERE username = '".$_SESSION["username"]."')";
+	$sql_predstatus = "SELECT EXISTS (SELECT username FROM live_user_predictions_groups WHERE username = '. $_SESSION["username"] . ')";
 	$predstatus = mysqli_query($con, $sql_predstatus);
-	if ($predstatus == 1) {
+	if ($predstatus = 1) {
 		consoleMsg($predstatus);
 		print("<p class='alert alert-success p-4'><span class='bi bi-check2-square text-success'></span> It appears that you have already submitted your predictions for this round. Good luck.</p>");
 	}
