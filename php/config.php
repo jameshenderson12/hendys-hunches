@@ -62,7 +62,7 @@ $B1img = "flag-icons/24/england.png";
 $B2 = "Iran";
 $B2img = "flag-icons/24/iran.png";
 $B3 = "USA";
-$B3img = "flag-icons/24/united-states.png";
+$B3img = "flag-icons/24/usa.png";
 $B4 = "Wales";
 $B4img = "flag-icons/24/wales.png";
 
