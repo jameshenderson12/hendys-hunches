@@ -137,7 +137,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		  </nav>
 
 
-	<main class="container px-4 py-4" id="<?php echo $predstatus ?>">
+	<main class="container px-4 py-4">
       <h1>Test Predictions</h1>
       <!--<p class="lead">Can you correctly predict your way to victory?</p>-->
       <p>To make your predictions, enter a score value into each box below and hit the 'Submit my predictions' button.</p>
@@ -145,7 +145,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 			<?php checkSubmitted(); ?>
       <a name="matches"></a><!--anchor point for filters-->
       <form id="predictionForm" name="predictionForm" class="form-horizontal" action="submit.php" method="POST">
-      <div class="row">
+      <div class="row" id="<?php echo $predstatus ?>">
 
         <!-- Placeholder for JSON table construction -->
         <table id="table" class="table table-sm table-striped">
