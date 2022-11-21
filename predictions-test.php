@@ -137,7 +137,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		  </nav>
 
 
-	<main class="container px-4 py-4">
+	<main class="container px-4 py-4" id="<?php echo $predstatus ?>">
       <h1>Test Predictions</h1>
       <!--<p class="lead">Can you correctly predict your way to victory?</p>-->
       <p>To make your predictions, enter a score value into each box below and hit the 'Submit my predictions' button.</p>
