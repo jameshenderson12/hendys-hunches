@@ -266,7 +266,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 			                      $('#table').append(fixture);
 			                    });
 			                });
-			            </script>
+			            </script>-->
 						</table>
 
 						</div>
