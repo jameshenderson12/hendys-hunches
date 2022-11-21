@@ -4,7 +4,6 @@ session_start();
 if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	header ("Location: index.php");
 }
-checkSubmitted();
 ?>
 <!DOCTYPE html>
 <html lang="en" class="h-100">
@@ -86,7 +85,7 @@ checkSubmitted();
 	</style>
   </head>
 
-  <body>
+  <body onload="checkSubmitted()">
 
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark" aria-label="Offcanvas navbar large">
 		    <div class="container">
