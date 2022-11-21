@@ -212,7 +212,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					        <th width="10%">Points</th>
 				        </tr>
 								<tr>
-									<td class="small text-muted d-none d-md-block">Group A<br>21/11/2022</td>
+									<td class="small text-muted d-none d-md-block">Group A<br>20/11/2022</td>
 								  <td style="text-align: right"><label for="score1_p"><?php echo $A1; ?></label></td>
 							    <td><img src="<?php echo $A1img; ?>" alt="<?php echo $A1; ?>" title="<?php echo $A1; ?>"></td>
 							    <td align="center"><span>v</span></td>
@@ -233,6 +233,28 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 							    <td><?php if($matchids[1]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[1]."_r"], $matchresult["score".$evengameno[1]."_r"]); } else echo "N/A"; ?></td>
 							    <td><?php if($matchids[1]) { echo $matchpoints[1]; } else { echo "-"; } ?></td>
 				      	</tr>
+								<tr>
+									<td class="small text-muted d-none d-md-block">Group A<br>21/11/2022</td>
+									<td style="text-align: right"><label for="score5_p"><?php echo $A3; ?></label></td>
+									<td><img src="<?php echo $A3img; ?>" alt="<?php echo $A3; ?>" title="<?php echo $A3; ?>"></td>
+									<td align="center"><span>v</span></td>
+									<td><img src="<?php echo $A4img; ?>" alt="<?php echo $A4; ?>" title="<?php echo $A4; ?>"></td>
+									<td class="right-team"><label for="score6_p"><?php echo $A4; ?></label></td>
+									<td><span class="prediction"><?php echo $userdata['score5_p'] ?> - <?php echo $userdata['score6_p'] ?></span></td>
+									<td><?php if($matchids[2]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[2]."_r"], $matchresult["score".$evengameno[2]."_r"]); } else echo "N/A"; ?></td>
+									<td><?php if($matchids[2]) { echo $matchpoints[2]; } else { echo "-"; } ?></td>
+								</tr>
+								<tr>
+									<td class="small text-muted d-none d-md-block">Group B<br>21/11/2022</td>
+									<td style="text-align: right"><label for="score7_p"><?php echo $B3; ?></label></td>
+									<td><img src="<?php echo $B3img; ?>" alt="<?php echo $B3; ?>" title="<?php echo $B3; ?>"></td>
+									<td align="center"><span>v</span></td>
+									<td><img src="<?php echo $B4img; ?>" alt="<?php echo $B4; ?>" title="<?php echo $B4; ?>"></td>
+									<td class="right-team"><label for="score8_p"><?php echo $B4; ?></label></td>
+									<td><span class="prediction"><?php echo $userdata['score7_p'] ?> - <?php echo $userdata['score8_p'] ?></span></td>
+									<td><?php if($matchids[3]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[3]."_r"], $matchresult["score".$evengameno[3]."_r"]); } else echo "N/A"; ?></td>
+									<td><?php if($matchids[3]) { echo $matchpoints[3]; } else { echo "-"; } ?></td>
+								</tr>
 						</table>
 
 						</div>
