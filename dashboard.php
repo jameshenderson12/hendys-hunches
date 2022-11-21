@@ -73,38 +73,6 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		    </div>
 		  </nav>
 
-			<?php
-					// Connect to the database
-					include 'php/db-connect.php';
-
-					// Set up variable to capture result of SQL query to retrieve data from database tables
-					$sql_getuserinfo = "SELECT * FROM live_user_information WHERE username='".$_SESSION["username"]."'";
-
-					$userdata = mysqli_fetch_assoc(mysqli_query($con, $sql_getuserinfo));
-					$uppCaseFN = ucfirst($userdata["firstname"]);
-					$uppCaseSN = ucfirst($userdata["surname"]);
-					$userid = $userdata["id"];
-					$avatar = $userdata["avatar"];
-					$fieldofwork = $userdata["fieldofwork"];
-					$location = $userdata["location"];
-					$faveteam = $userdata["faveteam"];
-					$tournwinner = $userdata["tournwinner"];
-					$currentpos = ordinal($userdata["currpos"]);
-					$pointstotal = $userdata["points_total"];
-
-					// Function for adding correct extention to a number
-					function ordinal($number) {
-						$ends = array('th','st','nd','rd','th','th','th','th','th','th');
-						if ($number == "N/A") {
-							return $number;
-						}
-						if ((($number % 100) >= 11) && (($number%100) <= 13))
-							return $number. 'th';
-						else
-							return $number. $ends[$number % 10];
-					}
-			?>
-
 			<main class="container px-4 py-4">
 	      <h1>My Dashboard</h1>
 	      <p class="lead">Use the dashboard to track your progress.</p>
@@ -114,22 +82,6 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					</div>
 					<div class="row g-4">
 						<div class="col-lg-3">
-							<div class="card">
-								<img src="<?php echo $avatar ?>" id="avatar" class="img-fluid mx-auto p-2" alt="User Avatar" name="User Avatar" width="100">
-								<div class="card-body">
-									<h5 class="card-title" style="text-align: center; font-weight: bolder; margin:-15px 0px;"><?php printf("%s<span class='mx-2' style='color:#CCC;'>|</span>%s pts", $currentpos, $pointstotal); ?></h5>
-								</div>
-								<ul class="list-group list-group-flush">
-									<li class="list-group-item"><?php printf ("<strong>Backed to win:</strong><br> %s", $tournwinner); ?></li>
-									<li class="list-group-item"><?php printf ("<strong>Favourite team:</strong><br> %s", $faveteam); ?></li>
-									<li class="list-group-item"><?php printf ("<strong>Location:</strong><br> %s", $location); ?></li>
-									<li class="list-group-item"><?php printf ("<strong>Field of work:</strong><br> %s", $fieldofwork); ?></li>
-								</ul>
-								<div class="card-body">
-									<a href="#" class="card-link">View Rankings</a>
-									<a href="#" class="card-link">View My Predictions</a>
-								</div>
-							</div>
 						</div>
 						<div class="col-md-8 col-lg-6">
 						</div>
