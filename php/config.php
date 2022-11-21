@@ -278,7 +278,7 @@ function returnAvatar() {
 
 function checkSubmitted() {
 	// Create DB connection
-	include 'php/db-connect.php';
+	include 'db-connect.php';
 	$un = $_SESSION["username"];
 	// Get team information from the DB	counting occurrences too
 	$sql_predstatus = "SELECT EXISTS SELECT username FROM live_user_predictions_groups WHERE username = $un";
