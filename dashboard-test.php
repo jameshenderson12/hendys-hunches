@@ -13,7 +13,6 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
     <meta name="description" content="Hendy's Hunches: Predictions Game">
     <meta name="author" content="James Henderson">
 		<title>Hendy's Hunches: Dashboard</title>
-		<?php include "php/dashboard-items.php" ?>
     <?php include "php/config.php" ?>
 		<link rel="shortcut icon" href="ico/favicon.ico">
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu|Lora">
@@ -129,7 +128,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 									<li class="list-group-item"><?php printf ("<strong>Field of work:</strong><br> %s", $fieldofwork); ?></li>
 								</ul>
 								<div class="card-body">
-									<a href="#" class="card-link">View My Predictions</a>
+									<a href="user.php?id=<?php echo $_SESSION['id']; ?>" class="card-link">View My Predictions</a>
 								</div>
 							</div>
 						</div>
