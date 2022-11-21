@@ -27,6 +27,10 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		}
 		td:nth-child(2) {
 			text-align: right;
+			width: 10%;
+		}
+		td:nth-child(6), td:nth-child(7), td:nth-child(8) {
+			width: 10%;
 		}
 		td:nth-child(4) {
 			width: 3%;
