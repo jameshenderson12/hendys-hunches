@@ -147,8 +147,9 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 				// Create DB connection
 				include 'php/db-connect.php';
 				$un = $_SESSION["username"];
+				consoleMsg($_SESSION["username"]);
 				// Get team information from the DB	counting occurrences too
-				$sql_predstatus = "SELECT EXISTS SELECT username FROM live_user_predictions_groups WHERE username = $un";
+				$sql_predstatus = "SELECT EXISTS (SELECT username FROM live_user_predictions_groups WHERE username = $_SESSION["username"])";
 				$predstatus = mysqli_query($con, $sql_predstatus);
 				if ($predstatus = 1) {
 					consoleMsg($predstatus);
