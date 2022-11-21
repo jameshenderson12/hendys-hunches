@@ -136,36 +136,6 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 						</div>
 						<div class="col-lg-3">
 							<div class="card">
-								<?php
-								// Create DB connection
-								include 'php/db-connect.php';
-
-								// Get team information from the DB	counting occurrences too
-								$sql_getbestmovers = "SELECT firstname, surname, lastpos-currpos AS diff FROM live_user_information WHERE (lastpos-currpos) > 0 ORDER BY diff DESC, surname ASC LIMIT 0, 5";
-
-								// Obtain the SQL query result
-								$result = mysqli_query($con, $sql_getbestmovers) or die(mysqli_error());
-
-								// Carry out the following for each result item
-								printf("<strong>Current best movers:\n</strong>");
-								printf("<ul>");
-
-								if (mysqli_num_rows($result) == 0) {
-									// Remove all carriage returns and new lines from array values
-									printf("<li>No results available yet</li>");
-								}
-
-								while($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
-									// Output the values into a list for display
-									printf ("<li>%s %s <span style='color: green;' class='glyphicon glyphicon-circle-arrow-up'></span> %s</li>", $row["firstname"], $row["surname"], $row["diff"]);
-								}
-								printf("</ul>");
-								// Free result set
-								mysqli_free_result($result);
-								// Close DB connection
-								mysqli_close($con);
-							}
-							?>
 							</div>
 						</div>
       		</div><!--row-->
