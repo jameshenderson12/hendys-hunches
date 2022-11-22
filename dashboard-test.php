@@ -100,7 +100,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 									<h5 class="card-title">Status</h5>
 									<div class="row">
 										<div class="col-md-3">
-											<small>Matches played:</small>
+											<p class="small">Matches played:</p>
 										</div>
 										<div class="col-md-9">
 											<?php displayMatchesPlayed() ?>
