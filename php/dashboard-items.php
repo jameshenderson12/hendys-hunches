@@ -533,8 +533,6 @@ function displayPersonalInfo() {
 	$originalsignupdate = $userdata1["signupdate"];
 	$haspaid = $userdata1["haspaid"];
 	$currpos = ordinal($userdata1["currpos"]);
-	$wc2014rank = ordinal($userdata1["wc2014rank"]);
-	$eu2016rank = ordinal($userdata1["eu2016rank"]);
 	$pointstotal = $userdata2["points_total"];
 	$convertedDate = date("l jS \of F", strtotime($originalsignupdate));
 	//$matchresult = mysqli_fetch_assoc(mysqli_query($con, $sql_getresults));
