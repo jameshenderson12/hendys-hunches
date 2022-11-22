@@ -548,11 +548,11 @@ function displayPersonalInfo() {
 		printf("<p class='text-center' style='font-size: 1.3em;'><strong>" . $_SESSION["firstname"] . " " . $_SESSION["surname"] . "</strong></p>");
 		printf("<p class='text-center 'style='font-size: 1.5em; color: #222;'><strong>%s&nbsp;&nbsp;<span style='color:#CCC;'>|</span>&nbsp;&nbsp;%spts</strong></p>", $currpos, $pointstotal);
 		print("<ul class='text-left' style='margin-left:5px; padding:0px; list-style-type:none;'>");
-		printf("<li><i class='bi bi-heart' aria-hidden='true'></i>Fan of %s</li>", $faveteam);
-		printf("<li><i class='bi bi-book' aria-hidden='true'></span>Works in %s</li>", $fieldofwork);
-		printf("<li><i class='bi bi-comment' aria-hidden='true'></i>Thinks %s will win</li>", $tournwinner);
-		printf("<li><i class='bi bi-calendar' aria-hidden='true'></i>&nbsp;&nbsp;Signed up %s</li>", $convertedDate);
-		printf("<li><i class='bi bi-gbp' aria-hidden='true'></i>Fee paid? %s</li>", $haspaid);
+		printf("<li><i class='bi bi-arrow-through-heart'></i> Fan of %s</li>", $faveteam);
+		printf("<li><i class='bi bi-person-workspace'></i> Works in %s</li>", $fieldofwork);
+		printf("<li><i class='bi bi-lightbulb'></i> Thinks %s will win</li>", $tournwinner);
+		printf("<li><i class='bi bi-calendar'></i> Signed up %s</li>", $convertedDate);
+		printf("<li><i class='bi bi-credit-card-2-front'></i> Fee paid? %s</li>", $haspaid);
 		print("</ul>");
 		printf("<a href='user.php?id=%s' title='Show predictions'>View My Predictions</a>", $_SESSION['id']);
 		//print("<p class='text-center'><a href='change-password.php'>Change password</a></p>");
