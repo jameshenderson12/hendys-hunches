@@ -84,12 +84,12 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 			<main class="container px-4 py-4">
 	      <h1>My Dashboard</h1>
 	      <p class="lead">Use the dashboard to track your progress.</p>
+				<p></p>
 					<div class="row g-4">
 						<div class="col-lg-3">
 							<div class="card">
 								<div class="card-body">
 									<?php displayPersonalInfo() ?>
-									<a href="user.php?id=<?php echo $_SESSION['id']; ?>" class="card-link">View My Predictions</a>
 								</div>
 							</div>
 						</div>
