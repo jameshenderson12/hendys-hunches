@@ -307,12 +307,11 @@ function displayTopRankings() {
 	$result2 = mysqli_query($con, $sql_findmatches) or die(mysqli_error());
 
 	// Carry out the following for each result item
-	printf("<strong>Top 5 players:\n</strong>");
 	printf("<ul>");
 
 	if (mysqli_num_rows($result2) == 0) {
 		// Remove all carriage returns and new lines from array values
-		printf("<li>No results available yet</li>");
+		printf("<li>No results available</li>");
 	}
 	else {
 		while($row = mysqli_fetch_array($result1, MYSQLI_ASSOC)) {
@@ -344,12 +343,11 @@ function displayBottomRankings() {
 	$result2 = mysqli_query($con, $sql_findmatches) or die(mysqli_error());
 
 	// Carry out the following for each result item
-	printf("<strong>Bottom 5 players:\n</strong>");
 	printf("<ul>");
 
 	if (mysqli_num_rows($result2) == 0) {
 		// Remove all carriage returns and new lines from array values
-		printf("<li>No results available yet</li>");
+		printf("<li>No results available</li>");
 	}
 	else {
 		while($row = mysqli_fetch_array($result1, MYSQLI_ASSOC)) {
@@ -382,7 +380,7 @@ function displayBestMovers() {
 
 	if (mysqli_num_rows($result) == 0) {
 		// Remove all carriage returns and new lines from array values
-		printf("<li>No results available yet</li>");
+		printf("<li>No results available</li>");
 	}
 
 	while($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
@@ -411,7 +409,7 @@ function displayWorstMovers() {
 
 	if (mysqli_num_rows($result) == 0) {
 		// Remove all carriage returns and new lines from array values
-		printf("<li>No results available yet</li>");
+		printf("<li>No results available</li>");
 	}
 
 	while($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
@@ -538,7 +536,7 @@ function displayPersonalInfo() {
 	// If table contains no data, then display 'not available message'
 	if ((mysqli_num_rows($result1) == 0) || (mysqli_num_rows($result2) == 0)) {
 		// Remove all carriage returns and new lines from array values
-		printf("<br><p class='text-center'><strong>No information available yet</strong><br>(Until a <a href='predictions.php'>prediction is made</a>)</p><br><br><br>");
+		printf("<br><p class='text-center'><strong>No information available</strong><br>(Until a <a href='predictions.php'>prediction is made</a>)</p><br><br><br>");
 	}
 	// Else display the user's available data
 	else {
