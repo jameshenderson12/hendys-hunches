@@ -104,6 +104,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 							</div>
 							<div class="card">
 								<div class="card-body">
+									<?php displayWorstMovers() ?>
 								</div>
 							</div>
 						</div>

@@ -378,7 +378,7 @@ function displayBestMovers() {
 	$result = mysqli_query($con, $sql_getbestmovers) or die(mysqli_error());
 
 	// Carry out the following for each result item
-	printf("<strong>Current best movers:\n</strong>");
+	printf("<h3>Highest climbers</h3>");
 	printf("<ul>");
 
 	if (mysqli_num_rows($result) == 0) {
@@ -388,7 +388,7 @@ function displayBestMovers() {
 
 	while($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 		// Output the values into a list for display
-		printf ("<li>%s %s <span style='color: green;' class='glyphicon glyphicon-circle-arrow-up'></span> %s</li>", $row["firstname"], $row["surname"], $row["diff"]);
+		printf ("<li>%s %s <i class='bi bi-arrow-up-circle-fill text-success'></i> %s</li>", $row["firstname"], $row["surname"], $row["diff"]);
 	}
 	printf("</ul>");
 	// Free result set
@@ -408,7 +408,7 @@ function displayWorstMovers() {
 	$result = mysqli_query($con, $sql_getworstmovers) or die(mysqli_error());
 
 	// Carry out the following for each result item
-	printf("<strong>Current worst movers:\n</strong>");
+	printf("<h3>Biggest droppers</h3>");
 	printf("<ul>");
 
 	if (mysqli_num_rows($result) == 0) {
@@ -418,7 +418,7 @@ function displayWorstMovers() {
 
 	while($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 		// Output the values into a list for display
-		printf ("<li>%s %s <span style='color: red;' class='glyphicon glyphicon-circle-arrow-down'></span> %s</li>", $row["firstname"], $row["surname"], $row["diff"]);
+		printf ("<li>%s %s <i class='bi bi-arrow-down-circle-fill text-danger'></i> %s</li>", $row["firstname"], $row["surname"], $row["diff"]);
 	}
 	printf("</ul>");
 	// Free result set
