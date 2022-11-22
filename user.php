@@ -190,7 +190,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 							<li class="list-group-item"><?php printf ("<strong>Field of work:</strong><br> %s", $fieldofwork); ?></li>
 					  </ul>
 					  <div class="card-body">
-					    <a href="#" class="card-link">Return to Rankings</a>
+					    <a href="rankings.php" class="card-link">Return to Rankings</a>
 					    <!--<a href="#" class="card-link">Another link</a>-->
 					  </div>
 					</div>
