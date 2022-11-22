@@ -100,12 +100,10 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 									<h5 class="card-title">Status</h5>
 									<div class="row">
 										<div class="col-md-3">
-											<p>Competition progress:</p>
+											<small>Matches played:</small>
 										</div>
 										<div class="col-md-9">
-											<div class="progress">
-  											<?php printf("<div class='progress-bar' role='progressbar' aria-label='Competition progress bar' style='width: %s%;' aria-valuenow='%s' aria-valuemin='0' aria-valuemax='100'>%s%</div>", $progress, $progress, $progress); ?>
-											</div>
+											<?php displayMatchesPlayed() ?>
 										</div>
 									</div>
 								</div>

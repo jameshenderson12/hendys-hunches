@@ -505,6 +505,25 @@ function returnProfileData() {
 	$convertedDate = date("l jS \of F", strtotime($originalsignupdate));
 }
 
+function displayMatchesPlayed() {
+	// Create DB connection
+	include 'php/db-connect.php';
+
+	$sql_get_matches_played = "SELECT COUNT(*) AS matches_played FROM live_match_results";
+	$matches_played = mysqli_query($con, $sql_get_matches_played);
+
+	while ($row = mysqli_fetch_assoc($matches_played)) {
+		$no_of_matches = $row["no_of_matches"];
+	}
+
+	print("<div class='progress'>");
+	printf("<div class='progress-bar' role='progressbar' aria-label='Competition progress bar' style='width: %s%;' aria-valuenow='%s' aria-valuemin='0' aria-valuemax='100'>%s%</div>", $progress, $progress, $progress);
+	print("</div>");
+
+	// Close DB connection
+	mysqli_close($con);
+}
+
 function displayPersonalInfo() {
 	// Create DB connection
 	include 'php/db-connect.php';
