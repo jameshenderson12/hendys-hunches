@@ -554,10 +554,10 @@ function displayPersonalInfo() {
 		printf("<div class='col-md-2'><i class='bi bi-calendar'></i></div><div class='col-md-10'>Signed up %s</div>", $convertedDate);
 		printf("<div class='col-md-2'><i class='bi bi-credit-card-2-front'></i></div><div class='col-md-10'>Fee paid? %s</div>", $haspaid);
 		print("</div>");
-		printf("<p class='text-center'><a href='user.php?id=%s' title='Show predictions'>View My Predictions</a></p>", $_SESSION['id']);
-		print("<p class='text-center'><a href='change-password.php'>Change password</a></p>");
+		printf("<p class='text-center mt-2'><a href='user.php?id=%s' title='Show predictions'>View My Predictions</a></p>", $_SESSION['id']);
+		print("<p class='text-center m-2'><a href='change-password.php'>Change password</a></p>");
 		//print("<p class='text-center'><a href='change-password.php'>Donate more to Sands</a></p>");
-		print("<p class='text-center'><a href='logout.php'>Logout</a></p>");
+		print("<p class='text-center mt-2'><a href='logout.php'>Logout</a></p>");
 		//print("<p class='pull-right'><a href='rankings.php'>See current rankings...</a></p>");
 	}
 	// Free result set
