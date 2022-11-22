@@ -123,10 +123,10 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 							</div>
 							<div class="card mt-4">
 								<div class="card-body">
-									<h5 class="card-title">Current bottom 5</h5>
+									<h5 class="card-title">Social Feed</h5>
 										<a class="twitter-timeline" data-lang="en" data-height="600" data-theme="light" href="https://twitter.com/FIFAWorldCup" data-chrome="noheader nofooter noborders">Tweets by FIFAWorldCup</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 								</div>
-							</div>														
+							</div>
 						</div>
       		</div><!--row-->
 				<!-- Site footer -->
