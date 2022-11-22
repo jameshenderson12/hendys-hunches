@@ -544,16 +544,21 @@ function displayPersonalInfo() {
 	}
 	// Else display the user's available data
 	else {
-		print("<img src='$avatar' id='avatar' class='img-responsive img-rounded img-thumbnail center-block' alt='User Avatar' name='User Avatar' width='70' style='margin-top:-35px'>");
+
+		<div class="grid text-center">
+  <div class="g-col-6">.g-col-6</div>
+  <div>1</div>
+
+		print("<div class='text-center'><img src='$avatar' id='avatar' class='img-rounded img-thumbnail img-fluid' alt='User Avatar' name='User Avatar' width='70' style='margin-top:-35px'></div>");
 		printf("<p class='text-center' style='font-size: 1.3em;'><strong>" . $_SESSION["firstname"] . " " . $_SESSION["surname"] . "</strong></p>");
 		printf("<p class='text-center 'style='font-size: 1.5em; color: #222;'><strong>%s&nbsp;&nbsp;<span style='color:#CCC;'>|</span>&nbsp;&nbsp;%spts</strong></p>", $currpos, $pointstotal);
-		print("<ul class='text-left' style='margin-left:5px; padding:0px; list-style-type:none;'>");
-		printf("<li><i class='bi bi-arrow-through-heart'></i> Fan of %s</li>", $faveteam);
+		print("<div class='grid text-center'>");
+		printf("<div><i class='bi bi-arrow-through-heart'></div><div class='g-col-6'>Fan of %s</div>", $faveteam);
 		printf("<li><i class='bi bi-person-workspace'></i> Works in %s</li>", $fieldofwork);
 		printf("<li><i class='bi bi-lightbulb'></i> Thinks %s will win</li>", $tournwinner);
 		printf("<li><i class='bi bi-calendar'></i> Signed up %s</li>", $convertedDate);
 		printf("<li><i class='bi bi-credit-card-2-front'></i> Fee paid? %s</li>", $haspaid);
-		print("</ul>");
+		print("</div>");
 		printf("<p class='text-center'><a href='user.php?id=%s' title='Show predictions'>View My Predictions</a></p>", $_SESSION['id']);
 		print("<p class='text-center'><a href='change-password.php'>Change password</a></p>");
 		//print("<p class='text-center'><a href='change-password.php'>Donate more to Sands</a></p>");
