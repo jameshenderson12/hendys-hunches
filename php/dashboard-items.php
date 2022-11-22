@@ -513,7 +513,7 @@ function displayMatchesPlayed() {
 	$matches_played = mysqli_query($con, $sql_get_matches_played);
 
 	while ($row = mysqli_fetch_assoc($matches_played)) {
-		$no_of_matches = $row["no_of_matches"];
+		$no_of_matches = $row["matches_played"];
 		$percent_played = round($no_of_matches * 100 / 48);
 	}
 
