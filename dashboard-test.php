@@ -24,12 +24,12 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.2.min.js"></script>
     <!--<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.1"></script>-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
-		<?php include 'php/dashboard-items.php'; ?>
+		<?php include 'php/dashboard-items.php' ?>
 		<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->		
+    <![endif]-->
   </head>
 
   <body>
@@ -81,40 +81,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		    </div>
 		  </nav>
 
-			<?php
-					// Connect to the database
-					include 'php/db-connect.php';
-
-					// Set up variable to capture result of SQL query to retrieve data from database tables
-					$sql_getuserinfo = "SELECT live_user_predictions_groups.*, live_user_information.avatar, live_user_information.faveteam, live_user_information.fieldofwork, live_user_information.location, live_user_information.tournwinner, live_user_information.currpos
-															FROM live_user_predictions_groups INNER JOIN live_user_information
-															ON live_user_predictions_groups.id = live_user_information.id
-															WHERE live_user_predictions_groups.id = '".$_SESSION["id"]."'";
-
-					$userdata = mysqli_fetch_assoc(mysqli_query($con, $sql_getuserinfo));
-					$uppCaseFN = ucfirst($userdata["firstname"]);
-					$uppCaseSN = ucfirst($userdata["surname"]);
-					$userid = $userdata["id"];
-					$avatar = $userdata["avatar"];
-					$fieldofwork = $userdata["fieldofwork"];
-					$location = $userdata["location"];
-					$faveteam = $userdata["faveteam"];
-					$tournwinner = $userdata["tournwinner"];
-					$currentpos = ordinal($userdata["currpos"]);
-					$pointstotal = $userdata["points_total"];
-
-					// Function for adding correct extention to a number
-					function ordinal($number) {
-						$ends = array('th','st','nd','rd','th','th','th','th','th','th');
-						if ($number == "N/A") {
-							return $number;
-						}
-						if ((($number % 100) >= 11) && (($number%100) <= 13))
-							return $number. 'th';
-						else
-							return $number. $ends[$number % 10];
-					}
-			?>
+			
 
 			<main class="container px-4 py-4">
 	      <h1>My Dashboard</h1>
