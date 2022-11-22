@@ -83,7 +83,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 
 			<main class="container px-4 py-4">
 	      <h1>My Dashboard</h1>
-	      <p class="lead mb-3">Use the dashboard to track your progress.</p>				
+	      <p class="lead mb-4">Use the dashboard to track your progress.</p>				
 					<div class="row g-4">
 						<div class="col-lg-3">
 							<div class="card">
