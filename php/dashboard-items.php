@@ -548,14 +548,14 @@ function displayPersonalInfo() {
 		printf("<p class='text-center' style='font-size: 1.3em;'><strong>" . $_SESSION["firstname"] . " " . $_SESSION["surname"] . "</strong></p>");
 		printf("<p class='text-center 'style='font-size: 1.5em; color: #222;'><strong>%s&nbsp;&nbsp;<span style='color:#CCC;'>|</span>&nbsp;&nbsp;%spts</strong></p>", $currpos, $pointstotal);
 		print("<ul class='text-left' style='margin-left:5px; padding:0px; list-style-type:none;'>");
-		printf("<li><span class='glyphicon glyphicon-heart' aria-hidden='true'></span>&nbsp;&nbsp;Fan of %s</li>", $faveteam);
-		printf("<li><span class='glyphicon glyphicon-book' aria-hidden='true'></span>&nbsp;&nbsp;Works in %s</li>", $fieldofwork);
-		printf("<li><span class='glyphicon glyphicon-comment' aria-hidden='true'></span>&nbsp;&nbsp;Thinks %s will win</li>", $tournwinner);
-//		printf("<li><span class='glyphicon glyphicon-calendar' aria-hidden='true'></span>&nbsp;&nbsp;Signed up on %s</li>", $convertedDate);
-		printf("<li><span class='glyphicon glyphicon-pushpin' aria-hidden='true'></span>&nbsp;&nbsp%s (WC2014), %s (EURO2016)</li>", $wc2014rank, $eu2016rank);
-		printf("<li><span class='glyphicon glyphicon-gbp' aria-hidden='true'></span>&nbsp;&nbsp;Paid to play? %s</li>", $haspaid);
+		printf("<li><i class='bi bi-heart' aria-hidden='true'></i>Fan of %s</li>", $faveteam);
+		printf("<li><i class='bi bi-book' aria-hidden='true'></span>Works in %s</li>", $fieldofwork);
+		printf("<li><i class='bi bi-comment' aria-hidden='true'></i>Thinks %s will win</li>", $tournwinner);
+		printf("<li><i class='bi bi-calendar' aria-hidden='true'></i>&nbsp;&nbsp;Signed up %s</li>", $convertedDate);
+		printf("<li><i class='bi bi-gbp' aria-hidden='true'></i>Fee paid? %s</li>", $haspaid);
 		print("</ul>");
-		print("<p class='text-center'><a href='change-password.php'>Change password</a></p>");
+		printf("<a href='user.php?id=%s' title='Show predictions'>View My Predictions</a>", $_SESSION['id']);
+		//print("<p class='text-center'><a href='change-password.php'>Change password</a></p>");
 		//print("<p class='pull-right'><a href='rankings.php'>See current rankings...</a></p>");
 	}
 	// Free result set
