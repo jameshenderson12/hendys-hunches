@@ -82,19 +82,19 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 						$sql_get_user_count = "SELECT COUNT(*) AS no_of_users FROM live_user_information";
 						$sql_get_match_count = "SELECT COUNT(*) AS no_of_matches FROM live_match_results";
 						$sql_get_latest_user = "SELECT firstname, surname FROM live_user_information ORDER BY signupdate DESC LIMIT 1";
-						$user_count = mysqli_query($con_app, $sql_get_user_count);
-						$match_count = mysqli_query($con_app, $sql_get_match_count);
-						$latest_user = mysqli_query($con_app, $sql_get_latest_user);
+						$user_count = mysqli_query($con, $sql_get_user_count);
+						$match_count = mysqli_query($con, $sql_get_match_count);
+						$latest_user = mysqli_query($con, $sql_get_latest_user);
 						while ($row = mysqli_fetch_assoc($user_count)) {
 							$no_of_users = $row["no_of_users"];
 						}
 						while ($row = mysqli_fetch_assoc($match_count)) {
 							$no_of_chatbots = $row["no_of_matches"];
 						}
-						$latest_user = mysqli_fetch_assoc(mysqli_query($con_app, $sql_get_latest_user));
+						$latest_user = mysqli_fetch_assoc(mysqli_query($con, $sql_get_latest_user));
 						$latest_user_added = $latest_user['firstname']. " " .$latest_user['surname']. " ";
-						//	$mysql_info = mysqli_get_server_info($con_app));
-						mysqli_close($con_app);
+						//	$mysql_info = mysqli_get_server_info($con));
+						mysqli_close($con);
 
 						// Function to get the client IP address
 						function get_client_ip() {
@@ -152,7 +152,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 						</tr>
 						<tr>
 							<th scope="row">MySQL Version</th>
-							<td><?php printf("Server version: %s\n", mysqli_get_server_info($con_app)); ?></td>
+							<td><?php printf("Server version: %s\n", mysqli_get_server_info($con)); ?></td>
 						</tr>
 						<tr>
 							<th scope="row">Matches Recorded</th>
