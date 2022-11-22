@@ -58,7 +58,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 										<?php returnAvatar();	?>
 		              </a>
 		              <ul class="dropdown-menu">
-										<li><a class="dropdown-item" href="overview.php">Application overview</a></li>
+										<!--<li><a class="dropdown-item" href="overview.php">Application overview</a></li>-->
 		                <li><a class="dropdown-item" href="change-password.php">Change my password</a></li>
 		                <li><a class="dropdown-item" href="user.php?id=<?php echo $_SESSION['id']; ?>" class="card-link">View my predictions</a></li>
 		                <li>
@@ -173,7 +173,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 				<footer class="mt-auto">
 					<hr>
 					<p class="small fw-light">Predictions game based on <a href="https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/qatar2022">FIFA World Cup 2022™</a><br><?=$title?> <?=$version?> &copy; <?=$year?> <?=$developer?>.</p>
-				</footer>				
+				</footer>
 			</main>
 
   </body>
