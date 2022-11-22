@@ -517,9 +517,7 @@ function displayMatchesPlayed() {
 		$percent_played = round($no_of_matches * 100 / 48);
 	}
 
-	print("<div class='progress'>");
-	printf("<div class='progress-bar' role='progressbar' aria-label='Competition progress bar' style='width: %s%;' aria-valuenow='%s' aria-valuemin='0' aria-valuemax='100'>%s%</div>", $percent_played, $percent_played, $percent_played);
-	print("</div>");
+	printf("<div class='progress'><div class='progress-bar' role='progressbar' aria-label='Competition progress bar' style='width: %s%;' aria-valuenow='%s' aria-valuemin='0' aria-valuemax='100'>%s%</div></div>", $percent_played);
 
 	// Close DB connection
 	mysqli_close($con);
