@@ -97,6 +97,21 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 						<div class="col-md-8 col-lg-6">
 							<div class="card">
 								<div class="card-body">
+									<h5 class="card-title">Status</h5>
+									<div class="row">
+										<div class="col-md-3">
+											Competition progress:
+										</div>
+										<div class="col-md-9">
+											<div class="progress">
+  											<?php printf("<div class='progress-bar' role='progressbar' aria-label='Competition progress bar' style='width: %s%;' aria-valuenow='%s' aria-valuemin='0' aria-valuemax='100'>%s%</div>", $progress, $progress, $progress); ?>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="card">
+								<div class="card-body mt-4">
 									<h5 class="card-title">Announcements</h5>
 								</div>
 							</div>
