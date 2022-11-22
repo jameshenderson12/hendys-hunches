@@ -78,7 +78,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	      <p class="lead">A simple overview of the application data for administrative reference.</p>
 	      <div class="row">
 					<?php
-						include('php/db-connect.php');
+						include 'php/db-connect.php';
 						$sql_get_user_count = "SELECT COUNT(*) AS no_of_users FROM live_user_information";
 						$sql_get_match_count = "SELECT COUNT(*) AS no_of_matches FROM live_match_results";
 						$sql_get_latest_user = "SELECT firstname, surname FROM live_user_information ORDER BY signupdate DESC LIMIT 1";
