@@ -378,7 +378,6 @@ function displayBestMovers() {
 	$result = mysqli_query($con, $sql_getbestmovers) or die(mysqli_error());
 
 	// Carry out the following for each result item
-	printf("<h3>Highest climbers</h3>");
 	printf("<ul>");
 
 	if (mysqli_num_rows($result) == 0) {
@@ -408,7 +407,6 @@ function displayWorstMovers() {
 	$result = mysqli_query($con, $sql_getworstmovers) or die(mysqli_error());
 
 	// Carry out the following for each result item
-	printf("<h3>Biggest droppers</h3>");
 	printf("<ul>");
 
 	if (mysqli_num_rows($result) == 0) {

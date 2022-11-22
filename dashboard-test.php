@@ -88,7 +88,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 			-->
 					<div class="row g-4">
 						<div class="col-lg-3">
-							<div class="card">
+							<div class="card mt-4">
 								<div class="card-body">
 									<?php displayPersonalInfo() ?>
 								</div>
@@ -97,13 +97,15 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 						<div class="col-md-8 col-lg-6">
 						</div>
 						<div class="col-lg-3">
-							<div class="card">
+							<div class="card mt-4">
 								<div class="card-body">
+									<h5 class="card-title">Biggest climbers</h5>
 									<?php displayBestMovers() ?>
 								</div>
 							</div>
-							<div class="card">
+							<div class="card mt-4">
 								<div class="card-body">
+									<h5 class="card-title">Biggest droppers</h5>
 									<?php displayWorstMovers() ?>
 								</div>
 							</div>
