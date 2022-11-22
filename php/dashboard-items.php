@@ -549,10 +549,10 @@ function displayPersonalInfo() {
 		printf("<p class='text-center 'style='font-size: 1.5em; color: #222;'><strong>%s&nbsp;&nbsp;<span style='color:#CCC;'>|</span>&nbsp;&nbsp;%spts</strong></p>", $currpos, $pointstotal);
 		print("<div class='row'>");
 		printf("<div class='col-md-2'><i class='bi bi-arrow-through-heart'></i></div><div class='col-md-10'>Fan of %s</div>", $faveteam);
-		printf("<div><i class='bi bi-person-workspace'></i></div><div class='g-col-6'>Works in %s</div>", $fieldofwork);
-		printf("<div><i class='bi bi-lightbulb'></i></div><div class='g-col-6'>Thinks %s will win</div>", $tournwinner);
-		printf("<div><i class='bi bi-calendar'></i></div><div class='g-col-6'>Signed up %s</div>", $convertedDate);
-		printf("<div><i class='bi bi-credit-card-2-front'></i></div><div class='g-col-6'>Fee paid? %s</div>", $haspaid);
+		printf("<div class='col-md-2'><i class='bi bi-person-workspace'></i></div><div class='col-md-10'>Works in %s</div>", $fieldofwork);
+		printf("<div class='col-md-2'><i class='bi bi-lightbulb'></i></div><div class='col-md-10'>Thinks %s will win</div>", $tournwinner);
+		printf("<div class='col-md-2'><i class='bi bi-calendar'></i></div><div class='col-md-10'>Signed up %s</div>", $convertedDate);
+		printf("<div class='col-md-2'><i class='bi bi-credit-card-2-front'></i></div><div class='col-md-10'>Fee paid? %s</div>", $haspaid);
 		print("</div>");
 		printf("<p class='text-center'><a href='user.php?id=%s' title='Show predictions'>View My Predictions</a></p>", $_SESSION['id']);
 		print("<p class='text-center'><a href='change-password.php'>Change password</a></p>");
