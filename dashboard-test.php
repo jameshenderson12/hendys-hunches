@@ -82,8 +82,10 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		  </nav>
 
 			<main class="container px-4 py-4">
+				<!--
 	      <h1>My Dashboard</h1>
-	      <p class="lead mb-4">Use the dashboard to track your progress.</p>				
+	      <p class="lead mb-4">Use the dashboard to track your progress.</p>
+			-->
 					<div class="row g-4">
 						<div class="col-lg-3">
 							<div class="card">
@@ -96,6 +98,13 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 						</div>
 						<div class="col-lg-3">
 							<div class="card">
+								<div class="card-body">
+									<?php displayBestMovers() ?>
+								</div>
+							</div>
+							<div class="card">
+								<div class="card-body">
+								</div>
 							</div>
 						</div>
       		</div><!--row-->
