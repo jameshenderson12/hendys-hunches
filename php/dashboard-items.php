@@ -514,8 +514,8 @@ function displayPersonalInfo() {
 	include 'php/db-connect.php';
 
 	// Get team information from the DB	counting occurrences too
-	$sql_getprofileinfo1 = "SELECT avatar, faveteam, fieldofwork, location, tournwinner, signupdate, haspaid, currpos, wc2014rank, eu2016rank FROM live_user_information WHERE username = '".$_SESSION["username"]."'";
-	$sql_getprofileinfo2 = "SELECT lastupdate, points_total FROM live_user_predictions WHERE username = '".$_SESSION["username"]."'";
+	$sql_getprofileinfo1 = "SELECT avatar, faveteam, fieldofwork, location, tournwinner, signupdate, haspaid, currpos FROM live_user_information WHERE username = '".$_SESSION["username"]."'";
+	$sql_getprofileinfo2 = "SELECT lastupdate, points_total FROM live_user_predictions_groups WHERE username = '".$_SESSION["username"]."'";
 
 	// Obtain the SQL query result and set corresponding result variables
 	$result1 = mysqli_query($con, $sql_getprofileinfo1);
