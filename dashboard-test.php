@@ -95,6 +95,11 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 							</div>
 						</div>
 						<div class="col-md-8 col-lg-6">
+							<div class="card">
+								<div class="card-body">
+									<iframe src="mboard/mboard.php" scrolling="no" frameborder="0"></iframe>
+								</div>
+							</div>
 						</div>
 						<div class="col-lg-3">
 							<div class="card">
