@@ -75,14 +75,71 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		  </nav>
 
 			<main class="container px-4 py-4">
+				<!--
 	      <h1>My Dashboard</h1>
-	      <p class="lead">Use the dashboard to track your progress.</p>
+	      <p class="lead mb-4">Use the dashboard to track your progress.</p>
+			-->
 					<div class="row g-4">
 						<div class="col-lg-3">
+							<div class="card">
+								<div class="card-body">
+									<?php displayPersonalInfo() ?>
+								</div>
+							</div>
 						</div>
 						<div class="col-md-8 col-lg-6">
+							<div class="card">
+								<div class="card-body">
+									<h5 class="card-title">Status</h5>
+									<div class="row">
+										<div class="col-md-3">
+											<!--<p class="small">Matches played:</p>-->
+										</div>
+										<div class="col-md-9">
+											<!--<?php displayMatchesPlayed() ?>-->
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="card mt-4">
+								<div class="card-body">
+									<h5 class="card-title">Announcements</h5>
+								</div>
+							</div>
 						</div>
 						<div class="col-lg-3">
+							<div class="card">
+								<div class="card-body">
+									<h5 class="card-title">Biggest climbers</h5>
+									<?php displayBestMovers() ?>
+								</div>
+							</div>
+							<div class="card mt-4">
+								<div class="card-body">
+									<h5 class="card-title">Biggest droppers</h5>
+									<?php displayWorstMovers() ?>
+								</div>
+							</div>
+							<div class="card mt-4">
+								<div class="card-body">
+									<h5 class="card-title">Current top 5</h5>
+									<?php displayTopRankings() ?>
+								</div>
+							</div>
+							<div class="card mt-4">
+								<div class="card-body">
+									<h5 class="card-title">Current bottom 5</h5>
+									<?php displayBottomRankings() ?>
+								</div>
+							</div>
+							<!--
+							<div class="card mt-4">
+								<div class="card-body">
+									<h5 class="card-title">Social Feed</h5>
+										<a class="twitter-timeline" data-lang="en" data-height="600" data-theme="light" href="https://twitter.com/FIFAWorldCup" data-chrome="noheader nofooter noborders">Tweets by FIFAWorldCup</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+								</div>
+							</div>
+						-->
 						</div>
       		</div><!--row-->
 				<!-- Site footer -->
