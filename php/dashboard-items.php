@@ -514,10 +514,10 @@ function displayMatchesPlayed() {
 
 	while ($row = mysqli_fetch_assoc($matches_played)) {
 		$no_of_matches = $row["matches_played"];
-		$percent_played = round($no_of_matches * 100 / 48);
+		//$percent_played = round($no_of_matches * 100 / 48);
 	}
 
-	printf("<div class='progress'><div class='progress-bar' role='progressbar' aria-label='Competition progress bar' style='width: %s%;' aria-valuenow='%s' aria-valuemin='0' aria-valuemax='100'>%s%</div></div>", $percent_played);
+	printf("<div class='progress'><div class='progress-bar' role='progressbar' aria-label='Competition progress bar' style='width: %s%;' aria-valuenow='%s' aria-valuemin='0' aria-valuemax='100'>%s%</div></div>", $percent_played, $percent_played, $percent_played);
 
 	// Close DB connection
 	mysqli_close($con);
