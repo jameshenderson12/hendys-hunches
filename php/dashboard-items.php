@@ -298,7 +298,7 @@ function displayTopRankings() {
 	include 'php/db-connect.php';
 
 	// Get team information from the DB	counting occurrences too
-	$sql_gettop5 = "SELECT firstname, surname, points_total FROM live_user_predictions ORDER BY points_total DESC, surname ASC LIMIT 0, 5";
+	$sql_gettop5 = "SELECT firstname, surname, points_total FROM live_user_predictions_groups ORDER BY points_total DESC, surname ASC LIMIT 0, 5";
 	// Check if any results have been recorded
 	$sql_findmatches = "SELECT * FROM live_match_results";
 
@@ -334,7 +334,7 @@ function displayBottomRankings() {
 	include 'php/db-connect.php';
 
 	// Get team information from the DB	counting occurrences too
-	$sql_getbottom5 = "SELECT * FROM (SELECT firstname, surname, points_total FROM live_user_predictions ORDER BY points_total ASC, surname DESC LIMIT 0, 5) TmpTable ORDER BY points_total DESC, surname ASC";
+	$sql_getbottom5 = "SELECT * FROM (SELECT firstname, surname, points_total FROM live_user_predictions_groups ORDER BY points_total ASC, surname DESC LIMIT 0, 5) TmpTable ORDER BY points_total DESC, surname ASC";
 	// Check if any results have been recorded
 	$sql_findmatches = "SELECT * FROM live_match_results";
 
