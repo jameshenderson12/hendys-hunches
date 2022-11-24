@@ -104,6 +104,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 							<div class="card mt-4">
 								<div class="card-body">
 									<h5 class="card-title">Announcements</h5>
+									<p class="alert alert-warning">Please be aware that updates to scores may be a bit delayed as I am currently travelling with work until Saturday 26th November. Thank you for your continued patience and understanding.</p>
 								</div>
 							</div>
 						</div>
