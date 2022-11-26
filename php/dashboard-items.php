@@ -519,7 +519,7 @@ function displayMatchesPlayed() {
 	}
 
 	//printf("<p>Matches played: %s / 64</p>", $no_of_matches);
-	print("<div class='progress'><div class='progress-bar' role='progressbar' aria-label='Competition progress bar' style='width: $percent_played%;' aria-valuenow='$percent_played' aria-valuemin='0' aria-valuemax='100'>$no_of_matches/64 ($percent_played%)</div></div>");
+	print("<div class='progress'><div class='progress-bar' role='progressbar' aria-label='Competition progress bar' style='width: $percent_played%;' aria-valuenow='$percent_played' aria-valuemin='0' aria-valuemax='100'>$no_of_matches/64</div></div>");
 
 	// Close DB connection
 	mysqli_close($con);
