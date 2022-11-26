@@ -116,7 +116,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 																					const [dateValues, timeValues] = str.split(' ');
 																					const [year, month, day] = dateValues.split('-');
 																					const [hours, minutes] = timeValues.split(':');
-																					const date = new Date(+year, +month - 1, +day).toLocaleString();
+																					const date = new Date(+year, +month - 1, +day).toLocaleString().slice(0, -8);
 																					console.log(date);
 																					/*
 																					fixture += '<tr>';
