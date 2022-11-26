@@ -518,8 +518,8 @@ function displayMatchesPlayed() {
 		$percent_played = round($no_of_matches * 100 / 64);
 	}
 
-	printf("<p>Matches played: %s / 64</p>", $no_of_matches);
-	print("<div class='progress'><div class='progress-bar' role='progressbar' aria-label='Competition progress bar' style='width: $percent_played%;' aria-valuenow='$percent_played' aria-valuemin='0' aria-valuemax='100'>$percent_played%</div></div>");
+	//printf("<p>Matches played: %s / 64</p>", $no_of_matches);
+	print("<div class='progress'><div class='progress-bar' role='progressbar' aria-label='Competition progress bar' style='width: $percent_played%;' aria-valuenow='$percent_played' aria-valuemin='0' aria-valuemax='100'>$no_of_matches/64 ($percent_played%)</div></div>");
 
 	// Close DB connection
 	mysqli_close($con);
