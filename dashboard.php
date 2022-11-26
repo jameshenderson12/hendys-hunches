@@ -131,7 +131,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 																					*/
 																			});
 																		// Insert rows into table
-																		$('#table').append(fixture);
+																		//$('#table').append(fixture);
 																	});
 															});
 													</script>
