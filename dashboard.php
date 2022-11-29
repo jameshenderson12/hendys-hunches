@@ -94,12 +94,12 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 									<div class="row">
 										<div class="col-md-3">
 											<p class="small">Matches played:</p>
-											<p class="small">Group matches played:</p>
+											<p class="small">Group stage::</p>
 										</div>
 										<div class="col-md-9">
 											<?php displayMatchesRecorded() ?>
 											<?php displayGroupMatchesPlayed() ?>
-											
+
 											<!-- Placeholder for JSON table construction -->
 											<table id="table" class="table table-sm table-striped">
 													<script>

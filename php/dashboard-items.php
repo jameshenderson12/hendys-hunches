@@ -517,7 +517,7 @@ function displayMatchesRecorded() {
 		console.log($no_of_matches_played);
 		$percent_group_played = round($no_of_matches_played * 100 / 48);
 	}
-	printf("<p>Matches recorded: %s of 64</p>", $no_of_matches_played);
+	print("<p>$no_of_matches_played of 64</p>");
 	// Close DB connection
 	mysqli_close($con);
 }
