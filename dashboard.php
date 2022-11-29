@@ -92,18 +92,18 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 								<div class="card-body">
 									<h5 class="card-title">Status</h5>
 									<div class="row">
-										<div class="col-md-3">
+										<div class="col-sm-4">
 											<p class="small">Matches recorded:</p>
 										</div>
-										<div class="col-md-9">
+										<div class="col-sm-8">
 											<?php displayMatchesRecorded() ?>
 										</div>
 									</div>
 									<div class="row">
-										<div class="col-md-3">
+										<div class="col-sm-3">
 											<p class="small">Group fixtures:</p>
 										</div>
-										<div class="col-md-9">
+										<div class="col-sm-9">
 											<?php displayGroupMatchesPlayed() ?>
 										</div>
 									</div>
