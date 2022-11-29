@@ -564,6 +564,50 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 									<td><?php if($matchids[31]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[31]."_r"], $matchresult["score".$evengameno[31]."_r"]); } else echo "N/A"; ?></td>
 									<td><?php if($matchids[31]) { echo $matchpoints[31]; } else { echo "-"; } ?></td>
 								</tr>
+								<tr>
+									<td class="small text-muted d-none d-md-block">Group A<br>29/11/2022</td>
+									<td style="text-align: right"><label for="score65_p"><?php echo $A4; ?></label></td>
+									<td><img src="<?php echo $A4img; ?>" alt="<?php echo $A4; ?>" title="<?php echo $A4; ?>"></td>
+									<td align="center"><span>v</span></td>
+									<td><img src="<?php echo $A1img; ?>" alt="<?php echo $A1; ?>" title="<?php echo $A1; ?>"></td>
+									<td class="right-team"><label for="score66_p"><?php echo $A1; ?></label></td>
+									<td><span class="prediction"><?php echo $userdata['score65_p'] ?> - <?php echo $userdata['score66_p'] ?></span></td>
+									<td><?php if($matchids[32]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[32]."_r"], $matchresult["score".$evengameno[32]."_r"]); } else echo "N/A"; ?></td>
+									<td><?php if($matchids[32]) { echo $matchpoints[32]; } else { echo "-"; } ?></td>
+								</tr>
+								<tr>
+									<td class="small text-muted d-none d-md-block">Group A<br>29/11/2022</td>
+									<td style="text-align: right"><label for="score67_p"><?php echo $A2; ?></label></td>
+									<td><img src="<?php echo $A2img; ?>" alt="<?php echo $A2; ?>" title="<?php echo $A2; ?>"></td>
+									<td align="center"><span>v</span></td>
+									<td><img src="<?php echo $A3img; ?>" alt="<?php echo $A3; ?>" title="<?php echo $A3; ?>"></td>
+									<td class="right-team"><label for="score68_p"><?php echo $A3; ?></label></td>
+									<td><span class="prediction"><?php echo $userdata['score67_p'] ?> - <?php echo $userdata['score68_p'] ?></span></td>
+									<td><?php if($matchids[33]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[33]."_r"], $matchresult["score".$evengameno[33]."_r"]); } else echo "N/A"; ?></td>
+									<td><?php if($matchids[33]) { echo $matchpoints[33]; } else { echo "-"; } ?></td>
+								</tr>
+								<tr>
+									<td class="small text-muted d-none d-md-block">Group B<br>29/11/2022</td>
+									<td style="text-align: right"><label for="score69_p"><?php echo $B4; ?></label></td>
+									<td><img src="<?php echo $B4img; ?>" alt="<?php echo $B4; ?>" title="<?php echo $B4; ?>"></td>
+									<td align="center"><span>v</span></td>
+									<td><img src="<?php echo $B1img; ?>" alt="<?php echo $B1; ?>" title="<?php echo $B1; ?>"></td>
+									<td class="right-team"><label for="score70_p"><?php echo $B1; ?></label></td>
+									<td><span class="prediction"><?php echo $userdata['score69_p'] ?> - <?php echo $userdata['score70_p'] ?></span></td>
+									<td><?php if($matchids[34]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[34]."_r"], $matchresult["score".$evengameno[34]."_r"]); } else echo "N/A"; ?></td>
+									<td><?php if($matchids[34]) { echo $matchpoints[34]; } else { echo "-"; } ?></td>
+								</tr>
+								<tr>
+									<td class="small text-muted d-none d-md-block">Group B<br>29/11/2022</td>
+									<td style="text-align: right"><label for="score71_p"><?php echo $B2; ?></label></td>
+									<td><img src="<?php echo $B2img; ?>" alt="<?php echo $B2; ?>" title="<?php echo $B2; ?>"></td>
+									<td align="center"><span>v</span></td>
+									<td><img src="<?php echo $B3img; ?>" alt="<?php echo $B3; ?>" title="<?php echo $B3; ?>"></td>
+									<td class="right-team"><label for="score72_p"><?php echo $B3; ?></label></td>
+									<td><span class="prediction"><?php echo $userdata['score71_p'] ?> - <?php echo $userdata['score72_p'] ?></span></td>
+									<td><?php if($matchids[35]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[35]."_r"], $matchresult["score".$evengameno[35]."_r"]); } else echo "N/A"; ?></td>
+									<td><?php if($matchids[35]) { echo $matchpoints[35]; } else { echo "-"; } ?></td>
+								</tr>
 						</table>
 
 						</div>
