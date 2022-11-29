@@ -93,48 +93,18 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 									<h5 class="card-title">Status</h5>
 									<div class="row">
 										<div class="col-md-3">
-											<p class="small">Matches played:</p>
-											<p class="small">Group fixtures:</p>
-											<!--
-											<p class="small">RO16 fixtures:</p>
-											<p class="small">QF fixtures:</p>
-											<p class="small">SF fixtures:</p>
-										-->
+											<p class="small">Matches recorded:</p>
 										</div>
 										<div class="col-md-9">
 											<?php displayMatchesRecorded() ?>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-3">
+											<p class="small">Group fixtures:</p>
+										</div>
+										<div class="col-md-9">
 											<?php displayGroupMatchesPlayed() ?>
-											<!-- Placeholder for JSON table construction
-											<table id="table" class="table table-sm table-striped">
-													<script>
-															$(document).ready(function () {
-																var d = new Date();
-																var currentDate = d.toLocaleDateString();
-																	// Fetch data from JSON file
-																	$.getJSON("json/fifa-world-cup-2022-fixtures-groups.json",
-																		function (data) {
-																			if (data.value == currentDate) {
-																				var homeTeam = value.HomeTeam;
-																				var awayTeam = value.AwayTeam;
-																				var homeTeamFlag = "flag-icons/24/" + homeTeam.toLowerCase().replaceAll(' ', '-') + ".png";
-																				var awayTeamFlag = "flag-icons/24/" + awayTeam.toLowerCase().replaceAll(' ', '-') + ".png";
-
-																				fixture += '<tr>';
-																				fixture += '<td class="small text-muted d-none d-md-block">' + value.Group + '</td>';
-																				fixture += '<td>' + value.HomeTeam + '</td>';
-																				fixture += '<td><img src="' + homeTeamFlag + '" alt="Flag of ' + homeTeam + '" title="Flag of ' + homeTeam + '"></td>';
-																				fixture += '<td align="center">v</td>';
-																				fixture += '<td><img src="' + awayTeamFlag + '" alt="Flag of ' + awayTeam + '" title="Flag of ' + awayTeam + '"></td>';
-																				fixture += '<td>' + value.AwayTeam + '</td>';
-																				fixture += '<td class="small text-muted d-none d-md-block"> ' + date + '<br>' + value.Location + '</td>';
-																				fixture += '</tr>';
-																			}
-																		// Insert rows into table
-																		$('#table').append(fixture);
-																	});
-															});
-													</script>
-										</table>-->
 										</div>
 									</div>
 								</div>
