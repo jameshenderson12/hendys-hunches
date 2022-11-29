@@ -139,7 +139,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 								<div class="card-body">
 									<h5 class="card-title">Announcements</h5>
 									<p class="alert alert-warning"><strong>Coming Soon</strong><br>There will soon be a short form to complete for 8 fixtures of the next stage of the competition (round of 16). You will also be reminded of when this is available via email.</p>
-									<p class="alert alert-success"><strong>Supporting Charity Chosen</strong><br><img src="img/sands-logo.jpg" class="img-fluid p-2 m-2" height="50px"><br>After careful consideration, <a href="https://www.sands.org.uk">SAMDS: Stillbirth and neonatal death charity</a> has been chosen in which £2 of your signup fee will go to. Thank you for contribution.</p>
+									<p class="alert alert-success"><strong>Supporting Charity Chosen</strong><br><img src="img/sands-logo.jpg" class="img-fluid p-2 m-2" width="100px"><br>After careful consideration, <a href="https://www.sands.org.uk">SAMDS: Stillbirth and neonatal death charity</a> has been chosen in which £2 of your signup fee will go to. Thank you for contribution.</p>
 								</div>
 							</div>
 						</div>
