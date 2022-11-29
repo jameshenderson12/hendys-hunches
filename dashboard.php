@@ -136,7 +136,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 							<div class="card mt-4">
 								<div class="card-body">
 									<h5 class="card-title">Announcements</h5>
-									<!--<p class="alert alert-warning">Please be aware that updates to scores may be a bit delayed as I am currently travelling with work until Saturday 26th November. Thank you for your continued patience and understanding.</p>-->
+									<p class="alert alert-warning"><strong>Coming Soon</strong><br>There will soon be a short form to complete for 8 fixtures of the next stage of the competition (round of 16). You will also be reminded of when this is available via email.</p>
 								</div>
 							</div>
 						</div>

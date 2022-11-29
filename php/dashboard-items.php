@@ -513,13 +513,13 @@ function displayMatchesPlayed() {
 	$matches_played = mysqli_query($con, $sql_get_matches_played);
 
 	while ($row = mysqli_fetch_assoc($matches_played)) {
-		$no_of_matches = $row["matches_played"];
-		console.log($no_of_matches);
-		$percent_played = round($no_of_matches * 100 / 64);
+		$no_of_matches_played = $row["matches_played"];
+		console.log($no_of_matches_played);
+		$percent_group_played = round($no_of_matches_played * 100 / 48);
 	}
 
-	//printf("<p>Matches played: %s / 64</p>", $no_of_matches);
-	print("<div class='progress'><div class='progress-bar' role='progressbar' aria-label='Competition progress bar' style='width: $percent_played%;' aria-valuenow='$percent_played' aria-valuemin='0' aria-valuemax='100'>$no_of_matches/64</div></div>");
+	printf("<p>Matches recorded: %s of 64</p>", $no_of_matches_played);
+	print("<div class='progress'>Group matches played:<div class='progress-bar' role='progressbar' aria-label='Competition progress bar' style='width: $percent_group_played%;' aria-valuenow='$percent_group_played' aria-valuemin='0' aria-valuemax='100'>$percent_group_played%</div></div>");
 
 	// Close DB connection
 	mysqli_close($con);
