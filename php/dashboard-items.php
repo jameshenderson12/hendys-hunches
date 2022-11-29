@@ -505,7 +505,7 @@ function returnProfileData() {
 	$convertedDate = date("l jS \of F", strtotime($originalsignupdate));
 }
 
-function displayMatchesPlayed() {
+function displayMatchesRecorded() {
 	// Create DB connection
 	include 'php/db-connect.php';
 
@@ -517,10 +517,24 @@ function displayMatchesPlayed() {
 		console.log($no_of_matches_played);
 		$percent_group_played = round($no_of_matches_played * 100 / 48);
 	}
-
 	printf("<p>Matches recorded: %s of 64</p>", $no_of_matches_played);
-	print("<p>Group matches played:</p><div class='progress'><div class='progress-bar' role='progressbar' aria-label='Competition progress bar' style='width: $percent_group_played%;' aria-valuenow='$percent_group_played' aria-valuemin='0' aria-valuemax='100'>$percent_group_played%</div></div>");
+	// Close DB connection
+	mysqli_close($con);
+}
 
+function displayGroupMatchesPlayed() {
+	// Create DB connection
+	include 'php/db-connect.php';
+
+	$sql_get_matches_played = "SELECT COUNT(*) AS matches_played FROM live_match_results";
+	$matches_played = mysqli_query($con, $sql_get_matches_played);
+
+	while ($row = mysqli_fetch_assoc($matches_played)) {
+		$no_of_matches_played = $row["matches_played"];
+		console.log($no_of_matches_played);
+		$percent_group_played = round($no_of_matches_played * 100 / 48);
+	}
+	print("<div class='progress'><div class='progress-bar' role='progressbar' aria-label='Competition progress bar' style='width: $percent_group_played%;' aria-valuenow='$percent_group_played' aria-valuemin='0' aria-valuemax='100'>$percent_group_played%</div></div>");
 	// Close DB connection
 	mysqli_close($con);
 }
