@@ -519,7 +519,7 @@ function displayMatchesPlayed() {
 	}
 
 	printf("<p>Matches recorded: %s of 64</p>", $no_of_matches_played);
-	print("<div class='progress'>Group matches played:<div class='progress-bar' role='progressbar' aria-label='Competition progress bar' style='width: $percent_group_played%;' aria-valuenow='$percent_group_played' aria-valuemin='0' aria-valuemax='100'>$percent_group_played%</div></div>");
+	print("<p>Group matches played:</p><div class='progress'><div class='progress-bar' role='progressbar' aria-label='Competition progress bar' style='width: $percent_group_played%;' aria-valuenow='$percent_group_played' aria-valuemin='0' aria-valuemax='100'>$percent_group_played%</div></div>");
 
 	// Close DB connection
 	mysqli_close($con);
