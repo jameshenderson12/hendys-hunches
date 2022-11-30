@@ -161,7 +161,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 			      	<td><input type="text" id="score98_p" name="score98_p" class="right-score score-field form-control input-sm" onBlur="return validateScore('score98_p');" value="<?php retrieveScorePrediction(98); ?>" /></td>
 			      	<td class="right-team">
 			        <img src="<?php echo $R2img; ?>" alt="<?php echo $R2; ?>" title="<?php echo $R2; ?>"><label for="score98_p"><?php abbrTeam($R2); ?></label></td>
-			      	<td class="date-venue"><?php echo "$_3pm, $_30Jun, $venue5"; ?></td>
+			      	<td class="date-venue"><?php echo "$_3pm"; ?></td>
 			      	</tr>
 
 			      	<tr>
@@ -173,7 +173,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 			      	<td><input type="text" id="score100_p" name="score100_p" class="right-score score-field form-control input-sm" onBlur="return validateScore('score100_p');" value="<?php retrieveScorePrediction(100); ?>" /></td>
 			      	<td class="right-team">
 			        <img src="<?php echo $R4img; ?>" alt="<?php echo $R4; ?>" title="<?php echo $R4; ?>"><label for="score100_p"><?php abbrTeam($R4); ?></label></td>
-			      	<td class="date-venue"><?php echo "$_7pm, $_30Jun, $venue4"; ?></td>
+			      	<td class="date-venue"><?php echo "$_7pm"; ?></td>
 			      	</tr>
 
 			      	<tr>
@@ -185,7 +185,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 			      	<td><input type="text" id="score102_p" name="score102_p" class="right-score score-field form-control input-sm" onBlur="return validateScore('score102_p');" value="<?php retrieveScorePrediction(102); ?>" /></td>
 			      	<td class="right-team">
 			        <img src="<?php echo $R6img; ?>" alt="<?php echo $R6; ?>" title="<?php echo $R6; ?>"><label for="score102_p"><?php abbrTeam($R6); ?></label></td>
-			      	<td class="date-venue"><?php echo "$_3pm, $_01Jul, $venue1"; ?></td>
+			      	<td class="date-venue"><?php echo "$_3pm"; ?></td>
 			      	</tr>
 
 			      	<tr>
@@ -197,7 +197,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 			      	<td><input type="text" id="score104_p" name="score104_p" class="right-score score-field form-control input-sm" onBlur="return validateScore('score104_p');" value="<?php retrieveScorePrediction(104); ?>" /></td>
 			      	<td class="right-team">
 			        <img src="<?php echo $R8img; ?>" alt="<?php echo $R8; ?>" title="<?php echo $R8; ?>"><label for="score104_p"><?php abbrTeam($R8); ?></label></td>
-			      	<td class="date-venue"><?php echo "$_7pm, $_01Jul, $venue10"; ?></td>
+			      	<td class="date-venue"><?php echo "$_7pm"; ?></td>
 			      	</tr>
 
 			      	<tr>
@@ -209,7 +209,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 			      	<td><input type="text" id="score106_p" name="score106_p" class="right-score score-field form-control input-sm" onBlur="return validateScore('score106_p');" value="<?php retrieveScorePrediction(106); ?>" /></td>
 			      	<td class="right-team">
 			        <img src="<?php echo $R10img; ?>" alt="<?php echo $R10; ?>" title="<?php echo $R10; ?>"><label for="score106_p"><?php abbrTeam($R10); ?></label></td>
-			      	<td class="date-venue"><?php echo "$_3pm, $_02Jul, $venue8"; ?></td>
+			      	<td class="date-venue"><?php echo "$_3pm"; ?></td>
 			      	</tr>
 
 			      	<tr>
@@ -221,7 +221,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 			      	<td><input type="text" id="score108_p" name="score108_p" class="right-score score-field form-control input-sm" onBlur="return validateScore('score108_p');" value="<?php retrieveScorePrediction(108); ?>" /></td>
 			      	<td class="right-team">
 			        <img src="<?php echo $R12img; ?>" alt="<?php echo $R12; ?>" title="<?php echo $R12; ?>"><label for="score108_p"><?php abbrTeam($R12); ?></label></td>
-			      	<td class="date-venue"><?php echo "$_7pm, $_02Jul, $venue9"; ?></td>
+			      	<td class="date-venue"><?php echo "$_7pm"; ?></td>
 			      	</tr>
 
 			      	<tr>
@@ -233,7 +233,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 			      	<td><input type="text" id="score110_p" name="score110_p" class="right-score score-field form-control input-sm" onBlur="return validateScore('score110_p');" value="<?php retrieveScorePrediction(110); ?>" /></td>
 			      	<td class="right-team">
 			        <img src="<?php echo $R14img; ?>" alt="<?php echo $R14; ?>" title="<?php echo $R14; ?>"><label for="score110_p"><?php abbrTeam($R14); ?></label></td>
-			      	<td class="date-venue"><?php echo "$_3pm, $_03Jul, $venue3"; ?></td>
+			      	<td class="date-venue"><?php echo "$_3pm"; ?></td>
 			      	</tr>
 
 			      	<tr>
@@ -245,7 +245,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 			      	<td><input type="text" id="score112_p" name="score112_p" class="right-score score-field form-control input-sm" onBlur="return validateScore('score112_p');" value="<?php retrieveScorePrediction(112); ?>" /></td>
 			      	<td class="right-team">
 			        <img src="<?php echo $R16img; ?>" alt="<?php echo $R16; ?>" title="<?php echo $R16; ?>"><label for="score112_p"><?php abbrTeam($R16); ?></label></td>
-			      	<td class="date-venue"><?php echo "$_7pm, $_03Jul, $venue6"; ?></td>
+			      	<td class="date-venue"><?php echo "$_7pm"; ?></td>
 			      	</tr>
 
 					<!-- QUARTER FINALS ---------------------->
