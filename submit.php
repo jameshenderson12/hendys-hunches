@@ -13,7 +13,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="refresh" content="1;url=predictions.php">
+    <meta http-equiv="refresh" content="3;url=dashboard.php">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="description" content="Hendy's Hunches: Predictions Game">
@@ -142,10 +142,10 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	<div id="main-section" class="col-md-10 col-md-offset-1">
     <h1 class="page-header">My Predictions</h1>
     <!--<p class="lead">Can you correctly predict your way to victory?</p>-->
-    <p>You can update your predictions at any time but prediction editing for each game will close 1 hour before kick-off.</p>
-    <p><span class="label label-success">SUCCESS</span> <strong>Predictions updated.</strong></p>
-	<p>Thank you for updating your predictions. You will now be returned to your predictions page.</p>
-	<div class="spinner"></div>
+    <p><span class="label label-success">SUCCESS</span> <strong>Predictions recorded.</strong></p>
+		<p>Thank you for updating your predictions. You will now be returned to your predictions page.</p>
+
+		<div class="spinner"></div>
 
 	<!-- Site footer -->
 	<footer class="mt-auto">
