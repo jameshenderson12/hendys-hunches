@@ -141,22 +141,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
       <h1>Test Predictions</h1>
       <!--<p class="lead">Can you correctly predict your way to victory?</p>-->
       <p>To make your predictions, enter a score value into each box below and hit the 'Submit my predictions' button.</p>
-			<p class="alert alert-warning" id="submitMsg"><strong>Note:</strong> You must predict all 48 fixtures before submitting! You only need to do this once.</p>
-
-			<?php
-				// Create DB connection
-				include 'php/db-connect.php';
-				$un = $_SESSION["username"];
-				consoleMsg($_SESSION["username"]);
-				// Get team information from the DB	counting occurrences too
-				$sql_predstatus = "SELECT EXISTS (SELECT NULL FROM live_user_predictions_groups WHERE username = 'testuser')";
-				$predstatus = mysqli_query($con, $sql_predstatus);
-				//if ($predstatus = 1) {
-					consoleMsg($predstatus);
-					echo("<p class='alert alert-success p-4'><span class='bi bi-check2-square text-success'></span> It appears that you have already submitted your predictions for this round. Good luck.</p>");
-				//}
-				//print("<img src='$avatar' id='avatar' class='img-fluid rounded-circle mx-1' alt='User Avatar' name='User Avatar' width='25'> $firstname");
-				?>
+			<p class="alert alert-warning" id="submitMsg"><strong>Note:</strong> You must predict all 8 'Round of 16' fixtures before submitting! You only need to do this once.</p>
 
       <a name="matches"></a><!--anchor point for filters-->
       <form id="predictionForm" name="predictionForm" class="form-horizontal" action="submit.php" method="POST">
@@ -364,7 +349,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 			        <img src="<?php echo $Fi2img; ?>" alt="<?php echo $Fi2; ?>" title="<?php echo $Fi2; ?>"><label for="score128_p"><?php abbrTeam($Fi2); ?></label></td>
 			      	<td class="date-venue"><?php echo "$_4pm, $_15Jul, $venue1"; ?></td>
 			      	</tr>
-
+-->
 					</table>
 					<!--
             <script>
