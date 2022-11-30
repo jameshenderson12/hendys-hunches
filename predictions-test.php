@@ -175,6 +175,28 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 								<td class="right-team"><label for="score100_p"><?php echo $R4; ?></label></td>
 								<td class="small text-muted d-none d-md-block">19:00<br><?php echo $venue4 ?></td>
 							</tr>
+							<tr>
+								<td class="small text-muted d-none d-md-block">RO16<br>04/12/2022</td>
+								<td style="text-align: right"><label for="score101_p"><?php echo $R5; ?></label></td>
+								<td><img src="<?php echo $R5img; ?>" alt="<?php echo $R5; ?>" title="<?php echo $R5; ?>"></td>
+								<td><input type="text" id="score101_p" name="score101_p" class="form-control" required /></td>
+								<td align="center"><span>v</span></td>
+								<td><input type="text" id="score102_p" name="score102_p" class="form-control" required /></td>
+								<td><img src="<?php echo $R6img; ?>" alt="<?php echo $R6; ?>" title="<?php echo $R6; ?>"></td>
+								<td class="right-team"><label for="score102_p"><?php echo $R6; ?></label></td>
+								<td class="small text-muted d-none d-md-block">15:00<br><?php echo $venue3 ?></td>
+							</tr>
+							<tr>
+								<td class="small text-muted d-none d-md-block">RO16<br>04/12/2022</td>
+								<td style="text-align: right"><label for="score103_p"><?php echo $R7; ?></label></td>
+								<td><img src="<?php echo $R7img; ?>" alt="<?php echo $R7; ?>" title="<?php echo $R7; ?>"></td>
+								<td><input type="text" id="score103_p" name="score103_p" class="form-control" required /></td>
+								<td align="center"><span>v</span></td>
+								<td><input type="text" id="score104_p" name="score104_p" class="form-control" required /></td>
+								<td><img src="<?php echo $R8img; ?>" alt="<?php echo $R8; ?>" title="<?php echo $R8; ?>"></td>
+								<td class="right-team"><label for="score104_p"><?php echo $R8; ?></label></td>
+								<td class="small text-muted d-none d-md-block">19:00<br><?php echo $venue1 ?></td>
+							</tr>
 							<!--
 							<tr>
 								<td class="small text-muted d-none d-md-block">RO16<br>04/12/2022</td>
