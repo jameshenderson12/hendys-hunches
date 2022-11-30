@@ -153,18 +153,8 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					<!-- ROUND OF 16 ------------------------>
 			        <!--===================================-->
 
-							fixture += '<td class="small text-muted d-none d-md-block">' + value.Group + '</td>';
-							fixture += '<td>' + value.HomeTeam + '</td>';
-							fixture += '<td><img src="' + homeTeamFlag + '" alt="Flag of ' + homeTeam + '" title="Flag of ' + homeTeam + '"></td>';
-							fixture += '<td><input type="text" id="score' + x + '_p" name="score' + x + '_p" class="form-control" required /></td>';
-							fixture += '<td align="center">v<br><span class="badge bg-light text-primary">' + value.MatchNumber + '</span></td>';
-							fixture += '<td><input type="text" id="score' + y + '_p" name="score' + y + '_p" class="form-control" required /></td>';
-							fixture += '<td><img src="' + awayTeamFlag + '" alt="Flag of ' + awayTeam + '" title="Flag of ' + awayTeam + '"></td>';
-							fixture += '<td>' + value.AwayTeam + '</td>';
-							fixture += '<td class="small text-muted d-none d-md-block"> ' + date + '<br>' + value.Location + '</td>';
-
 							<tr>
-								<td class="small text-muted d-none d-md-block">RO16</td>
+								<td class="small text-muted d-none d-md-block">RO16<br>03/12/2022</td>
 								<td style="text-align: right"><label for="score97_p"><?php echo $R1; ?></label></td>
 								<td><img src="<?php echo $R1img; ?>" alt="<?php echo $R1; ?>" title="<?php echo $R1; ?>"></td>
 								<td><input type="text" id="score97_p" name="score97_p" class="form-control" required /></td>
@@ -172,10 +162,10 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 								<td><input type="text" id="score98_p" name="score98_p" class="form-control" required /></td>
 								<td><img src="<?php echo $R2img; ?>" alt="<?php echo $R2; ?>" title="<?php echo $R2; ?>"></td>
 								<td class="right-team"><label for="score98_p"><?php echo $R2; ?></label></td>
-								<td class="small text-muted d-none d-md-block">03/12/2022</td>
+								<td class="small text-muted d-none d-md-block">15:00<br><?php echo $venue2 ?></td>
 							</tr>
 							<tr>
-								<td class="small text-muted d-none d-md-block">RO16</td>
+								<td class="small text-muted d-none d-md-block">RO16<br>03/12/2022</td>
 								<td style="text-align: right"><label for="score99_p"><?php echo $R3; ?></label></td>
 								<td><img src="<?php echo $R3img; ?>" alt="<?php echo $R3; ?>" title="<?php echo $R3; ?>"></td>
 								<td><input type="text" id="score99_p" name="score99_p" class="form-control" required /></td>
@@ -183,7 +173,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 								<td><input type="text" id="score100_p" name="score100_p" class="form-control" required /></td>
 								<td><img src="<?php echo $R4img; ?>" alt="<?php echo $R4; ?>" title="<?php echo $R4; ?>"></td>
 								<td class="right-team"><label for="score100_p"><?php echo $R4; ?></label></td>
-								<td class="small text-muted d-none d-md-block">03/12/2022</td>
+								<td class="small text-muted d-none d-md-block">19:00<br><?php echo $venue4 ?></td>
 							</tr>
 							<!--
 							<tr>
