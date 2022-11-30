@@ -152,203 +152,106 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 
 					<!-- ROUND OF 16 ------------------------>
 			        <!--===================================-->
-			      	<tr>
-			        <td class="date-venue">RO16<br>03/12/22</td>
-			      	<td class="left-team">
-			        <img src="<?php echo $R1img; ?>" alt="<?php echo $R1; ?>" title="<?php echo $R1; ?>"><label for="score97_p"><?php abbrTeam($R1); ?></label></td>
-			      	<td><input type="text" id="score97_p" name="score97_p" class="left-score score-field form-control input-sm" onBlur="return validateScore('score97_p');" value="<?php retrieveScorePrediction(97); ?>" /></td>
-			      	<td align="center">v</td>
-			      	<td><input type="text" id="score98_p" name="score98_p" class="right-score score-field form-control input-sm" onBlur="return validateScore('score98_p');" value="<?php retrieveScorePrediction(98); ?>" /></td>
-			      	<td class="right-team">
-			        <img src="<?php echo $R2img; ?>" alt="<?php echo $R2; ?>" title="<?php echo $R2; ?>"><label for="score98_p"><?php abbrTeam($R2); ?></label></td>
-			      	<td class="date-venue"><?php echo "$_3pm"; ?></td>
-			      	</tr>
 
-			      	<tr>
-			        <td class="date-venue">RO16<br>03/12/22</td>
-			      	<td class="left-team">
-			        <img src="<?php echo $R3img; ?>" alt="<?php echo $R3; ?>" title="<?php echo $R3; ?>"><label for="score99_p"><?php abbrTeam($R3); ?></label></td>
-			      	<td><input type="text" id="score99_p" name="score99_p" class="left-score score-field form-control input-sm" onBlur="return validateScore('score99_p');" value="<?php retrieveScorePrediction(99); ?>" /></td>
-			      	<td align="center">v</td>
-			      	<td><input type="text" id="score100_p" name="score100_p" class="right-score score-field form-control input-sm" onBlur="return validateScore('score100_p');" value="<?php retrieveScorePrediction(100); ?>" /></td>
-			      	<td class="right-team">
-			        <img src="<?php echo $R4img; ?>" alt="<?php echo $R4; ?>" title="<?php echo $R4; ?>"><label for="score100_p"><?php abbrTeam($R4); ?></label></td>
-			      	<td class="date-venue"><?php echo "$_7pm"; ?></td>
-			      	</tr>
+							fixture += '<td class="small text-muted d-none d-md-block">' + value.Group + '</td>';
+							fixture += '<td>' + value.HomeTeam + '</td>';
+							fixture += '<td><img src="' + homeTeamFlag + '" alt="Flag of ' + homeTeam + '" title="Flag of ' + homeTeam + '"></td>';
+							fixture += '<td><input type="text" id="score' + x + '_p" name="score' + x + '_p" class="form-control" required /></td>';
+							fixture += '<td align="center">v<br><span class="badge bg-light text-primary">' + value.MatchNumber + '</span></td>';
+							fixture += '<td><input type="text" id="score' + y + '_p" name="score' + y + '_p" class="form-control" required /></td>';
+							fixture += '<td><img src="' + awayTeamFlag + '" alt="Flag of ' + awayTeam + '" title="Flag of ' + awayTeam + '"></td>';
+							fixture += '<td>' + value.AwayTeam + '</td>';
+							fixture += '<td class="small text-muted d-none d-md-block"> ' + date + '<br>' + value.Location + '</td>';
 
-			      	<tr>
-			        <td class="date-venue">RO16<br>04/12/22</td>
-			      	<td class="left-team">
-			        <img src="<?php echo $R5img; ?>" alt="<?php echo $R5; ?>" title="<?php echo $R5; ?>"><label for="score101_p"><?php abbrTeam($R5); ?></label></td>
-			      	<td><input type="text" id="score101_p" name="score101_p" class="left-score score-field form-control input-sm" onBlur="return validateScore('score101_p');" value="<?php retrieveScorePrediction(101); ?>" /></td>
-			      	<td align="center">v</td>
-			      	<td><input type="text" id="score102_p" name="score102_p" class="right-score score-field form-control input-sm" onBlur="return validateScore('score102_p');" value="<?php retrieveScorePrediction(102); ?>" /></td>
-			      	<td class="right-team">
-			        <img src="<?php echo $R6img; ?>" alt="<?php echo $R6; ?>" title="<?php echo $R6; ?>"><label for="score102_p"><?php abbrTeam($R6); ?></label></td>
-			      	<td class="date-venue"><?php echo "$_3pm"; ?></td>
-			      	</tr>
-
-			      	<tr>
-			        <td class="date-venue">RO16<br>04/12/22</td>
-			      	<td class="left-team">
-			        <img src="<?php echo $R7img; ?>" alt="<?php echo $R7; ?>" title="<?php echo $R7; ?>"><label for="score103_p"><?php abbrTeam($R7); ?></label></td>
-			      	<td><input type="text" id="score103_p" name="score103_p" class="left-score score-field form-control input-sm" onBlur="return validateScore('score103_p');" value="<?php retrieveScorePrediction(103); ?>" /></td>
-			      	<td align="center">v</td>
-			      	<td><input type="text" id="score104_p" name="score104_p" class="right-score score-field form-control input-sm" onBlur="return validateScore('score104_p');" value="<?php retrieveScorePrediction(104); ?>" /></td>
-			      	<td class="right-team">
-			        <img src="<?php echo $R8img; ?>" alt="<?php echo $R8; ?>" title="<?php echo $R8; ?>"><label for="score104_p"><?php abbrTeam($R8); ?></label></td>
-			      	<td class="date-venue"><?php echo "$_7pm"; ?></td>
-			      	</tr>
-
-			      	<tr>
-			        <td class="date-venue">RO16<br>05/12/22</td>
-			      	<td class="left-team">
-			        <img src="<?php echo $R9img; ?>" alt="<?php echo $R9; ?>" title="<?php echo $R9; ?>"><label for="score105_p"><?php abbrTeam($R9); ?></label></td>
-			      	<td><input type="text" id="score105_p" name="score105_p" class="left-score score-field form-control input-sm" onBlur="return validateScore('score105_p');" value="<?php retrieveScorePrediction(105); ?>" /></td>
-			      	<td align="center">v</td>
-			      	<td><input type="text" id="score106_p" name="score106_p" class="right-score score-field form-control input-sm" onBlur="return validateScore('score106_p');" value="<?php retrieveScorePrediction(106); ?>" /></td>
-			      	<td class="right-team">
-			        <img src="<?php echo $R10img; ?>" alt="<?php echo $R10; ?>" title="<?php echo $R10; ?>"><label for="score106_p"><?php abbrTeam($R10); ?></label></td>
-			      	<td class="date-venue"><?php echo "$_3pm"; ?></td>
-			      	</tr>
-
-			      	<tr>
-			        <td class="date-venue">RO16<br>05/12/22</td>
-			      	<td class="left-team">
-			        <img src="<?php echo $R11img; ?>" alt="<?php echo $R11; ?>" title="<?php echo $R11; ?>"><label for="score107_p"><?php abbrTeam($R11); ?></label></td>
-			      	<td><input type="text" id="score107_p" name="score107_p" class="left-score score-field form-control input-sm" onBlur="return validateScore('score107_p');" value="<?php retrieveScorePrediction(107); ?>" /></td>
-			      	<td align="center">v</td>
-			      	<td><input type="text" id="score108_p" name="score108_p" class="right-score score-field form-control input-sm" onBlur="return validateScore('score108_p');" value="<?php retrieveScorePrediction(108); ?>" /></td>
-			      	<td class="right-team">
-			        <img src="<?php echo $R12img; ?>" alt="<?php echo $R12; ?>" title="<?php echo $R12; ?>"><label for="score108_p"><?php abbrTeam($R12); ?></label></td>
-			      	<td class="date-venue"><?php echo "$_7pm"; ?></td>
-			      	</tr>
-
-			      	<tr>
-			        <td class="date-venue">RO16<br>06/12/22</td>
-			      	<td class="left-team">
-			        <img src="<?php echo $R13img; ?>" alt="<?php echo $R13; ?>" title="<?php echo $R13; ?>"><label for="score109_p"><?php abbrTeam($R13); ?></label></td>
-			      	<td><input type="text" id="score109_p" name="score109_p" class="left-score score-field form-control input-sm" onBlur="return validateScore('score109_p');" value="<?php retrieveScorePrediction(109); ?>" /></td>
-			      	<td align="center">v</td>
-			      	<td><input type="text" id="score110_p" name="score110_p" class="right-score score-field form-control input-sm" onBlur="return validateScore('score110_p');" value="<?php retrieveScorePrediction(110); ?>" /></td>
-			      	<td class="right-team">
-			        <img src="<?php echo $R14img; ?>" alt="<?php echo $R14; ?>" title="<?php echo $R14; ?>"><label for="score110_p"><?php abbrTeam($R14); ?></label></td>
-			      	<td class="date-venue"><?php echo "$_3pm"; ?></td>
-			      	</tr>
-
-			      	<tr>
-			        <td class="date-venue">RO16<br>06/12/22</td>
-			      	<td class="left-team">
-			        <img src="<?php echo $R15img; ?>" alt="<?php echo $R15; ?>" title="<?php echo $R15; ?>"><label for="score111_p"><?php abbrTeam($R15); ?></label></td>
-			      	<td><input type="text" id="score111_p" name="score111_p" class="left-score score-field form-control input-sm" onBlur="return validateScore('score111_p');" value="<?php retrieveScorePrediction(111); ?>" /></td>
-			      	<td align="center">v</td>
-			      	<td><input type="text" id="score112_p" name="score112_p" class="right-score score-field form-control input-sm" onBlur="return validateScore('score112_p');" value="<?php retrieveScorePrediction(112); ?>" /></td>
-			      	<td class="right-team">
-			        <img src="<?php echo $R16img; ?>" alt="<?php echo $R16; ?>" title="<?php echo $R16; ?>"><label for="score112_p"><?php abbrTeam($R16); ?></label></td>
-			      	<td class="date-venue"><?php echo "$_7pm"; ?></td>
-			      	</tr>
-
-					<!-- QUARTER FINALS ---------------------->
-			        <!--===================================
-			      	<tr>
-			        <td class="date-venue">Match 57<br>Quarter</td>
-			      	<td class="left-team">
-			        <img src="<?php echo $Q1img; ?>" alt="<?php echo $Q1; ?>" title="<?php echo $Q1; ?>"><label for="score113_p"><?php abbrTeam($Q1); ?></label></td>
-			      	<td><input type="text" id="score113_p" name="score113_p" class="left-score score-field form-control input-sm" onBlur="return validateScore('score113_p');" value="<?php retrieveScorePrediction(113); ?>" /></td>
-			      	<td align="center">v</td>
-			      	<td><input type="text" id="score114_p" name="score114_p" class="right-score score-field form-control input-sm" onBlur="return validateScore('score114_p');" value="<?php retrieveScorePrediction(114); ?>" /></td>
-			      	<td class="right-team">
-			        <img src="<?php echo $Q2img; ?>" alt="<?php echo $Q2; ?>" title="<?php echo $Q2; ?>"><label for="score114_p"><?php abbrTeam($Q2); ?></label></td>
-			      	<td class="date-venue"><?php echo "$_3pm, $_06Jul, $venue10"; ?></td>
-			      	</tr>
-
-			      	<tr>
-			        <td class="date-venue">Match 58<br>Quarter</td>
-			      	<td class="left-team">
-			        <img src="<?php echo $Q3img; ?>" alt="<?php echo $Q3; ?>" title="<?php echo $Q3; ?>"><label for="score115_p"><?php abbrTeam($Q3); ?></label></td>
-			      	<td><input type="text" id="score115_p" name="score115_p" class="left-score score-field form-control input-sm" onBlur="return validateScore('score115_p');" value="<?php retrieveScorePrediction(115); ?>" /></td>
-			      	<td align="center">v</td>
-			      	<td><input type="text" id="score116_p" name="score116_p" class="right-score score-field form-control input-sm" onBlur="return validateScore('score116_p');" value="<?php retrieveScorePrediction(116); ?>" /></td>
-			      	<td class="right-team">
-			        <img src="<?php echo $Q4img; ?>" alt="<?php echo $Q4; ?>" title="<?php echo $Q4; ?>"><label for="score116_p"><?php abbrTeam($Q4); ?></label></td>
-			      	<td class="date-venue"><?php echo "$_7pm, $_06Jul, $venue5"; ?></td>
-			      	</tr>
-
-			      	<tr>
-			        <td class="date-venue">Match 59<br>Quarter</td>
-			      	<td class="left-team">
-			        <img src="<?php echo $Q5img; ?>" alt="<?php echo $Q5; ?>" title="<?php echo $Q5; ?>"><label for="score117_p"><?php abbrTeam($Q5); ?></label></td>
-			      	<td><input type="text" id="score117_p" name="score117_p" class="left-score score-field form-control input-sm" onBlur="return validateScore('score117_p');" value="<?php retrieveScorePrediction(117); ?>" /></td>
-			      	<td align="center">v</td>
-			      	<td><input type="text" id="score118_p" name="score118_p" class="right-score score-field form-control input-sm" onBlur="return validateScore('score118_p');" value="<?php retrieveScorePrediction(118); ?>" /></td>
-			      	<td class="right-team">
-			        <img src="<?php echo $Q6img; ?>" alt="<?php echo $Q6; ?>" title="<?php echo $Q6; ?>"><label for="score118_p"><?php abbrTeam($Q6); ?></label></td>
-			      	<td class="date-venue"><?php echo "$_3pm, $_07Jul, $venue8"; ?></td>
-			      	</tr>
-
-			      	<tr>
-			        <td class="date-venue">Match 60<br>Quarter</td>
-			      	<td class="left-team">
-			        <img src="<?php echo $Q7img; ?>" alt="<?php echo $Q7; ?>" title="<?php echo $Q7; ?>"><label for="score119_p"><?php abbrTeam($Q7); ?></label></td>
-			      	<td><input type="text" id="score119_p" name="score119_p" class="left-score score-field form-control input-sm" onBlur="return validateScore('score119_p');" value="<?php retrieveScorePrediction(119); ?>" /></td>
-			      	<td align="center">v</td>
-			      	<td><input type="text" id="score120_p" name="score120_p" class="right-score score-field form-control input-sm" onBlur="return validateScore('score120_p');" value="<?php retrieveScorePrediction(120); ?>" /></td>
-			      	<td class="right-team">
-			        <img src="<?php echo $Q8img; ?>" alt="<?php echo $Q8; ?>" title="<?php echo $Q8; ?>"><label for="score120_p"><?php abbrTeam($Q8); ?></label></td>
-			      	<td class="date-venue"><?php echo "$_7pm, $_07Jul, $venue4"; ?></td>
-			      	</tr>
-
-					<!-- SEMI FINALS ---------------------->
-			        <!--===================================
-			      	<tr>
-			        <td class="date-venue">Match 61<br>Semi</td>
-			      	<td class="left-team">
-			        <img src="<?php echo $S1img; ?>" alt="<?php echo $S1; ?>" title="<?php echo $S1; ?>"><label for="score121_p"><?php abbrTeam($S1); ?></label></td>
-			      	<td><input type="text" id="score121_p" name="score121_p" class="left-score score-field form-control input-sm" onBlur="return validateScore('score121_p');" value="<?php retrieveScorePrediction(121); ?>" /></td>
-			      	<td align="center">v</td>
-			      	<td><input type="text" id="score122_p" name="score122_p" class="right-score score-field form-control input-sm" onBlur="return validateScore('score122_p');" value="<?php retrieveScorePrediction(122); ?>" /></td>
-			      	<td class="right-team">
-			        <img src="<?php echo $S2img; ?>" alt="<?php echo $S2; ?>" title="<?php echo $S2; ?>"><label for="score122_p"><?php abbrTeam($S2); ?></label></td>
-			      	<td class="date-venue"><?php echo "$_7pm, $_10Jul, $venue3"; ?></td>
-			      	</tr>
-
-			      	<tr>
-			        <td class="date-venue">Match 62<br>Semi</td>
-			      	<td class="left-team">
-			        <img src="<?php echo $S3img; ?>" alt="<?php echo $S3; ?>" title="<?php echo $S3; ?>"><label for="score123_p"><?php abbrTeam($S3); ?></label></td>
-			      	<td><input type="text" id="score123_p" name="score123_p" class="left-score score-field form-control input-sm" onBlur="return validateScore('score123_p');" value="<?php retrieveScorePrediction(123); ?>" /></td>
-			      	<td align="center">v</td>
-			      	<td><input type="text" id="score124_p" name="score124_p" class="right-score score-field form-control input-sm" onBlur="return validateScore('score124_p');" value="<?php retrieveScorePrediction(124); ?>" /></td>
-			      	<td class="right-team">
-			        <img src="<?php echo $S4img; ?>" alt="<?php echo $S4; ?>" title="<?php echo $S4; ?>"><label for="score124_p"><?php abbrTeam($S4); ?></label></td>
-			      	<td class="date-venue"><?php echo "$_7pm, $_11Jul, $venue1"; ?></td>
-			      	</tr>
-
-					<!-- 3rd PLACE PLAYOFF ------------------>
-			        <!--===================================
-			      	<tr>
-			        <td class="date-venue">Match 63<br>PO 3rd</td>
-			      	<td class="left-team">
-			        <img src="<?php echo $P1img; ?>" alt="<?php echo $P1; ?>" title="<?php echo $P1; ?>"><label for="score125_p"><?php abbrTeam($P1); ?></label></td>
-			      	<td><input type="text" id="score125_p" name="score125_p" class="left-score score-field form-control input-sm" onBlur="return validateScore('score125_p');" value="<?php retrieveScorePrediction(125); ?>" /></td>
-			      	<td align="center">v</td>
-			      	<td><input type="text" id="score126_p" name="score126_p" class="right-score score-field form-control input-sm" onBlur="return validateScore('score126_p');" value="<?php retrieveScorePrediction(126); ?>" /></td>
-			      	<td class="right-team">
-			        <img src="<?php echo $P2img; ?>" alt="<?php echo $P2; ?>" title="<?php echo $P2; ?>"><label for="score126_p"><?php abbrTeam($P2); ?></label></td>
-			      	<td class="date-venue"><?php echo "$_3pm, $_14Jul, $venue3"; ?></td>
-			      	</tr>
-
-			      	<tr>
-			        <td class="date-venue">Match 64<br>Final</td>
-			      	<td class="left-team">
-			        <img src="<?php echo $Fi1img; ?>" alt="<?php echo $Fi1; ?>" title="<?php echo $Fi1; ?>"><label for="score127_p"><?php abbrTeam($Fi1); ?></label></td>
-			      	<td><input type="text" id="score127_p" name="score127_p" class="left-score score-field form-control input-sm" onBlur="return validateScore('score127_p');" value="<?php retrieveScorePrediction(127); ?>" /></td>
-			      	<td align="center">v</td>
-			      	<td><input type="text" id="score128_p" name="score128_p" class="right-score score-field form-control input-sm" onBlur="return validateScore('score128_p');" value="<?php retrieveScorePrediction(128); ?>" /></td>
-			      	<td class="right-team">
-			        <img src="<?php echo $Fi2img; ?>" alt="<?php echo $Fi2; ?>" title="<?php echo $Fi2; ?>"><label for="score128_p"><?php abbrTeam($Fi2); ?></label></td>
-			      	<td class="date-venue"><?php echo "$_4pm, $_15Jul, $venue1"; ?></td>
-			      	</tr>
+							<tr>
+								<td class="small text-muted d-none d-md-block">RO16</td>
+								<td style="text-align: right"><label for="score97_p"><?php echo $R1; ?></label></td>
+								<td><img src="<?php echo $R1img; ?>" alt="<?php echo $R1; ?>" title="<?php echo $R1; ?>"></td>
+								<td><input type="text" id="score97_p" name="score97_p" class="form-control" required /></td>
+								<td align="center"><span>v</span></td>
+								<td><input type="text" id="score98_p" name="score98_p" class="form-control" required /></td>
+								<td><img src="<?php echo $R2img; ?>" alt="<?php echo $R2; ?>" title="<?php echo $R2; ?>"></td>
+								<td class="right-team"><label for="score98_p"><?php echo $R2; ?></label></td>
+								<td class="small text-muted d-none d-md-block">03/12/2022</td>
+							</tr>
+							<tr>
+								<td class="small text-muted d-none d-md-block">RO16</td>
+								<td style="text-align: right"><label for="score99_p"><?php echo $R3; ?></label></td>
+								<td><img src="<?php echo $R3img; ?>" alt="<?php echo $R3; ?>" title="<?php echo $R3; ?>"></td>
+								<td><input type="text" id="score99_p" name="score99_p" class="form-control" required /></td>
+								<td align="center"><span>v</span></td>
+								<td><input type="text" id="score100_p" name="score100_p" class="form-control" required /></td>
+								<td><img src="<?php echo $R4img; ?>" alt="<?php echo $R4; ?>" title="<?php echo $R4; ?>"></td>
+								<td class="right-team"><label for="score100_p"><?php echo $R4; ?></label></td>
+								<td class="small text-muted d-none d-md-block">03/12/2022</td>
+							</tr>
+							<!--
+							<tr>
+								<td class="small text-muted d-none d-md-block">RO16<br>04/12/2022</td>
+								<td style="text-align: right"><label for="score101_p"><?php echo $R5; ?></label></td>
+								<td><img src="<?php echo $R5img; ?>" alt="<?php echo $R5; ?>" title="<?php echo $R5; ?>"></td>
+								<td align="center"><span>v</span></td>
+								<td><img src="<?php echo $R6img; ?>" alt="<?php echo $R6; ?>" title="<?php echo $R6; ?>"></td>
+								<td class="right-team"><label for="score102_p"><?php echo $R6; ?></label></td>
+								<td><span class="prediction"><?php echo $userdata['score101_p'] ?> - <?php echo $userdata['score102_p'] ?></span></td>
+								<td><?php if($matchids[50]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[50]."_r"], $matchresult["score".$evengameno[50]."_r"]); } else echo "N/A"; ?></td>
+								<td><?php if($matchids[50]) { echo $matchpoints[50]; } else { echo "-"; } ?></td>
+							</tr>
+							<tr>
+								<td class="small text-muted d-none d-md-block">RO16<br>04/12/2022</td>
+								<td style="text-align: right"><label for="score103_p"><?php echo $R7; ?></label></td>
+								<td><img src="<?php echo $R7img; ?>" alt="<?php echo $R7; ?>" title="<?php echo $R7; ?>"></td>
+								<td align="center"><span>v</span></td>
+								<td><img src="<?php echo $R8img; ?>" alt="<?php echo $R8; ?>" title="<?php echo $R8; ?>"></td>
+								<td class="right-team"><label for="score104_p"><?php echo $R8; ?></label></td>
+								<td><span class="prediction"><?php echo $userdata['score103_p'] ?> - <?php echo $userdata['score104_p'] ?></span></td>
+								<td><?php if($matchids[51]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[51]."_r"], $matchresult["score".$evengameno[51]."_r"]); } else echo "N/A"; ?></td>
+								<td><?php if($matchids[51]) { echo $matchpoints[51]; } else { echo "-"; } ?></td>
+							</tr>
+							<tr>
+								<td class="small text-muted d-none d-md-block">RO16<br>05/12/2022</td>
+								<td style="text-align: right"><label for="score105_p"><?php echo $R9; ?></label></td>
+								<td><img src="<?php echo $R9img; ?>" alt="<?php echo $R9; ?>" title="<?php echo $R9; ?>"></td>
+								<td align="center"><span>v</span></td>
+								<td><img src="<?php echo $R10img; ?>" alt="<?php echo $R10; ?>" title="<?php echo $R10; ?>"></td>
+								<td class="right-team"><label for="score106_p"><?php echo $R10; ?></label></td>
+								<td><span class="prediction"><?php echo $userdata['score105_p'] ?> - <?php echo $userdata['score106_p'] ?></span></td>
+								<td><?php if($matchids[52]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[52]."_r"], $matchresult["score".$evengameno[52]."_r"]); } else echo "N/A"; ?></td>
+								<td><?php if($matchids[52]) { echo $matchpoints[52]; } else { echo "-"; } ?></td>
+							</tr>
+							<tr>
+								<td class="small text-muted d-none d-md-block">RO16<br>05/12/2022</td>
+								<td style="text-align: right"><label for="score107_p"><?php echo $R11; ?></label></td>
+								<td><img src="<?php echo $R11img; ?>" alt="<?php echo $R11; ?>" title="<?php echo $R11; ?>"></td>
+								<td align="center"><span>v</span></td>
+								<td><img src="<?php echo $R12img; ?>" alt="<?php echo $R12; ?>" title="<?php echo $R12; ?>"></td>
+								<td class="right-team"><label for="score108_p"><?php echo $R12; ?></label></td>
+								<td><span class="prediction"><?php echo $userdata['score107_p'] ?> - <?php echo $userdata['score108_p'] ?></span></td>
+								<td><?php if($matchids[53]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[53]."_r"], $matchresult["score".$evengameno[53]."_r"]); } else echo "N/A"; ?></td>
+								<td><?php if($matchids[53]) { echo $matchpoints[53]; } else { echo "-"; } ?></td>
+							</tr>
+							<tr>
+								<td class="small text-muted d-none d-md-block">RO16<br>06/12/2022</td>
+								<td style="text-align: right"><label for="score109_p"><?php echo $R13; ?></label></td>
+								<td><img src="<?php echo $R13img; ?>" alt="<?php echo $R13; ?>" title="<?php echo $R13; ?>"></td>
+								<td align="center"><span>v</span></td>
+								<td><img src="<?php echo $R14img; ?>" alt="<?php echo $R14; ?>" title="<?php echo $R14; ?>"></td>
+								<td class="right-team"><label for="score110_p"><?php echo $R14; ?></label></td>
+								<td><span class="prediction"><?php echo $userdata['score109_p'] ?> - <?php echo $userdata['score110_p'] ?></span></td>
+								<td><?php if($matchids[54]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[54]."_r"], $matchresult["score".$evengameno[54]."_r"]); } else echo "N/A"; ?></td>
+								<td><?php if($matchids[54]) { echo $matchpoints[54]; } else { echo "-"; } ?></td>
+							</tr>
+							<tr>
+								<td class="small text-muted d-none d-md-block">RO16<br>04/12/2022</td>
+								<td style="text-align: right"><label for="score111_p"><?php echo $R15; ?></label></td>
+								<td><img src="<?php echo $R15img; ?>" alt="<?php echo $R15; ?>" title="<?php echo $R15; ?>"></td>
+								<td align="center"><span>v</span></td>
+								<td><img src="<?php echo $R16img; ?>" alt="<?php echo $R16; ?>" title="<?php echo $R16; ?>"></td>
+								<td class="right-team"><label for="score112_p"><?php echo $R16; ?></label></td>
+								<td><span class="prediction"><?php echo $userdata['score111_p'] ?> - <?php echo $userdata['score112_p'] ?></span></td>
+								<td><?php if($matchids[55]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[55]."_r"], $matchresult["score".$evengameno[55]."_r"]); } else echo "N/A"; ?></td>
+								<td><?php if($matchids[55]) { echo $matchpoints[55]; } else { echo "-"; } ?></td>
+							</tr>
 -->
 					</table>
 					<!--
