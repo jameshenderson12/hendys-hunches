@@ -162,7 +162,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
       <form id="predictionForm" name="predictionForm" class="form-horizontal" action="submit.php" method="POST">
       <div class="row">
 
-        <!-- Placeholder for JSON table construction -->
+        <!-- Placeholder for JSON table construction
         <table id="table" class="table table-sm table-striped">
             <script>
                 $(document).ready(function () {
@@ -203,7 +203,9 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
                     });
                 });
             </script>
-			</table>
+			</table>-->
+
+			
 
         <div id="submit-footer" class="navbar navbar-default navbar-fixed-bottom col-md-10 col-md-offset-1">
             <div class="pull-right">
