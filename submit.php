@@ -16,8 +16,8 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
     <meta http-equiv="refresh" content="3;url=dashboard.php">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="description" content="Hendy's Hunches: Predictions Game">
-	<meta name="author" content="James Henderson">
+		<meta name="description" content="Hendy's Hunches: Predictions Game">
+		<meta name="author" content="James Henderson">
     <?php include "php/config.php" ?>
     <link rel="shortcut icon" href="ico/favicon.ico">
 

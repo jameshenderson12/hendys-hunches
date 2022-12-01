@@ -206,7 +206,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 								<td><input type="text" id="score106_p" name="score106_p" class="form-control" required /></td>
 								<td><img src="<?php echo $R10img; ?>" alt="<?php echo $R10; ?>" title="<?php echo $R10; ?>"></td>
 								<td class="right-team"><label for="score106_p"><?php echo $R10; ?></label></td>
-								<td class="small text-muted d-none d-md-block">15:00<br><?php echo $venue1 ?></td>
+								<td class="small text-muted d-none d-md-block">15:00<br><?php echo $venue9 ?></td>
 							</tr>
 							<tr>
 								<td class="small text-muted d-none d-md-block">RO16<br>05/12/2022</td>
@@ -217,7 +217,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 								<td><input type="text" id="score108_p" name="score108_p" class="form-control" required /></td>
 								<td><img src="<?php echo $R12img; ?>" alt="<?php echo $R12; ?>" title="<?php echo $R12; ?>"></td>
 								<td class="right-team"><label for="score108_p"><?php echo $R12; ?></label></td>
-								<td class="small text-muted d-none d-md-block">19:00<br><?php echo $venue1 ?></td>
+								<td class="small text-muted d-none d-md-block">19:00<br><?php echo $venue7 ?></td>
 							</tr>
 							<tr>
 								<td class="small text-muted d-none d-md-block">RO16<br>06/12/2022</td>
@@ -228,7 +228,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 								<td><input type="text" id="score110_p" name="score110_p" class="form-control" required /></td>
 								<td><img src="<?php echo $R14img; ?>" alt="<?php echo $R14; ?>" title="<?php echo $R14; ?>"></td>
 								<td class="right-team"><label for="score110_p"><?php echo $R14; ?></label></td>
-								<td class="small text-muted d-none d-md-block">15:00<br><?php echo $venue1 ?></td>
+								<td class="small text-muted d-none d-md-block">15:00<br><?php echo $venue8 ?></td>
 							</tr>
 							<tr>
 								<td class="small text-muted d-none d-md-block">RO16<br>06/12/2022</td>
@@ -239,7 +239,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 								<td><input type="text" id="score112_p" name="score112_p" class="form-control" required /></td>
 								<td><img src="<?php echo $R16img; ?>" alt="<?php echo $R16; ?>" title="<?php echo $R16; ?>"></td>
 								<td class="right-team"><label for="score112_p"><?php echo $R16; ?></label></td>
-								<td class="small text-muted d-none d-md-block">19:00<br><?php echo $venue1 ?></td>
+								<td class="small text-muted d-none d-md-block">19:00<br><?php echo $venue6 ?></td>
 							</tr>
 					</table>
 					<!--

@@ -175,12 +175,13 @@ function insertMatchResult() {
 	include '../php/db-connect.php';
 
 	// Write results data to the database
-	$sql = "INSERT INTO live_match_results (score1_r, score2_r, score3_r, score4_r, score5_r, score6_r, score7_r, score8_r, score9_r, score10_r, score11_r, score12_r, score13_r, score14_r, score15_r, score16_r, score17_r, score18_r, score19_r, score20_r, score21_r, score22_r, score23_r, score24_r, score25_r, score26_r, score27_r, score28_r, score29_r, score30_r, score31_r, score32_r, score33_r, score34_r, score35_r, score36_r, score37_r, score38_r, score39_r, score40_r, score41_r, score42_r, score43_r, score44_r, score45_r, score46_r, score47_r, score48_r, score49_r, score50_r, score51_r, score52_r, score53_r, score54_r, score55_r, score56_r, score57_r, score58_r, score59_r, score60_r, score61_r, score62_r, score63_r, score64_r, score65_r, score66_r, score67_r, score68_r, score69_r, score70_r, score71_r, score72_r, score73_r, score74_r, score75_r, score76_r, score77_r, score78_r, score79_r, score80_r, score81_r, score82_r, score83_r, score84_r, score85_r, score86_r, score87_r, score88_r, score89_r, score90_r, score91_r, score92_r, score93_r, score94_r, score95_r, score96_r)
-	VALUES ('$_POST[score1_r]','$_POST[score2_r]','$_POST[score3_r]','$_POST[score4_r]','$_POST[score5_r]','$_POST[score6_r]','$_POST[score7_r]','$_POST[score8_r]','$_POST[score9_r]','$_POST[score10_r]','$_POST[score11_r]','$_POST[score12_r]','$_POST[score13_r]','$_POST[score14_r]','$_POST[score15_r]','$_POST[score16_r]','$_POST[score17_r]','$_POST[score18_r]','$_POST[score19_r]','$_POST[score20_r]',
-		'$_POST[score21_r]','$_POST[score22_r]','$_POST[score23_r]','$_POST[score24_r]','$_POST[score25_r]','$_POST[score26_r]','$_POST[score27_r]','$_POST[score28_r]','$_POST[score29_r]','$_POST[score30_r]','$_POST[score31_r]','$_POST[score32_r]','$_POST[score33_r]','$_POST[score34_r]','$_POST[score35_r]','$_POST[score36_r]','$_POST[score37_r]','$_POST[score38_r]','$_POST[score39_r]','$_POST[score40_r]',
-		'$_POST[score41_r]','$_POST[score42_r]','$_POST[score43_r]','$_POST[score44_r]','$_POST[score45_r]','$_POST[score46_r]','$_POST[score47_r]','$_POST[score48_r]','$_POST[score49_r]','$_POST[score50_r]','$_POST[score51_r]','$_POST[score52_r]','$_POST[score53_r]','$_POST[score54_r]','$_POST[score55_r]','$_POST[score56_r]','$_POST[score57_r]','$_POST[score58_r]','$_POST[score59_r]','$_POST[score60_r]',
-		'$_POST[score61_r]','$_POST[score62_r]','$_POST[score63_r]','$_POST[score64_r]','$_POST[score65_r]','$_POST[score66_r]','$_POST[score67_r]','$_POST[score68_r]','$_POST[score69_r]','$_POST[score70_r]','$_POST[score71_r]','$_POST[score72_r]','$_POST[score73_r]','$_POST[score74_r]','$_POST[score75_r]','$_POST[score76_r]','$_POST[score77_r]','$_POST[score78_r]','$_POST[score79_r]','$_POST[score80_r]',
-		'$_POST[score81_r]','$_POST[score82_r]','$_POST[score83_r]','$_POST[score84_r]','$_POST[score85_r]','$_POST[score86_r]','$_POST[score87_r]','$_POST[score88_r]','$_POST[score89_r]','$_POST[score90_r]','$_POST[score91_r]','$_POST[score92_r]','$_POST[score93_r]','$_POST[score94_r]','$_POST[score95_r]','$_POST[score96_r]')";
+	$sql = "INSERT INTO live_match_results (score1_r, score2_r, score3_r, score4_r, score5_r, score6_r, score7_r, score8_r, score9_r, score10_r, score11_r, score12_r, score13_r, score14_r, score15_r, score16_r, score17_r, score18_r, score19_r, score20_r, score21_r, score22_r, score23_r, score24_r, score25_r, score26_r, score27_r, score28_r, score29_r, score30_r, score31_r, score32_r, score33_r, score34_r, score35_r, score36_r, score37_r, score38_r, score39_r, score40_r, score41_r, score42_r, score43_r, score44_r, score45_r, score46_r, score47_r, score48_r, score49_r, score50_r, score51_r, score52_r, score53_r, score54_r, score55_r, score56_r, score57_r, score58_r, score59_r, score60_r, score61_r, score62_r, score63_r, score64_r, score65_r, score66_r, score67_r, score68_r, score69_r, score70_r, score71_r, score72_r, score73_r, score74_r, score75_r, score76_r, score77_r, score78_r, score79_r, score80_r, score81_r, score82_r, score83_r, score84_r, score85_r, score86_r, score87_r, score88_r, score89_r, score90_r, score91_r, score92_r, score93_r, score94_r, score95_r, score96_r, score97_r, score98_r, score99_r, score100_r, score101_r, score102_r, score103_r, score104_r, score105_r, score106_r, score107_r, score108_r, score109_r, score110_r, score111_r, score112_r, score113_r, score114_r, score115_r, score116_r, score117_r, score118_r, score119_r, score120_r, score121_r, score122_r, score123_r, score124_r, score125_r, score126_r, score127_r, score128_r)
+	VALUES ('$_POST[score1_r]','$_POST[score2_r]','$_POST[score3_r]','$_POST[score4_r]','$_POST[score5_r]','$_POST[score6_r]','$_POST[score7_r]','$_POST[score8_r]','$_POST[score9_r]','$_POST[score10_r]','$_POST[score11_r]','$_POST[score12_r]','$_POST[score13_r]','$_POST[score14_r]','$_POST[score15_r]','$_POST[score16_r]','$_POST[score17_r]','$_POST[score18_r]','$_POST[score19_r]','$_POST[score20_r]','$_POST[score21_r]','$_POST[score22_r]','$_POST[score23_r]',
+		'$_POST[score24_r]','$_POST[score25_r]','$_POST[score26_r]','$_POST[score27_r]','$_POST[score28_r]','$_POST[score29_r]','$_POST[score30_r]','$_POST[score31_r]','$_POST[score32_r]','$_POST[score33_r]','$_POST[score34_r]','$_POST[score35_r]','$_POST[score36_r]','$_POST[score37_r]','$_POST[score38_r]','$_POST[score39_r]','$_POST[score40_r]','$_POST[score41_r]','$_POST[score42_r]','$_POST[score43_r]','$_POST[score44_r]','$_POST[score45_r]','$_POST[score46_r]',
+		'$_POST[score47_r]','$_POST[score48_r]','$_POST[score49_r]','$_POST[score50_r]','$_POST[score51_r]','$_POST[score52_r]','$_POST[score53_r]','$_POST[score54_r]','$_POST[score55_r]','$_POST[score56_r]','$_POST[score57_r]','$_POST[score58_r]','$_POST[score59_r]','$_POST[score60_r]','$_POST[score61_r]','$_POST[score62_r]','$_POST[score63_r]','$_POST[score64_r]','$_POST[score65_r]','$_POST[score66_r]','$_POST[score67_r]','$_POST[score68_r]','$_POST[score69_r]',
+		'$_POST[score70_r]','$_POST[score71_r]','$_POST[score72_r]','$_POST[score73_r]','$_POST[score74_r]','$_POST[score75_r]','$_POST[score76_r]','$_POST[score77_r]','$_POST[score78_r]','$_POST[score79_r]','$_POST[score80_r]','$_POST[score81_r]','$_POST[score82_r]','$_POST[score83_r]','$_POST[score84_r]','$_POST[score85_r]','$_POST[score86_r]','$_POST[score87_r]','$_POST[score88_r]','$_POST[score89_r]','$_POST[score90_r]','$_POST[score91_r]','$_POST[score92_r]',
+		'$_POST[score93_r]','$_POST[score94_r]','$_POST[score95_r]','$_POST[score96_r]','$_POST[score97_r]','$_POST[score98_r]','$_POST[score99_r]','$_POST[score100_r]','$_POST[score101_r]','$_POST[score102_r]','$_POST[score103_r]','$_POST[score104_r]','$_POST[score105_r]','$_POST[score106_r]','$_POST[score107_r]','$_POST[score108_r]','$_POST[score109_r]','$_POST[score110_r]','$_POST[score111_r]','$_POST[score112_r]','$_POST[score113_r]','$_POST[score114_r]',
+		'$_POST[score115_r]','$_POST[score116_r]','$_POST[score117_r]','$_POST[score118_r]','$_POST[score119_r]','$_POST[score120_r]','$_POST[score121_r]','$_POST[score122_r]','$_POST[score123_r]','$_POST[score124_r]','$_POST[score125_r]','$_POST[score126_r]','$_POST[score127_r]','$_POST[score128_r]')";
 
 	// If the SQL query fails, produce related error message
 	if (!mysqli_query($con, $sql)) {
@@ -291,15 +292,27 @@ function insertPredictions() {
 	mysqli_close($con);
 }
 
+function insertRO16Predictions() {
+	// Connect to the database
+	include 'php/db-connect.php';
+	// SQL query to insert predictions initially
+	$sql_insert = "INSERT INTO live_user_predictions_ro16 (id, username, firstname, surname, score97_p, score98_p, score99_p, score100_p, score101_p, score102_p, score103_p, score104_p, score105_p, score106_p, score107_p, score108_p, score109_p, score110_p, score111_p, score112_p, lastupdate)
+			   VALUES ('{$_SESSION['id']}','{$_SESSION['username']}','{$_SESSION['firstname']}','{$_SESSION['surname']}','$_POST[score97_p]','$_POST[score98_p]','$_POST[score99_p]','$_POST[score100_p]','$_POST[score101_p]','$_POST[score102_p]','$_POST[score103_p]','$_POST[score104_p]','$_POST[score105_p]','$_POST[score106_p]','$_POST[score107_p]','$_POST[score108_p]','$_POST[score109_p]','$_POST[score110_p]',
+					 '$_POST[score111_p]','$_POST[score112_p]', NOW())";
+	mysqli_query($con, $sql_insert) or die('Error: ' . mysqli_error($con));
+	mysqli_close($con);
+}
+
 function submitPredictions() {
 	// Connect to the database
 	include 'php/db-connect.php';
 
-  	$sql_exists = "SELECT * FROM live_user_predictions_groups WHERE id='{$_SESSION['id']}'";
+  	//$sql_exists = "SELECT * FROM live_user_predictions_groups WHERE id='{$_SESSION['id']}'";
+		$sql_exists = "SELECT * FROM live_user_predictions_ro16 WHERE id='{$_SESSION['id']}'";
 
 	$result = mysqli_query($con, $sql_exists);
 	if(mysqli_num_rows($result) == 0) {
-		insertPredictions();
+		insertRO16Predictions();
 		/* Alert to check if predictions are inserted...
 		print '<script type="text/javascript">';
 		print 'alert("Predictions have been inserted! '. $_SESSION['firstname'].' '. $_SESSION['surname'].' yeah.")';
