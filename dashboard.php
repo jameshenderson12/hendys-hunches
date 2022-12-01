@@ -109,7 +109,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 									</div>
 									<div class="row">
 										<div class="col-sm-3">
-											<p class="small">Round of 16 fixtures:</p>
+											<p class="small">RO16 fixtures:</p>
 										</div>
 										<div class="col-sm-9">
 											<?php displayRO16MatchesPlayed() ?>
