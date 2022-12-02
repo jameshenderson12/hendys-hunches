@@ -539,6 +539,22 @@ function displayGroupMatchesPlayed() {
 	mysqli_close($con);
 }
 
+function checkSubmitted() {
+	// Create DB connection
+	include 'db-connect.php';
+	$un = $_SESSION["username"];
+	// Get team information from the DB	counting occurrences too
+	$sql_predstatus = "SELECT EXISTS SELECT username FROM live_user_predictions_ro16 WHERE username = $un";
+	$predstatus = mysqli_query($con, $sql_predstatus);
+	if ($predstatus = 1) {
+		consoleMsg($predstatus);
+		print("<p class='alert alert-success p-4'><i class='bi bi-check2-square text-success'></i> You've successfully submitted your predictions for the first knockout stage (Round of 16). Good luck.</p>");
+	}
+	else {
+		print("<p class='alert alert-danger p-4'><i class='bi bi-exclamation-square text-danger'></i> You still need to <a href='predictions.php' title='Submit your predictions'>submit your predictions</a> for the first knockout stage (Round of 16).</p>");
+	}
+}
+
 function displayRO16MatchesPlayed() {
 	// Create DB connection
 	include 'php/db-connect.php';

@@ -8,7 +8,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 <!DOCTYPE html>
 <html lang="en" class="h-100">
   <head>
-    <meta charset="utf-8">		
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Hendy's Hunches: Predictions Game">
     <meta name="author" content="James Henderson">
@@ -90,6 +90,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 							<div class="card">
 								<div class="card-body">
 									<h5 class="card-title">Status</h5>
+									<?php checkSubmitted() ?>
 									<div class="row">
 										<div class="col-md-3">
 											<p class="small">Matches played:</p>
