@@ -42,7 +42,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		              <a class="nav-link active" aria-current="page" href="dashboard.php">Home</a>
 		            </li>
 		            <li class="nav-item">
-		              <a class="nav-link disabled" href="predictions.php">Submit Predictions</a>
+		              <a class="nav-link" href="predictions.php">Submit Predictions</a>
 		            </li>
 								<li class="nav-item">
 		              <a class="nav-link" href="rankings.php">Rankings</a>
@@ -739,7 +739,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 									<td><span class="prediction"><?php echo $userdata['score95_p'] ?> - <?php echo $userdata['score96_p'] ?></span></td>
 									<td><?php if($matchids[47]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[47]."_r"], $matchresult["score".$evengameno[47]."_r"]); } else echo "N/A"; ?></td>
 									<td><?php if($matchids[47]) { echo $matchpoints[47]; } else { echo "-"; } ?></td>
-								</tr>								
+								</tr>
 								<tr>
 									<td class="small text-muted d-none d-md-block">RO16<br>03/12/2022</td>
 									<td style="text-align: right"><label for="score97_p"><?php echo $R1; ?></label></td>
