@@ -534,7 +534,7 @@ function displayGroupMatchesPlayed() {
 		//console.log($no_of_matches_played);
 		$percent_group_played = round($no_of_matches_played * 100 / 48);
 	}
-	print("<div class='progress'><div class='progress-bar' role='progressbar' aria-label='Competition progress bar' style='width: $percent_group_played%;' aria-valuenow='$percent_group_played' aria-valuemin='0' aria-valuemax='100'>$percent_group_played%</div></div>");
+	print("<div class='progress'><div class='progress-bar bg-success' role='progressbar' aria-label='Competition progress bar' style='width: $percent_group_played%;' aria-valuenow='$percent_group_played' aria-valuemin='0' aria-valuemax='100'>$percent_group_played%</div></div>");
 	// Close DB connection
 	mysqli_close($con);
 }
