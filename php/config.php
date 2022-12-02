@@ -276,20 +276,6 @@ function returnAvatar() {
 	print("<img src='$avatar' id='avatar' class='img-fluid rounded-circle mx-1' alt='User Avatar' name='User Avatar' width='25'> $firstname");
 }
 
-function checkSubmitted() {
-	// Create DB connection
-	include 'db-connect.php';
-	$un = $_SESSION["username"];
-	// Get team information from the DB	counting occurrences too
-	$sql_predstatus = "SELECT EXISTS SELECT username FROM live_user_predictions_groups WHERE username = $un";
-	$predstatus = mysqli_query($con, $sql_predstatus);
-	if ($predstatus = 1) {
-		consoleMsg($predstatus);
-		print("<p class='alert alert-success p-4'><span class='bi bi-check2-square text-success'></span> It appears that you have already submitted your predictions for this round. Good luck.</p>");
-	}
-	//print("<img src='$avatar' id='avatar' class='img-fluid rounded-circle mx-1' alt='User Avatar' name='User Avatar' width='25'> $firstname");
-}
-
 // Display an alert style message
 function alertMsg($msg) {
 	echo "<script type='text/javascript'>alert('Alert message: " . $msg . "');</script>";
