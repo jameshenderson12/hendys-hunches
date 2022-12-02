@@ -544,9 +544,9 @@ function checkSubmitted() {
 	include 'db-connect.php';
 	$un = $_SESSION["username"];
 	// Get team information from the DB	counting occurrences too
-	$sql_predstatus = "SELECT EXISTS (SELECT username FROM live_user_predictions_ro16 WHERE username = 'testuser')";
+	$sql_predstatus = "SELECT EXISTS (SELECT username FROM live_user_predictions_ro16 WHERE username = '".$_SESSION["username"]."')";
 	$predstatus = mysqli_query($con, $sql_predstatus);
-	if ($predstatus = 1) {
+	if ($predstatus > 0) {
 		consoleMsg($predstatus);
 		print("<p class='alert alert-success p-4'><i class='bi bi-check2-square text-success'></i> You've successfully submitted your predictions for the first knockout stage (Round of 16). Good luck.</p>");
 	}
