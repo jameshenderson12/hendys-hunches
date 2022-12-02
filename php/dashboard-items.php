@@ -542,9 +542,9 @@ function displayGroupMatchesPlayed() {
 function checkSubmitted() {
 	// Create DB connection
 	include 'db-connect.php';
-	//$un = $_SESSION["username"];
+	$un = $_SESSION["username"];
 	// Get team information from the DB	counting occurrences too
-	$sql_predstatus = "SELECT EXISTS 'SELECT username FROM live_user_predictions_ro16 WHERE username = ".$_SESSION['username']."' ";
+	$sql_predstatus = "SELECT EXISTS (SELECT username FROM live_user_predictions_ro16 WHERE username = $un)";
 	$predstatus = mysqli_query($con, $sql_predstatus);
 	if ($predstatus > 0) {
 		consoleMsg($predstatus);
