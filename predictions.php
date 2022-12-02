@@ -141,7 +141,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 
 	<main class="container px-4 py-4">
       <h1>My Predictions</h1>
-      <p class="lead">Round of 16</p>-->
+      <p class="lead">Round of 16</p>
       <p>To make your predictions, enter a score value into each box below and hit the 'Submit my predictions' button.</p>
 			<p class="alert alert-warning" id="submitMsg"><strong>Note:</strong> You must predict all 8 'Round of 16' fixtures before submitting! You only need to do this once.</p>
       <a name="matches"></a><!--anchor point for filters-->
