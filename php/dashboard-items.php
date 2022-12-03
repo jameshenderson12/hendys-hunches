@@ -542,7 +542,7 @@ function displayGroupMatchesPlayed() {
 function checkSubmitted() {
 	// Create DB connection
 	include 'db-connect.php';
-	$un = mysql_real_escape_string($_SESSION["username"]);
+	$un = $_SESSION["username"];
 	// Get team information from the DB	counting occurrences too
 	$sql_predstatus = printf("SELECT EXISTS ("SELECT username FROM live_user_predictions_ro16 WHERE username = '%s'")", $un);
 	$predstatus = mysqli_query($con, $sql_predstatus);
