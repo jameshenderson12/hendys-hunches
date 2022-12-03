@@ -81,7 +81,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					$sql_getuserinfo = "SELECT live_user_predictions_groups.*, live_user_predictions_ro16.*, live_user_information.avatar, live_user_information.faveteam, live_user_information.fieldofwork, live_user_information.location, live_user_information.tournwinner, live_user_information.currpos
 															FROM live_user_predictions_groups
 															INNER JOIN live_user_information ON live_user_predictions_groups.id = live_user_information.id
-															INNER JOIN live_user_information ON live_user_predictions_ro16.id = live_user_information.id
+															INNER JOIN live_user_predictions_ro16 ON live_user_predictions_groups.id = live_user_predictions_ro16.id
 															WHERE live_user_predictions_groups.id='".$_GET["id"]."'";
 
 					// Global SQL query strings
