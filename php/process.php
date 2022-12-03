@@ -435,6 +435,7 @@ function displayRankings() {
 	include 'php/db-connect.php';
 
 	// Set up SQL query to retrieve data from database tables
+	/*
 	$sql_maketable = "SELECT live_user_information.id, live_user_information.firstname, live_user_information.surname, live_user_information.avatar, live_user_information.faveteam, live_user_information.startpos, live_user_information.currpos, live_user_information.lastpos, live_user_predictions_groups.points_total,
 						FIND_IN_SET(points_total, (
 							SELECT GROUP_CONCAT( DISTINCT points_total
@@ -444,6 +445,12 @@ function displayRankings() {
 						FROM live_user_information
 						INNER JOIN live_user_predictions_groups ON live_user_information.id = live_user_predictions_groups.id
 						ORDER BY rank ASC, surname ASC";
+*/
+	$sql_maketable = "SELECT live_user_information.id, live_user_information.firstname, live_user_information.surname, live_user_information.avatar, live_user_information.faveteam, live_user_information.startpos, live_user_information.currpos, live_user_information.lastpos, live_user_predictions_groups.points_total as group_points, live_user_predictions_ro16.points_total as ro16_points, live_user_predictions_groups.points_total + live_user_predictions_ro16.points_total as points_total
+						FROM live_user_information
+						INNER JOIN live_user_predictions_groups ON live_user_information.id = live_user_predictions_groups.id
+						INNER JOIN live_user_predictions_ro16 ON live_user_information.id = live_user_predictions_ro16.id
+						ORDER BY points_total DESC, surname ASC";
 
 	$sql_matchresults = "SELECT * FROM live_match_results";
 
