@@ -168,7 +168,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 															const [hours, minutes] = timeValues.split(':');
 															const date = new Date(+year, +month - 1, +day, +hours, +minutes).toLocaleString().slice(0, -3);
 	                            fixture += '<tr>';
-															fixture += '<td class="small text-muted">' + value.Group + '</td>';
+															//fixture += '<td class="small text-muted">' + value.Group + '</td>';
 	                            fixture += '<td>' + value.HomeTeam + '</td>';
 															fixture += '<td><img src="' + homeTeamFlag + '" alt="Flag of ' + homeTeam + '" title="Flag of ' + homeTeam + '"></td>';
 															fixture += '<td><input type="text" id="score' + x + '_r" name="score' + x + '_r" class="form-control" /></td>';
