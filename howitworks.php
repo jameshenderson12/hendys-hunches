@@ -79,7 +79,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	      <ol>
 	      <li>Register to play (you're already registered! <span class="bi bi-check2-square text-success"></span>)</li>
 	      <li>Login using your registered username and password (you're already logged in! <span class="bi bi-check2-square text-success"></span>)</li>
-	      <li>Go to the '<a href="predictions.php" title="Predictions page">Submit Predictions</a>' page to fill out your predictions</li>
+	      <li>Go to the 'Submit Predictions' page to fill out your predictions</li>
 	      <li>Check the 'Rankings' page shortly after each match to see where you and your colleagues, friends or family stand</li>
 	      </ol>
 
