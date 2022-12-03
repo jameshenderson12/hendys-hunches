@@ -121,7 +121,10 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 							<div class="card mt-4">
 								<div class="card-body">
 									<h5 class="card-title">Announcements</h5>
-									<p class="alert alert-danger"><strong>Deadline (15:00 03/12/2022)</strong><br>Predict the next stage of the competition (round of 16) now! You have until 15:00 on 3rd December.</p>
+									<div class="alert alert-danger alert-dismissible fade show" role="alert">
+									  <strong>Deadline 15:00 today!</strong> Predict the next stage of the competition (round of 16) now. You have until 15:00 today.
+									  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+									</div>
 									<p class="alert alert-success"><strong>Supporting Charity Chosen</strong><br><img src="img/sands-logo.jpg" class="img-fluid p-2 mx-4" width="300px"><br>After careful consideration, <a href="https://www.sands.org.uk">SAMDS: Stillbirth and neonatal death charity</a> has been chosen in which £2 of your signup fee will go to. Thank you for contribution.</p>
 								</div>
 							</div>
