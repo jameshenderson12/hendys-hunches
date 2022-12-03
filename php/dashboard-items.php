@@ -544,10 +544,9 @@ function checkSubmitted() {
 	include 'db-connect.php';
 	$un = $_SESSION["username"];
 	// Get team information from the DB	counting occurrences too
-	$sql_predstatus = printf("SELECT EXISTS
-														SELECT username FROM live_user_predictions_ro16 WHERE username = '%s'", $un);
+	$sql_predstatus = sprintf("SELECT EXISTS (SELECT username FROM live_user_predictions_ro16 WHERE username = '%s')", $un);
 	$predstatus = mysqli_query($con, $sql_predstatus);
-	consoleMsg($predstatus);
+	//consoleMsg($predstatus);
 
 	if ($predstatus > 0) {
 		consoleMsg($predstatus);
