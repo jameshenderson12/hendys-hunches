@@ -83,6 +83,11 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 															ON live_user_predictions_groups.id = live_user_information.id
 															WHERE live_user_predictions_groups.id='".$_GET["id"]."'";
 
+					$sql_getuserro16 = "SELECT live_user_predictions_ro16.*, live_user_information.avatar, live_user_information.faveteam, live_user_information.fieldofwork, live_user_information.location, live_user_information.tournwinner, live_user_information.currpos
+															FROM live_user_predictions_ro16 INNER JOIN live_user_information
+															ON live_user_predictions_ro16.id = live_user_information.id
+															WHERE live_user_predictions_ro16.id='".$_GET["id"]."'";
+
 					// Global SQL query strings
 					$sql_getresults = "SELECT SUM(score1_r) as score1_r, SUM(score2_r) as score2_r, SUM(score3_r) as score3_r, SUM(score4_r) as score4_r, SUM(score5_r) as score5_r, SUM(score6_r) as score6_r, SUM(score7_r) as score7_r, SUM(score8_r) as score8_r, SUM(score9_r) as score9_r, SUM(score10_r) as score10_r,
 					SUM(score11_r) as score11_r, SUM(score12_r) as score12_r, SUM(score13_r) as score13_r, SUM(score14_r) as score14_r, SUM(score15_r) as score15_r, SUM(score16_r) as score16_r, SUM(score17_r) as score17_r, SUM(score18_r) as score18_r, SUM(score19_r) as score19_r, SUM(score20_r) as score20_r,
@@ -93,7 +98,9 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					SUM(score61_r) as score61_r, SUM(score62_r) as score62_r, SUM(score63_r) as score63_r, SUM(score64_r) as score64_r, SUM(score65_r) as score65_r, SUM(score66_r) as score66_r, SUM(score67_r) as score67_r, SUM(score68_r) as score68_r, SUM(score69_r) as score69_r, SUM(score70_r) as score70_r,
 					SUM(score71_r) as score71_r, SUM(score72_r) as score72_r, SUM(score73_r) as score73_r, SUM(score74_r) as score74_r, SUM(score75_r) as score75_r, SUM(score76_r) as score76_r, SUM(score77_r) as score77_r, SUM(score78_r) as score78_r, SUM(score79_r) as score79_r, SUM(score80_r) as score80_r,
 					SUM(score81_r) as score81_r, SUM(score82_r) as score82_r, SUM(score83_r) as score83_r, SUM(score84_r) as score84_r, SUM(score85_r) as score85_r, SUM(score86_r) as score86_r, SUM(score87_r) as score87_r, SUM(score88_r) as score88_r, SUM(score89_r) as score89_r, SUM(score90_r) as score90_r,
-					SUM(score91_r) as score91_r, SUM(score92_r) as score92_r, SUM(score93_r) as score93_r, SUM(score94_r) as score94_r, SUM(score95_r) as score95_r, SUM(score96_r) as score96_r FROM live_match_results";
+					SUM(score91_r) as score91_r, SUM(score92_r) as score92_r, SUM(score93_r) as score93_r, SUM(score94_r) as score94_r, SUM(score95_r) as score95_r, SUM(score96_r) as score96_r, SUM(score97_r) as score97_r, SUM(score98_r) as score98_r, SUM(score99_r) as score99_r, SUM(score100_r) as score100_r,
+					SUM(score101_r) as score101_r, SUM(score102_r) as score102_r, SUM(score103_r) as score103_r, SUM(score104_r) as score104_r, SUM(score105_r) as score105_r, SUM(score106_r) as score106_r, SUM(score107_r) as score107_r, SUM(score108_r) as score108_r, SUM(score109_r) as score109_r, SUM(score110_r) as score110_r,
+					SUM(score111_r) as score111_r, SUM(score112_r) as score112_r FROM live_match_results";
 
 					$sql_getid = "SELECT match_id FROM live_match_results";
 
@@ -104,6 +111,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					}
 
 					$userdata = mysqli_fetch_assoc(mysqli_query($con, $sql_getuserinfo));
+					$userdata2 = mysqli_fetch_assoc(mysqli_query($con, $sql_getuserro16));
 					$uppCaseFN = ucfirst($userdata["firstname"]);
 					$uppCaseSN = ucfirst($userdata["surname"]);
 					$userid = $userdata["id"];
@@ -114,6 +122,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					$tournwinner = $userdata["tournwinner"];
 					$currentpos = ordinal($userdata["currpos"]);
 					$pointstotal = $userdata["points_total"];
+					$pointstotal2 = $userdata2["points_total"];
 					$matchresult = mysqli_fetch_assoc(mysqli_query($con, $sql_getresults));
 
 		// Function for adding correct extention to a number
@@ -143,12 +152,12 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					$pvalue = mysqli_fetch_assoc(mysqli_query($con, $sql_getspecid));
 					$rvalue = mysqli_fetch_assoc(mysqli_query($con, $sql_getresults));
 
-					for ($gameno=1; $gameno<97; $gameno+=2) {
+					for ($gameno=1; $gameno<113; $gameno+=2) {
 							$oddgameno[] = $gameno;
 							$evengameno[] = $gameno + 1;
 					}
 
-					for ($i=0; $i<=48; $i++) {
+					for ($i=0; $i<=47; $i++) {
 							$matchpoints[$i] = 0;
 
 							if( is_numeric($pvalue["score".$oddgameno[$i]."_p"]) && is_numeric($pvalue["score".$evengameno[$i]."_p"]) ) {
@@ -166,6 +175,31 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 								if ((($pvalue["score".$oddgameno[$i]."_p"] > $pvalue["score".$evengameno[$i]."_p"]) && ($rvalue["score".$oddgameno[$i]."_r"] > $rvalue["score".$evengameno[$i]."_r"]))
 								|| (($pvalue["score".$oddgameno[$i]."_p"] < $pvalue["score".$evengameno[$i]."_p"]) && ($rvalue["score".$oddgameno[$i]."_r"] < $rvalue["score".$evengameno[$i]."_r"]))
 								|| (($pvalue["score".$oddgameno[$i]."_p"] === $pvalue["score".$evengameno[$i]."_p"]) && ($rvalue["score".$oddgameno[$i]."_r"] === $rvalue["score".$evengameno[$i]."_r"])) ) {
+									$matchpoints[$i] += 2;
+								}
+							}
+					}
+
+					$sql_getspecidro16 = "SELECT id, firstname, surname, score97_p, score98_p, score99_p, score100_p, score101_p, score102_p, score103_p, score104_p, score105_p, score106_p, score107_p, score108_p, score109_p, score110_p, score111_p, score112_p FROM live_user_predictions_ro16 WHERE id='".$userid."'";
+					$pval = mysqli_fetch_assoc(mysqli_query($con, $sql_getspecidro16));
+
+					for ($i=48; $i<=55; $i++) {
+							$matchpoints[$i] = 0;
+
+							if( is_numeric($pval["score".$oddgameno[$i]."_p"]) && is_numeric($pval["score".$evengameno[$i]."_p"]) ) {
+
+								if($pval["score".$oddgameno[$i]."_p"] === $rvalue["score".$oddgameno[$i]."_r"]) {
+									$matchpoints[$i] += 1;
+								}
+								if($pval["score".$evengameno[$i]."_p"] === $rvalue["score".$evengameno[$i]."_r"]) {
+									$matchpoints[$i] += 1;
+								}
+								if (($pval["score".$oddgameno[$i]."_p"] === $rvalue["score".$oddgameno[$i]."_r"]) && ($pval["score".$evengameno[$i]."_p"] === $rvalue["score".$evengameno[$i]."_r"])) {
+									$matchpoints[$i] += 3;
+								}
+								if ((($pval["score".$oddgameno[$i]."_p"] > $pval["score".$evengameno[$i]."_p"]) && ($rvalue["score".$oddgameno[$i]."_r"] > $rvalue["score".$evengameno[$i]."_r"]))
+								|| (($pval["score".$oddgameno[$i]."_p"] < $pval["score".$evengameno[$i]."_p"]) && ($rvalue["score".$oddgameno[$i]."_r"] < $rvalue["score".$evengameno[$i]."_r"]))
+								|| (($pval["score".$oddgameno[$i]."_p"] === $pval["score".$evengameno[$i]."_p"]) && ($rvalue["score".$oddgameno[$i]."_r"] === $rvalue["score".$evengameno[$i]."_r"])) ) {
 									$matchpoints[$i] += 2;
 								}
 							}
@@ -747,7 +781,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 									<td align="center"><span>v</span></td>
 									<td><img src="<?php echo $R2img; ?>" alt="<?php echo $R2; ?>" title="<?php echo $R2; ?>"></td>
 									<td class="right-team"><label for="score98_p"><?php echo $R2; ?></label></td>
-									<td><span class="prediction"><?php echo $userdata['score97_p'] ?> - <?php echo $userdata['score98_p'] ?></span></td>
+									<td><span class="prediction"><?php echo $userdata2['score97_p'] ?> - <?php echo $userdata2['score98_p'] ?></span></td>
 									<td><?php if($matchids[48]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[48]."_r"], $matchresult["score".$evengameno[48]."_r"]); } else echo "N/A"; ?></td>
 									<td><?php if($matchids[48]) { echo $matchpoints[48]; } else { echo "-"; } ?></td>
 								</tr>
@@ -758,7 +792,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 									<td align="center"><span>v</span></td>
 									<td><img src="<?php echo $R4img; ?>" alt="<?php echo $R4; ?>" title="<?php echo $R4; ?>"></td>
 									<td class="right-team"><label for="score100_p"><?php echo $R4; ?></label></td>
-									<td><span class="prediction"><?php echo $userdata['score99_p'] ?> - <?php echo $userdata['score100_p'] ?></span></td>
+									<td><span class="prediction"><?php echo $userdata2['score99_p'] ?> - <?php echo $userdata2['score100_p'] ?></span></td>
 									<td><?php if($matchids[49]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[49]."_r"], $matchresult["score".$evengameno[49]."_r"]); } else echo "N/A"; ?></td>
 									<td><?php if($matchids[49]) { echo $matchpoints[49]; } else { echo "-"; } ?></td>
 								</tr>
@@ -769,7 +803,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 									<td align="center"><span>v</span></td>
 									<td><img src="<?php echo $R6img; ?>" alt="<?php echo $R6; ?>" title="<?php echo $R6; ?>"></td>
 									<td class="right-team"><label for="score102_p"><?php echo $R6; ?></label></td>
-									<td><span class="prediction"><?php echo $userdata['score101_p'] ?> - <?php echo $userdata['score102_p'] ?></span></td>
+									<td><span class="prediction"><?php echo $userdata2['score101_p'] ?> - <?php echo $userdata2['score102_p'] ?></span></td>
 									<td><?php if($matchids[50]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[50]."_r"], $matchresult["score".$evengameno[50]."_r"]); } else echo "N/A"; ?></td>
 									<td><?php if($matchids[50]) { echo $matchpoints[50]; } else { echo "-"; } ?></td>
 								</tr>
@@ -780,7 +814,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 									<td align="center"><span>v</span></td>
 									<td><img src="<?php echo $R8img; ?>" alt="<?php echo $R8; ?>" title="<?php echo $R8; ?>"></td>
 									<td class="right-team"><label for="score104_p"><?php echo $R8; ?></label></td>
-									<td><span class="prediction"><?php echo $userdata['score103_p'] ?> - <?php echo $userdata['score104_p'] ?></span></td>
+									<td><span class="prediction"><?php echo $userdata2['score103_p'] ?> - <?php echo $userdata2['score104_p'] ?></span></td>
 									<td><?php if($matchids[51]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[51]."_r"], $matchresult["score".$evengameno[51]."_r"]); } else echo "N/A"; ?></td>
 									<td><?php if($matchids[51]) { echo $matchpoints[51]; } else { echo "-"; } ?></td>
 								</tr>
@@ -791,7 +825,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 									<td align="center"><span>v</span></td>
 									<td><img src="<?php echo $R10img; ?>" alt="<?php echo $R10; ?>" title="<?php echo $R10; ?>"></td>
 									<td class="right-team"><label for="score106_p"><?php echo $R10; ?></label></td>
-									<td><span class="prediction"><?php echo $userdata['score105_p'] ?> - <?php echo $userdata['score106_p'] ?></span></td>
+									<td><span class="prediction"><?php echo $userdata2['score105_p'] ?> - <?php echo $userdata2['score106_p'] ?></span></td>
 									<td><?php if($matchids[52]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[52]."_r"], $matchresult["score".$evengameno[52]."_r"]); } else echo "N/A"; ?></td>
 									<td><?php if($matchids[52]) { echo $matchpoints[52]; } else { echo "-"; } ?></td>
 								</tr>
@@ -802,7 +836,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 									<td align="center"><span>v</span></td>
 									<td><img src="<?php echo $R12img; ?>" alt="<?php echo $R12; ?>" title="<?php echo $R12; ?>"></td>
 									<td class="right-team"><label for="score108_p"><?php echo $R12; ?></label></td>
-									<td><span class="prediction"><?php echo $userdata['score107_p'] ?> - <?php echo $userdata['score108_p'] ?></span></td>
+									<td><span class="prediction"><?php echo $userdata2['score107_p'] ?> - <?php echo $userdata2['score108_p'] ?></span></td>
 									<td><?php if($matchids[53]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[53]."_r"], $matchresult["score".$evengameno[53]."_r"]); } else echo "N/A"; ?></td>
 									<td><?php if($matchids[53]) { echo $matchpoints[53]; } else { echo "-"; } ?></td>
 								</tr>
@@ -813,7 +847,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 									<td align="center"><span>v</span></td>
 									<td><img src="<?php echo $R14img; ?>" alt="<?php echo $R14; ?>" title="<?php echo $R14; ?>"></td>
 									<td class="right-team"><label for="score110_p"><?php echo $R14; ?></label></td>
-									<td><span class="prediction"><?php echo $userdata['score109_p'] ?> - <?php echo $userdata['score110_p'] ?></span></td>
+									<td><span class="prediction"><?php echo $userdata2['score109_p'] ?> - <?php echo $userdata2['score110_p'] ?></span></td>
 									<td><?php if($matchids[54]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[54]."_r"], $matchresult["score".$evengameno[54]."_r"]); } else echo "N/A"; ?></td>
 									<td><?php if($matchids[54]) { echo $matchpoints[54]; } else { echo "-"; } ?></td>
 								</tr>
@@ -824,7 +858,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 									<td align="center"><span>v</span></td>
 									<td><img src="<?php echo $R16img; ?>" alt="<?php echo $R16; ?>" title="<?php echo $R16; ?>"></td>
 									<td class="right-team"><label for="score112_p"><?php echo $R16; ?></label></td>
-									<td><span class="prediction"><?php echo $userdata['score111_p'] ?> - <?php echo $userdata['score112_p'] ?></span></td>
+									<td><span class="prediction"><?php echo $userdata2['score111_p'] ?> - <?php echo $userdata2['score112_p'] ?></span></td>
 									<td><?php if($matchids[55]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[55]."_r"], $matchresult["score".$evengameno[55]."_r"]); } else echo "N/A"; ?></td>
 									<td><?php if($matchids[55]) { echo $matchpoints[55]; } else { echo "-"; } ?></td>
 								</tr>

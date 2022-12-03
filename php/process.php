@@ -170,6 +170,99 @@ function compareValues() {
 	updateMoveStatus();
 }
 
+function compareRO16Values() {
+	// Initialise global variables
+	$identical_points = 3;
+	$outcome_points = 2;
+	$score_points = 1;
+	$blank_points = 0;
+	$ids = array();
+
+	// Connect to the database
+	include '../php/db-connect.php';
+
+	// Global SQL query strings
+	$sql_getresults = "SELECT SUM(score97_r) as score97_r, SUM(score98_r) as score98_r, SUM(score99_r) as score99_r, SUM(score100_r) as score100_r, SUM(score101_r) as score101_r, SUM(score102_r) as score102_r, SUM(score103_r) as score103_r, SUM(score104_r) as score104_r, SUM(score105_r) as score105_r, SUM(score106_r) as score106_r,
+	SUM(score107_r) as score107_r, SUM(score108_r) as score108_r, SUM(score109_r) as score109_r, SUM(score110_r) as score110_r, SUM(score111_r) as score111_r, SUM(score112_r) as score112_r FROM live_match_results";
+	$sql_getusernames = "SELECT username FROM live_user_predictions_ro16";
+	$sql_setzero = "UPDATE live_user_predictions_ro16 SET points_total = 0";
+
+	// Return all match fixtures (ids)
+	$sql_getmatchid = "SELECT match_id FROM live_match_results";
+
+	// Create an array of match ids
+	$list_of_matchids = mysqli_query($con, $sql_getmatchid);
+	while($row = mysqli_fetch_array($list_of_matchids)) {
+		$matchids[] = $row['match_id'];
+	}
+
+	// Create an array of usernames
+	mysqli_query($con, $sql_setzero);
+	$list_of_usernames = mysqli_query($con, $sql_getusernames);
+	while($row = mysqli_fetch_array($list_of_usernames)) {
+		$usernames[] = $row['username'];
+	}
+	// Check all predictions for any matched scores against results
+	foreach ($usernames as $usernamevalue) {
+
+		// SQL query strings to be looped on username value
+		$sql_getspecificuser = "SELECT username, firstname, surname, score97_p, score98_p, score99_p, score100_p, score101_p, score102_p, score103_p, score104_p, score105_p, score106_p, score107_p, score108_p, score109_p, score110_p, score111_p, score112_p FROM live_user_predictions_ro16 WHERE username='".$usernamevalue."'";
+		$sql_setblankpoints = "UPDATE live_user_predictions_ro16 SET points_total = points_total + '".$blank_points."' WHERE username='".$usernamevalue."'";
+		$sql_setscorepoints = "UPDATE live_user_predictions_ro16 SET points_total = points_total + '".$score_points."' WHERE username='".$usernamevalue."'";
+
+		$pvalue = mysqli_fetch_assoc(mysqli_query($con, $sql_getspecificuser));
+		$rvalue = mysqli_fetch_assoc(mysqli_query($con, $sql_getresults));
+
+
+		// Determine a matched score for home or away result
+		//==================================================
+		// Cycle through the number of potential matches (e.g. 1-48)
+		$length = sizeof($matchids) * 2;
+
+		for ($i=97; $i<=$length; $i++) {
+			if($pvalue["score".$i."_p"] === $rvalue["score".$i."_r"]) {
+				//printf ("%s %s's Prediction: %s, Result: %s", $pvalue["firstname"], $pvalue["surname"], $pvalue["score".$i."_p"], $rvalue["score".$i."_r"]);
+				mysqli_query($con, $sql_setscorepoints);
+				//print "<br />The results are a match - well done!<br /><br />";
+			}
+			else {
+				//printf ("%s %s's Prediction: %s, Result: %s", $pvalue["firstname"], $pvalue["surname"], $pvalue["score".$i."_p"], $rvalue["score".$i."_r"]);
+				//print "<br />No match - better luck next time!<br /><br />";
+			}
+		}
+
+		// Determine a correct match outcome (home win/away win/draw)
+		//===========================================================
+		// Cycle through the home and away scores
+
+		for ($j=97, $k=98; $j<=$length, $k<=$length; $j+=2, $k+=2) {
+
+			$sql_setoutcomepoints = "UPDATE live_user_predictions_ro16 SET points_total = points_total + '".$outcome_points."' WHERE username='".$usernamevalue."'";
+			$sql_setidenticalpoints = "UPDATE live_user_predictions_ro16 SET points_total = points_total + '".$identical_points."' WHERE username='".$usernamevalue."'";
+
+		if( is_numeric($pvalue["score".$j."_p"]) && is_numeric($pvalue["score".$k."_p"]) ) {
+
+				if ( (($pvalue["score".$j."_p"] > $pvalue["score".$k."_p"]) && ($rvalue["score".$j."_r"] > $rvalue["score".$k."_r"])) || (($pvalue["score".$j."_p"] < $pvalue["score".$k."_p"]) && ($rvalue["score".$j."_r"] < $rvalue["score".$k."_r"])) || (($pvalue["score".$j."_p"] === $pvalue["score".$k."_p"]) && ($rvalue["score".$j."_r"] === $rvalue["score".$k."_r"])) ) {
+					mysqli_query($con, $sql_setoutcomepoints);
+				}
+
+				// Determine if identical match result
+				//====================================
+				if ( ($pvalue["score".$j."_p"] === $rvalue["score".$j."_r"]) && ($pvalue["score".$k."_p"] === $rvalue["score".$k."_r"]) ) {
+					mysqli_query($con, $sql_setidenticalpoints);
+					//printf ("%s %s's Exact Match for game above!<br />", $pvalue["firstname"], $pvalue["surname"]);
+				}
+			}
+		}
+		mysqli_free_result($pvalue);
+		mysqli_free_result($rvalue);
+	}
+	// Close the database connection
+	mysqli_close($con);
+	// Now update the move indicators within the rankings table
+	updateMoveStatus();
+}
+
 function insertMatchResult() {
 	// Connect to the database
 	include '../php/db-connect.php';
@@ -190,7 +283,8 @@ function insertMatchResult() {
 	// Close the DB connection
 	mysqli_close($con);
 	// Now update table by comparing match results against user predictions
-	compareValues();
+	//compareValues();
+	compareRO16Values();
 }
 
 function updateTotalUsers() {
