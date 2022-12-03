@@ -79,8 +79,9 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 
 					// Set up variable to capture result of SQL query to retrieve data from database tables
 					$sql_getuserinfo = "SELECT live_user_predictions_groups.*, live_user_information.avatar, live_user_information.faveteam, live_user_information.fieldofwork, live_user_information.location, live_user_information.tournwinner, live_user_information.currpos
-															FROM live_user_predictions_groups INNER JOIN live_user_information
-															ON live_user_predictions_groups.id = live_user_information.id
+															FROM live_user_predictions_groups
+															INNER JOIN live_user_information ON live_user_predictions_groups.id = live_user_information.id
+															INNER JOIN live_user_information ON live_user_predictions_ro16.id = live_user_information.id
 															WHERE live_user_predictions_groups.id='".$_GET["id"]."'";
 
 					// Global SQL query strings
