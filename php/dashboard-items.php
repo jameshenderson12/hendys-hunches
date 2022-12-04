@@ -567,7 +567,7 @@ function displayRO16MatchesPlayed() {
 		$no_of_matches_played = $row["matches_played"];
 		$no_of_ro16_matches_played = $no_of_matches_played - 48;
 		//console.log($no_of_matches_played);
-		$percent_ro16_played = round($no_of_ro16_matches_played * 100 / 48);
+		$percent_ro16_played = round($no_of_ro16_matches_played * 100 / 8);
 	}
 	print("<div class='progress'><div class='progress-bar' role='progressbar' aria-label='Competition progress bar' style='width: $percent_ro16_played%;' aria-valuenow='$percent_ro16_played' aria-valuemin='0' aria-valuemax='100'>$percent_ro16_played%</div></div>");
 	//print("<div class='progress'><div class='progress-bar' role='progressbar' aria-label='Competition progress bar' style='width: 0%;' aria-valuenow='0' aria-valuemin='0' aria-valuemax='100'></div></div>");
