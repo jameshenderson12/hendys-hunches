@@ -147,13 +147,13 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 							<div class="card mt-4">
 								<div class="card-body">
 									<h5 class="card-title">Current top 5</h5>
-									<?php displayTopRankings() ?>
+									<!--<?php displayTopRankings() ?>-->
 								</div>
 							</div>
 							<div class="card mt-4">
 								<div class="card-body">
 									<h5 class="card-title">Current bottom 5</h5>
-									<?php displayBottomRankings() ?>
+									<!--<?php displayBottomRankings() ?>-->
 								</div>
 							</div>
 							<!--
