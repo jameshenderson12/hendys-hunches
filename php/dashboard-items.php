@@ -273,11 +273,11 @@ function displayCharityInformation() {
 		$countoftotalusers = $row["totalusers"];
 		$donation = ($countoftotalusers * 2);
 	}*/
-	print("<div class='row'><div class='col-md-6'><a href='https://www.sands.org.uk' target='_blank' title='Sands charity website'><img src='img/sands-logo.jpg' class='img-fluid p-2 mx-4' width='300px'></a></div><div class='col-xs-6'><p><font size='+4'><strong>£72</strong></font><br>has been donated!</p><p class='label label-success'>Thank you so much!</p></div></div>");
+	print("<div class='row'><div class='col-md-6'><a href='https://www.sands.org.uk' target='_blank' title='Sands charity website'><img src='img/sands-logo.jpg' class='img-fluid' width='300px'></a></div><div class='col-xs-4'><p><font size='+4'><strong>£72</strong></font><br>has been donated!</p><p class='label label-success'>Thank you so much!</p></div></div>");
 	//printf("<p><strong>Hendy's Hunches donation:</strong> £%d.00 (40&#37; from entry fees)", $donation);
 	//print("<span class='label label-success'>A huge thank you to all players!</span>");
-	print("<p><strong>Thanks to your participation, Hendy's Hunches has been able to donate £72</strong>:</p>");
-	print("<ul type='none'>");
+	print("<p><strong>Thanks to your participation, Hendy's Hunches has been able to donate £72</strong> for Sands to do any of the following:</p>");
+	print("<ul>");
 	print("<li>provide <strong>4</strong> bereaved families with a memory box to help create and keep safe precious and lasting memories of their baby</li>");
 	print("<li>answer <strong>2</strong> calls from someone reaching out for support who has been through pregnancy loss or the death of a baby</li>");
 	print("<li>help ensure every hospital in the UK has a dedicated Sands volunteer to help healthcare professionals access our training, guidance and support</li>");
