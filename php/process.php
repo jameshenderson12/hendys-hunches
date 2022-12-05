@@ -528,9 +528,9 @@ function displayRankings2() {
 	$result = mysqli_query($con, $sql_matchresults) or die(mysqli_error());
 	// Start creating the table to display the returned values
 	print "<table class='table table-striped' style='background-color:#FFF'>";
-	//print "<tr><th></th><th>Rank</th><th>Move</th><th>Player</th><th>Favourite Team</th><th>Points</th></tr>";
-	print "<tr><th></th><th>Player</th><th>Points</th></tr>";
-	$rowcount = 0;
+	print "<tr><th></th><th>Rank</th><th>Move</th><th>Player</th><th>Points</th></tr>";
+	//print "<tr><th>Rank</th><th>Player</th><th>Points</th></tr>";
+	$rowcount = 1;
 	while ($row = mysqli_fetch_assoc($table)) {
 		 console_log($row);
 		// Check if match results table contains any data
@@ -561,8 +561,8 @@ function displayRankings2() {
 		$uppCaseSN = ucfirst($row["surname"]);
 		// Display the table complete with all data variables
 		printf ("<td></td>");
-		//printf ("<td><strong>%s</strong> <span class='text-muted'>(%s)</span></td>", $rank, $row["lastpos"]);
-		//printf ("<td>%s %s</td>", $move, $diff);
+		printf ("<td><strong>%s</strong> <span class='text-muted'>(%s)</span></td>", $rank, $row["lastpos"]);
+		printf ("<td>%s %s</td>", $move, $diff);
 		printf ("<td><img src=".$row["avatar"]." class='img-responsive pull-left' width='20px'>&nbsp;<a href='user.php?id=%s'>%s %s</a></td>", $row["id"], $uppCaseFN, $uppCaseSN);
 		//printf ("<td>%s</td>", $row["faveteam"]);
 		printf ("<td>%s</td>", $row["points_total"]);
