@@ -446,12 +446,7 @@ function displayRankings() {
 						INNER JOIN live_user_predictions_groups ON live_user_information.id = live_user_predictions_groups.id
 						ORDER BY rank ASC, surname ASC";
 */
-	$sql_maketable = "SELECT live_user_information.id, live_user_information.firstname, live_user_information.surname, live_user_information.avatar, live_user_information.faveteam, live_user_information.startpos, live_user_information.currpos, live_user_information.lastpos, live_user_predictions_groups.points_total as group_points, live_user_predictions_ro16.points_total as ro16_points, live_user_predictions_groups.points_total + live_user_predictions_ro16.points_total as points_total,
-						FIND_IN_SET(points_total, (
-							SELECT GROUP_CONCAT( DISTINCT points_total
-							ORDER BY points_total DESC )
-							FROM live_user_predictions_groups )
-						) AS rank
+	$sql_maketable = "SELECT live_user_information.id, live_user_information.firstname, live_user_information.surname, live_user_information.avatar, live_user_information.faveteam, live_user_information.startpos, live_user_information.currpos, live_user_information.lastpos, live_user_predictions_groups.points_total as group_points, live_user_predictions_ro16.points_total as ro16_points, live_user_predictions_groups.points_total + live_user_predictions_ro16.points_total as points_total 
 						FROM live_user_information
 						INNER JOIN live_user_predictions_groups ON live_user_information.id = live_user_predictions_groups.id
 						INNER JOIN live_user_predictions_ro16 ON live_user_information.id = live_user_predictions_ro16.id
@@ -468,17 +463,16 @@ function displayRankings() {
 	print "<table class='table table-striped' style='background-color:#FFF'>";
 	print "<tr><th></th><th>Rank</th><th>Move</th><th>Player</th><th>Favourite Team</th><th>Points</th></tr>";
 
-	$rank = 0;
 	while ($row = mysqli_fetch_assoc($table)) {
+
 		// Check if match results table contains any data
 		if (mysqli_num_rows($result) == 0) {
 			// Set rank value to start position value if there is no match data
 			$rank = $row["startpos"];
 		}
 		else {
-			$rank++;
 			// Set rank value to rank position once match data exists
-			//$rank = $row["rank"];
+			$rank = $row["rank"];
 		}
 
 		// Determine if move is upwards, downwards or the same and calculate the difference between current and previous ranking
@@ -502,7 +496,7 @@ function displayRankings() {
 
 		// Display the table complete with all data variables
 		printf ("<td></td>");
-		printf ("<td><strong>%s</strong> <span class='text-muted'>(%s)</span></td>", $rank, $row["lastpos"]);
+		//printf ("<td><strong>%s</strong> <span class='text-muted'>(%s)</span></td>", $rank, $row["lastpos"]);
 		//printf ("<td>%s %s</td>", $move, $diff);
 		printf ("<td><img src=".$row["avatar"]." class='img-responsive pull-left' width='20px'>&nbsp;<a href='user.php?id=%s'>%s %s</a></td>", $row["id"], $uppCaseFN, $uppCaseSN);
 		//printf ("<td>%s</td>", $row["faveteam"]);
