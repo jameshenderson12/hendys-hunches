@@ -462,7 +462,7 @@ function displayRankings() {
 	// Start creating the table to display the returned values
 	print "<table class='table table-striped' style='background-color:#FFF'>";
 	//print "<tr><th></th><th>Rank</th><th>Move</th><th>Player</th><th>Favourite Team</th><th>Points</th></tr>";
-	print "<tr><th>Player</th><th>Points</th></tr>";
+	print "<tr><th></th><th>Player</th><th>Points</th></tr>";
 
 	while ($row = mysqli_fetch_assoc($table)) {
 
