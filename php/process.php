@@ -512,6 +512,70 @@ function displayRankings() {
 	mysqli_close($con);
 }
 
+
+function displayRankings2() {
+	// Connect to the database
+	include 'php/db-connect.php';
+	$sql_maketable = "SELECT live_user_information.id, live_user_information.firstname, live_user_information.surname, live_user_information.avatar, live_user_information.faveteam, live_user_information.startpos, live_user_information.currpos, live_user_information.lastpos, live_user_predictions_groups.points_total as group_points, live_user_predictions_ro16.points_total as ro16_points, live_user_predictions_groups.points_total + live_user_predictions_ro16.points_total as points_total
+						FROM live_user_information
+						INNER JOIN live_user_predictions_groups ON live_user_information.id = live_user_predictions_groups.id
+						INNER JOIN live_user_predictions_ro16 ON live_user_information.id = live_user_predictions_ro16.id
+						ORDER BY points_total DESC, surname ASC";
+	$sql_matchresults = "SELECT * FROM live_match_results";
+	// Execute the query and return the results or display an appropriate error message
+	$table = mysqli_query($con, $sql_maketable) or die(mysqli_error());
+	// Execute the query to see if match results table contains any data
+	$result = mysqli_query($con, $sql_matchresults) or die(mysqli_error());
+	// Start creating the table to display the returned values
+	print "<table class='table table-striped' style='background-color:#FFF'>";
+	//print "<tr><th></th><th>Rank</th><th>Move</th><th>Player</th><th>Favourite Team</th><th>Points</th></tr>";
+	print "<tr><th></th><th>Player</th><th>Points</th></tr>";
+
+	while ($row = mysqli_fetch_assoc($table)) {
+		 console_log($row);
+		// Check if match results table contains any data
+		if (mysqli_num_rows($result) == 0) {
+			// Set rank value to start position value if there is no match data
+			$rank = $row["startpos"];
+		}
+		else {
+			// Set rank value to rank position once match data exists
+			$rank = $row["rank"];
+		}
+		// Determine if move is upwards, downwards or the same and calculate the difference between current and previous ranking
+		if ($row["lastpos"] > $row["currpos"]) {
+			$diff = $row["lastpos"] - $row["currpos"];
+			$move = "<i class='bi bi-arrow-up-circle-fill text-success'></i>";
+		}
+		if ($row["lastpos"] < $row["currpos"]) {
+			$diff = $row["currpos"] - $row["lastpos"];
+			$move = "<i class='bi bi-arrow-down-circle-fill text-danger'></i>";
+		}
+		if ($row["lastpos"] == $row["currpos"]) {
+			$diff = 0;
+			$move = "<i class='bi bi-arrow-right-circle-fill text-secondary'></i>";
+		}
+		print "<tr>";
+		// Ensure both name variables being with upper case letters
+		$uppCaseFN = ucfirst($row["firstname"]);
+		$uppCaseSN = ucfirst($row["surname"]);
+		// Display the table complete with all data variables
+		printf ("<td></td>");
+		//printf ("<td><strong>%s</strong> <span class='text-muted'>(%s)</span></td>", $rank, $row["lastpos"]);
+		//printf ("<td>%s %s</td>", $move, $diff);
+		printf ("<td><img src=".$row["avatar"]." class='img-responsive pull-left' width='20px'>&nbsp;<a href='user.php?id=%s'>%s %s</a></td>", $row["id"], $uppCaseFN, $uppCaseSN);
+		//printf ("<td>%s</td>", $row["faveteam"]);
+		printf ("<td>%s</td>", $row["points_total"]);
+		print "</tr>";
+	}
+	// Complete the physical table layout
+	print "</tr>";
+	print "</table>";
+	// Close the database connection
+	mysqli_close($con);
+}
+
+
 function displayInfo() {
 	// Connect to the database
 	//include 'php/db-connect.php';
