@@ -580,12 +580,18 @@ function displayPersonalInfo() {
 	// Get team information from the DB	counting occurrences too
 	$sql_getprofileinfo1 = "SELECT avatar, faveteam, fieldofwork, location, tournwinner, signupdate, haspaid, currpos FROM live_user_information WHERE username = '".$_SESSION["username"]."'";
 	$sql_getprofileinfo2 = "SELECT lastupdate, points_total FROM live_user_predictions_groups WHERE username = '".$_SESSION["username"]."'";
+	$sql_getpointstotal = "SELECT live_user_predictions_groups.points_total as group_points, live_user_predictions_ro16.points_total as ro16_points, live_user_predictions_groups.points_total + live_user_predictions_ro16.points_total as points_total
+						FROM live_user_predictions_groups
+						INNER JOIN live_user_predictions_ro16 ON live_user_information.id = live_user_predictions_ro16.id
+						WHERE username = '".$_SESSION["username"]."'";
 
 	// Obtain the SQL query result and set corresponding result variables
 	$result1 = mysqli_query($con, $sql_getprofileinfo1);
 	$userdata1 = mysqli_fetch_assoc($result1);
 	$result2 = mysqli_query($con, $sql_getprofileinfo2);
 	$userdata2 = mysqli_fetch_assoc($result2);
+	$result3 = mysqli_query($con, $sql_getpointstotal);
+	$userdata3 = mysqli_fetch_assoc($result3);
 	// Assign returned data to variables
 	$uppCaseFN = ucfirst($userdata1["firstname"]);
 	$uppCaseSN = ucfirst($userdata1["surname"]);
@@ -597,7 +603,7 @@ function displayPersonalInfo() {
 	$originalsignupdate = $userdata1["signupdate"];
 	$haspaid = $userdata1["haspaid"];
 	$currpos = ordinal($userdata1["currpos"]);
-	$pointstotal = $userdata2["points_total"];
+	$pointstotal = $userdata3["points_total"];
 	$convertedDate = date("l jS \of F", strtotime($originalsignupdate));
 	//$matchresult = mysqli_fetch_assoc(mysqli_query($con, $sql_getresults));
 
