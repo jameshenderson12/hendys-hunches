@@ -273,19 +273,16 @@ function displayCharityInformation() {
 		$countoftotalusers = $row["totalusers"];
 		$donation = ($countoftotalusers * 2);
 	}*/
-	print("<div class='row'><div class='col-xs-6'><a href='https://www.thecalmzone.net/' target='_blank' title='CALM charity website'><img src='img/calm-logo-dark-blue.png' class='img-responsive'></a></div><div class='col-xs-6'><p><font size='+4'><strong>£108</strong></font><br>has been donated!</p><p class='label label-success'>Thank you so much!</p></div></div>");
-	//print("<h1>£108 donated<h1>");
+	print("<div class='row'><div class='col-md-6'><a href='https://www.sands.org.uk' target='_blank' title='Sands charity website'><img src='img/sands-logo.jpg' class='img-fluid p-2 mx-4' width='300px'></a></div><div class='col-xs-6'><p><font size='+4'><strong>£72</strong></font><br>has been donated!</p><p class='label label-success'>Thank you so much!</p></div></div>");
 	//printf("<p><strong>Hendy's Hunches donation:</strong> £%d.00 (40&#37; from entry fees)", $donation);
 	//print("<span class='label label-success'>A huge thank you to all players!</span>");
-	print("<p><strong>Hendy's Hunches has donated £108*</strong> which is equivalent to helping CALM...</p>");
+	print("<p><strong>Thanks to your participation, Hendy's Hunches has been able to donate £72</strong>:</p>");
 	print("<ul type='none'>");
-	print("<li>answer <font size='+1'>13</font> potentially life-saving calls <span class='label label-primary'>or</span></li>");
-	print("<li>equip <font size='+1'>5</font> campaigners with CALM materials <span class='label label-primary'>or</span></li>");
-	print("<li>run their website for <font size='+1'>24</font> hours <span class='label label-primary'>or</span></li>");
-	print("<li>one of each of these combined!</li>");
+	print("<li>provide <strong>4</strong> bereaved families with a memory box to help create and keep safe precious and lasting memories of their baby</li>");
+	print("<li>answer <strong>2</strong> calls from someone reaching out for support who has been through pregnancy loss or the death of a baby</li>");
+	print("<li>help ensure every hospital in the UK has a dedicated Sands volunteer to help healthcare professionals access our training, guidance and support</li>");
 	//print("<li></li>");
 	print("</ul>");
-	print("<p class='text-right'><font size='-2'>*22&#37; of your entry fees</font></p>");
 	//print("<img src='img/calm-values.png' class='img-responsive'>");
 	// Free result set
 	//mysqli_free_result($totalusers);

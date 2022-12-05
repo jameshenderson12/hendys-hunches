@@ -127,7 +127,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 									  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 									</div>
 									-->
-									<p class="alert alert-success"><strong>Supporting Charity Chosen</strong><br><img src="img/sands-logo.jpg" class="img-fluid p-2 mx-4" width="300px"><br>After careful consideration, <a href="https://www.sands.org.uk">SAMDS: Stillbirth and neonatal death charity</a> has been chosen in which £2 of your signup fee will go to. Thank you for contribution.</p>
+									<?php displayCharityInformation() ?>
 								</div>
 							</div>
 						</div>
