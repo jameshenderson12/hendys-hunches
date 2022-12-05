@@ -274,10 +274,10 @@ function displayCharityInformation() {
 		$donation = ($countoftotalusers * 2);
 	}*/
 	print("<a href='https://www.sands.org.uk' target='_blank' title='Sands charity website'><img src='img/sands-logo.jpg' class='img-fluid w-50'></a>");
-	print("<h3>£72 has been donated! Thank you</h3>");
+	print("<h4 class='my-2'>£72 has been donated! Thank you</h4>");
 	//printf("<p><strong>Hendy's Hunches donation:</strong> £%d.00 (40&#37; from entry fees)", $donation);
 	//print("<span class='label label-success'>A huge thank you to all players!</span>");
-	print("<p><strong>Thanks to your participation, Hendy's Hunches has been able to donate £72</strong> for Sands to do any of the following:</p>");
+	print("<p>Thanks to your participation, Hendy's Hunches has been able to donate £72 for Sands to do any of the following:</p>");
 	print("<ul>");
 	print("<li>provide <strong>4</strong> bereaved families with a memory box to help create and keep safe precious and lasting memories of their baby</li>");
 	print("<li>answer <strong>2</strong> calls from someone reaching out for support who has been through pregnancy loss or the death of a baby</li>");
