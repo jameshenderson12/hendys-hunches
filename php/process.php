@@ -530,7 +530,7 @@ function displayRankings2() {
 	print "<table class='table table-striped' style='background-color:#FFF'>";
 	//print "<tr><th></th><th>Rank</th><th>Move</th><th>Player</th><th>Favourite Team</th><th>Points</th></tr>";
 	print "<tr><th></th><th>Player</th><th>Points</th></tr>";
-	$rowcount = 1;
+	$rowcount = 0;
 	while ($row = mysqli_fetch_assoc($table)) {
 		 console_log($row);
 		// Check if match results table contains any data
@@ -567,10 +567,7 @@ function displayRankings2() {
 		//printf ("<td>%s</td>", $row["faveteam"]);
 		printf ("<td>%s</td>", $row["points_total"]);
 		print "</tr>";
-
 		$rowcount++;
-		console_log($rowcount);
-
 	}
 	// Complete the physical table layout
 	print "</tr>";
