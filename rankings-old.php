@@ -83,12 +83,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	      <div class="row">
 					<div class="col-xs-12">
 		      	<!-- Display table of rankings from process.php -->
-						<?php displayRankings2(); ?>
-						<!--
-						<div class="well well-sm">
-		        <?php displayInfo(); ?>
-		        </div>
-					-->
+						<?php displayRankings2(); ?>					
 		        <a class="btn btn-light" href="#top" role="button">Return to top</a>
 		      </div>
       	</div><!--row-->
