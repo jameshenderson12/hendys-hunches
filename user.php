@@ -88,12 +88,6 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 															ON live_user_predictions_ro16.id = live_user_information.id
 															WHERE live_user_predictions_ro16.id='".$_GET["id"]."'";
 
-					$sql_getpointstotal = "SELECT live_user_information.id, live_user_predictions_groups.points_total as group_points, live_user_predictions_ro16.points_total as ro16_points, live_user_predictions_groups.points_total + live_user_predictions_ro16.points_total as points_total
-														FROM live_user_information
-														INNER JOIN live_user_predictions_groups ON live_user_information.id = live_user_predictions_groups.id
-														INNER JOIN live_user_predictions_ro16 ON live_user_information.id = live_user_predictions_ro16.id
-														WHERE live_user_information.id = '".$_SESSION["id"]."'";
-
 					// Global SQL query strings
 					$sql_getresults = "SELECT SUM(score1_r) as score1_r, SUM(score2_r) as score2_r, SUM(score3_r) as score3_r, SUM(score4_r) as score4_r, SUM(score5_r) as score5_r, SUM(score6_r) as score6_r, SUM(score7_r) as score7_r, SUM(score8_r) as score8_r, SUM(score9_r) as score9_r, SUM(score10_r) as score10_r,
 					SUM(score11_r) as score11_r, SUM(score12_r) as score12_r, SUM(score13_r) as score13_r, SUM(score14_r) as score14_r, SUM(score15_r) as score15_r, SUM(score16_r) as score16_r, SUM(score17_r) as score17_r, SUM(score18_r) as score18_r, SUM(score19_r) as score19_r, SUM(score20_r) as score20_r,
@@ -118,7 +112,6 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 
 					$userdata = mysqli_fetch_assoc(mysqli_query($con, $sql_getuserinfo));
 					$userdata2 = mysqli_fetch_assoc(mysqli_query($con, $sql_getuserro16));
-					$userdata3 = mysqli_fetch_assoc(mysqli_query($con, $sql_getpointstotal);
 					$uppCaseFN = ucfirst($userdata["firstname"]);
 					$uppCaseSN = ucfirst($userdata["surname"]);
 					$userid = $userdata["id"];
@@ -129,6 +122,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					$tournwinner = $userdata["tournwinner"];
 					$currentpos = ordinal($userdata["currpos"]);
 					$pointstotal = $userdata["points_total"];
+					$pointstotal2 = $userdata2["points_total"];
 					$matchresult = mysqli_fetch_assoc(mysqli_query($con, $sql_getresults));
 
 		// Function for adding correct extention to a number
@@ -220,7 +214,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					<div class="card">
 					  <img src="<?php echo $avatar ?>" id="avatar" class="img-fluid mx-auto p-2" alt="User Avatar" name="User Avatar" width="100">
 					  <div class="card-body">
-					    <h5 class="card-title" style="text-align: center; font-weight: bolder; margin:-15px 0px;"><?php printf("%s pts", $pointstotal); ?></h5>
+					    <h5 class="card-title" style="text-align: center; font-weight: bolder; margin:-15px 0px;"><?php printf("%s<span class='mx-2' style='color:#CCC;'>|</span>%s pts", $currentpos, $pointstotal); ?></h5>
 					    <!--<p class="card-text"><?php printf ("%s thinks %s will win FIFA World Cup 2022.", $uppCaseFN, $tournwinner); ?></p>-->
 					  </div>
 					  <ul class="list-group list-group-flush">
