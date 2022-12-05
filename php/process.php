@@ -567,9 +567,11 @@ function displayRankings2() {
 		//printf ("<td>%s</td>", $row["faveteam"]);
 		printf ("<td>%s</td>", $row["points_total"]);
 		print "</tr>";
+
+		$rowcount++;
+		console_log($rowcount);
+
 	}
-	$rowcount++;
-	console_log($rowcount);
 	// Complete the physical table layout
 	print "</tr>";
 	print "</table>";
