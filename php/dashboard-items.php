@@ -610,7 +610,8 @@ function displayPersonalInfo() {
 	else {
 		print("<div class='text-center'><img src='$avatar' id='avatar' class='img-rounded img-thumbnail img-fluid' alt='User Avatar' name='User Avatar' width='70' style='margin-top:-35px'></div>");
 		printf("<p class='text-center' style='font-size: 1.3em;'><strong>" . $_SESSION["firstname"] . " " . $_SESSION["surname"] . "</strong></p>");
-		printf("<p class='text-center 'style='font-size: 1.5em; color: #222;'><strong>%s&nbsp;&nbsp;<span style='color:#CCC;'>|</span>&nbsp;&nbsp;%spts</strong></p>", $currpos, $pointstotal);
+		//printf("<p class='text-center 'style='font-size: 1.5em; color: #222;'><strong>%s&nbsp;&nbsp;<span style='color:#CCC;'>|</span>&nbsp;&nbsp;%spts</strong></p>", $currpos, $pointstotal);
+		printf("<p class='text-center 'style='font-size: 1.5em; color: #222;'><strong>%spts</strong></p>", $pointstotal);
 		print("<div class='row'>");
 		printf("<div class='col-md-2'><i class='bi bi-arrow-through-heart'></i></div><div class='col-md-10'>Fan of %s</div>", $faveteam);
 		printf("<div class='col-md-2'><i class='bi bi-person-workspace'></i></div><div class='col-md-10'>Works in %s</div>", $fieldofwork);
