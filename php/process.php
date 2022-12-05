@@ -532,7 +532,6 @@ function displayRankings2() {
 	//print "<tr><th>Rank</th><th>Player</th><th>Points</th></tr>";
 	$rowcount = 1;
 	while ($row = mysqli_fetch_assoc($table)) {
-		 console_log($row);
 		// Check if match results table contains any data
 		if (mysqli_num_rows($result) == 0) {
 			// Set rank value to start position value if there is no match data
@@ -561,7 +560,7 @@ function displayRankings2() {
 		$uppCaseSN = ucfirst($row["surname"]);
 		// Display the table complete with all data variables
 		printf ("<td></td>");
-		printf ("<td><strong>%s</strong> <span class='text-muted'>(%s)</span></td>", $rank, $row["lastpos"]);
+		printf ("<td><strong>%s</strong> <span class='text-muted'>(%s)</span></td>", $rowcount, $row["lastpos"]);
 		printf ("<td>%s %s</td>", $move, $diff);
 		printf ("<td><img src=".$row["avatar"]." class='img-responsive pull-left' width='20px'>&nbsp;<a href='user.php?id=%s'>%s %s</a></td>", $row["id"], $uppCaseFN, $uppCaseSN);
 		//printf ("<td>%s</td>", $row["faveteam"]);
