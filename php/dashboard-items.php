@@ -277,7 +277,7 @@ function displayCharityInformation() {
 	print("<h4 class='my-3'><strong>£72</strong> has been donated! Thank you.</h4>");
 	//printf("<p><strong>Hendy's Hunches donation:</strong> £%d.00 (40&#37; from entry fees)", $donation);
 	//print("<span class='label label-success'>A huge thank you to all players!</span>");
-	print("<p>Thanks to your participation, Hendy's Hunches has donated £72 to Sands for the following:</p>");
+	print("<p>Thanks to your participation, Hendy's Hunches has donated £74 to Sands for the following:</p>");
 	print("<ul>");
 	print("<li>provide <strong>4</strong> bereaved families with a memory box to help create and keep safe precious and lasting memories of their baby</li>");
 	print("<li>answer <strong>2</strong> calls from someone reaching out for support who has been through pregnancy loss or the death of a baby</li>");
@@ -542,15 +542,15 @@ function checkSubmitted() {
 	include 'db-connect.php';
 	$un = $_SESSION["username"];
 	// Get team information from the DB	counting occurrences too
-	$sql_predstatus = sprintf("SELECT username FROM live_user_predictions_ro16 WHERE username = '%s'", $un);
+	$sql_predstatus = sprintf("SELECT username FROM live_user_predictions_qf WHERE username = '%s'", $un);
 	$predstatus = mysqli_query($con, $sql_predstatus);
 
 	if (mysqli_num_rows($predstatus) > 0) {
 		//consoleMsg($predstatus);
-		print("<p class='alert alert-success p-4'><i class='bi bi-check2-square text-success'></i> You've successfully submitted your predictions for the first knockout stage (Round of 16). Good luck.</p>");
+		print("<p class='alert alert-success p-4'><i class='bi bi-check2-square text-success'></i> You've successfully submitted your predictions for the Quarter Finals. Good luck.</p>");
 	}
 	else {
-		print("<p class='alert alert-danger p-4'><i class='bi bi-exclamation-square text-danger'></i> You still need to <a href='predictions.php' title='Submit your predictions'>submit your predictions</a> for the first knockout stage (Round of 16).</p>");
+		print("<p class='alert alert-danger p-4'><i class='bi bi-exclamation-square text-danger'></i> You still need to <a href='predictions.php' title='Submit your predictions'>submit your predictions</a> for the Quarter Finals.</p>");
 	}
 }
 

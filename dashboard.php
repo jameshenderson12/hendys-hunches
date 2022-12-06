@@ -91,7 +91,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 							<div class="card">
 								<div class="card-body">
 									<h5 class="card-title">Status</h5>
-									<!--<?php checkSubmitted() ?>-->
+									<?php checkSubmitted() ?>
 									<div class="row">
 										<div class="col-sm-4">
 											<p class="small">Matches recorded:</p>
@@ -116,14 +116,22 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 											<?php displayRO16MatchesPlayed() ?>
 										</div>
 									</div>
+									<div class="row">
+										<div class="col-sm-3">
+											<p class="small">Quarter Final fixtures:</p>
+										</div>
+										<div class="col-sm-9">
+											<?php displayQFMatchesPlayed() ?>
+										</div>
+									</div>
 								</div>
 							</div>
 							<div class="card mt-4">
 								<div class="card-body">
 									<h5 class="card-title">Announcements</h5>
-									<!--
+
 									<div class="alert alert-danger alert-dismissible fade show" role="alert">
-									  <strong>Deadline 15:00 today!</strong> Predict the next stage of the competition (round of 16) now. You have until 15:00 today.
+									  <strong>Deadline 15:00, Sat, 9th Dec!</strong> Predict the Quarter Final stage now. You have until 15:00 on Saturday 9th December.
 									  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 									</div>
 									-->
