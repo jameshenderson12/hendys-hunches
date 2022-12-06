@@ -412,7 +412,7 @@ function submitPredictions() {
 	include 'php/db-connect.php';
 
   	//$sql_exists = "SELECT * FROM live_user_predictions_groups WHERE id='{$_SESSION['id']}'";
-		$sql_exists = "SELECT * FROM live_user_predictions_ro16 WHERE id='{$_SESSION['id']}'";
+		$sql_exists = "SELECT * FROM live_user_predictions_qf WHERE id='{$_SESSION['id']}'";
 
 	$result = mysqli_query($con, $sql_exists);
 	if(mysqli_num_rows($result) == 0) {
