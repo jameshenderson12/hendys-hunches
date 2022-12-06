@@ -118,7 +118,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 									</div>
 									<div class="row">
 										<div class="col-sm-3">
-											<p class="small">Quarter Final fixtures:</p>
+											<p class="small">QF fixtures:</p>
 										</div>
 										<div class="col-sm-9">
 											<?php displayQFMatchesPlayed() ?>
