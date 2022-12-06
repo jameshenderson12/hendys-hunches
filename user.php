@@ -212,8 +212,8 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	      <div class="row">
 					<div class="col-md-3">
 					<div class="card">
+					  <img src="<?php echo $avatar ?>" id="avatar" class="img-fluid mx-auto p-2" alt="User Avatar" name="User Avatar" width="100">
 					  <div class="card-body">
-							<img src="<?php echo $avatar ?>" id="avatar" class="img-fluid mx-auto p-2" alt="User Avatar" name="User Avatar" width="100">
 					    <!--<h5 class="card-title" style="text-align: center; font-weight: bolder; margin:-15px 0px;"><?php printf("%s<span class='mx-2' style='color:#CCC;'>|</span>%s pts", $currentpos, $pointstotal); ?></h5>-->
 					    <!--<p class="card-text"><?php printf ("%s thinks %s will win FIFA World Cup 2022.", $uppCaseFN, $tournwinner); ?></p>-->
 					  </div>
