@@ -43,7 +43,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		              <a class="nav-link" href="dashboard.php">Home</a>
 		            </li>
 		            <li class="nav-item">
-		              <a class="nav-link disabled" href="predictions.php">Submit Predictions</a>
+		              <a class="nav-link" href="predictions.php">Submit Predictions</a>
 		            </li>
 								<li class="nav-item">
 		              <a class="nav-link active" aria-current="page" href="rankings.php">Rankings</a>
@@ -83,7 +83,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	      <div class="row">
 					<div class="col-xs-12">
 		      	<!-- Display table of rankings from process.php -->
-						<?php displayRankings2(); ?>					
+						<?php displayRankings2(); ?>
 		        <a class="btn btn-light" href="#top" role="button">Return to top</a>
 		      </div>
       	</div><!--row-->

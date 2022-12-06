@@ -141,7 +141,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 
 	<main class="container px-4 py-4">
       <h1>My Predictions</h1>
-      <p class="lead">Predict all 8 'Round of 16' fixtures before submitting! You only need to do this once.</p>
+      <p class="lead">Predict all 4 Quarter Final fixtures before submitting! You only need to do this once.</p>
 			<p class="alert alert-warning" id="submitMsg"><strong>Note:</strong> You can predict a draw as predictions are for 90 mins only (do not include extra time and penalties).</p>
       <a name="matches"></a><!--anchor point for filters-->
       <form id="predictionForm" name="predictionForm" class="form-horizontal" action="submit.php" method="POST">
