@@ -532,7 +532,7 @@ function displayGroupMatchesPlayed() {
 		//console.log($no_of_matches_played);
 		$percent_group_played = round($no_of_matches_played * 100 / 48);
 	}*/
-	print("<div class='progress'><div class='progress-bar bg-success' role='progressbar' aria-label='Competition progress bar' style='width: 100%;' aria-valuenow='100' aria-valuemin='0' aria-valuemax='100'>100%</div></div>");
+	print("<div class='progress my-1'><div class='progress-bar bg-success' role='progressbar' aria-label='Competition progress bar' style='width: 100%;' aria-valuenow='100' aria-valuemin='0' aria-valuemax='100'>100%</div></div>");
 	// Close DB connection
 	//mysqli_close($con);
 }
@@ -567,7 +567,7 @@ function displayRO16MatchesPlayed() {
 		//console.log($no_of_matches_played);
 		$percent_ro16_played = round($no_of_ro16_matches_played * 100 / 8);
 	}
-	print("<div class='progress'><div class='progress-bar bg-success' role='progressbar' aria-label='Competition progress bar' style='width: 100%;' aria-valuenow='100' aria-valuemin='0' aria-valuemax='100'>100%</div></div>");
+	print("<div class='progress my-1'><div class='progress-bar bg-success' role='progressbar' aria-label='Competition progress bar' style='width: 100%;' aria-valuenow='100' aria-valuemin='0' aria-valuemax='100'>100%</div></div>");
 	//print("<div class='progress'><div class='progress-bar' role='progressbar' aria-label='Competition progress bar' style='width: 0%;' aria-valuenow='0' aria-valuemin='0' aria-valuemax='100'></div></div>");
 	// Close DB connection
 	mysqli_close($con);
@@ -586,7 +586,7 @@ function displayQFMatchesPlayed() {
 		//console.log($no_of_matches_played);
 		$percent_qf_played = round($no_of_qf_matches_played * 100 / 4);
 	}
-	print("<div class='progress'><div class='progress-bar' role='progressbar' aria-label='Competition progress bar' style='width: $percent_qf_played%;' aria-valuenow='$percent_qf_played' aria-valuemin='0' aria-valuemax='100'>$percent_qf_played%</div></div>");
+	print("<div class='progress my-1'><div class='progress-bar' role='progressbar' aria-label='Competition progress bar' style='width: $percent_qf_played%;' aria-valuenow='$percent_qf_played' aria-valuemin='0' aria-valuemax='100'>$percent_qf_played%</div></div>");
 	//print("<div class='progress'><div class='progress-bar' role='progressbar' aria-label='Competition progress bar' style='width: 0%;' aria-valuenow='0' aria-valuemin='0' aria-valuemax='100'></div></div>");
 	// Close DB connection
 	mysqli_close($con);
