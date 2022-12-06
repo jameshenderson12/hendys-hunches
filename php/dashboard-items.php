@@ -550,7 +550,7 @@ function checkSubmitted() {
 		print("<p class='alert alert-success p-4'><i class='bi bi-check2-square text-success'></i> You've successfully submitted your predictions for the Quarter Finals. Good luck.</p>");
 	}
 	else {
-		print("<p class='alert alert-danger p-4'><i class='bi bi-exclamation-square text-danger'></i> You still need to <a href='predictions.php' title='Submit your predictions'>submit your predictions</a> for the Quarter Finals.</p>");
+		print("<p class='alert alert-danger p-4'><i class='bi bi-exclamation-square text-danger'></i> Please <a href='predictions.php' title='Submit your predictions'>submit your predictions</a> for the Quarter Finals.</p>");
 	}
 }
 
