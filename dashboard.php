@@ -130,11 +130,13 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 								<div class="card-body">
 									<h5 class="card-title">Announcements</h5>
 
+									<!--
 									<div class="alert alert-danger alert-dismissible fade show" role="alert">
-									  <strong>Deadline 15:00, Sat, 9th Dec!</strong> Predict the Quarter Final stage now. You have until 15:00 on Saturday 9th December.
+									  <strong>Deadline 15:00, Sat, 9th Dec</strong> Predict the Quarter Final stage now. You have until 15:00 on Saturday 9th December.
 									  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 									</div>
-									-->
+								-->
+
 									<?php displayCharityInformation() ?>
 								</div>
 							</div>
