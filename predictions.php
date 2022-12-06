@@ -149,8 +149,55 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 
 				<table id="table" class="table table-sm table-striped">
 
+					<!-- QUARTER FINALS ------------------------>
+
+					<tr>
+						<td class="small text-muted d-none d-md-block">QF1<br>09/12/2022</td>
+						<td style="text-align: right"><label for="score113_p"><?php echo $Q1; ?></label></td>
+						<td><img src="<?php echo $Q1img; ?>" alt="<?php echo $Q1; ?>" title="<?php echo $Q1; ?>"></td>
+						<td><input type="text" id="score113_p" name="score113_p" class="form-control" required /></td>
+						<td align="center"><span>v</span></td>
+						<td><input type="text" id="score114_p" name="score114_p" class="form-control" required /></td>
+						<td><img src="<?php echo $Q2img; ?>" alt="<?php echo $Q2; ?>" title="<?php echo $Q2; ?>"></td>
+						<td class="right-team"><label for="score114_p"><?php echo $Q2; ?></label></td>
+						<td class="small text-muted d-none d-md-block">15:00<br><?php echo $venue8 ?></td>
+					</tr>
+					<tr>
+						<td class="small text-muted d-none d-md-block">QF2<br>09/12/2022</td>
+						<td style="text-align: right"><label for="score115_p"><?php echo $Q3; ?></label></td>
+						<td><img src="<?php echo $Q3img; ?>" alt="<?php echo $Q3; ?>" title="<?php echo $Q3; ?>"></td>
+						<td><input type="text" id="score115_p" name="score115_p" class="form-control" required /></td>
+						<td align="center"><span>v</span></td>
+						<td><input type="text" id="score116_p" name="score116_p" class="form-control" required /></td>
+						<td><img src="<?php echo $Q4img; ?>" alt="<?php echo $Q4; ?>" title="<?php echo $Q4; ?>"></td>
+						<td class="right-team"><label for="score116_p"><?php echo $Q4; ?></label></td>
+						<td class="small text-muted d-none d-md-block">19:00<br><?php echo $venue6 ?></td>
+					</tr>
+					<tr>
+						<td class="small text-muted d-none d-md-block">QF3<br>10/12/2022</td>
+						<td style="text-align: right"><label for="score117_p"><?php echo $Q5; ?></label></td>
+						<td><img src="<?php echo $Q5img; ?>" alt="<?php echo $Q5; ?>" title="<?php echo $Q5; ?>"></td>
+						<td><input type="text" id="score117_p" name="score117_p" class="form-control" required /></td>
+						<td align="center"><span>v</span></td>
+						<td><input type="text" id="score118_p" name="score118_p" class="form-control" required /></td>
+						<td><img src="<?php echo $Q6img; ?>" alt="<?php echo $Q6; ?>" title="<?php echo $Q6; ?>"></td>
+						<td class="right-team"><label for="score118_p"><?php echo $Q6; ?></label></td>
+						<td class="small text-muted d-none d-md-block">15:00<br><?php echo $venue3 ?></td>
+					</tr>
+					<tr>
+						<td class="small text-muted d-none d-md-block">QF4<br>10/12/2022</td>
+						<td style="text-align: right"><label for="score119_p"><?php echo $Q7; ?></label></td>
+						<td><img src="<?php echo $Q7img; ?>" alt="<?php echo $Q7; ?>" title="<?php echo $Q7; ?>"></td>
+						<td><input type="text" id="score119_p" name="score119_p" class="form-control" required /></td>
+						<td align="center"><span>v</span></td>
+						<td><input type="text" id="score120_p" name="score120_p" class="form-control" required /></td>
+						<td><img src="<?php echo $Q8img; ?>" alt="<?php echo $Q8; ?>" title="<?php echo $Q8; ?>"></td>
+						<td class="right-team"><label for="score120_p"><?php echo $Q8; ?></label></td>
+						<td class="small text-muted d-none d-md-block">19:00<br><?php echo $venue1 ?></td>
+					</tr>
+
 					<!-- ROUND OF 16 ------------------------>
-			        <!--===================================-->
+			        <!--===================================
 
 							<tr>
 								<td class="small text-muted d-none d-md-block">RO16<br>03/12/2022</td>
@@ -239,7 +286,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 								<td><img src="<?php echo $R16img; ?>" alt="<?php echo $R16; ?>" title="<?php echo $R16; ?>"></td>
 								<td class="right-team"><label for="score112_p"><?php echo $R16; ?></label></td>
 								<td class="small text-muted d-none d-md-block">19:00<br><?php echo $venue6 ?></td>
-							</tr>
+							</tr>-->
 					</table>
 
         <!-- Placeholder for JSON table construction

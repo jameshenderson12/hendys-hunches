@@ -397,6 +397,16 @@ function insertRO16Predictions() {
 	mysqli_close($con);
 }
 
+function insertQFPredictions() {
+	// Connect to the database
+	include 'php/db-connect.php';
+	// SQL query to insert predictions initially
+	$sql_insert = "INSERT INTO live_user_predictions_qf (id, username, firstname, surname, score113_p, score114_p, score115_p, score116_p, score117_p, score118_p, score119_p, score120_p, lastupdate)
+			   VALUES ('{$_SESSION['id']}','{$_SESSION['username']}','{$_SESSION['firstname']}','{$_SESSION['surname']}','$_POST[score113_p]','$_POST[score114_p]','$_POST[score115_p]','$_POST[score116_p]','$_POST[score117_p]','$_POST[score118_p]','$_POST[score119_p]','$_POST[score120_p]', NOW())";
+	mysqli_query($con, $sql_insert) or die('Error: ' . mysqli_error($con));
+	mysqli_close($con);
+}
+
 function submitPredictions() {
 	// Connect to the database
 	include 'php/db-connect.php';
@@ -406,7 +416,8 @@ function submitPredictions() {
 
 	$result = mysqli_query($con, $sql_exists);
 	if(mysqli_num_rows($result) == 0) {
-		insertRO16Predictions();
+		//insertRO16Predictions();
+		insertQFPredictions();
 		/* Alert to check if predictions are inserted...
 		print '<script type="text/javascript">';
 		print 'alert("Predictions have been inserted! '. $_SESSION['firstname'].' '. $_SESSION['surname'].' yeah.")';
