@@ -263,6 +263,100 @@ function compareRO16Values() {
 	updateMoveStatus();
 }
 
+
+function compareQFValues() {
+	// Initialise global variables
+	$identical_points = 3;
+	$outcome_points = 2;
+	$score_points = 1;
+	$blank_points = 0;
+	$ids = array();
+
+	// Connect to the database
+	include '../php/db-connect.php';
+
+	// Global SQL query strings
+	$sql_getresults = "SELECT SUM(score113_r) as score113_r, SUM(score114_r) as score114_r, SUM(score115_r) as score115_r, SUM(score116_r) as score116_r, SUM(score117_r) as score117_r, SUM(score118_r) as score118_r, SUM(score119_r) as score119_r, SUM(score120_r) as score120_r FROM live_match_results";
+	$sql_getusernames = "SELECT username FROM live_user_predictions_qf";
+	$sql_setzero = "UPDATE live_user_predictions_qf SET points_total = 0";
+
+	// Return all match fixtures (ids)
+	$sql_getmatchid = "SELECT match_id FROM live_match_results";
+
+	// Create an array of match ids
+	$list_of_matchids = mysqli_query($con, $sql_getmatchid);
+	while($row = mysqli_fetch_array($list_of_matchids)) {
+		$matchids[] = $row['match_id'];
+	}
+
+	// Create an array of usernames
+	mysqli_query($con, $sql_setzero);
+	$list_of_usernames = mysqli_query($con, $sql_getusernames);
+	while($row = mysqli_fetch_array($list_of_usernames)) {
+		$usernames[] = $row['username'];
+	}
+	// Check all predictions for any matched scores against results
+	foreach ($usernames as $usernamevalue) {
+
+		// SQL query strings to be looped on username value
+		$sql_getspecificuser = "SELECT username, firstname, surname, score113_p, score114_p, score115_p, score116_p, score117_p, score118_p, score119_p, score120_p FROM live_user_predictions_qf WHERE username='".$usernamevalue."'";
+		$sql_setblankpoints = "UPDATE live_user_predictions_qf SET points_total = points_total + '".$blank_points."' WHERE username='".$usernamevalue."'";
+		$sql_setscorepoints = "UPDATE live_user_predictions_qf SET points_total = points_total + '".$score_points."' WHERE username='".$usernamevalue."'";
+
+		$pvalue = mysqli_fetch_assoc(mysqli_query($con, $sql_getspecificuser));
+		$rvalue = mysqli_fetch_assoc(mysqli_query($con, $sql_getresults));
+
+
+		// Determine a matched score for home or away result
+		//==================================================
+		// Cycle through the number of potential matches (e.g. 1-48)
+		$length = sizeof($matchids) * 2;
+
+		for ($i=113; $i<=$length; $i++) {
+			if($pvalue["score".$i."_p"] === $rvalue["score".$i."_r"]) {
+				//printf ("%s %s's Prediction: %s, Result: %s", $pvalue["firstname"], $pvalue["surname"], $pvalue["score".$i."_p"], $rvalue["score".$i."_r"]);
+				mysqli_query($con, $sql_setscorepoints);
+				//print "<br />The results are a match - well done!<br /><br />";
+			}
+			else {
+				//printf ("%s %s's Prediction: %s, Result: %s", $pvalue["firstname"], $pvalue["surname"], $pvalue["score".$i."_p"], $rvalue["score".$i."_r"]);
+				//print "<br />No match - better luck next time!<br /><br />";
+			}
+		}
+
+		// Determine a correct match outcome (home win/away win/draw)
+		//===========================================================
+		// Cycle through the home and away scores
+
+		for ($j=113, $k=114; $j<=$length, $k<=$length; $j+=2, $k+=2) {
+
+			$sql_setoutcomepoints = "UPDATE live_user_predictions_qf SET points_total = points_total + '".$outcome_points."' WHERE username='".$usernamevalue."'";
+			$sql_setidenticalpoints = "UPDATE live_user_predictions_qf SET points_total = points_total + '".$identical_points."' WHERE username='".$usernamevalue."'";
+
+		if( is_numeric($pvalue["score".$j."_p"]) && is_numeric($pvalue["score".$k."_p"]) ) {
+
+				if ( (($pvalue["score".$j."_p"] > $pvalue["score".$k."_p"]) && ($rvalue["score".$j."_r"] > $rvalue["score".$k."_r"])) || (($pvalue["score".$j."_p"] < $pvalue["score".$k."_p"]) && ($rvalue["score".$j."_r"] < $rvalue["score".$k."_r"])) || (($pvalue["score".$j."_p"] === $pvalue["score".$k."_p"]) && ($rvalue["score".$j."_r"] === $rvalue["score".$k."_r"])) ) {
+					mysqli_query($con, $sql_setoutcomepoints);
+				}
+
+				// Determine if identical match result
+				//====================================
+				if ( ($pvalue["score".$j."_p"] === $rvalue["score".$j."_r"]) && ($pvalue["score".$k."_p"] === $rvalue["score".$k."_r"]) ) {
+					mysqli_query($con, $sql_setidenticalpoints);
+					//printf ("%s %s's Exact Match for game above!<br />", $pvalue["firstname"], $pvalue["surname"]);
+				}
+			}
+		}
+		mysqli_free_result($pvalue);
+		mysqli_free_result($rvalue);
+	}
+	// Close the database connection
+	mysqli_close($con);
+	// Now update the move indicators within the rankings table
+	updateMoveStatus();
+}
+
+
 function insertMatchResult() {
 	// Connect to the database
 	include '../php/db-connect.php';
@@ -284,7 +378,8 @@ function insertMatchResult() {
 	mysqli_close($con);
 	// Now update table by comparing match results against user predictions
 	//compareValues();
-	compareRO16Values();
+	//compareRO16Values();
+	compareQFValues();
 }
 
 function updateTotalUsers() {
@@ -457,10 +552,11 @@ function displayRankings() {
 						INNER JOIN live_user_predictions_groups ON live_user_information.id = live_user_predictions_groups.id
 						ORDER BY rank ASC, surname ASC";
 */
-	$sql_maketable = "SELECT live_user_information.id, live_user_information.firstname, live_user_information.surname, live_user_information.avatar, live_user_information.faveteam, live_user_information.startpos, live_user_information.currpos, live_user_information.lastpos, live_user_predictions_groups.points_total as group_points, live_user_predictions_ro16.points_total as ro16_points, live_user_predictions_groups.points_total + live_user_predictions_ro16.points_total as points_total
+	$sql_maketable = "SELECT live_user_information.id, live_user_information.firstname, live_user_information.surname, live_user_information.avatar, live_user_information.faveteam, live_user_information.startpos, live_user_information.currpos, live_user_information.lastpos, live_user_predictions_groups.points_total as group_points, live_user_predictions_ro16.points_total as ro16_points, live_user_predictions_qf.points_total as qf_points, live_user_predictions_groups.points_total + live_user_predictions_ro16.points_total + live_user_predictions_qf.points_total as points_total
 						FROM live_user_information
 						INNER JOIN live_user_predictions_groups ON live_user_information.id = live_user_predictions_groups.id
 						INNER JOIN live_user_predictions_ro16 ON live_user_information.id = live_user_predictions_ro16.id
+						INNER JOIN live_user_predictions_qf ON live_user_information.id = live_user_predictions_qf.id
 						ORDER BY points_total DESC, surname ASC";
 
 	$sql_matchresults = "SELECT * FROM live_match_results";
