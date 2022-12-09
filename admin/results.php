@@ -125,7 +125,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 			$matchids[] = $row['match_id'];
 		}
 
-		for ($i=0; $i<55; $i++) {
+		for ($i=0; $i<59; $i++) {
 			if ($matchids[$i]) {
 				$matchstatus[$i] = 'True';
 				// Return existing match values from DB
@@ -151,11 +151,11 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	            <script>
 	                $(document).ready(function () {
 	                    // Fetch data from JSON file
-	                    $.getJSON("../json/fifa-world-cup-2022-fixtures-ro16.json",
+	                    $.getJSON("../json/fifa-world-cup-2022-fixtures-quarters.json",
 	                    	function (data) {
 	                        var fixture = '';
-													var x = 97;
-													var y = 98;
+													var x = 113;
+													var y = 114;
 	                        // Iterate through objects
 	                        $.each(data, function (key, value) {
 															var homeTeam = value.HomeTeam;
