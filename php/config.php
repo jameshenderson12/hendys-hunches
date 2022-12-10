@@ -170,23 +170,23 @@ $Q7img = "flag-icons/24/england.png";
 $Q8 = "France";
 $Q8img = "flag-icons/24/france.png";
 
-$S1 = "";
-$S1img = "flag-icons/24/.png";
-$S2 = "";
-$S2img = "flag-icons/24/.png";
-$S3 = "";
-$S3img = "flag-icons/24/.png";
-$S4 = "";
-$S4img = "flag-icons/24/.png";
+$S1 = "Argentina";
+$S1img = "flag-icons/24/argentina.png";
+$S2 = "Croatia";
+$S2img = "flag-icons/24/croatia.png";
+$S3 = "France";
+$S3img = "flag-icons/24/france.png";
+$S4 = "Morocco";
+$S4img = "flag-icons/24/morocco.png";
 
-$P1 = "";
+$P1 = "TBC";
 $P1img = "flag-icons/24/.png";
-$P2 = "";
+$P2 = "TBC";
 $P2img = "flag-icons/24/.png";
 
-$Fi1 = "";
+$Fi1 = "TBC";
 $Fi1img = "flag-icons/24/.png";
-$Fi2 = "";
+$Fi2 = "TBC";
 $Fi2img = "flag-icons/24/.png";
 
 // Setup variables for kick-off times

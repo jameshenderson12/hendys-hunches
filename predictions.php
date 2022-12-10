@@ -149,7 +149,33 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 
 				<table id="table" class="table table-sm table-striped">
 
-					<!-- QUARTER FINALS ------------------------>
+
+					<!-- SEMI FINALS --------------------------->
+
+					<tr>
+						<td class="small text-muted d-none d-md-block">SF1<br>13/12/2022</td>
+						<td style="text-align: right"><label for="score121_p"><?php echo $S1; ?></label></td>
+						<td><img src="<?php echo $S1img; ?>" alt="<?php echo $S1; ?>" title="<?php echo $S1; ?>"></td>
+						<td><input type="text" id="score121_p" name="score121_p" class="form-control" required /></td>
+						<td align="center"><span>v</span></td>
+						<td><input type="text" id="score122_p" name="score122_p" class="form-control" required /></td>
+						<td><img src="<?php echo $S2img; ?>" alt="<?php echo $S2; ?>" title="<?php echo $S2; ?>"></td>
+						<td class="right-team"><label for="score122_p"><?php echo $S2; ?></label></td>
+						<td class="small text-muted d-none d-md-block">19:00<br><?php echo $venue6 ?></td>
+					</tr>
+					<tr>
+						<td class="small text-muted d-none d-md-block">SF2<br>14/12/2022</td>
+						<td style="text-align: right"><label for="score123_p"><?php echo $S3; ?></label></td>
+						<td><img src="<?php echo $S3img; ?>" alt="<?php echo $S3; ?>" title="<?php echo $S3; ?>"></td>
+						<td><input type="text" id="score123_p" name="score123_p" class="form-control" required /></td>
+						<td align="center"><span>v</span></td>
+						<td><input type="text" id="score124_p" name="score124_p" class="form-control" required /></td>
+						<td><img src="<?php echo $S4img; ?>" alt="<?php echo $S4; ?>" title="<?php echo $S4; ?>"></td>
+						<td class="right-team"><label for="score124_p"><?php echo $S4; ?></label></td>
+						<td class="small text-muted d-none d-md-block">19:00<br><?php echo $venue1 ?></td>
+					</tr>
+
+					<!-- QUARTER FINALS ------------------------
 
 					<tr>
 						<td class="small text-muted d-none d-md-block">QF1<br>09/12/2022</td>
