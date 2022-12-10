@@ -542,15 +542,15 @@ function checkSubmitted() {
 	include 'db-connect.php';
 	$un = $_SESSION["username"];
 	// Get team information from the DB	counting occurrences too
-	$sql_predstatus = sprintf("SELECT username FROM live_user_predictions_qf WHERE username = '%s'", $un);
+	$sql_predstatus = sprintf("SELECT username FROM live_user_predictions_sf WHERE username = '%s'", $un);
 	$predstatus = mysqli_query($con, $sql_predstatus);
 
 	if (mysqli_num_rows($predstatus) > 0) {
 		//consoleMsg($predstatus);
-		print("<p class='alert alert-success p-4'><i class='bi bi-check2-square text-success'></i> You've successfully submitted your predictions for the Quarter Finals. Good luck.</p>");
+		print("<p class='alert alert-success p-4'><i class='bi bi-check2-square text-success'></i> You've successfully submitted your predictions for the Semi Finals. Good luck.</p>");
 	}
 	else {
-		print("<p class='alert alert-danger p-4'><i class='bi bi-exclamation-square text-danger'></i> Please <a href='predictions.php' title='Submit your predictions'>submit your predictions</a> for the Quarter Finals.</p>");
+		print("<p class='alert alert-danger p-4'><i class='bi bi-exclamation-square text-danger'></i> Please <a href='predictions.php' title='Submit your predictions'>submit your predictions</a> for the Semi Finals.</p>");
 	}
 }
 
@@ -586,7 +586,26 @@ function displayQFMatchesPlayed() {
 		//console.log($no_of_matches_played);
 		$percent_qf_played = round($no_of_qf_matches_played * 100 / 4);
 	}
-	print("<div class='progress my-1'><div class='progress-bar' role='progressbar' aria-label='Competition progress bar' style='width: $percent_qf_played%;' aria-valuenow='$percent_qf_played' aria-valuemin='0' aria-valuemax='100'>$percent_qf_played%</div></div>");
+	print("<div class='progress my-1'><div class='progress-bar bg-success' role='progressbar' aria-label='Competition progress bar' style='width: $percent_qf_played%;' aria-valuenow='$percent_qf_played' aria-valuemin='0' aria-valuemax='100'>$percent_qf_played%</div></div>");
+	//print("<div class='progress'><div class='progress-bar' role='progressbar' aria-label='Competition progress bar' style='width: 0%;' aria-valuenow='0' aria-valuemin='0' aria-valuemax='100'></div></div>");
+	// Close DB connection
+	mysqli_close($con);
+}
+
+function displaySFMatchesPlayed() {
+	// Create DB connection
+	include 'php/db-connect.php';
+
+	$sql_get_matches_played = "SELECT COUNT(*) AS matches_played FROM live_match_results";
+	$matches_played = mysqli_query($con, $sql_get_matches_played);
+
+	while ($row = mysqli_fetch_assoc($matches_played)) {
+		$no_of_matches_played = $row["matches_played"];
+		$no_of_sf_matches_played = $no_of_matches_played - 60;
+		//console.log($no_of_matches_played);
+		$percent_sf_played = round($no_of_sf_matches_played * 100 / 2);
+	}
+	print("<div class='progress my-1'><div class='progress-bar' role='progressbar' aria-label='Competition progress bar' style='width: $percent_sf_played%;' aria-valuenow='$percent_sf_played' aria-valuemin='0' aria-valuemax='100'>$percent_sf_played%</div></div>");
 	//print("<div class='progress'><div class='progress-bar' role='progressbar' aria-label='Competition progress bar' style='width: 0%;' aria-valuenow='0' aria-valuemin='0' aria-valuemax='100'></div></div>");
 	// Close DB connection
 	mysqli_close($con);
