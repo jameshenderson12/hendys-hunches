@@ -118,6 +118,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					$userdata = mysqli_fetch_assoc(mysqli_query($con, $sql_getuserinfo));
 					$userdata2 = mysqli_fetch_assoc(mysqli_query($con, $sql_getuserro16));
 					$userdata3 = mysqli_fetch_assoc(mysqli_query($con, $sql_getuserqf));
+					$userdata4 = mysqli_fetch_assoc(mysqli_query($con, $sql_getuserqf));
 					$uppCaseFN = ucfirst($userdata["firstname"]);
 					$uppCaseSN = ucfirst($userdata["surname"]);
 					$userid = $userdata["id"];
@@ -160,7 +161,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					$pvalue = mysqli_fetch_assoc(mysqli_query($con, $sql_getspecid));
 					$rvalue = mysqli_fetch_assoc(mysqli_query($con, $sql_getresults));
 
-					for ($gameno=1; $gameno<121; $gameno+=2) {
+					for ($gameno=1; $gameno<125; $gameno+=2) {
 							$oddgameno[] = $gameno;
 							$evengameno[] = $gameno + 1;
 					}
