@@ -93,6 +93,11 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 															ON live_user_predictions_qf.id = live_user_information.id
 															WHERE live_user_predictions_qf.id='".$_GET["id"]."'";
 
+					$sql_getusersf = "SELECT live_user_predictions_sf.*, live_user_information.avatar, live_user_information.faveteam, live_user_information.fieldofwork, live_user_information.location, live_user_information.tournwinner, live_user_information.currpos
+															FROM live_user_predictions_sf INNER JOIN live_user_information
+															ON live_user_predictions_sf.id = live_user_information.id
+															WHERE live_user_predictions_sf.id='".$_GET["id"]."'";
+
 					// Global SQL query strings
 					$sql_getresults = "SELECT SUM(score1_r) as score1_r, SUM(score2_r) as score2_r, SUM(score3_r) as score3_r, SUM(score4_r) as score4_r, SUM(score5_r) as score5_r, SUM(score6_r) as score6_r, SUM(score7_r) as score7_r, SUM(score8_r) as score8_r, SUM(score9_r) as score9_r, SUM(score10_r) as score10_r,
 					SUM(score11_r) as score11_r, SUM(score12_r) as score12_r, SUM(score13_r) as score13_r, SUM(score14_r) as score14_r, SUM(score15_r) as score15_r, SUM(score16_r) as score16_r, SUM(score17_r) as score17_r, SUM(score18_r) as score18_r, SUM(score19_r) as score19_r, SUM(score20_r) as score20_r,
@@ -105,7 +110,8 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					SUM(score81_r) as score81_r, SUM(score82_r) as score82_r, SUM(score83_r) as score83_r, SUM(score84_r) as score84_r, SUM(score85_r) as score85_r, SUM(score86_r) as score86_r, SUM(score87_r) as score87_r, SUM(score88_r) as score88_r, SUM(score89_r) as score89_r, SUM(score90_r) as score90_r,
 					SUM(score91_r) as score91_r, SUM(score92_r) as score92_r, SUM(score93_r) as score93_r, SUM(score94_r) as score94_r, SUM(score95_r) as score95_r, SUM(score96_r) as score96_r, SUM(score97_r) as score97_r, SUM(score98_r) as score98_r, SUM(score99_r) as score99_r, SUM(score100_r) as score100_r,
 					SUM(score101_r) as score101_r, SUM(score102_r) as score102_r, SUM(score103_r) as score103_r, SUM(score104_r) as score104_r, SUM(score105_r) as score105_r, SUM(score106_r) as score106_r, SUM(score107_r) as score107_r, SUM(score108_r) as score108_r, SUM(score109_r) as score109_r, SUM(score110_r) as score110_r,
-					SUM(score111_r) as score111_r, SUM(score112_r) as score112_r, SUM(score113_r) as score113_r, SUM(score114_r) as score114_r, SUM(score115_r) as score115_r, SUM(score116_r) as score116_r, SUM(score117_r) as score117_r, SUM(score118_r) as score118_r, SUM(score119_r) as score119_r, SUM(score120_r) as score120_r FROM live_match_results";
+					SUM(score111_r) as score111_r, SUM(score112_r) as score112_r, SUM(score113_r) as score113_r, SUM(score114_r) as score114_r, SUM(score115_r) as score115_r, SUM(score116_r) as score116_r, SUM(score117_r) as score117_r, SUM(score118_r) as score118_r, SUM(score119_r) as score119_r, SUM(score120_r) as score120_r,
+					SUM(score121_r) as score121_r, SUM(score122_r) as score122_r, SUM(score123_r) as score123_r, SUM(score124_r) as score124_r FROM live_match_results";
 
 					$sql_getid = "SELECT match_id FROM live_match_results";
 
@@ -118,7 +124,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					$userdata = mysqli_fetch_assoc(mysqli_query($con, $sql_getuserinfo));
 					$userdata2 = mysqli_fetch_assoc(mysqli_query($con, $sql_getuserro16));
 					$userdata3 = mysqli_fetch_assoc(mysqli_query($con, $sql_getuserqf));
-					$userdata4 = mysqli_fetch_assoc(mysqli_query($con, $sql_getuserqf));
+					$userdata4 = mysqli_fetch_assoc(mysqli_query($con, $sql_getusersf));
 					$uppCaseFN = ucfirst($userdata["firstname"]);
 					$uppCaseSN = ucfirst($userdata["surname"]);
 					$userid = $userdata["id"];
@@ -131,7 +137,8 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					$pointstotal1 = $userdata["points_total"];
 					$pointstotal2 = $userdata2["points_total"];
 					$pointstotal3 = $userdata3["points_total"];
-					$pointstotal = $pointstotal1 + $pointstotal2 + $pointstotal3;
+					$pointstotal4 = $userdata4["points_total"];
+					$pointstotal = $pointstotal1 + $pointstotal2 + $pointstotal3 + $pointstotal4;
 					$matchresult = mysqli_fetch_assoc(mysqli_query($con, $sql_getresults));
 
 		// Function for adding correct extention to a number
@@ -239,8 +246,8 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 							}
 					}
 
-					$sql_getspecidqf = "SELECT id, firstname, surname, score121_p, score122_p, score123_p, score124_p FROM live_user_predictions_sf WHERE id='".$userid."'";
-					$pval = mysqli_fetch_assoc(mysqli_query($con, $sql_getspecidqf));
+					$sql_getspecidsf = "SELECT id, firstname, surname, score121_p, score122_p, score123_p, score124_p FROM live_user_predictions_sf WHERE id='".$userid."'";
+					$pval = mysqli_fetch_assoc(mysqli_query($con, $sql_getspecidsf));
 
 					for ($i=60; $i<=61; $i++) {
 							$matchpoints[$i] = 0;
