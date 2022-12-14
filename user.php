@@ -98,6 +98,11 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 															ON live_user_predictions_sf.id = live_user_information.id
 															WHERE live_user_predictions_sf.id='".$_GET["id"]."'";
 
+					$sql_getuserfi = "SELECT live_user_predictions_final.*, live_user_information.avatar, live_user_information.faveteam, live_user_information.fieldofwork, live_user_information.location, live_user_information.tournwinner, live_user_information.currpos
+															FROM live_user_predictions_final INNER JOIN live_user_information
+															ON live_user_predictions_final.id = live_user_information.id
+															WHERE live_user_predictions_final.id='".$_GET["id"]."'";															
+
 					// Global SQL query strings
 					$sql_getresults = "SELECT SUM(score1_r) as score1_r, SUM(score2_r) as score2_r, SUM(score3_r) as score3_r, SUM(score4_r) as score4_r, SUM(score5_r) as score5_r, SUM(score6_r) as score6_r, SUM(score7_r) as score7_r, SUM(score8_r) as score8_r, SUM(score9_r) as score9_r, SUM(score10_r) as score10_r,
 					SUM(score11_r) as score11_r, SUM(score12_r) as score12_r, SUM(score13_r) as score13_r, SUM(score14_r) as score14_r, SUM(score15_r) as score15_r, SUM(score16_r) as score16_r, SUM(score17_r) as score17_r, SUM(score18_r) as score18_r, SUM(score19_r) as score19_r, SUM(score20_r) as score20_r,
@@ -125,6 +130,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					$userdata2 = mysqli_fetch_assoc(mysqli_query($con, $sql_getuserro16));
 					$userdata3 = mysqli_fetch_assoc(mysqli_query($con, $sql_getuserqf));
 					$userdata4 = mysqli_fetch_assoc(mysqli_query($con, $sql_getusersf));
+					$userdata5 = mysqli_fetch_assoc(mysqli_query($con, $sql_getuserfi));
 					$uppCaseFN = ucfirst($userdata["firstname"]);
 					$uppCaseSN = ucfirst($userdata["surname"]);
 					$userid = $userdata["id"];
@@ -138,7 +144,8 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					$pointstotal2 = $userdata2["points_total"];
 					$pointstotal3 = $userdata3["points_total"];
 					$pointstotal4 = $userdata4["points_total"];
-					$pointstotal = $pointstotal1 + $pointstotal2 + $pointstotal3 + $pointstotal4;
+					$pointstotal5 = $userdata5["points_total"];
+					$pointstotal = $pointstotal1 + $pointstotal2 + $pointstotal3 + $pointstotal4 + $pointstotal5;
 					$matchresult = mysqli_fetch_assoc(mysqli_query($con, $sql_getresults));
 
 		// Function for adding correct extention to a number
@@ -250,6 +257,31 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					$pval = mysqli_fetch_assoc(mysqli_query($con, $sql_getspecidsf));
 
 					for ($i=60; $i<=61; $i++) {
+							$matchpoints[$i] = 0;
+
+							if( is_numeric($pval["score".$oddgameno[$i]."_p"]) && is_numeric($pval["score".$evengameno[$i]."_p"]) ) {
+
+								if($pval["score".$oddgameno[$i]."_p"] === $rvalue["score".$oddgameno[$i]."_r"]) {
+									$matchpoints[$i] += 1;
+								}
+								if($pval["score".$evengameno[$i]."_p"] === $rvalue["score".$evengameno[$i]."_r"]) {
+									$matchpoints[$i] += 1;
+								}
+								if (($pval["score".$oddgameno[$i]."_p"] === $rvalue["score".$oddgameno[$i]."_r"]) && ($pval["score".$evengameno[$i]."_p"] === $rvalue["score".$evengameno[$i]."_r"])) {
+									$matchpoints[$i] += 3;
+								}
+								if ((($pval["score".$oddgameno[$i]."_p"] > $pval["score".$evengameno[$i]."_p"]) && ($rvalue["score".$oddgameno[$i]."_r"] > $rvalue["score".$evengameno[$i]."_r"]))
+								|| (($pval["score".$oddgameno[$i]."_p"] < $pval["score".$evengameno[$i]."_p"]) && ($rvalue["score".$oddgameno[$i]."_r"] < $rvalue["score".$evengameno[$i]."_r"]))
+								|| (($pval["score".$oddgameno[$i]."_p"] === $pval["score".$evengameno[$i]."_p"]) && ($rvalue["score".$oddgameno[$i]."_r"] === $rvalue["score".$evengameno[$i]."_r"])) ) {
+									$matchpoints[$i] += 2;
+								}
+							}
+					}
+
+					$sql_getspecidfi = "SELECT id, firstname, surname, score125_p, score126_p, score127_p, score128_p FROM live_user_predictions_final WHERE id='".$userid."'";
+					$pval = mysqli_fetch_assoc(mysqli_query($con, $sql_getspecidfi));
+
+					for ($i=62; $i<=63; $i++) {
 							$matchpoints[$i] = 0;
 
 							if( is_numeric($pval["score".$oddgameno[$i]."_p"]) && is_numeric($pval["score".$evengameno[$i]."_p"]) ) {
@@ -1012,7 +1044,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 									<td align="center"><span>v</span></td>
 									<td><img src="<?php echo $Fi2img; ?>" alt="<?php echo $Fi2; ?>" title="<?php echo $Fi2; ?>"></td>
 									<td class="right-team"><label for="score128_p"><?php echo $Fi2; ?></label></td>
-									<td><span class="prediction"><?php echo $userdata6['score127_p'] ?> - <?php echo $userdata6['score128_p'] ?></span></td>
+									<td><span class="prediction"><?php echo $userdata5['score127_p'] ?> - <?php echo $userdata5['score128_p'] ?></span></td>
 									<td><?php if($matchids[63]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[63]."_r"], $matchresult["score".$evengameno[63]."_r"]); } else echo "N/A"; ?></td>
 									<td><?php if($matchids[63]) { echo $matchpoints[63]; } else { echo "-"; } ?></td>
 								</tr>
