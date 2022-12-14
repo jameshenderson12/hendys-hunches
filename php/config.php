@@ -181,13 +181,13 @@ $S4img = "flag-icons/24/morocco.png";
 
 $P1 = "Croatia";
 $P1img = "flag-icons/24/croatia.png";
-$P2 = "TBC";
-$P2img = "flag-icons/24/.png";
+$P2 = "Morocco";
+$P2img = "flag-icons/24/morocco.png";
 
 $Fi1 = "Argentina";
 $Fi1img = "flag-icons/24/argentina.png";
-$Fi2 = "TBC";
-$Fi2img = "flag-icons/24/.png";
+$Fi2 = "France";
+$Fi2img = "flag-icons/24/france.png";
 
 // Setup variables for kick-off times
 // AST (UTC+3)
