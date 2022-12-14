@@ -149,8 +149,30 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 
 				<table id="table" class="table table-sm table-striped">
 
+					<tr>
+						<td class="small text-muted d-none d-md-block">3PP<br>17/12/2022</td>
+						<td style="text-align: right"><label for="score125_p"><?php echo $P1; ?></label></td>
+						<td><img src="<?php echo $P1img; ?>" alt="<?php echo $P1; ?>" title="<?php echo $P1; ?>"></td>
+						<td><input type="text" id="score125_p" name="score125_p" class="form-control" required /></td>
+						<td align="center"><span>v</span></td>
+						<td><input type="text" id="score126_p" name="score126_p" class="form-control" required /></td>
+						<td><img src="<?php echo $P2img; ?>" alt="<?php echo $P2; ?>" title="<?php echo $P2; ?>"></td>
+						<td class="right-team"><label for="score126_p"><?php echo $P2; ?></label></td>
+						<td class="small text-muted d-none d-md-block">15:00<br><?php echo $venue2 ?></td>
+					</tr>
+					<tr>
+						<td class="small text-muted d-none d-md-block">Final<br>18/12/2022</td>
+						<td style="text-align: right"><label for="score127_p"><?php echo $Fi1; ?></label></td>
+						<td><img src="<?php echo $Fi1img; ?>" alt="<?php echo $Fi1; ?>" title="<?php echo $Fi1; ?>"></td>
+						<td><input type="text" id="score127_p" name="score127_p" class="form-control" required /></td>
+						<td align="center"><span>v</span></td>
+						<td><input type="text" id="score128_p" name="score128_p" class="form-control" required /></td>
+						<td><img src="<?php echo $Fi2img; ?>" alt="<?php echo $Fi2; ?>" title="<?php echo $Fi2; ?>"></td>
+						<td class="right-team"><label for="score128_p"><?php echo $Fi2; ?></label></td>
+						<td class="small text-muted d-none d-md-block">15:00<br><?php echo $venue6 ?></td>
+					</tr>
 
-					<!-- SEMI FINALS --------------------------->
+					<!-- SEMI FINALS --------------------------
 
 					<tr>
 						<td class="small text-muted d-none d-md-block">SF1<br>13/12/2022</td>
