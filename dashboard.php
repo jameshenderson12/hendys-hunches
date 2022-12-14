@@ -91,7 +91,8 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 							<div class="card">
 								<div class="card-body">
 									<h5 class="card-title">Status</h5>
-									<?php checkSubmitted() ?>
+									<!--<?php checkSubmitted() ?>-->
+									<!--
 									<div class="row">
 										<div class="col-sm-4">
 											<p class="small">Matches recorded:</p>
@@ -132,6 +133,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 											<?php displaySFMatchesPlayed() ?>
 										</div>
 									</div>
+								-->
 								</div>
 							</div>
 							<div class="card mt-4">
