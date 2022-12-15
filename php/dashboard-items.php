@@ -542,15 +542,15 @@ function checkSubmitted() {
 	include 'db-connect.php';
 	$un = $_SESSION["username"];
 	// Get team information from the DB	counting occurrences too
-	$sql_predstatus = sprintf("SELECT username FROM live_user_predictions_sf WHERE username = '%s'", $un);
+	$sql_predstatus = sprintf("SELECT username FROM live_user_predictions_final WHERE username = '%s'", $un);
 	$predstatus = mysqli_query($con, $sql_predstatus);
 
 	if (mysqli_num_rows($predstatus) > 0) {
 		//consoleMsg($predstatus);
-		print("<p class='alert alert-success p-4'><i class='bi bi-check2-square text-success'></i> You've successfully submitted your predictions for the Semi Finals. Good luck.</p>");
+		print("<p class='alert alert-success p-4'><i class='bi bi-check2-square text-success'></i> You've successfully submitted your predictions for the 3rd Place Playoff and Finals. Good luck.</p>");
 	}
 	else {
-		print("<p class='alert alert-danger p-4'><i class='bi bi-exclamation-square text-danger'></i> Please <a href='predictions.php' title='Submit your predictions'>submit your predictions</a> for the Semi Finals.</p>");
+		print("<p class='alert alert-danger p-4'><i class='bi bi-exclamation-square text-danger'></i> Please <a href='predictions.php' title='Submit your predictions'>submit your predictions</a> for the 3rd Place Playoff Finals.</p>");
 	}
 }
 
