@@ -116,7 +116,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					SUM(score91_r) as score91_r, SUM(score92_r) as score92_r, SUM(score93_r) as score93_r, SUM(score94_r) as score94_r, SUM(score95_r) as score95_r, SUM(score96_r) as score96_r, SUM(score97_r) as score97_r, SUM(score98_r) as score98_r, SUM(score99_r) as score99_r, SUM(score100_r) as score100_r,
 					SUM(score101_r) as score101_r, SUM(score102_r) as score102_r, SUM(score103_r) as score103_r, SUM(score104_r) as score104_r, SUM(score105_r) as score105_r, SUM(score106_r) as score106_r, SUM(score107_r) as score107_r, SUM(score108_r) as score108_r, SUM(score109_r) as score109_r, SUM(score110_r) as score110_r,
 					SUM(score111_r) as score111_r, SUM(score112_r) as score112_r, SUM(score113_r) as score113_r, SUM(score114_r) as score114_r, SUM(score115_r) as score115_r, SUM(score116_r) as score116_r, SUM(score117_r) as score117_r, SUM(score118_r) as score118_r, SUM(score119_r) as score119_r, SUM(score120_r) as score120_r,
-					SUM(score121_r) as score121_r, SUM(score122_r) as score122_r, SUM(score123_r) as score123_r, SUM(score124_r) as score124_r FROM live_match_results";
+					SUM(score121_r) as score121_r, SUM(score122_r) as score122_r, SUM(score123_r) as score123_r, SUM(score124_r) as score124_r, SUM(score125_r) as score125_r, SUM(score126_r) as score126_r, SUM(score127_r) as score127_r, SUM(score128_r) as score128_r FROM live_match_results";
 
 					$sql_getid = "SELECT match_id FROM live_match_results";
 
