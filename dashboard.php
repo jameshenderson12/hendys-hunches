@@ -91,7 +91,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 							<div class="card">
 								<div class="card-body">
 									<h5 class="card-title">Status</h5>
-									<?php checkSubmitted() ?>
+									<!--<?php checkSubmitted() ?>-->
 
 									<div class="row">
 										<div class="col-sm-4">
@@ -99,6 +99,15 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 										</div>
 										<div class="col-sm-8">
 											<?php displayMatchesRecorded() ?>
+										</div>
+										<div class="alert alert-danger alert-dismissible fade show" role="alert">
+											<p><strong>Game complete:</strong><br>Thank you all for your participation!</p>
+											<p>Congratulations to the prize winners who share the total prize fund of £108 as follows:</p>
+											<table class='table table-condensed table-responsive table-bordered'>
+											<tr><td>1st</td><td>£50</td><td>Chloe McCandlish-Boyd</td></tr>
+											<tr><td>2nd</td><td>£35</td><td>Howard Kilbourn</td></tr>
+											<tr><td>3rd</td><td>£23</td><td>Andrew Lough</td></tr>
+											</table>
 										</div>
 									</div>
 									<!--
