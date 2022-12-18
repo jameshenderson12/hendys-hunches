@@ -151,7 +151,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	            <script>
 	                $(document).ready(function () {
 	                    // Fetch data from JSON file
-	                    $.getJSON("../json/fifa-world-cup-2022-fixtures-semis.json",
+	                    $.getJSON("../json/fifa-world-cup-2022-fixtures-final.json",
 	                    	function (data) {
 	                        var fixture = '';
 													var x = 125;
