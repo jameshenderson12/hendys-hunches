@@ -110,6 +110,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 											</table>
 											<p>Thank you all for your participation!</p>
 										</div>
+										<p>It is possible that this game will take place next year for the FIFA Women’s World Cup Australia & New Zealand 2023. If you have any comments or suggestions for new features or improvements you'd like to see, please feel free to drop me a quick line at <a href="mailto:jameshenderson12@hotmail.com">jameshenderson12@hotmail.com</a>.</p>
 									</div>
 									<!--
 									<div class="row">
