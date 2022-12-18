@@ -108,7 +108,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 											<tr><td>2nd</td><td>£35</td><td>Howard Kilbourn</td></tr>
 											<tr><td>3rd</td><td>£23</td><td>Andrew Lough</td></tr>
 											</table>
-											<p>Thank you all for your participation!</p>
+											<p>Thank you all for your participation and well done!</p>
 										</div>
 										<p>It is possible that this game will take place next year for the FIFA Women’s World Cup Australia & New Zealand 2023. If you have any comments or suggestions for new features or improvements you'd like to see, please feel free to drop me a quick line at <a href="mailto:jameshenderson12@hotmail.com">jameshenderson12@hotmail.com</a>.</p>
 									</div>
