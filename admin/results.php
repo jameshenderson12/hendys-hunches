@@ -154,8 +154,8 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	                    $.getJSON("../json/fifa-world-cup-2022-fixtures-semis.json",
 	                    	function (data) {
 	                        var fixture = '';
-													var x = 121;
-													var y = 122;
+													var x = 125;
+													var y = 126;
 	                        // Iterate through objects
 	                        $.each(data, function (key, value) {
 															var homeTeam = value.HomeTeam;
