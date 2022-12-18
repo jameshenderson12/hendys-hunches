@@ -104,8 +104,8 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
     <script>
 	$(document).ready(function () {	 
 	  $("td:eq(0)").css("background","#FFFF9E").css("text-align", "center").css("font-size","8px").append("£50"); // Create 'rank 1' cell 
-	  $("td:eq(6)").css("background","#FFFFA7").css("text-align", "center").css("font-size","8px").append("£35"); // Create 'rank 2' cell
-	  $("td:eq(12)").css("background","#FFFFB1").css("text-align", "center").css("font-size","8px").append("£23"); // Create 'rank 3' cell	  
+	  $("td:eq(3)").css("background","#FFFFA7").css("text-align", "center").css("font-size","8px").append("£35"); // Create 'rank 2' cell
+	  $("td:eq(6)").css("background","#FFFFB1").css("text-align", "center").css("font-size","8px").append("£23"); // Create 'rank 3' cell	  
 	});
     </script>    
   </body>
