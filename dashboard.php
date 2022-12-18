@@ -102,7 +102,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 										</div>
 										<div class="alert alert-success" role="alert">
 											<h4><strong>Game complete!</strong></h4>
-											<p>Congratulations to the winners who share a total prize fund of £108 as follows:</p>
+											<p>Congratulations to the winners who share a £108 total prize fund.</p>
 											<table class='table table-condensed table-bordered table-striped'>
 											<tr><td>1st</td><td>£50</td><td>Chloe McCandlish-Boyd</td></tr>
 											<tr><td>2nd</td><td>£35</td><td>Howard Kilbourn</td></tr>
