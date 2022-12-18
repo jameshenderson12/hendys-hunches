@@ -100,7 +100,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 										<div class="col-sm-8">
 											<?php displayMatchesRecorded() ?>
 										</div>
-										<div class="alert alert-danger alert-dismissible fade show" role="alert">
+										<div class="alert alert-success" role="alert">
 											<p><strong>Game complete:</strong><br>Thank you all for your participation!</p>
 											<p>Congratulations to the prize winners who share the total prize fund of £108 as follows:</p>
 											<table class='table table-condensed table-responsive table-bordered'>
