@@ -175,7 +175,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					$pvalue = mysqli_fetch_assoc(mysqli_query($con, $sql_getspecid));
 					$rvalue = mysqli_fetch_assoc(mysqli_query($con, $sql_getresults));
 
-					for ($gameno=1; $gameno<125; $gameno+=2) {
+					for ($gameno=1; $gameno<129; $gameno+=2) {
 							$oddgameno[] = $gameno;
 							$evengameno[] = $gameno + 1;
 					}
