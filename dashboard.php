@@ -101,13 +101,14 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 											<?php displayMatchesRecorded() ?>
 										</div>
 										<div class="alert alert-success" role="alert">
-											<p><strong>Game complete:</strong><br>Thank you all for your participation!</p>
+											<h4><strong>Game complete!</strong></h4>
 											<p>Congratulations to the prize winners who share the total prize fund of £108 as follows:</p>
 											<table class='table table-condensed table-bordered table-striped'>
 											<tr><td>1st</td><td>£50</td><td>Chloe McCandlish-Boyd</td></tr>
 											<tr><td>2nd</td><td>£35</td><td>Howard Kilbourn</td></tr>
 											<tr><td>3rd</td><td>£23</td><td>Andrew Lough</td></tr>
 											</table>
+											<p>Thank you all for your participation!</p>
 										</div>
 									</div>
 									<!--
