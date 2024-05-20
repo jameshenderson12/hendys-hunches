@@ -26,7 +26,6 @@ Legal Profession
 Leisure
 Management and Statistics
 Media and Broadcasting
-N/A
 Performing Arts
 Property
 Publishing and Journalism
@@ -41,4 +40,3 @@ Sport
 Student
 Transport, Logistics and Distribution
 Tourism
-Unspecified
