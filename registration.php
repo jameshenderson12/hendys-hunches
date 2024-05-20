@@ -298,7 +298,7 @@
           <label for="tournwinner" class="form-label">Predicted winner</label>
           <input id="tournwinner" name="tournwinner" class="form-select" list="datalistOptions3" placeholder="Type to search..." required>
           <div class="invalid-feedback">
-            Please tell us who'll win the World Cup.
+            Please tell us who'll win Euro 2024.
           </div>
           <datalist id="datalistOptions3">
             <option selected disabled></option>
@@ -351,9 +351,9 @@
             <p>By registering to play Hendy's Hunches, you acknowledge that:</p>
             <ul>
               <li>your involvement in this game, and the game itself, is intended only for entertainment; it is not a gambling site</li>
-              <li>the game is based on FIFA World Cup Qatar 2022™</li>
+              <li>the game is based on <?=$competition?></li>
               <li>only one registration per person is permitted although family and friends are welcome to participate</li>
-              <li>an entry fee of £5 is to be paid prior to 20/11/2022; split for charity (TBC) donation and prize funds</li>
+              <li>an entry fee of <?=$signup_fee?> is to be paid prior to <?=$signup_close_date?>; split for charity (TBC) donation and prize funds</li>
               <li>an unpaid entry fee results in removal from the game</li>
               <li>the number of prize funds, and their amounts, are revealed in due course, awarded to winners after the final tournament fixture and, in the event of a shared winning spot, divided accordingly.</li>
             </ul>
@@ -367,7 +367,7 @@
     </div>
 
     <footer class="mt-auto">
-      <p class="small fw-light">Predictions game based on <a href="https://www.uefa.com/euro2024/" class="text-white">UEFA EURO 2024™</a><br><?=$title?> <?=$version?> &copy; <?=$year?> <?=$developer?>.</p>
+      <p class="small fw-light">Predictions game based on <a href="<?=$competition_url?>" class="text-white"><?=$competition?></a><br><?=$title?> <?=$version?> &copy; <?=$year?> <?=$developer?>.</p>
     </footer>
 
 		</div>

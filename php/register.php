@@ -124,7 +124,7 @@
 			</main>
 
 			<footer class="mt-auto">
-	      <p class="small fw-light">Predictions game based on <a href="https://www.uefa.com/euro2024/" class="text-white">UEFA EURO 2024™</a><br><?=$title?> <?=$version?> &copy; <?=$year?> <?=$developer?>.</p>
+	      <p class="small fw-light">Predictions game based on <a href="<?=$competition_url?>" class="text-white"><?=$competition?></a><br><?=$title?> <?=$version?> &copy; <?=$year?> <?=$developer?>.</p>
 	    </footer>
 
     </div><!-- /.container -->

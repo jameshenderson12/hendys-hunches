@@ -35,7 +35,7 @@ session_start();
 
   		<main class="px-3">
   			<!--<h1>Welcome</h1>-->
-  			<img src="img/qatar-2022-logo.png" alt="Qatar 2022 edition of Hendy's Hunches" class="w-50 mb-3">
+  			<img src="img/germany-2024-logo-md.png" alt="Hendy's Hunches logo for Germany 2024" class="w-75 mb-3">
 
         <form id="login" role="form" method="post" action="php/login.php" class="">
 
@@ -56,8 +56,7 @@ session_start();
               <input id="remember" name="remember" type="checkbox" class="form-check-input" role="switch" value="<?php if(isset($_COOKIE['remember_me'])) { echo 'checked="checked"'; } else { echo ''; } ?>">
               <label class="form-check-label ml-3" for="remember">Remember my username?</label>
             </div>
-            <hr />
-          <!--<p class="lead">Pit your FIFA World Cup 2022 predictions against others for a chance to earn a prize spot or bragging rights in the rankings.</p>-->
+            <hr />          
     			<p class="lead">
     				<button class="btn btn-lg btn-primary" type="submit"><i class="fw-bold bi bi-box-arrow-in-right"></i> Log in</button>
     			</p>
@@ -77,9 +76,9 @@ session_start();
               <p>By registering to play Hendy's Hunches, you acknowledge that:</p>
               <ul>
                 <li>your involvement in this game, and the game itself, is intended only for entertainment; it is not a gambling site</li>
-                <li>the game is based on FIFA World Cup 2022™</li>
+                <li>the game is based on <?=$competition?></li>
                 <li>only one registration per person is permitted although family and friends are welcome to participate</li>
-                <li>an entry fee of £5 is to be paid prior to 20/11/2022; split for charity (TBC) donation and prize funds</li>
+                <li>an entry fee of <?=$signup_fee?> is to be paid prior to <?=$signup_close_date?>; split for charity (TBC) donation and prize funds</li>
                 <li>an unpaid entry fee results in removal from the game</li>
                 <li>the number of prize funds, and their amounts, are revealed in due course, awarded to winners after the final tournament fixture and, in the event of a shared winning spot, divided accordingly.</li>
               </ul>
@@ -93,7 +92,7 @@ session_start();
       </div>
 
       <footer class="mt-auto">
-        <p class="small fw-light">Predictions game based on <a href="https://www.uefa.com/euro2024/" class="text-white">UEFA EURO 2024™</a><br><?=$title?> <?=$version?> &copy; <?=$year?> <?=$developer?>.</p>
+        <p class="small fw-light">Predictions game based on <a href="<?=$competition_url?>" class="text-white"><?=$competition?></a><br><?=$title?> <?=$version?> &copy; <?=$year?> <?=$developer?>.</p>
       </footer>
 
 	  </div>

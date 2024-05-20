@@ -23,35 +23,36 @@ ini_set('html_errors', 1);
 $protocol = "https://";
 $acronym = "HH";
 $title = "Hendy's Hunches";
-$version = "v2.5.0";
-$year = "2022";
+$version = "v2.5.1";
+$year = "2024";
 $last_update = "21st Nov 2022";
 $base_url = $protocol."www.hendyshunches.co.uk";
-$university_name = "The University of Nottingham";
-$school_name = "School of Health Sciences";
-$reports_dir = "/reports";
 $backup_dir = "/bak";
 $datalists_dir = "/text";
 $sql_dir = "/sql";
 $forum_dir = "/mboard";
 $developer = "James Henderson";
-$date_created = "9th Jun 2006";
+$date_created = "09/06/2006";
 $date_format = "d/m/Y (H:i)";
 
-$prelim_groups = 8;
-$prelim_fixtures = 48;
-$prelim_teams = 32;
-$knockout_fixtures = 16;
+$no_of_competition_groups = 6;
+$no_of_competition_teams = 24;
+$no_of_prelim_fixtures = 18;
+$no_of_knockout_fixtures = 16;
+$competition = "UEFA EURO 2024™";
+$competition_url = "https://www.uefa.com/euro2024/";
+$signup_fee = "£5.00";
+$signup_close_date = "14/06/2024";
 
 //===============================
 // Game variables
 //===============================
 
 // Variable format groupXteamY
-$A1 = "Qatar";
-$A1img = "flag-icons/24/qatar.png";
-$A2 = "Ecuador";
-$A2img = "flag-icons/24/ecuador.png";
+$A1 = "Germany";
+$A1img = "flag-icons/24/germany.png";
+$A2 = "Scotland";
+$A2img = "flag-icons/24/scotland.png";
 $A3 = "Senegal";
 $A3img = "flag-icons/24/senegal.png";
 $A4 = "Netherlands";
@@ -102,23 +103,57 @@ $F3img = "flag-icons/24/morocco.png";
 $F4 = "Croatia";
 $F4img = "flag-icons/24/croatia.png";
 
-$G1 = "Brazil";
-$G1img = "flag-icons/24/brazil.png";
-$G2 = "Serbia";
-$G2img = "flag-icons/24/serbia.png";
-$G3 = "Switzerland";
-$G3img = "flag-icons/24/switzerland.png";
-$G4 = "Cameroon";
-$G4img = "flag-icons/24/cameroon.png";
 
-$H1 = "Portugal";
-$H1img = "flag-icons/24/portugal.png";
-$H2 = "Ghana";
-$H2img = "flag-icons/24/ghana.png";
-$H3 = "Uruguay";
-$H3img = "flag-icons/24/uruguay.png";
-$H4 = "South Korea";
-$H4img = "flag-icons/24/korea-republic.png";
+// Setup variables for kick-off times
+// CET (UTC+1)
+$_10 = "10:00";
+$_13 = "13:00";
+$_15 = "15:00";
+$_16 = "16:00";
+$_19 = "19:00";
+
+// Setup variables for kick-off dates
+$_20Nov = "20 NOV";
+$_21Nov = "21 NOV";
+$_22Nov = "22 NOV";
+$_23Nov = "23 NOV";
+$_24Nov = "24 NOV";
+$_25Nov = "25 NOV";
+$_26Nov = "26 NOV";
+$_27Nov = "27 NOV";
+$_28Nov = "28 NOV";
+$_29Nov = "29 NOV";
+$_30Nov = "30 NOV";
+$_01Dec = "01 DEC";
+$_02Dec = "02 DEC";
+$_03Dec = "03 DEC";
+$_04Dec = "04 DEC";
+$_05Dec = "05 DEC";
+$_06Dec = "06 DEC";
+$_07Dec = "07 DEC";
+$_08Dec = "08 DEC";
+$_09Dec = "09 DEC";
+$_10Dec = "10 DEC";
+$_11Dec = "11 DEC";
+$_12Dec = "12 DEC";
+$_13Dec = "13 DEC";
+$_14Dec = "14 DEC";
+$_15Dec = "15 DEC";
+$_16Dec = "16 DEC";
+$_17Dec = "17 DEC";
+$_18Dec = "18 DEC";
+
+// Setup variables for venues
+$venue1 = "Al Bayt Stadium";
+$venue2 = "Khalifa International Stadium";
+$venue3 = "Al Thumama Stadium";
+$venue4 = "Ahmad Bin Ali Stadium";
+$venue5 = "Kazan Arena, Kazan";
+$venue6 = "Lusail Stadium";
+$venue7 = "Stadium 974";
+$venue8 = "Education City Stadium";
+$venue9 = "Al Janoub Stadium";
+
 
 $R1 = "Netherlands";
 $R1img = "flag-icons/24/netherlands.png";
@@ -188,56 +223,6 @@ $Fi1 = "Argentina";
 $Fi1img = "flag-icons/24/argentina.png";
 $Fi2 = "France";
 $Fi2img = "flag-icons/24/france.png";
-
-// Setup variables for kick-off times
-// AST (UTC+3)
-$_10 = "10:00";
-$_13 = "13:00";
-$_15 = "15:00";
-$_16 = "16:00";
-$_19 = "19:00";
-
-// Setup variables for kick-off dates
-$_20Nov = "20 NOV";
-$_21Nov = "21 NOV";
-$_22Nov = "22 NOV";
-$_23Nov = "23 NOV";
-$_24Nov = "24 NOV";
-$_25Nov = "25 NOV";
-$_26Nov = "26 NOV";
-$_27Nov = "27 NOV";
-$_28Nov = "28 NOV";
-$_29Nov = "29 NOV";
-$_30Nov = "30 NOV";
-$_01Dec = "01 DEC";
-$_02Dec = "02 DEC";
-$_03Dec = "03 DEC";
-$_04Dec = "04 DEC";
-$_05Dec = "05 DEC";
-$_06Dec = "06 DEC";
-$_07Dec = "07 DEC";
-$_08Dec = "08 DEC";
-$_09Dec = "09 DEC";
-$_10Dec = "10 DEC";
-$_11Dec = "11 DEC";
-$_12Dec = "12 DEC";
-$_13Dec = "13 DEC";
-$_14Dec = "14 DEC";
-$_15Dec = "15 DEC";
-$_16Dec = "16 DEC";
-$_17Dec = "17 DEC";
-$_18Dec = "18 DEC";
-
-// Setup variables for venues
-$venue1 = "Al Bayt Stadium";
-$venue2 = "Khalifa International Stadium";
-$venue3 = "Al Thumama Stadium";
-$venue4 = "Ahmad Bin Ali Stadium";
-$venue5 = "Kazan Arena, Kazan";
-$venue6 = "Lusail Stadium";
-$venue7 = "Stadium 974";
-$venue8 = "Education City Stadium";
-$venue9 = "Al Janoub Stadium";
 
 // Setup variables for football kits
 $fk1 = "football-kits/green-white.png";
