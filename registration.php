@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="h-100">
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -66,6 +66,11 @@
         $('.invalid-feedback').css('display', 'none');
       }
       </script>
+      <style>
+        .form-label {
+          text-align: left !important;
+        }
+      </style>
   </head>
 
 
@@ -304,7 +309,7 @@
             <option selected disabled></option>
               <?php
                 // Source file for extracting data
-                $file = 'text/select-wc2018teams-input.txt';
+                $file = 'text/select-countryteams-input.txt';
                 $handle = @fopen($file, 'r');
                 if ($handle) {
                  while (!feof($handle)) {

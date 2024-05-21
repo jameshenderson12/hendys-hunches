@@ -232,7 +232,7 @@ $fk5 = "football-kits/sky-blue-stripes.png";
 $fk6 = "football-kits/yellow-green.png";
 $fk7 = "football-kits/pink-white.png";
 $fk8 = "football-kits/purple-grad.png";
-$fk9 = "football-kits/orange-black.png";
+$fk9 = "football-kits/orange-purple.png";
 $fk10 = "football-kits/mint-grey-square.png";
 $fk11 = "football-kits/black-white.png";
 $fk12 = "football-kits/diag-navy-red.png";
@@ -240,7 +240,7 @@ $fk13 = "football-kits/claret-blue-square.png";
 $fk14 = "football-kits/blue-yellow.png";
 $fk15 = "football-kits/blue-white-hoops.png";
 $fk16 = "football-kits/green-white-hoops.png";
-$fk17 = "football-kits/red-grad.png";
+$fk17 = "football-kits/red-black.png";
 $fk18 = "football-kits/pink-grad.png";
 
 //===============================

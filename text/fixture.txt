@@ -1,0 +1,64 @@
+Can you please input the following data into a series of INSERT statements exactly like this one as an example:
+
+Example: 
+INSERT INTO live_match_schedule (`hometeamimg`, `hometeam`, `homescore`, `awayscore`, `awayteam`, `awayteamimg`, `venue`, `kotime`, `date`) VALUES ('flag-icons/24/germany.png', 'Germany', NULL, NULL, 'Scotland', 'flag-icons/24/scotland.png', 'Munich', '8pm', '2024-06-14');
+
+Data to complete for:
+Fri, 14/06/2024 	20:00	Germany	Scotland	1	A1	A2	Munich
+Sat, 15/06/2024 	14:00	Hungary	Switzerland	2	A3	A4	Cologne
+Sat, 15/06/2024 	17:00	Spain	Croatia	3	B1	B2	Berlin
+Sat, 15/06/2024 	20:00	Italy	Albania	4	B3	B4	Dortmund
+Sun, 16/06/2024 	14:00	Poland	Netherlands	7	D1	D2	Hamburg
+Sun, 16/06/2024 	17:00	Slovenia	Denmark	6	C1	C2	Stuttgart
+Sun, 16/06/2024 	20:00	Serbia	England	5	C3	C4	Gelsenkirchen
+Mon, 17/06/2024 	14:00	Romania	Ukraine	10	E3	E4	Munich
+Mon, 17/06/2024 	17:00	Belgium	Slovakia	9	E1	E2	Frankfurt
+Mon, 17/06/2024 	20:00	Austria	France	8	D3	D4	Dusseldorf
+Tue, 18/06/2024 	17:00	Türkiye	Georgia	11	F1	F2	Dortmund
+Tue, 18/06/2024 	20:00	Portugal	Czechia	12	F3	F4	Leipzig
+Wed, 19/06/2024 	14:00	Croatia	Albania	15	B2	B4	Hamburg
+Wed, 19/06/2024 	17:00	Germany	Hungary	14	A1	A3	Stuttgart
+Wed, 19/06/2024 	20:00	Scotland	Switzerland	13	A2	A4	Cologne
+Thu, 20/06/2024 	14:00	Slovenia	Serbia	18	C1	C3	Munich
+Thu, 20/06/2024 	17:00	Denmark	England	17	C2	C4	Frankfurt
+Thu, 20/06/2024 	20:00	Spain	Italy	16	B1	B3	Gelsenkirchen
+Fri, 21/06/2024 	14:00	Slovakia	Ukraine	21	E2	E4	Dusseldorf
+Fri, 21/06/2024 	17:00	Poland	Austria	19	D1	D3	Berlin
+Fri, 21/06/2024 	20:00	Netherlands	France	20	D2	D4	Leipzig
+Sat, 22/06/2024 	14:00	Georgia	Czechia	24	F2	F4	Hamburg
+Sat, 22/06/2024 	17:00	Türkiye	Portugal	23	F1	F3	Dortmund
+Sat, 22/06/2024 	20:00	Belgium	Romania	22	E1	E3	Cologne
+Sun, 23/06/2024 	20:00	Switzerland	Germany	25	A4	A1	Frankfurt
+Sun, 23/06/2024 	20:00	Scotland	Hungary	26	A2	A3	Stuttgart
+Mon, 24/06/2024 	20:00	Albania	Spain	27	B4	B1	Dusseldorf
+Mon, 24/06/2024 	20:00	Croatia	Italy	28	B2	B3	Leipzig
+Tue, 25/06/2024 	17:00	Netherlands	Austria	31	D2	D3	Berlin
+Tue, 25/06/2024 	17:00	France	Poland	32	D4	D1	Dortmund
+Tue, 25/06/2024 	20:00	England	Slovenia	29	C4	C1	Cologne
+Tue, 25/06/2024 	20:00	Denmark	Serbia	30	C2	C3	Munich
+Wed, 26/06/2024 	17:00	Slovakia	Romania	33	E2	E3	Frankfurt
+Wed, 26/06/2024 	17:00	Ukraine	Belgium	34	E4	E1	Stuttgart
+Wed, 26/06/2024 	20:00	Georgia	Portugal	35	F2	F3	Gelsenkirchen
+Wed, 26/06/2024 	20:00	Czechia	Türkiye	36	F4	F1	Hamburg
+
+
+
+
+
+INSERT INTO live_match_schedule (`hometeamimg`, `hometeam`, `homescore`, `awayscore`, `awayteam`, `awayteamimg`, `venue`, `kotime`, `date`) VALUES ('flag-icons/24/germany.png', 'Germany', NULL, NULL, 'Scotland', 'flag-icons/24/scotland.png', 'Munich', '20:00', '2024-06-14');
+INSERT INTO live_match_schedule (`hometeamimg`, `hometeam`, `homescore`, `awayscore`, `awayteam`, `awayteamimg`, `venue`, `kotime`, `date`) VALUES ('flag-icons/24/hungary.png', 'Hungary', NULL, NULL, 'Switzerland', 'flag-icons/24/switzerland.png', 'Cologne', '14:00', '2024-06-15');
+INSERT INTO live_match_schedule (`hometeamimg`, `hometeam`, `homescore`, `awayscore`, `awayteam`, `awayteamimg`, `venue`, `kotime`, `date`) VALUES ('flag-icons/24/spain.png', 'Spain', NULL, NULL, 'Croatia', 'flag-icons/24/croatia.png', 'Berlin', '17:00', '2024-06-15');
+INSERT INTO live_match_schedule (`hometeamimg`, `hometeam`, `homescore`, `awayscore`, `awayteam`, `awayteamimg`, `venue`, `kotime`, `date`) VALUES ('flag-icons/24/italy.png', 'Italy', NULL, NULL, 'Albania', 'flag-icons/24/albania.png', 'Dortmund', '20:00', '2024-06-15');
+INSERT INTO live_match_schedule (`hometeamimg`, `hometeam`, `homescore`, `awayscore`, `awayteam`, `awayteamimg`, `venue`, `kotime`, `date`) VALUES ('flag-icons/24/poland.png', 'Poland', NULL, NULL, 'Netherlands', 'flag-icons/24/netherlands.png', 'Hamburg', '14:00', '2024-06-16');
+INSERT INTO live_match_schedule (`hometeamimg`, `hometeam`, `homescore`, `awayscore`, `awayteam`, `awayteamimg`, `venue`, `kotime`, `date`) VALUES ('flag-icons/24/slovenia.png', 'Slovenia', NULL, NULL, 'Denmark', 'flag-icons/24/denmark.png', 'Stuttgart', '17:00', '2024-06-16');
+INSERT INTO live_match_schedule (`hometeamimg`, `hometeam`, `homescore`, `awayscore`, `awayteam`, `awayteamimg`, `venue`, `kotime`, `date`) VALUES ('flag-icons/24/serbia.png', 'Serbia', NULL, NULL, 'England', 'flag-icons/24/england.png', 'Gelsenkirchen', '20:00', '2024-06-16');
+INSERT INTO live_match_schedule (`hometeamimg`, `hometeam`, `homescore`, `awayscore`, `awayteam`, `awayteamimg`, `venue`, `kotime`, `date`) VALUES ('flag-icons/24/romania.png', 'Romania', NULL, NULL, 'Ukraine', 'flag-icons/24/ukraine.png', 'Munich', '14:00', '2024-06-17');
+INSERT INTO live_match_schedule (`hometeamimg`, `hometeam`, `homescore`, `awayscore`, `awayteam`, `awayteamimg`, `venue`, `kotime`, `date`) VALUES ('flag-icons/24/belgium.png', 'Belgium', NULL, NULL, 'Slovakia', 'flag-icons/24/slovakia.png', 'Frankfurt', '17:00', '2024-06-17');
+INSERT INTO live_match_schedule (`hometeamimg`, `hometeam`, `homescore`, `awayscore`, `awayteam`, `awayteamimg`, `venue`, `kotime`, `date`) VALUES ('flag-icons/24/austria.png', 'Austria', NULL, NULL, 'France', 'flag-icons/24/france.png', 'Dusseldorf', '20:00', '2024-06-17');
+INSERT INTO live_match_schedule (`hometeamimg`, `hometeam`, `homescore`, `awayscore`, `awayteam`, `awayteamimg`, `venue`, `kotime`, `date`) VALUES ('flag-icons/24/turkey.png', 'Türkiye', NULL, NULL, 'Georgia', 'flag-icons/24/georgia.png', 'Dortmund', '17:00', '2024-06-18');
+INSERT INTO live_match_schedule (`hometeamimg`, `hometeam`, `homescore`, `awayscore`, `awayteam`, `awayteamimg`, `venue`, `kotime`, `date`) VALUES ('flag-icons/24/portugal.png', 'Portugal', NULL, NULL, 'Czechia', 'flag-icons/24/czechia.png', 'Leipzig', '20:00', '2024-06-18');
+INSERT INTO live_match_schedule (`hometeamimg`, `hometeam`, `homescore`, `awayscore`, `awayteam`, `awayteamimg`, `venue`, `kotime`, `date`) VALUES ('flag-icons/24/croatia.png', 'Croatia', NULL, NULL, 'Albania', 'flag-icons/24/albania.png', 'Hamburg', '14:00', '2024-06-19');
+INSERT INTO live_match_schedule (`hometeamimg`, `hometeam`, `homescore`, `awayscore`, `awayteam`, `awayteamimg`, `venue`, `kotime`, `date`) VALUES ('flag-icons/24/germany.png', 'Germany', NULL, NULL, 'Hungary', 'flag-icons/24/hungary.png', 'Stuttgart', '17:00', '2024-06-19');
+INSERT INTO live_match_schedule (`hometeamimg`, `hometeam`, `homescore`, `awayscore`, `awayteam`, `awayteamimg`, `venue`, `kotime`, `date`) VALUES ('flag-icons/24/scotland.png', 'Scotland', NULL, NULL, 'Switzerland', 'flag-icons/24/switzerland.png', 'Cologne', '20:00', '2024-06-19');
+INSERT INTO live_match_schedule (`hometeamimg`, `hometeam`, `homescore`, `awayscore`, `awayteam`, `awayteamimg`, `venue`, `kotime`, `date`) VALUES ('flag-icons/24/slovenia.png', 'Slovenia', NULL, NULL, 'Serbia', 'flag-icons/24/serbia.png', 'Munich', '14:00', '2024-06-20');
+INSERT INTO live_match_schedule (`hometeamimg`, `hometeam`, `homescore`, `awayscore`, `awayteam`, `away
