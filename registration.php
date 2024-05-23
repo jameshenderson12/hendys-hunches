@@ -13,6 +13,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="https://getbootstrap.com/docs/5.2/assets/css/docs.css" rel="stylesheet">
     <link href="css/registration.css" rel="stylesheet">
+    <link href="css/multi-step-form.css" rel="stylesheet">
+    <script src="js/multi-step-form.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.1"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script type="text/javascript">
@@ -66,11 +68,6 @@
         $('.invalid-feedback').css('display', 'none');
       }
       </script>
-      <style>
-        .form-label {
-          text-align: left !important;
-        }
-      </style>
   </head>
 
 
@@ -90,8 +87,18 @@
 
 		<main class="px-3">
 			<h1>Registration</h1>
+      <!-- Progress bar -->
+      <div class="progressbar">
+        <div class="progress" id="progress"></div>
+        <div class="progress-step progress-step-active" data-title="Intro"></div>
+        <div class="progress-step" data-title="Contact"></div>
+        <div class="progress-step" data-title="ID"></div>
+        <div class="progress-step" data-title="Password"></div>
+      </div>
       <!--<p>Register your details below to sign up or return to the <a href="index.php">login page</a> to sign in. All fields are required to be completed.</p>-->
       <form class="row g-3 needs-validation" method="post" action="php/register.php" id="registrationForm" name="registrationForm" novalidate> <!--  onsubmit="validateAvatar()" onSubmit="return validateFullForm()" border border-white p-2 my-2 border-opacity-25   -->
+      <!-- Steps -->
+      <div class="form-step form-step-active">
         <div class="col-md-6">
           <label for="firstname" class="form-label">First name</label>
           <input type="text" class="form-control" id="firstname" name="firstname" required>
@@ -117,6 +124,11 @@
             Please provide a valid email address.
           </div>
         </div>
+        <div class="">
+          <a href="#" class="btn btn-next width-50 ml-auto">Next</a>
+        </div>
+      </div>
+      <div class="form-step">
         <div class="col-md-6">
           <label for="username" class="form-label">Username</label>
           <input type="text" class="form-control" id="username" name="username" required>
@@ -146,87 +158,33 @@
             Passwords do not meet criteria or match.
           </div>
         </div>
-
-        <div class="container text-center g-3">
-          <label for="avatar" class="form-label">Select your avatar strip</label>
-          <div class="row row-cols-4 row-cols-sm-6 g-1">
-            <div class="col">
-              <input type="radio" class="btn-check" autocomplete="off" id="fk1" name="fkradio" value="<?php echo $fk1; ?>" onClick="chooseImage('fk1');" required>
-              <label class="btn btn-outline-light" for="fk1"><img src="<?php echo $fk1; ?>" alt="Football kit description..." class="w-100" /></label>
-            </div>
-            <div class="col">
-              <input type="radio" class="btn-check" autocomplete="off" id="fk2" name="fkradio" value="<?php echo $fk2; ?>" onClick="chooseImage('fk2');">
-              <label class="btn btn-outline-light" for="fk2"><img src="<?php echo $fk2; ?>" alt="Football kit description..." class="w-100" /></label>
-            </div>
-            <div class="col">
-              <input type="radio" class="btn-check" autocomplete="off" id="fk3" name="fkradio" value="<?php echo $fk3; ?>" onClick="chooseImage('fk3');">
-              <label class="btn btn-outline-light" for="fk3"><img src="<?php echo $fk3; ?>" alt="Football kit description..."class="w-100" /></label>
-            </div>
-            <div class="col">
-              <input type="radio" class="btn-check" autocomplete="off" id="fk4" name="fkradio" value="<?php echo $fk4; ?>" onClick="chooseImage('fk4');">
-              <label class="btn btn-outline-light" for="fk4"><img src="<?php echo $fk4; ?>" alt="Football kit description..."class="w-100" /></label>
-            </div>
-            <div class="col">
-              <input type="radio" class="btn-check" autocomplete="off" id="fk5" name="fkradio" value="<?php echo $fk5; ?>" onClick="chooseImage('fk5');">
-              <label class="btn btn-outline-light" for="fk5"><img src="<?php echo $fk5; ?>" alt="Football kit description..."class="w-100" /></label>
-            </div>
-            <div class="col">
-              <input type="radio" class="btn-check" autocomplete="off" id="fk6" name="fkradio" value="<?php echo $fk6; ?>" onClick="chooseImage('fk6');">
-              <label class="btn btn-outline-light" for="fk6"><img src="<?php echo $fk6; ?>" alt="Football kit description..."class="w-100" /></label>
-            </div>
-            <div class="col">
-              <input type="radio" class="btn-check" autocomplete="off" id="fk7" name="fkradio" value="<?php echo $fk7; ?>" onClick="chooseImage('fk7');">
-              <label class="btn btn-outline-light" for="fk7"><img src="<?php echo $fk7; ?>" alt="Football kit description..." class="w-100" /></label>
-            </div>
-            <div class="col">
-              <input type="radio" class="btn-check" autocomplete="off" id="fk8" name="fkradio" value="<?php echo $fk8; ?>" onClick="chooseImage('fk8');">
-              <label class="btn btn-outline-light" for="fk8"><img src="<?php echo $fk8; ?>" alt="Football kit description..." class="w-100" /></label>
-            </div>
-            <div class="col">
-              <input type="radio" class="btn-check" autocomplete="off" id="fk9" name="fkradio" value="<?php echo $fk9; ?>" onClick="chooseImage('fk9');">
-              <label class="btn btn-outline-light" for="fk9"><img src="<?php echo $fk9; ?>" alt="Football kit description..." class="w-100" /></label>
-            </div>
-            <div class="col">
-              <input type="radio" class="btn-check" autocomplete="off" id="fk10" name="fkradio" value="<?php echo $fk10; ?>" onClick="chooseImage('fk10');">
-              <label class="btn btn-outline-light" for="fk10"><img src="<?php echo $fk10; ?>" alt="Football kit description..." class="w-100" /></label>
-            </div>
-            <div class="col">
-              <input type="radio" class="btn-check" autocomplete="off" id="fk11" name="fkradio" value="<?php echo $fk11; ?>" onClick="chooseImage('fk11');">
-              <label class="btn btn-outline-light" for="fk11"><img src="<?php echo $fk11; ?>" alt="Football kit description..." class="w-100" /></label>
-            </div>
-            <div class="col">
-              <input type="radio" class="btn-check" autocomplete="off" id="fk12" name="fkradio" value="<?php echo $fk12; ?>" onClick="chooseImage('fk12');">
-              <label class="btn btn-outline-light" for="fk12"><img src="<?php echo $fk12; ?>" alt="Football kit description..." class="w-100" /></label>
-            </div>
-            <div class="col">
-              <input type="radio" class="btn-check" autocomplete="off" id="fk13" name="fkradio" value="<?php echo $fk13; ?>" onClick="chooseImage('fk13');">
-              <label class="btn btn-outline-light" for="fk13"><img src="<?php echo $fk13; ?>" alt="Football kit description..." class="w-100" /></label>
-            </div>
-            <div class="col">
-              <input type="radio" class="btn-check" autocomplete="off" id="fk14" name="fkradio" value="<?php echo $fk14; ?>" onClick="chooseImage('fk14');">
-              <label class="btn btn-outline-light" for="fk14"><img src="<?php echo $fk14; ?>" alt="Football kit description..." class="w-100" /></label>
-            </div>
-            <div class="col">
-              <input type="radio" class="btn-check" autocomplete="off" id="fk15" name="fkradio" value="<?php echo $fk15; ?>" onClick="chooseImage('fk15');">
-              <label class="btn btn-outline-light" for="fk15"><img src="<?php echo $fk15; ?>" alt="Football kit description..." class="w-100" /></label>
-            </div>
-            <div class="col">
-              <input type="radio" class="btn-check" autocomplete="off" id="fk16" name="fkradio" value="<?php echo $fk16; ?>" onClick="chooseImage('fk16');">
-              <label class="btn btn-outline-light" for="fk16"><img src="<?php echo $fk16; ?>" alt="Football kit description..." class="w-100" /></label>
-            </div>
-            <div class="col">
-              <input type="radio" class="btn-check" autocomplete="off" id="fk17" name="fkradio" value="<?php echo $fk17; ?>" onClick="chooseImage('fk17');">
-              <label class="btn btn-outline-light" for="fk17"><img src="<?php echo $fk17; ?>" alt="Football kit description..." class="w-100" /></label>
-            </div>
-            <div class="col">
-              <input type="radio" class="btn-check" autocomplete="off" id="fk18" name="fkradio" value="<?php echo $fk18; ?>" onClick="chooseImage('fk18');">
-              <label class="btn btn-outline-light" for="fk18"><img src="<?php echo $fk18; ?>" alt="Football kit description..." class="w-100" /></label>
-            </div>
-            <div id="avatarMsg"></div>
-          </div>
+        <div class="btns-group">
+          <a href="#" class="btn btn-prev">Previous</a>
+          <a href="#" class="btn btn-next">Next</a>
         </div>
-        <input type="text" class="form-control" id="avatar" name="avatar" readonly hidden>
-
+      </div>
+      <div class="form-step">
+        <div class="container text-center g-3">
+            <label for="avatar" class="form-label">Select your avatar strip</label>
+            <div class="row row-cols-4 row-cols-sm-6 g-1">
+                <?php
+                $avatars = [$fk1, $fk2, $fk3, $fk4, $fk5, $fk6, $fk7, $fk8, $fk9, $fk10, $fk11, $fk12, $fk13, $fk14, $fk15, $fk16, $fk17, $fk18];
+                foreach ($avatars as $index => $avatar) {
+                  echo "
+                  <div class='col'>
+                    <input type='radio' class='btn-check' autocomplete='off' id='fk" . ($index + 1) . "' name='fkradio' value='$avatar' onclick='chooseImage(\"fk" . ($index + 1) . "\");' required>
+                    <label class='btn btn-outline-light' for='fk" . ($index + 1) . "'>
+                      <img src='$avatar' alt='Football kit description...' class='w-100'/>
+                    </label>
+                  </div>";
+                }
+                ?>
+                <div id="avatarMsg"></div>
+            </div>
+        </div>
+        <input type="hidden" class="form-control" id="avatar" name="avatar">
+      </div>
+      <div class="form-step">
         <div class="col-md-6">
           <label for="fieldofwork" class="form-label">Field of work</label>
           <input id="fieldofwork" name="fieldofwork" class="form-select" list="datalistOptions1" placeholder="Type to search..." required>
@@ -322,8 +280,8 @@
               ?>
           </datalist>
         </div>
-
-        <div class="col-12">
+      </div>
+        <!-- <div class="col-12">
           <div class="form-check">
             <input class="form-check-input" type="checkbox" id="disclaimer" name="disclaimer" value="disclaimer" required>
             <label class="form-check-label" for="disclaimer">
@@ -333,12 +291,12 @@
               You must agree before submitting.
             </div>
           </div>
-        </div>
-        <hr />
+        </div> -->
+        <!-- <hr />
         <div class="col-12 d-flex justify-content-evenly" style="margin: 0px 0px 10px 0px;">
           <button class="btn btn-lg btn-primary" type="submit"><i class="fw-bold bi bi-hand-thumbs-up"></i> Sign me up!</button>
           <button class="btn btn-lg btn-outline-light" type="reset" onClick="resetAll();"><i class="fw-bold bi bi-x"></i> Reset all</button>
-        </div>
+        </div> -->
       </form>
 
 		</main>

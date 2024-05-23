@@ -226,22 +226,22 @@ $Fi2_img = "flag-icons/24/.png";
 // Setup variables for football kits
 $fk1 = "football-kits/green-white.png";
 $fk2 = "football-kits/blue-white.png";
-$fk3 = "football-kits/red-white.png";
-$fk4 = "football-kits/maroon-stripe.png";
-$fk5 = "football-kits/sky-blue-stripes.png";
-$fk6 = "football-kits/yellow-green.png";
-$fk7 = "football-kits/pink-white.png";
-$fk8 = "football-kits/purple-grad.png";
+$fk3 = "football-kits/red-white-blue.png";
+$fk4 = "football-kits/maroon-white.png";
+$fk5 = "football-kits/skyblue-blue-hoops.png";
+$fk6 = "football-kits/yellow-black.png";
+$fk7 = "football-kits/pink-black.png";
+$fk8 = "football-kits/purple-black.png";
 $fk9 = "football-kits/orange-purple.png";
-$fk10 = "football-kits/mint-grey-square.png";
-$fk11 = "football-kits/black-white.png";
-$fk12 = "football-kits/diag-navy-red.png";
-$fk13 = "football-kits/claret-blue-square.png";
-$fk14 = "football-kits/blue-yellow.png";
-$fk15 = "football-kits/blue-white-hoops.png";
-$fk16 = "football-kits/green-white-hoops.png";
+$fk10 = "football-kits/grey-mint.png";
+$fk11 = "football-kits/charcoal-gold.png";
+$fk12 = "football-kits/green-lightgreen.png";
+$fk13 = "football-kits/claret-lightblue.png";
+$fk14 = "football-kits/lightred-lightyellow.png";
+$fk15 = "football-kits/navy-blue-red.png";
+$fk16 = "football-kits/white-green.png";
 $fk17 = "football-kits/red-black.png";
-$fk18 = "football-kits/pink-grad.png";
+$fk18 = "football-kits/pink-white.png";
 
 //===============================
 // Global 'helper' functions
