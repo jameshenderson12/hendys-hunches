@@ -107,7 +107,7 @@ $E4 = "Ukraine";
 $E4_img = "flag-icons/24/ukraine.png";
 
 $F1 = "Türkiye";
-$F1_img = "flag-icons/24/turkey.png";
+$F1_img = "flag-icons/24/türkiye.png";
 $F2 = "Georgia";
 $F2_img = "flag-icons/24/georgia.png";
 $F3 = "Portugal";

@@ -1,4 +1,7 @@
 <?php
+
+	// print_r($_POST); Print all POST variables
+
 	// Sanitize incoming username and password
 	$firstname = ucfirst($_POST['firstname']);
 	$surname = ucfirst($_POST['surname']);
@@ -24,8 +27,8 @@
 		$setdeflastpos = $row["totalusers"] + 1;
 	  }
 
-	$stmt1 = mysqli_prepare($con, "INSERT INTO live_user_information (username, password, firstname, surname, email, avatar, fieldofwork, location, faveteam, tournwinner, startpos, lastpos, currpos) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
-	$stmt2 = mysqli_prepare($con, "INSERT INTO live_temp_information (username) VALUES (?)");
+	$stmt1 = mysqli_prepare($con, "INSERT INTO live_user_information (`username`, `password`, `firstname`, `surname`, `email`, `avatar`, `fieldofwork`, `location`, `faveteam`, `tournwinner`, `startpos`, `lastpos`, `currpos`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
+	$stmt2 = mysqli_prepare($con, "INSERT INTO live_temp_information (`username`) VALUES (?)");
 
 	// Bind the input parameters to the prepared statement
 	mysqli_stmt_bind_param($stmt1, "ssssssssssddd", $username, md5($password), $firstname, $surname, $email, $avatar, $fieldofwork, $location, $faveteam, $tournwinner, $setdefstartpos, $setdeflastpos, $setdefcurrpos);

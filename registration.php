@@ -87,211 +87,224 @@
 
 		<main class="px-3">
 			<h1>Registration</h1>
+
       <!-- Progress bar -->
       <div class="progressbar">
         <div class="progress" id="progress"></div>
-        <div class="progress-step progress-step-active" data-title="Intro"></div>
-        <div class="progress-step" data-title="Contact"></div>
-        <div class="progress-step" data-title="ID"></div>
-        <div class="progress-step" data-title="Password"></div>
+        <div class="progress-step progress-step-active" data-title="Contact"></div>
+        <div class="progress-step" data-title="Account"></div>
+        <div class="progress-step" data-title="Avatar"></div>
+        <div class="progress-step" data-title="Details"></div>
+        <div class="progress-step" data-title="Terms"></div>
       </div>
       <!--<p>Register your details below to sign up or return to the <a href="index.php">login page</a> to sign in. All fields are required to be completed.</p>-->
-      <form class="row g-3 needs-validation" method="post" action="php/register.php" id="registrationForm" name="registrationForm" novalidate> <!--  onsubmit="validateAvatar()" onSubmit="return validateFullForm()" border border-white p-2 my-2 border-opacity-25   -->
+      <form class="d-flex flex-column needs-validation" method="post" action="php/register.php" id="registrationForm" name="registrationForm" novalidate> <!--  onsubmit="validateAvatar()" onSubmit="return validateFullForm()" border border-white p-2 my-2 border-opacity-25   -->
       <!-- Steps -->
       <div class="form-step form-step-active">
-        <div class="col-md-6">
-          <label for="firstname" class="form-label">First name</label>
-          <input type="text" class="form-control" id="firstname" name="firstname" required>
-          <!--
-          <div class="valid-feedback">
-            Looks good!
-          </div>-->
-          <div class="invalid-feedback">
-            Please provide your first name.
-          </div>
+        <label for="firstname" class="form-label">First Name</label>
+        <input type="text" class="form-control" id="firstname" name="firstname" required>
+        <div class="invalid-feedback">
+          Please provide your first name.
         </div>
-        <div class="col-md-6">
-          <label for="surname" class="form-label">Last name</label>
-          <input type="text" class="form-control" id="surname" name="surname" required>
-          <div class="invalid-feedback">
-            Please provide your last name.
-          </div>
+        <label for="surname" class="form-label">Last Name</label>
+        <input type="text" class="form-control" id="surname" name="surname" required>
+        <div class="invalid-feedback">
+          Please provide your last name.
         </div>
-        <div class="col-md-6">
-          <label for="email" class="form-label">Email</label>
-          <input type="email" class="form-control" id="email" name="email" required>
-          <div class="invalid-feedback">
-            Please provide a valid email address.
-          </div>
-        </div>
-        <div class="">
-          <a href="#" class="btn btn-next width-50 ml-auto">Next</a>
-        </div>
-      </div>
-      <div class="form-step">
-        <div class="col-md-6">
-          <label for="username" class="form-label">Username</label>
-          <input type="text" class="form-control" id="username" name="username" required>
-          <span class="un-msg"></span>
-          <div class="invalid-feedback">
-            Please provide a username.
-          </div>
-        </div>
-        <div class="col-md-6">
-          <label for="pwd1" class="form-label">Password</label> <i class="bi bi-eye-slash-fill" id="togglePwd1"></i>
-          <input type="password" class="form-control" id="pwd1" name="pwd1" onBlur="return validatePassword();" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" onchange="form.pwd2.pattern = this.value;" />
-          <div class="invalid-feedback">
-            Password does not meet criteria.
-            <div id="pwdMsg">
-              <ul type="none" class="small">
-                <li id="length" class="invalid">Minimum <b>6 characters</b></li>
-                <li id="letter" class="invalid">1 <b>uppercase</b> and 1 <b>lowercase</b> letter</li>
-                <li id="number" class="invalid">1 <b>number</b></li>
-              </ul>
+        <label for="email" class="form-label">Email</label>
+        <input type="email" class="form-control" id="email" name="email" required>
+        <div class="invalid-feedback">
+          Please provide a valid email address.
+        </div>        
+          <div class="row">
+            <hr>
+            <div class="col-12 text-end">
+              <button type="button" class="btn btn-primary btn-next w-50">Next</button>
             </div>
           </div>
-        </div>
-        <div class="col-md-6">
-          <label for="pwd2" class="form-label">Confirm Password</label> <i class="bi bi-eye-slash-fill" id="togglePwd2"></i>
-          <input type="password" class="form-control" id="pwd2" name="pwd2" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}">
-          <div class="invalid-feedback">
-            Passwords do not meet criteria or match.
-          </div>
-        </div>
-        <div class="btns-group">
-          <a href="#" class="btn btn-prev">Previous</a>
-          <a href="#" class="btn btn-next">Next</a>
-        </div>
       </div>
       <div class="form-step">
-        <div class="container text-center g-3">
-            <label for="avatar" class="form-label">Select your avatar strip</label>
-            <div class="row row-cols-4 row-cols-sm-6 g-1">
-                <?php
-                $avatars = [$fk1, $fk2, $fk3, $fk4, $fk5, $fk6, $fk7, $fk8, $fk9, $fk10, $fk11, $fk12, $fk13, $fk14, $fk15, $fk16, $fk17, $fk18];
-                foreach ($avatars as $index => $avatar) {
-                  echo "
-                  <div class='col'>
-                    <input type='radio' class='btn-check' autocomplete='off' id='fk" . ($index + 1) . "' name='fkradio' value='$avatar' onclick='chooseImage(\"fk" . ($index + 1) . "\");' required>
-                    <label class='btn btn-outline-light' for='fk" . ($index + 1) . "'>
-                      <img src='$avatar' alt='Football kit description...' class='w-100'/>
-                    </label>
-                  </div>";
-                }
-                ?>
-                <div id="avatarMsg"></div>
-            </div>
+        <label for="username" class="form-label">Username</label>
+        <input type="text" class="form-control" id="username" name="username" required>
+        <span class="un-msg"></span>
+        <div class="invalid-feedback">
+          Please provide a username.
         </div>
-        <input type="hidden" class="form-control" id="avatar" name="avatar">
+        <label for="pwd1" class="form-label">Password <i class="bi bi-eye-slash-fill m-4" id="togglePwd1"></i></label>
+        <input type="password" class="form-control" id="pwd1" name="pwd1" onBlur="return validatePassword();" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" onchange="form.pwd2.pattern = this.value;" />
+        <div class="invalid-feedback">
+          Password does not meet criteria.
+          <div id="pwdMsg">
+            <ul type="none" class="small">
+              <li id="length" class="invalid">Minimum <b>6 characters</b></li>
+              <li id="letter" class="invalid">1 <b>uppercase</b> and 1 <b>lowercase</b> letter</li>
+              <li id="number" class="invalid">1 <b>number</b></li>
+            </ul>
+          </div>
+        </div>
+        <label for="pwd2" class="form-label">Confirm Password <i class="bi bi-eye-slash-fill m-4" id="togglePwd2"></i></label> 
+        <input type="password" class="form-control" id="pwd2" name="pwd2" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}">
+        <div class="invalid-feedback">
+          Passwords do not meet criteria or match.
+        </div>
+        <div class="row">
+          <hr>
+          <div class="col-6">
+            <button type="button" class="btn btn-primary btn-prev w-100">Previous</button>
+          </div>
+          <div class="col-6 text-end">
+            <button type="button" class="btn btn-primary btn-next w-100">Next</button>
+          </div>
+        </div>
+    </div>      
+    <div class="form-step">
+      <div class="container text-center g-3">
+          <label for="avatar" class="form-label">Choose Your Avatar</label>
+          <div class="row row-cols-6 g-1">
+              <?php
+              $avatars = [$fk1, $fk2, $fk3, $fk4, $fk5, $fk6, $fk7, $fk8, $fk9, $fk10, $fk11, $fk12, $fk13, $fk14, $fk15, $fk16, $fk17, $fk18];
+              foreach ($avatars as $index => $avatar) {
+                $filename = pathinfo($avatar, PATHINFO_FILENAME);
+                echo "
+                <div class='col'>
+                  <input type='radio' class='btn-check' autocomplete='off' id='fk" . ($index + 1) . "' name='fkradio' value='$avatar' onclick='chooseImage(\"fk" . ($index + 1) . "\");' required>
+                  <label class='btn btn-outline-light' for='fk" . ($index + 1) . "'>
+                    <img src='$avatar' alt='Football kit $filename' class='w-100 img-fluid'/>
+                  </label>
+                </div>";
+              }
+              ?>
+              <div id="avatarMsg"></div>
+          </div>
       </div>
-      <div class="form-step">
-        <div class="col-md-6">
-          <label for="fieldofwork" class="form-label">Field of work</label>
-          <input id="fieldofwork" name="fieldofwork" class="form-select" list="datalistOptions1" placeholder="Type to search..." required>
-          <div class="invalid-feedback">
-            Please tell us your field of work.
-          </div>
-          <datalist id="datalistOptions1">
-            <option selected disabled></option>
-              <?php
-                // Source file for extracting data
-                $file = 'text/select-sectors-input.txt';
-                $handle = @fopen($file, 'r');
-                if ($handle) {
-                 while (!feof($handle)) {
-                   $line = fgets($handle, 4096);
-                   $item = explode('\n', $line);
-                   echo '<option value="' . $item[0] . '">' . $item[0] . '</option>' . "\n";
-                   }
-                fclose($handle);
-                }
-              ?>
-          </datalist>
+      <input type="hidden" class="form-control" id="avatar" name="avatar">
+      <div class="row">
+        <hr>
+        <div class="col-6">
+          <button type="button" class="btn btn-primary btn-prev w-100">Previous</button>
         </div>
-
-        <div class="col-md-6">
-          <label for="location" class="form-label">Rough location</label>
-          <input id="location" name="location" class="form-select" list="datalistOptions4" placeholder="Type to search..." required>
-          <div class="invalid-feedback">
-            Please tell us your nearest city.
-          </div>
-          <datalist id="datalistOptions4">
-            <option selected disabled></option>
-              <?php
-                // Source file for extracting data
-                $file = 'text/select-ukcities-input.txt';
-                $handle = @fopen($file, 'r');
-                if ($handle) {
-                 while (!feof($handle)) {
-                   $line = fgets($handle, 4096);
-                   $item = explode('\n', $line);
-                   echo '<option value="' . $item[0] . '">' . $item[0] . '</option>' . "\n";
-                   }
-                fclose($handle);
-                }
-              ?>
-          </datalist>
-        </div>
-
-        <div class="col-md-6">
-          <label for="faveteam" class="form-label">Favourite team</label>
-          <input id="faveteam" name="faveteam" class="form-select" list="datalistOptions2" placeholder="Type to search..." required>
-          <div class="invalid-feedback">
-            Please tell us your team.
-          </div>
-          <datalist id="datalistOptions2">
-            <option selected disabled></option>
-              <?php
-                // Source file for extracting data
-                $file = 'text/select-clubteams-input.txt';
-                $handle = @fopen($file, 'r');
-                if ($handle) {
-                 while (!feof($handle)) {
-                   $line = fgets($handle, 4096);
-                   $item = explode('\n', $line);
-                   echo '<option value="' . $item[0] . '">' . $item[0] . '</option>' . "\n";
-                   }
-                fclose($handle);
-                }
-              ?>
-          </datalist>
-        </div>
-
-        <div class="col-md-6">
-          <label for="tournwinner" class="form-label">Predicted winner</label>
-          <input id="tournwinner" name="tournwinner" class="form-select" list="datalistOptions3" placeholder="Type to search..." required>
-          <div class="invalid-feedback">
-            Please tell us who'll win Euro 2024.
-          </div>
-          <datalist id="datalistOptions3">
-            <option selected disabled></option>
-              <?php
-                // Source file for extracting data
-                $file = 'text/select-countryteams-input.txt';
-                $handle = @fopen($file, 'r');
-                if ($handle) {
-                 while (!feof($handle)) {
-                   $line = fgets($handle, 4096);
-                   $item = explode('\n', $line);
-                   echo '<option value="' . $item[0] . '">' . $item[0] . '</option>' . "\n";
-                   }
-                fclose($handle);
-                }
-              ?>
-          </datalist>
+        <div class="col-6 text-end">
+          <button type="button" class="btn btn-primary btn-next w-100">Next</button>
         </div>
       </div>
-        <!-- <div class="col-12">
-          <div class="form-check">
+    </div>
+    <div class="form-step">
+      <span class="badge text-bg-light">Begin typing to search or use drop-down menus</span>
+      <label for="fieldofwork" class="form-label">Field of Expertise</label>
+      <input id="fieldofwork" name="fieldofwork" class="form-select" list="datalistOptions1" required>
+      <div class="invalid-feedback">
+        Please tell us your field of expertise.
+      </div>
+      <datalist id="datalistOptions1">
+        <option value="Prefer Not To Say"></option>        
+        <?php
+          $file = 'text/select-sectors-input.txt';
+          $handle = @fopen($file, 'r');
+          if ($handle) {
+            while (!feof($handle)) {
+              $line = fgets($handle, 4096);
+              $item = explode('\n', $line);
+              echo '<option value="' . trim($item[0]) . '">' . trim($item[0]) . '</option>' . "\n";
+            }
+            fclose($handle);
+          }
+        ?>
+      </datalist>
+      <!-- Repeat similar structure for other input fields -->
+      <label for="location" class="form-label">Location (Nearest Town/City)</label>
+      <input id="location" name="location" class="form-select" list="datalistOptions4" required>
+      <div class="invalid-feedback">
+        Please tell us your nearest city.
+      </div>
+      <datalist id="datalistOptions4">
+      <option value="Prefer Not To Say"></option>
+        <?php
+          $file = 'text/select-ukcities-input.txt';
+          $handle = @fopen($file, 'r');
+          if ($handle) {
+            while (!feof($handle)) {
+              $line = fgets($handle, 4096);
+              $item = explode('\n', $line);
+              echo '<option value="' . trim($item[0]) . '">' . trim($item[0]) . '</option>' . "\n";
+            }
+            fclose($handle);
+          }
+        ?>
+      </datalist>
+      <label for="faveteam" class="form-label">Favourite Team</label>
+      <input id="faveteam" name="faveteam" class="form-select" list="datalistOptions2" required>
+      <div class="invalid-feedback">
+        Please tell us your team.
+      </div>
+      <datalist id="datalistOptions2">
+        <option value="None"></option>
+        <?php
+          $file = 'text/select-clubteams-input.txt';
+          $handle = @fopen($file, 'r');
+          if ($handle) {
+            while (!feof($handle)) {
+              $line = fgets($handle, 4096);
+              $item = explode('\n', $line);
+              echo '<option value="' . trim($item[0]) . '">' . trim($item[0]) . '</option>' . "\n";
+            }
+            fclose($handle);
+          }
+        ?>
+      </datalist>
+      <label for="tournwinner" class="form-label">Who'll Win <?= $competition ?>?</label>
+      <input id="tournwinner" name="tournwinner" class="form-select" list="datalistOptions3" required>
+      <div class="invalid-feedback">
+        Please tell us who'll win <?= $competition ?>.
+      </div>
+      <datalist id="datalistOptions3">
+      <option value="Prefer Not To Say"></option>        
+        <?php
+          $file = 'text/select-countryteams-input.txt';
+          $handle = @fopen($file, 'r');
+          if ($handle) {
+            while (!feof($handle)) {
+              $line = fgets($handle, 4096);
+              $item = explode('\n', $line);
+              echo '<option value="' . trim($item[0]) . '">' . trim($item[0]) . '</option>' . "\n";
+            }
+            fclose($handle);
+          }
+        ?>
+      </datalist>
+      <div class="row">
+        <hr>
+        <div class="col-6">
+          <button type="button" class="btn btn-primary btn-prev w-100">Previous</button>
+        </div>
+        <div class="col-6 text-end">
+          <button type="button" class="btn btn-primary btn-next w-100">Next</button>
+        </div>
+      </div>
+    </div>
+
+      <div class="form-step">                 
+        <div class="row">
+          <div class="col-auto d-flex align-items-center m-5">
+            <img src="img/hh-logo-2018.jpg" class="img-fluid mt-auto" title="Hendy's Hunches Logo" alt="Hendy's Hunches Logo" style="width: 200px; margin-bottom: 10px;"> 
             <input class="form-check-input" type="checkbox" id="disclaimer" name="disclaimer" value="disclaimer" required>
-            <label class="form-check-label" for="disclaimer">
+            <label class="form-check-label m-3" for="disclaimer">
               I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#terms" class="text-white">terms and conditions</a> of Hendy's Hunches.
             </label>
-            <div class="invalid-feedback">
-              You must agree before submitting.
-            </div>
           </div>
-        </div> -->
+          <div class="invalid-feedback">
+            You must agree before submitting.
+          </div>
+        </div>
+        <div class="row">
+          <hr>
+          <div class="col-6">
+            <button type="button" class="btn btn-primary btn-prev w-100">Previous</button>
+          </div>
+          <div class="col-6 text-end">
+            <button type="submit" class="btn btn-success w-100">Sign up!</button><!-- <i class="fw-bold bi bi-hand-thumbs-up"></i> -->
+          </div>
+        </div>
+      </div>
         <!-- <hr />
         <div class="col-12 d-flex justify-content-evenly" style="margin: 0px 0px 10px 0px;">
           <button class="btn btn-lg btn-primary" type="submit"><i class="fw-bold bi bi-hand-thumbs-up"></i> Sign me up!</button>

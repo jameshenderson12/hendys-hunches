@@ -75,7 +75,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		              <a class="nav-link" href="../rankings.php">Rankings</a>
 		            </li>
 								<li class="nav-item">
-		              <a class="nav-link" href="../howitworks.php">How It Works</a>
+		              <a class="nav-link" href="../how-it-works.php">How It Works</a>
 		            </li>
 								<li class="nav-item">
 									<a class="nav-link" href="../about.php">About</a>

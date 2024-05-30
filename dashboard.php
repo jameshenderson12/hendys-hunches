@@ -27,7 +27,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
   <body>
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark" aria-label="Offcanvas navbar large">
 		    <div class="container">
-					<img src="ico/favicon.ico" class="img-fluid bg-light mx-2" style="--bs-bg-opacity: 0.80" width="50px">
+			<img src="img/hh-icon-2024.png" class="img-fluid bg-light mx-2" style="--bs-bg-opacity: 0.80" width="50px">
 		      <a class="navbar-brand" href="#">Hendy's Hunches</a>
 		      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar2" aria-controls="offcanvasNavbar2">
 		        <span class="navbar-toggler-icon"></span>
@@ -49,7 +49,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		              <a class="nav-link" href="rankings.php">Rankings</a>
 		            </li>
 								<li class="nav-item">
-		              <a class="nav-link" href="howitworks.php">How It Works</a>
+		              <a class="nav-link" href="how-it-works.php">How It Works</a>
 		            </li>
 								<li class="nav-item">
 									<a class="nav-link" href="about.php">About</a>

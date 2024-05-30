@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+
 body {
   background-image: url(../img/football-stadium.jpg);
   background-color: #CCCCCC; /* Used if the image is unavailable */
@@ -5,11 +7,11 @@ body {
   background-position: center; /* Center the image */
   background-repeat: no-repeat; /* Do not repeat the image */
   background-size: cover; /* Resize the background image to cover the entire container */
-  font-family: 'Lora';
+  font-family: 'Noto Sans';
 }
 
 h1, h2, h3 {
-  font-family: 'Ubuntu';
+  font-family: 'Noto Sans';
 }
 
 a[href^="#top"] {

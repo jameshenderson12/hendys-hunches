@@ -26,7 +26,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
   <body>
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark" aria-label="Offcanvas navbar large">
 		    <div class="container">
-					<img src="ico/favicon.ico" class="img-fluid bg-light mx-2" style="--bs-bg-opacity: 0.80" width="50px">
+					<img src="img/hh-logo-2024.png" class="img-fluid bg-light mx-2" style="--bs-bg-opacity: 0.80" width="50px">
 		      <a class="navbar-brand" href="#">Hendy's Hunches</a>
 		      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar2" aria-controls="offcanvasNavbar2">
 		        <span class="navbar-toggler-icon"></span>
@@ -48,7 +48,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		              <a class="nav-link" href="rankings.php">Rankings</a>
 		            </li>
 								<li class="nav-item">
-		              <a class="nav-link" href="howitworks.php">How It Works</a>
+		              <a class="nav-link" href="how-it-works.php">How It Works</a>
 		            </li>
 								<li class="nav-item">
 									<a class="nav-link active" aria-current="page" href="about.php">About</a>
@@ -88,9 +88,9 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 						    <p class="card-text">The first origins of Hendy's Hunches - complete with no game name and no supporting website! It was a very monotonous process which consisted simply of sending friends a basic spreadsheet template, having them input their scores for each game and return it to me before the competition began. It was flaky at best although it did seem to be well perceived by those who had taken part. I'd spend a couple of hours a day trauling through each player's spreadsheet and manually calculating points before sending a daily email update of a table with scores and rankings. Despite the tedious effort, it left me thinking that it would be great to repeat the event again some time in the future.</p>
 						  </div>
 						  <ul class="list-group list-group-flush">
-						    <li class="list-group-item"><strong>1st:</strong> Steven Lough/James Henderson</li>
+						    <li class="list-group-item"><strong>1st:</strong> Steven Lough & James Henderson</li>
 						    <li class="list-group-item"><strong>2nd:</strong> Kirsty Yarnold</li>
-						    <li class="list-group-item"><strong>3rd:</strong> Julien Alégre/Andrew Lough</li>
+						    <li class="list-group-item"><strong>3rd:</strong> Julien Alégre & Andrew Lough</li>
 						  </ul>
 						</div>
 					</div>
@@ -120,10 +120,30 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 						  <ul class="list-group list-group-flush">
 						    <li class="list-group-item"><strong>1st:</strong> Jonathan Lamley</li>
 						    <li class="list-group-item"><strong>2nd:</strong> Sam McGuigan</li>
-						    <li class="list-group-item"><strong>3rd:</strong> Steve Butt/Kirsty Yarnold</li>
+						    <li class="list-group-item"><strong>3rd:</strong> Steve Butt & Kirsty Yarnold</li>
 						  </ul>
 						</div>
 					</div>
+					
+				<div class="row">
+
+					<div class="col-sm-12 col-md-4">
+						<div class="card">
+					  	<img src="img/euro2016-site-v3.png" alt="Euro 2016 Game Image" class="card-img-top">
+						  <div class="card-body">
+						    <h5 class="card-title">???</h5>
+						    <p class="card-text">...</p>
+						  </div>
+						  <ul class="list-group list-group-flush">
+						    <li class="list-group-item"><strong>1st:</strong> Chloe McCandlish</li>
+						    <li class="list-group-item"><strong>2nd:</strong> Howard Kilbourn</li>
+						    <li class="list-group-item"><strong>3rd:</strong> Andrew Lough</li>
+						  </ul>
+						</div>
+					</div>
+					
+				</div>
+
 		    </div>
 
 		    <a class="btn btn-default" href="#top" role="button">Return to top</a>

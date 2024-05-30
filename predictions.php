@@ -7,19 +7,19 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 //checkSubmitted();
 ?>
 <!DOCTYPE html>
-<html lang="en" class="h-100">
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Hendy's Hunches: Predictions Game">
     <meta name="author" content="James Henderson">
-		<title>Hendy's Hunches: Predictions</title>
+	<title>Hendy's Hunches: Predictions</title>
     <?php include "php/config.php" ?>
-		<link rel="shortcut icon" href="ico/favicon.ico">
-		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu|Lora">
-		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+	<link rel="shortcut icon" href="ico/favicon.ico">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu|Lora">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-		<link rel="stylesheet" href="css/default.css">
+	<link rel="stylesheet" href="css/default.css">
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.1"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
@@ -59,29 +59,27 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		}
 	</script>
 	<style>
-	body {
-		font-family: 'Lora';
-	}
-	h1, h2, h3 {
-		font-family: 'Ubuntu';
-	}
-	table {
-		width: 100%;
+	td img {
+		width: 36px;
+		border-radius: 50%;
+		vertical-align: middle;
 	}
 	td:nth-child(2), td:nth-child(7) {
 		text-align: right;
 	}
+	/*
 	td:nth-child(4), td:nth-child(6) {
 		width: 5%;
-		min-width: 40px;
 		text-align: center;
 	}
 	td:nth-child(5) {
 		width: 3%;
-	}
+	} */
 	input {
-		font-size: larger;
-		text-align: center;
+		font-size: larger !important;
+		text-align: center !important;
+		border: 1px solid #AAA !important;
+		width: 55px !important;
 	}
 	</style>
   </head>
@@ -90,7 +88,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark" aria-label="Offcanvas navbar large">
 		    <div class="container">
-					<img src="ico/favicon.ico" class="img-fluid bg-light mx-2" style="--bs-bg-opacity: 0.80" width="50px">
+					<img src="img/hh-icon-2024.png" class="img-fluid bg-light mx-2" style="--bs-bg-opacity: 0.80" width="50px">
 		      <a class="navbar-brand" href="#">Hendy's Hunches</a>
 		      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar2" aria-controls="offcanvasNavbar2">
 		        <span class="navbar-toggler-icon"></span>
@@ -112,7 +110,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		              <a class="nav-link" href="rankings.php">Rankings</a>
 		            </li>
 								<li class="nav-item">
-		              <a class="nav-link" href="howitworks.php">How It Works</a>
+		              <a class="nav-link" href="how-it-works.php">How It Works</a>
 		            </li>
 								<li class="nav-item">
 									<a class="nav-link" href="about.php">About</a>
@@ -120,7 +118,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 
 		            <li class="nav-item dropdown">
 		              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-										<?php returnAvatar();	?>
+										<?php returnAvatar(); ?>
 		              </a>
 		              <ul class="dropdown-menu">
 										<!--<li><a class="dropdown-item" href="overview.php">Application overview</a></li>-->
@@ -141,12 +139,13 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 
 	<main class="container px-4 py-4">
       <h1>My Predictions</h1>
-      <p class="lead">Predict the 3rd place playoff and final fixtures. You only need to do this once.</p>
-			<p class="alert alert-warning" id="submitMsg"><strong>Note:</strong> You can predict a draw as predictions are for 90 mins only (do not include extra time and penalties).</p>
+      <p class="lead">Predict each of the 36 group stage fixtures and submit using the button below.</p>
+	  <p class="small">Estimated time 5-10 mins.</p>
+	  <!-- <p class="alert alert-warning" id="submitMsg"><strong>Note:</strong> You can predict a draw as predictions are for 90 mins only (do not include extra time and penalties).</p> -->
       <a name="matches"></a><!--anchor point for filters-->
       <form id="predictionForm" name="predictionForm" class="form-horizontal" action="submit.php" method="POST">
       <div class="row">
-
+<!--
 				<table id="table" class="table table-sm table-striped">
 
 					<tr>
@@ -172,7 +171,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 						<td class="small text-muted d-none d-md-block">15:00<br><?php echo $venue6 ?></td>
 					</tr>
 
-					<!-- SEMI FINALS --------------------------
+					----- SEMI FINALS --------------------------
 
 					<tr>
 						<td class="small text-muted d-none d-md-block">SF1<br>13/12/2022</td>
@@ -197,7 +196,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 						<td class="small text-muted d-none d-md-block">19:00<br><?php echo $venue1 ?></td>
 					</tr>
 
-					<!-- QUARTER FINALS ------------------------
+					----- QUARTER FINALS ------------------------
 
 					<tr>
 						<td class="small text-muted d-none d-md-block">QF1<br>09/12/2022</td>
@@ -244,7 +243,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 						<td class="small text-muted d-none d-md-block">19:00<br><?php echo $venue1 ?></td>
 					</tr>
 
-					<!-- ROUND OF 16 ------------------------>
+					----- ROUND OF 16 ------------------------>
 			        <!--===================================
 
 							<tr>
@@ -334,58 +333,29 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 								<td><img src="<?php echo $R16_img; ?>" alt="<?php echo $R16; ?>" title="<?php echo $R16; ?>"></td>
 								<td class="right-team"><label for="score112_p"><?php echo $R16; ?></label></td>
 								<td class="small text-muted d-none d-md-block">19:00<br><?php echo $venue6 ?></td>
-							</tr>-->
-					</table>
+							</tr>
+					</table>-->
 
-        <!-- Placeholder for JSON table construction
-        <table id="table" class="table table-sm table-striped">
-            <script>
-                $(document).ready(function () {
-                    // Fetch data from JSON file
-                    $.getJSON("json/fifa-world-cup-2022-fixtures-groups.json",
-                    	function (data) {
-                        var fixture = '';
-												var x = 1;
-												var y = 2;
-                        // Iterate through objects
-                        $.each(data, function (key, value) {
-														var homeTeam = value.HomeTeam;
-														var awayTeam = value.AwayTeam;
-														var homeTeamFlag = "flag-icons/24/" + homeTeam.toLowerCase().replaceAll(' ', '-') + ".png";
-														var awayTeamFlag = "flag-icons/24/" + awayTeam.toLowerCase().replaceAll(' ', '-') + ".png";
-														const str = value.DateUtc;
-														const [dateValues, timeValues] = str.split(' ');
-														const [year, month, day] = dateValues.split('-');
-														const [hours, minutes] = timeValues.split(':');
-														const date = new Date(+year, +month - 1, +day, +hours, +minutes).toLocaleString().slice(0, -3);
-														console.log(date);
-                            fixture += '<tr>';
-														fixture += '<td class="small text-muted d-none d-md-block">' + value.Group + '</td>';
-                            fixture += '<td>' + value.HomeTeam + '</td>';
-														fixture += '<td><img src="' + homeTeamFlag + '" alt="Flag of ' + homeTeam + '" title="Flag of ' + homeTeam + '"></td>';
-														fixture += '<td><input type="text" id="score' + x + '_p" name="score' + x + '_p" class="form-control" required /></td>';
-														fixture += '<td align="center">v<br><span class="badge bg-light text-primary">' + value.MatchNumber + '</span></td>';
-														fixture += '<td><input type="text" id="score' + y + '_p" name="score' + y + '_p" class="form-control" required /></td>';
-														fixture += '<td><img src="' + awayTeamFlag + '" alt="Flag of ' + awayTeam + '" title="Flag of ' + awayTeam + '"></td>';
-                            fixture += '<td>' + value.AwayTeam + '</td>';
-                            fixture += '<td class="small text-muted d-none d-md-block"> ' + date + '<br>' + value.Location + '</td>';
-                            fixture += '</tr>';
-														x+=2;
-														y+=2;
-                        });
-                      // Insert rows into table
-                      $('#table').append(fixture);
-                    });
-                });
-            </script>
-			</table>-->
+        <!-- Placeholder for JSON table construction -->
+		<table id="table" class="table table-sm table-striped">
+			<thead>
+				<tr>
+					<th class="d-none d-md-table-cell">Group</th>
+					<th></th>
+					<th></th>
+					<th></th>
+					<th></th>
+					<th></th>
+					<th></th>
+					<th></th>
+					<th class="d-none d-md-table-cell">Details</th>
+				</tr>
+			</thead>
+			<tbody></tbody>
+		</table>
 
-        <div id="submit-footer" class="navbar navbar-default navbar-fixed-bottom col-md-10 col-md-offset-1">
-            <div class="pull-right">
-            <!-- Results being processed - updating temporarily unavailable... -->
-            <input type="submit" class="navbar-btn btn btn-primary" value="Submit my predictions" name="predictionsSubmitted" />
-            </div>
-        </div>
+		<button type="submit" class="btn btn-primary mt-2 mb-5" name="predictionsSubmitted">Submit my predictions</button>
+
       </div><!--row-->
    	</form>
 
@@ -397,13 +367,58 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	</main>
 
     <script type="text/javascript">
-			function parseDate(str) {
-				var s = str.split(" "),
-					d = s[0].split("-"),
-					t = s[1].replace(/:/g, "");
-				return d[2] + d[1] + d[0] + t;
-			}
-		</script>
+    $(document).ready(function () {
+        // Fetch data from JSON file
+        $.getJSON("json/uefa-euro-2024-fixtures-groups.json", function (data) {
+            let fixture = '';
+            let x = 1, y = 2;
+
+            // Iterate through objects
+            $.each(data, function (key, value) {
+                const homeTeam = value.HomeTeam;
+                const awayTeam = value.AwayTeam;
+                const homeTeamFlag = `flag-icons/24/${homeTeam.toLowerCase().replaceAll(' ', '-')}.png`;
+                const awayTeamFlag = `flag-icons/24/${awayTeam.toLowerCase().replaceAll(' ', '-')}.png`;
+                const dateStr = value.DateUtc;
+                const [dateValues, timeValues] = dateStr.split(' ');
+                const [year, month, day] = dateValues.split('-');
+                const [hours, minutes] = timeValues.split(':');
+                const date = new Date(+year, +month - 1, +day, +hours, +minutes).toLocaleString().slice(0, -3);
+
+                fixture += `
+                    <tr>
+                        <td class="small text-muted d-none d-md-table-cell">${value.Group}</td>
+                        <td><img src="${homeTeamFlag}" alt="Flag of ${homeTeam}" title="Flag of ${homeTeam}" class="img-fluid"></td>
+						<td>${homeTeam}</td>                        
+                        <td><input type="text" id="score${x}_p" name="score${x}_p" class="form-control" required /></td>
+                        <td align="center"><strong>V</strong></td><!--<br><span class="badge bg-light text-primary">${value.MatchNumber}</span>-->
+                        <td><input type="text" id="score${y}_p" name="score${y}_p" class="form-control" style="float:right" required /></td>                        
+                        <td>${awayTeam}</td>
+						<td><img src="${awayTeamFlag}" alt="Flag of ${awayTeam}" title="Flag of ${awayTeam}" class="img-fluid"></td>
+                        <td class="small text-muted d-none d-md-table-cell">
+                            <span data-bs-toggle="tooltip" title="Match Number: ${value.MatchNumber}, Round: ${value.RoundNumber}, Date: ${date}, Location: ${value.Location}">${date}<br>${value.Location}</span>
+                        </td>
+                    </tr>
+                `;
+                x += 2;
+                y += 2;
+            });
+
+            // Insert rows into table
+            $('#table tbody').append(fixture);
+            
+            // Initialize Bootstrap tooltips
+            $('[data-bs-toggle="tooltip"]').tooltip();
+        });
+    });
+
+	function parseDate(str) {
+		var s = str.split(" "),
+			d = s[0].split("-"),
+			t = s[1].replace(/:/g, "");
+		return d[2] + d[1] + d[0] + t;
+	}
+	</script>
 
 	</body>
 </html>

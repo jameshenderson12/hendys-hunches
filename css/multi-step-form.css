@@ -1,46 +1,16 @@
 :root {
-    --primary-color: rgb(11, 78, 179);
+    --primary-color: lightgreen;
   }
   
-  *,
-  *::before,
-  *::after {
-    box-sizing: border-box;
-  }
-  
-  body {
-    font-family: Montserrat, "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    display: grid;
-    place-items: center;
-    min-height: 100vh;
-  }
   /* Global Stylings */
   label {
     display: block;
     margin-bottom: 0.5rem;
+    text-align: left !important;
+    font-weight: bold;
+    font-size: large;
   }
-  
-  input {
-    display: block;
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ccc;
-    border-radius: 0.25rem;
-  }
-  
-  .width-50 {
-    width: 50%;
-  }
-  
-  .ml-auto {
-    margin-left: auto;
-  }
-  
-  .text-center {
-    text-align: center;
-  }
-  
+
   /* Progressbar */
   .progressbar {
     position: relative;
@@ -48,6 +18,7 @@
     justify-content: space-between;
     counter-reset: step;
     margin: 2rem 0 4rem;
+    padding: 0px 10px;
   }
   
   .progressbar::before,
@@ -88,66 +59,80 @@
     position: absolute;
     top: calc(100% + 0.5rem);
     font-size: 0.85rem;
-    color: #666;
+    color: #EEE;
   }
   
   .progress-step-active {
     background-color: var(--primary-color);
-    color: #f3f3f3;
+    color: #000;
   }
   
   /* Form */
-  .form {
-    width: clamp(320px, 30%, 430px);
-    margin: 0 auto;
-    border: 1px solid #ccc;
-    border-radius: 0.35rem;
-    padding: 1.5rem;
-  }
-  
-  .form-step {
-    display: none;
-    transform-origin: top;
-    animation: animate 0.5s;
-  }
-  
-  .form-step-active {
-    display: block;
-  }
-  
-  .input-group {
-    margin: 2rem 0;
-  }
-  
-  @keyframes animate {
+  @keyframes slideInFromRight {
     from {
-      transform: scale(1, 0);
+      transform: translateX(100%);
       opacity: 0;
     }
     to {
-      transform: scale(1, 1);
+      transform: translateX(0);
       opacity: 1;
     }
   }
   
-  /* Button */
-  .btns-group {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
+  @keyframes slideInFromLeft {
+    from {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  .form-step {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
   }
   
-  .btn {
-    padding: 0.75rem;
+  .form-step-active {
     display: block;
-    text-decoration: none;
-    background-color: var(--primary-color);
-    color: #f3f3f3;
-    text-align: center;
-    border-radius: 0.25rem;
-    cursor: pointer;
-    transition: 0.3s;
+    opacity: 1;
   }
-  .btn:hover {
-    box-shadow: 0 0 0 2px #fff, 0 0 0 3px var(--primary-color);
+  
+  .slide-in-right {
+    animation: slideInFromRight 1s forwards;
+  }
+  
+  .slide-in-left {
+    animation: slideInFromLeft 1s forwards;
+  }
+  
+  form {
+    width: 100%;
+    margin: 0 auto;
+    border: 1px solid #AAA;
+    border-radius: 0.35rem;
+    padding: 1.5rem;
+    overflow: hidden;
+    min-height: 50vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  input[type="text"], input[type="email"], input[type="password"], input[list] {
+    width: 70% !important;
+    display: block;
+    border-radius: 0.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  input[type="checkbox"] {
+    display: block;
+    padding: 1rem;    
+  }
+
+  button.btn-next, button.btn-prev, button[type="submit"] {
+    margin-top: 20px;
   }

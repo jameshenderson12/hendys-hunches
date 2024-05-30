@@ -22,7 +22,7 @@ session_start();
 	<body class="d-flex h-100 text-center text-bg-dark">
 
   	<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-  		<header class="mb-auto">
+  		<!-- <header class="mb-auto">
   			<div>
   				<h3 class="float-md-start mb-0">Hendy's Hunches</h3>
   				<nav class="nav nav-masthead justify-content-center float-md-end">
@@ -31,7 +31,18 @@ session_start();
             <a class="nav-link fw-bold py-1 px-0" href="#" data-bs-toggle="modal" data-bs-target="#terms">Terms</a>
   				</nav>
   			</div>
-  		</header>
+  		</header> -->
+
+      <header class="mb-auto">
+        <div>
+          <h3 class="float-md-start mb-0"><iframe src="https://free.timeanddate.com/countdown/i8k6yqvc/n4511/cf11/cm0/cu3/ct0/cs1/ca0/co0/cr0/ss0/cacfff/cpc0f0/pct/tcfff/fs100/szw320/szh135/iso2024-06-15T20:00:00/bacfff/pa5" allowtransparency="true" frameborder="0" width="244" height="42"></iframe></h3>
+          <nav class="nav nav-masthead justify-content-center float-md-end">
+            <a class="nav-link fw-bold py-1 px-0" href="#">Register</a>
+  					<a class="nav-link fw-bold py-1 px-0" href="#">Reset Password</a>
+            <a class="nav-link fw-bold py-1 px-0" href="#" data-bs-toggle="modal" data-bs-target="#terms">Terms</a>
+          </nav>
+        </div>
+      </header>
 
   		<main class="px-3">
   			<!--<h1>Welcome</h1>-->
@@ -65,7 +76,7 @@ session_start();
 
       <!-- HH Terms Modal -->
       <div class="modal fade" id="terms" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
           <div class="modal-content">
             <div class="modal-header">
               <h1 class="modal-title fs-5" id="staticBackdropLabel">Hendy's Hunches: Terms &amp; Conditions</h1>

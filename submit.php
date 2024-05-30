@@ -95,7 +95,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
             <li><a href="dashboard.php">Home</a></li>
             <li class="active"><a href="predictions.php">Submit Predictions</a></li>
             <li><a href="rankings.php">Rankings</a></li>
-            <li><a href="howitworks.php">How It Works</a></li>
+            <li><a href="how-it-works.php">How It Works</a></li>
 			<li><a href="about.php">About</a></li>
           </ul>
           <!--
@@ -130,7 +130,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
             <li><a href="dashboard.php"><span class="glyphicon glyphicon-home" aria-hidden="true"></span>&nbsp;&nbsp;Home</a></li>
             <li class="active"><a href="predictions.php"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>&nbsp;&nbsp;My Predictions</a></li>
             <li><a href="rankings.php"><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>&nbsp;&nbsp;Rankings</a></li>
-            <li><a href="howitworks.php"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>&nbsp;&nbsp;How It Works</a></li>
+            <li><a href="how-it-works.php"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>&nbsp;&nbsp;How It Works</a></li>
 			<li><a href="about.php"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>&nbsp;&nbsp;About</a></li>
             <li><a href="php/logout.php"><span class='glyphicon glyphicon-user' aria-hidden="true"></span>&nbsp;&nbsp;Logout</a></li>
           </ul>
