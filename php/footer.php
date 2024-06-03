@@ -8,18 +8,18 @@
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
   <!-- Vendor JS Files -->
-  <script src="js/vendor/apexcharts/apexcharts.min.js"></script>
-  <script src="js/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="js/vendor/chart.js/chart.umd.js"></script>
-  <script src="js/vendor/echarts/echarts.min.js"></script>
-  <script src="js/vendor/progressbar/progressbar.js"></script>
-  <script src="js/vendor/simple-datatables/simple-datatables.js"></script>
+  <script src="vendor/apexcharts/apexcharts.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="vendor/chart.js/chart.umd.js"></script>
+  <script src="vendor/echarts/echarts.min.js"></script>
+  <script src="vendor/progressbar/progressbar.js"></script>
+  <script src="vendor/simple-datatables/simple-datatables.js"></script>
   <!-- Async/Custom/jQuery Files -->  
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
-  <script async src="js/vendor/bootbox/bootbox.min.js"></script>
-  <script async src="js/vendor/lodash/lodash.min.js"></script>
-  <script src="js/vendor/highlight-text/highlight-text.js"></script>
+  <script async src="vendor/bootbox/bootbox.min.js"></script>
+  <script async src="vendor/lodash/lodash.min.js"></script>
+  <script async src="vendor/highlight-text/highlight-text.js"></script>
   <script async src="js/confetti.js"></script>
   <script async src="js/multi-step-form.js"></script>
   <!-- Template Main JS File -->

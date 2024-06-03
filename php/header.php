@@ -21,7 +21,7 @@
     <link href="vendor/simple-datatables/style.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet" />
     <!-- Custom CSS Files -->
-    <link href="css/style.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
     <!-- Include PHP Config File -->
     <?php include "php/config.php" ?>
 </head>
