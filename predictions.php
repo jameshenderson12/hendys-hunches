@@ -336,6 +336,8 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 							</tr>
 					</table>-->
 
+		<button id="populateScores" class="btn btn-primary mt-3">Populate Scores</button>
+
         <!-- Placeholder for JSON table construction -->
 		<table id="table" class="table table-sm table-striped">
 			<thead>
@@ -409,8 +411,19 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
             
             // Initialize Bootstrap tooltips
             $('[data-bs-toggle="tooltip"]').tooltip();
-        });
-    });
+
+			// Add click event to populate scores
+			$('#populateScores').click(function() {
+				populateScores();
+			});
+		});
+	});
+
+	function populateScores() {
+		for (let i = 1; i <= 72; i++) {
+			$('#score' + i + '_p').val(Math.floor(Math.random() * 5)); // Random score between 0 and 4
+		}
+	}
 
 	function parseDate(str) {
 		var s = str.split(" "),

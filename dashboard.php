@@ -6,22 +6,22 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 }
 ?>
 <!DOCTYPE html>
-<html lang="en" class="h-100">
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Hendy's Hunches: Predictions Game">
     <meta name="author" content="James Henderson">
-		<title>Hendy's Hunches: Dashboard</title>
+	<title>Hendy's Hunches: Dashboard</title>
     <?php include "php/config.php" ?>
-		<link rel="shortcut icon" href="ico/favicon.ico">
-		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu|Lora">
-		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+	<link rel="shortcut icon" href="ico/favicon.ico">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu|Lora">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-		<link rel="stylesheet" href="css/default.css">
+	<link rel="stylesheet" href="css/default.css">
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.1"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-		<?php include 'php/dashboard-items.php' ?>
+	<?php include 'php/dashboard-items.php' ?>
   </head>
 
   <body>
@@ -56,7 +56,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 								</li>
 		            <li class="nav-item dropdown">
 									<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-										<?php returnAvatar();	?>
+										<?php returnAvatar(); ?>
 		              </a>
 		              <ul class="dropdown-menu">
 										<!--<li><a class="dropdown-item" href="overview.php">Application overview</a></li>-->
@@ -74,11 +74,11 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		    </div>
 		  </nav>
 
-			<main class="container px-4 py-4">
-				<!--
-	      <h1>My Dashboard</h1>
+		<main class="container px-4 py-4">
+				
+	      <h1>Dashboard</h1>
 	      <p class="lead mb-4">Use the dashboard to track your progress.</p>
-			-->
+			
 					<div class="row g-4">
 						<div class="col-lg-3">
 							<div class="card">
@@ -91,14 +91,14 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 							<div class="card">
 								<div class="card-body">
 									<h5 class="card-title">Status</h5>
-									<!--<?php checkSubmitted() ?>-->
+									<!-- <?php checkSubmitted() ?> -->
 
 									<div class="row">
 										<div class="col-sm-4">
 											<p class="small">Matches recorded:</p>
 										</div>
 										<div class="col-sm-8">
-											<?php displayMatchesRecorded() ?>
+											<!-- <?php displayMatchesRecorded() ?> -->
 										</div>
 										<div class="alert alert-success" role="alert">
 											<h4><strong>Game complete!</strong></h4>
@@ -112,13 +112,13 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 										</div>
 										<p>It is possible that this game will take place next year for the FIFA Women’s World Cup Australia & New Zealand 2023. If you have any comments or suggestions for new features or improvements you'd like to see, please feel free to drop me a quick line at <a href="mailto:jameshenderson12@hotmail.com">jameshenderson12@hotmail.com</a>.</p>
 									</div>
-									<!--
+									
 									<div class="row">
 										<div class="col-sm-3">
 											<p class="small">Group fixtures:</p>
 										</div>
 										<div class="col-sm-9">
-											<?php displayGroupMatchesPlayed() ?>
+											<!-- <?php displayGroupMatchesPlayed() ?> -->
 										</div>
 									</div>
 									<div class="row">
@@ -126,7 +126,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 											<p class="small">RO16 fixtures:</p>
 										</div>
 										<div class="col-sm-9">
-											<?php displayRO16MatchesPlayed() ?>
+											<!-- <?php displayRO16MatchesPlayed() ?> -->
 										</div>
 									</div>
 									<div class="row">
@@ -134,7 +134,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 											<p class="small">QF fixtures:</p>
 										</div>
 										<div class="col-sm-9">
-											<?php displayQFMatchesPlayed() ?>
+											<!-- <?php displayQFMatchesPlayed() ?> -->
 										</div>
 									</div>
 									<div class="row">
@@ -142,10 +142,10 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 											<p class="small">SF fixtures:</p>
 										</div>
 										<div class="col-sm-9">
-											<?php displaySFMatchesPlayed() ?>
+											<!-- <?php displaySFMatchesPlayed() ?> -->
 										</div>
 									</div>
-								-->
+								
 								</div>
 							</div>
 							<div class="card mt-4">
@@ -159,7 +159,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 									</div>
 								-->
 
-									<?php displayCharityInformation() ?>
+									<!-- <?php displayCharityInformation() ?> -->
 								</div>
 							</div>
 						</div>
@@ -167,13 +167,13 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 							<div class="card">
 								<div class="card-body">
 									<h5 class="card-title">Biggest climbers</h5>
-									<?php displayBestMovers() ?>
+									<!-- <?php displayBestMovers() ?> -->
 								</div>
 							</div>
 							<div class="card mt-4">
 								<div class="card-body">
 									<h5 class="card-title">Biggest droppers</h5>
-									<?php displayWorstMovers() ?>
+									<!-- <?php displayWorstMovers() ?> -->
 								</div>
 							</div>
 							<div class="card mt-4">
@@ -204,6 +204,6 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					<p class="small fw-light">Predictions game based on <a href="<?=$competition_url?>"><?=$competition?></a><br><?=$title?> <?=$version?> &copy; <?=$year?> <?=$developer?>.</p>
 				</footer>
 			</main>
-
+			<a href="#" class="back-to-top d-flex align-items-center justify-content-center active"><i class="bi bi-arrow-up-short"></i></a>
   </body>
 </html>

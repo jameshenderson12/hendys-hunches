@@ -554,20 +554,18 @@ function updatePredictions() {
 	mysqli_close($con);
 }
 */
-function insertPredictions() {
+function insertGroupPredictions() {
 	// Connect to the database
 	include 'php/db-connect.php';
 	// SQL query to insert predictions initially
 	$sql_insert = "INSERT INTO live_user_predictions_groups (id, username, firstname, surname, score1_p, score2_p, score3_p, score4_p, score5_p, score6_p, score7_p, score8_p, score9_p, score10_p, score11_p, score12_p, score13_p, score14_p, score15_p, score16_p, score17_p, score18_p, score19_p, score20_p, score21_p, score22_p, score23_p, score24_p, score25_p,
 	score26_p, score27_p, score28_p, score29_p, score30_p, score31_p, score32_p, score33_p, score34_p, score35_p, score36_p, score37_p, score38_p, score39_p, score40_p, score41_p, score42_p, score43_p, score44_p, score45_p, score46_p, score47_p, score48_p, score49_p, score50_p, score51_p, score52_p, score53_p, score54_p, score55_p, score56_p, score57_p, score58_p,
-	score59_p, score60_p, score61_p, score62_p, score63_p, score64_p, score65_p, score66_p, score67_p, score68_p, score69_p, score70_p, score71_p, score72_p, score73_p, score74_p, score75_p, score76_p, score77_p, score78_p, score79_p, score80_p, score81_p, score82_p, score83_p, score84_p, score85_p, score86_p, score87_p, score88_p, score89_p, score90_p, score91_p,
-	score92_p, score93_p, score94_p, score95_p, score96_p, lastupdate)
+	score59_p, score60_p, score61_p, score62_p, score63_p, score64_p, score65_p, score66_p, score67_p, score68_p, score69_p, score70_p, score71_p, score72_p, lastupdate)
 			   VALUES ('{$_SESSION['id']}','{$_SESSION['username']}','{$_SESSION['firstname']}','{$_SESSION['surname']}','$_POST[score1_p]','$_POST[score2_p]','$_POST[score3_p]','$_POST[score4_p]','$_POST[score5_p]','$_POST[score6_p]','$_POST[score7_p]','$_POST[score8_p]','$_POST[score9_p]','$_POST[score10_p]','$_POST[score11_p]','$_POST[score12_p]','$_POST[score13_p]','$_POST[score14_p]',
 					 '$_POST[score15_p]','$_POST[score16_p]','$_POST[score17_p]','$_POST[score18_p]','$_POST[score19_p]','$_POST[score20_p]','$_POST[score21_p]','$_POST[score22_p]','$_POST[score23_p]','$_POST[score24_p]','$_POST[score25_p]','$_POST[score26_p]','$_POST[score27_p]','$_POST[score28_p]','$_POST[score29_p]','$_POST[score30_p]','$_POST[score31_p]','$_POST[score32_p]','$_POST[score33_p]',
 					 '$_POST[score34_p]','$_POST[score35_p]','$_POST[score36_p]','$_POST[score37_p]','$_POST[score38_p]','$_POST[score39_p]','$_POST[score40_p]','$_POST[score41_p]','$_POST[score42_p]','$_POST[score43_p]','$_POST[score44_p]','$_POST[score45_p]','$_POST[score46_p]','$_POST[score47_p]','$_POST[score48_p]','$_POST[score49_p]','$_POST[score50_p]','$_POST[score51_p]','$_POST[score52_p]',
 					 '$_POST[score53_p]','$_POST[score54_p]','$_POST[score55_p]','$_POST[score56_p]','$_POST[score57_p]','$_POST[score58_p]','$_POST[score59_p]','$_POST[score60_p]','$_POST[score61_p]','$_POST[score62_p]','$_POST[score63_p]','$_POST[score64_p]','$_POST[score65_p]','$_POST[score66_p]','$_POST[score67_p]','$_POST[score68_p]','$_POST[score69_p]','$_POST[score70_p]','$_POST[score71_p]',
-					 '$_POST[score72_p]','$_POST[score73_p]','$_POST[score74_p]','$_POST[score75_p]','$_POST[score76_p]','$_POST[score77_p]','$_POST[score78_p]','$_POST[score79_p]','$_POST[score80_p]','$_POST[score81_p]','$_POST[score82_p]','$_POST[score83_p]','$_POST[score84_p]','$_POST[score85_p]','$_POST[score86_p]','$_POST[score87_p]','$_POST[score88_p]','$_POST[score89_p]','$_POST[score90_p]',
-					 '$_POST[score91_p]','$_POST[score92_p]','$_POST[score93_p]','$_POST[score94_p]','$_POST[score95_p]','$_POST[score96_p]', NOW())";
+					 '$_POST[score72_p]', NOW())";
 
 	mysqli_query($con, $sql_insert) or die('Error: ' . mysqli_error($con));
 	mysqli_close($con);
@@ -577,7 +575,7 @@ function insertRO16Predictions() {
 	// Connect to the database
 	include 'php/db-connect.php';
 	// SQL query to insert predictions initially
-	$sql_insert = "INSERT INTO live_user_predictions_ro16 (id, username, firstname, surname, score97_p, score98_p, score99_p, score100_p, score101_p, score102_p, score103_p, score104_p, score105_p, score106_p, score107_p, score108_p, score109_p, score110_p, score111_p, score112_p, lastupdate)
+	$sql_insert = "INSERT INTO live_user_predictions_ro16 (id, username, firstname, surname, score73_p, score74_p, score75_p, score76_p, score77_p, score78_p, score79_p, score80_p, score81_p, score82_p, score83_p, score84_p, score85_p, score86_p, score87_p, score88_p, lastupdate)
 			   VALUES ('{$_SESSION['id']}','{$_SESSION['username']}','{$_SESSION['firstname']}','{$_SESSION['surname']}','$_POST[score97_p]','$_POST[score98_p]','$_POST[score99_p]','$_POST[score100_p]','$_POST[score101_p]','$_POST[score102_p]','$_POST[score103_p]','$_POST[score104_p]','$_POST[score105_p]','$_POST[score106_p]','$_POST[score107_p]','$_POST[score108_p]','$_POST[score109_p]','$_POST[score110_p]',
 					 '$_POST[score111_p]','$_POST[score112_p]', NOW())";
 	mysqli_query($con, $sql_insert) or die('Error: ' . mysqli_error($con));
@@ -619,14 +617,15 @@ function submitPredictions() {
 	include 'php/db-connect.php';
 
   	//$sql_exists = "SELECT * FROM live_user_predictions_groups WHERE id='{$_SESSION['id']}'";
-		$sql_exists = "SELECT * FROM live_user_predictions_final WHERE id='{$_SESSION['id']}'";
+	$sql_exists = "SELECT * FROM live_user_predictions_groups WHERE id='{$_SESSION['id']}'";
 
 	$result = mysqli_query($con, $sql_exists);
 	if(mysqli_num_rows($result) == 0) {
 		//insertRO16Predictions();
 		//insertQFPredictions();
 		//insertSFPredictions();
-		insertFiPredictions();
+		//insertFiPredictions();
+		insertGroupPredictions();
 		/* Alert to check if predictions are inserted...
 		print '<script type="text/javascript">';
 		print 'alert("Predictions have been inserted! '. $_SESSION['firstname'].' '. $_SESSION['surname'].' yeah.")';
@@ -634,7 +633,7 @@ function submitPredictions() {
 		*/
 	}
 	else {
-		updatePredictions();
+		//updatePredictions();
 		//mysqli_query($con, $sql_update) or die('Error: ' . mysqli_error($con));
 		/* Alert to check if predictions are updated...
 		print '<script type="text/javascript">';
@@ -655,7 +654,7 @@ function displayRankings() {
 	include 'php/db-connect.php';
 
 	// Set up SQL query to retrieve data from database tables
-	/*
+	
 	$sql_maketable = "SELECT live_user_information.id, live_user_information.firstname, live_user_information.surname, live_user_information.avatar, live_user_information.faveteam, live_user_information.startpos, live_user_information.currpos, live_user_information.lastpos, live_user_predictions_groups.points_total,
 						FIND_IN_SET(points_total, (
 							SELECT GROUP_CONCAT( DISTINCT points_total
@@ -665,7 +664,7 @@ function displayRankings() {
 						FROM live_user_information
 						INNER JOIN live_user_predictions_groups ON live_user_information.id = live_user_predictions_groups.id
 						ORDER BY rank ASC, surname ASC";
-*/
+/*
 	$sql_maketable = "SELECT live_user_information.id, live_user_information.firstname, live_user_information.surname, live_user_information.avatar, live_user_information.faveteam, live_user_information.startpos, live_user_information.currpos, live_user_information.lastpos, live_user_predictions_groups.points_total as group_points, live_user_predictions_ro16.points_total as ro16_points, live_user_predictions_qf.points_total as qf_points, live_user_predictions_groups.points_total + live_user_predictions_ro16.points_total + live_user_predictions_qf.points_total + live_user_predictions_sf.points_total as points_total
 						FROM live_user_information
 						INNER JOIN live_user_predictions_groups ON live_user_information.id = live_user_predictions_groups.id
@@ -673,7 +672,7 @@ function displayRankings() {
 						INNER JOIN live_user_predictions_qf ON live_user_information.id = live_user_predictions_qf.id
 						INNER JOIN live_user_predictions_sf ON live_user_information.id = live_user_predictions_sf.id
 						ORDER BY points_total DESC, surname ASC";
-
+*/
 	$sql_matchresults = "SELECT * FROM live_match_results";
 
 	// Execute the query and return the results or display an appropriate error message

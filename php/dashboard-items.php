@@ -523,7 +523,7 @@ function displayMatchesRecorded() {
 function displayGroupMatchesPlayed() {
 	// Create DB connection
 	//include 'php/db-connect.php';
-/*
+
 	$sql_get_matches_played = "SELECT COUNT(*) AS matches_played FROM live_match_results";
 	$matches_played = mysqli_query($con, $sql_get_matches_played);
 
@@ -531,10 +531,10 @@ function displayGroupMatchesPlayed() {
 		$no_of_matches_played = $row["matches_played"];
 		//console.log($no_of_matches_played);
 		$percent_group_played = round($no_of_matches_played * 100 / 48);
-	}*/
+	}
 	print("<div class='progress my-1'><div class='progress-bar bg-success' role='progressbar' aria-label='Competition progress bar' style='width: 100%;' aria-valuenow='100' aria-valuemin='0' aria-valuemax='100'>100%</div></div>");
 	// Close DB connection
-	//mysqli_close($con);
+	mysqli_close($con);
 }
 
 function checkSubmitted() {
@@ -542,11 +542,11 @@ function checkSubmitted() {
 	include 'db-connect.php';
 	$un = $_SESSION["username"];
 	// Get team information from the DB	counting occurrences too
-	$sql_predstatus = sprintf("SELECT username FROM live_user_predictions_final WHERE username = '%s'", $un);
+	$sql_predstatus = sprintf("SELECT username FROM live_user_predictions_group WHERE username = '%s'", $un);
 	$predstatus = mysqli_query($con, $sql_predstatus);
 
 	if (mysqli_num_rows($predstatus) > 0) {
-		//consoleMsg($predstatus);
+		// consoleMsg($predstatus);
 		print("<p class='alert alert-success p-4'><i class='bi bi-check2-square text-success'></i> You've successfully submitted your predictions for the 3rd Place Playoff and Finals. Good luck.</p>");
 	}
 	else {
@@ -618,21 +618,21 @@ function displayPersonalInfo() {
 	// Get team information from the DB	counting occurrences too
 	$sql_getprofileinfo1 = "SELECT avatar, faveteam, fieldofwork, location, tournwinner, signupdate, haspaid, currpos FROM live_user_information WHERE username = '".$_SESSION["username"]."'";
 	$sql_getprofileinfo2 = "SELECT lastupdate, points_total FROM live_user_predictions_groups WHERE username = '".$_SESSION["username"]."'";
-	$sql_getpointstotal = "SELECT live_user_information.id, live_user_predictions_groups.points_total as group_points, live_user_predictions_ro16.points_total as ro16_points, live_user_predictions_qf.points_total as qf_points, live_user_predictions_sf.points_total as sf_points, live_user_predictions_groups.points_total + live_user_predictions_ro16.points_total + live_user_predictions_qf.points_total + live_user_predictions_sf.points_total as points_total
+	/*$sql_getpointstotal = "SELECT live_user_information.id, live_user_predictions_groups.points_total as group_points, live_user_predictions_ro16.points_total as ro16_points, live_user_predictions_qf.points_total as qf_points, live_user_predictions_sf.points_total as sf_points, live_user_predictions_groups.points_total + live_user_predictions_ro16.points_total + live_user_predictions_qf.points_total + live_user_predictions_sf.points_total as points_total
 						FROM live_user_information
 						INNER JOIN live_user_predictions_groups ON live_user_information.id = live_user_predictions_groups.id
 						INNER JOIN live_user_predictions_ro16 ON live_user_information.id = live_user_predictions_ro16.id
 						INNER JOIN live_user_predictions_qf ON live_user_information.id = live_user_predictions_qf.id
 						INNER JOIN live_user_predictions_sf ON live_user_information.id = live_user_predictions_sf.id
-            WHERE live_user_information.id = '".$_SESSION["id"]."'";
+            WHERE live_user_information.id = '".$_SESSION["id"]."'"; */
 
 	// Obtain the SQL query result and set corresponding result variables
 	$result1 = mysqli_query($con, $sql_getprofileinfo1);
 	$userdata1 = mysqli_fetch_assoc($result1);
 	$result2 = mysqli_query($con, $sql_getprofileinfo2);
 	$userdata2 = mysqli_fetch_assoc($result2);
-	$result3 = mysqli_query($con, $sql_getpointstotal);
-	$userdata3 = mysqli_fetch_assoc($result3);
+	// $result3 = mysqli_query($con, $sql_getpointstotal);
+	// $userdata3 = mysqli_fetch_assoc($result3);
 	// Assign returned data to variables
 	$uppCaseFN = ucfirst($userdata1["firstname"]);
 	$uppCaseSN = ucfirst($userdata1["surname"]);

@@ -12,13 +12,13 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Hendy's Hunches: Predictions Game">
     <meta name="author" content="James Henderson">
-		<title>Hendy's Hunches: User</title>
+	<title>Hendy's Hunches: User</title>
     <?php include "php/config.php" ?>
-		<link rel="shortcut icon" href="ico/favicon.ico">
-		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu|Lora">
-		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+	<link rel="shortcut icon" href="ico/favicon.ico">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu|Lora">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-		<link rel="stylesheet" href="css/default.css">
+	<link rel="stylesheet" href="css/default.css">
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.1"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
   </head>
@@ -55,7 +55,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 								</li>
 		            <li class="nav-item dropdown">
 									<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-										<?php returnAvatar();	?>
+										<?php returnAvatar(); ?>
 		              </a>
 		              <ul class="dropdown-menu">
 										<!--<li><a class="dropdown-item" href="overview.php">Application overview</a></li>-->
@@ -83,25 +83,25 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 															ON live_user_predictions_groups.id = live_user_information.id
 															WHERE live_user_predictions_groups.id='".$_GET["id"]."'";
 
-					$sql_getuserro16 = "SELECT live_user_predictions_ro16.*, live_user_information.avatar, live_user_information.faveteam, live_user_information.fieldofwork, live_user_information.location, live_user_information.tournwinner, live_user_information.currpos
-															FROM live_user_predictions_ro16 INNER JOIN live_user_information
-															ON live_user_predictions_ro16.id = live_user_information.id
-															WHERE live_user_predictions_ro16.id='".$_GET["id"]."'";
+					// $sql_getuserro16 = "SELECT live_user_predictions_ro16.*, live_user_information.avatar, live_user_information.faveteam, live_user_information.fieldofwork, live_user_information.location, live_user_information.tournwinner, live_user_information.currpos
+					// 										FROM live_user_predictions_ro16 INNER JOIN live_user_information
+					// 										ON live_user_predictions_ro16.id = live_user_information.id
+					// 										WHERE live_user_predictions_ro16.id='".$_GET["id"]."'";
 
-					$sql_getuserqf = "SELECT live_user_predictions_qf.*, live_user_information.avatar, live_user_information.faveteam, live_user_information.fieldofwork, live_user_information.location, live_user_information.tournwinner, live_user_information.currpos
-															FROM live_user_predictions_qf INNER JOIN live_user_information
-															ON live_user_predictions_qf.id = live_user_information.id
-															WHERE live_user_predictions_qf.id='".$_GET["id"]."'";
+					// $sql_getuserqf = "SELECT live_user_predictions_qf.*, live_user_information.avatar, live_user_information.faveteam, live_user_information.fieldofwork, live_user_information.location, live_user_information.tournwinner, live_user_information.currpos
+					// 										FROM live_user_predictions_qf INNER JOIN live_user_information
+					// 										ON live_user_predictions_qf.id = live_user_information.id
+					// 										WHERE live_user_predictions_qf.id='".$_GET["id"]."'";
 
-					$sql_getusersf = "SELECT live_user_predictions_sf.*, live_user_information.avatar, live_user_information.faveteam, live_user_information.fieldofwork, live_user_information.location, live_user_information.tournwinner, live_user_information.currpos
-															FROM live_user_predictions_sf INNER JOIN live_user_information
-															ON live_user_predictions_sf.id = live_user_information.id
-															WHERE live_user_predictions_sf.id='".$_GET["id"]."'";
+					// $sql_getusersf = "SELECT live_user_predictions_sf.*, live_user_information.avatar, live_user_information.faveteam, live_user_information.fieldofwork, live_user_information.location, live_user_information.tournwinner, live_user_information.currpos
+					// 										FROM live_user_predictions_sf INNER JOIN live_user_information
+					// 										ON live_user_predictions_sf.id = live_user_information.id
+					// 										WHERE live_user_predictions_sf.id='".$_GET["id"]."'";
 
-					$sql_getuserfi = "SELECT live_user_predictions_final.*, live_user_information.avatar, live_user_information.faveteam, live_user_information.fieldofwork, live_user_information.location, live_user_information.tournwinner, live_user_information.currpos
-															FROM live_user_predictions_final INNER JOIN live_user_information
-															ON live_user_predictions_final.id = live_user_information.id
-															WHERE live_user_predictions_final.id='".$_GET["id"]."'";															
+					// $sql_getuserfi = "SELECT live_user_predictions_final.*, live_user_information.avatar, live_user_information.faveteam, live_user_information.fieldofwork, live_user_information.location, live_user_information.tournwinner, live_user_information.currpos
+					// 										FROM live_user_predictions_final INNER JOIN live_user_information
+					// 										ON live_user_predictions_final.id = live_user_information.id
+					// 										WHERE live_user_predictions_final.id='".$_GET["id"]."'";															
 
 					// Global SQL query strings
 					$sql_getresults = "SELECT SUM(score1_r) as score1_r, SUM(score2_r) as score2_r, SUM(score3_r) as score3_r, SUM(score4_r) as score4_r, SUM(score5_r) as score5_r, SUM(score6_r) as score6_r, SUM(score7_r) as score7_r, SUM(score8_r) as score8_r, SUM(score9_r) as score9_r, SUM(score10_r) as score10_r,
@@ -127,10 +127,10 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					}
 
 					$userdata = mysqli_fetch_assoc(mysqli_query($con, $sql_getuserinfo));
-					$userdata2 = mysqli_fetch_assoc(mysqli_query($con, $sql_getuserro16));
-					$userdata3 = mysqli_fetch_assoc(mysqli_query($con, $sql_getuserqf));
-					$userdata4 = mysqli_fetch_assoc(mysqli_query($con, $sql_getusersf));
-					$userdata5 = mysqli_fetch_assoc(mysqli_query($con, $sql_getuserfi));
+					// $userdata2 = mysqli_fetch_assoc(mysqli_query($con, $sql_getuserro16));
+					// $userdata3 = mysqli_fetch_assoc(mysqli_query($con, $sql_getuserqf));
+					// $userdata4 = mysqli_fetch_assoc(mysqli_query($con, $sql_getusersf));
+					// $userdata5 = mysqli_fetch_assoc(mysqli_query($con, $sql_getuserfi));
 					$uppCaseFN = ucfirst($userdata["firstname"]);
 					$uppCaseSN = ucfirst($userdata["surname"]);
 					$userid = $userdata["id"];
@@ -140,12 +140,12 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 					$faveteam = $userdata["faveteam"];
 					$tournwinner = $userdata["tournwinner"];
 					$currentpos = ordinal($userdata["currpos"]);
-					$pointstotal1 = $userdata["points_total"];
-					$pointstotal2 = $userdata2["points_total"];
-					$pointstotal3 = $userdata3["points_total"];
-					$pointstotal4 = $userdata4["points_total"];
-					$pointstotal5 = $userdata5["points_total"];
-					$pointstotal = $pointstotal1 + $pointstotal2 + $pointstotal3 + $pointstotal4 + $pointstotal5;
+					$pointstotal = $userdata["points_total"];
+					// $pointstotal2 = $userdata2["points_total"];
+					// $pointstotal3 = $userdata3["points_total"];
+					// $pointstotal4 = $userdata4["points_total"];
+					// $pointstotal5 = $userdata5["points_total"];
+					//$pointstotal = $pointstotal1 + $pointstotal2 + $pointstotal3 + $pointstotal4 + $pointstotal5;
 					$matchresult = mysqli_fetch_assoc(mysqli_query($con, $sql_getresults));
 
 		// Function for adding correct extention to a number
@@ -872,7 +872,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 									<td><?php if($matchids[47]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[47]."_r"], $matchresult["score".$evengameno[47]."_r"]); } else echo "N/A"; ?></td>
 									<td><?php if($matchids[47]) { echo $matchpoints[47]; } else { echo "-"; } ?></td>
 								</tr>
-								<tr>
+								<!-- <tr>
 									<td class="small text-muted d-none d-md-block">RO16<br>03/12/2022</td>
 									<td style="text-align: right"><label for="score97_p"><?php echo $R1; ?></label></td>
 									<td><img src="<?php echo $R1_img; ?>" alt="<?php echo $R1; ?>" title="<?php echo $R1; ?>"></td>
@@ -1047,7 +1047,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 									<td><span class="prediction"><?php echo $userdata5['score127_p'] ?> - <?php echo $userdata5['score128_p'] ?></span></td>
 									<td><?php if($matchids[63]) { printf ("<span class='result'>%s - %s</span>", $matchresult["score".$oddgameno[63]."_r"], $matchresult["score".$evengameno[63]."_r"]); } else echo "N/A"; ?></td>
 									<td><?php if($matchids[63]) { echo $matchpoints[63]; } else { echo "-"; } ?></td>
-								</tr>
+								</tr> -->
 						</table>
 						</div>
 					</div>
@@ -1062,3 +1062,5 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 
   </body>
 </html>
+
+

@@ -6,7 +6,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 }
 ?>
 <!DOCTYPE html>
-<html lang="en" class="h-100">
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -27,7 +27,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
   <body>
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark" aria-label="Offcanvas navbar large">
 		    <div class="container">
-					<img src="img/hh-logo-2024.png" class="img-fluid bg-light mx-2" style="--bs-bg-opacity: 0.80" width="50px">
+					<img src="img/hh-icon-2024.png" class="img-fluid bg-light mx-2" style="--bs-bg-opacity: 0.80" width="50px">
 		      <a class="navbar-brand" href="#">Hendy's Hunches</a>
 		      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar2" aria-controls="offcanvasNavbar2">
 		        <span class="navbar-toggler-icon"></span>
@@ -78,7 +78,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	      <h1>Rankings</h1>
 
 	      <p class="lead">Check your progress against others.</p>
-	      <p class="alert alert-success">Congratulations to our winners Chloe (1st), Howard (2nd) and Andrew (3rd).</p>
+	      <!-- <p class="alert alert-success">Congratulations to our winners Chloe (1st), Howard (2nd) and Andrew (3rd).</p> -->
 
 	      <div class="row">
 					<div class="col-xs-12">
@@ -89,7 +89,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		        <?php displayInfo(); ?>
 		        </div>
 					-->
-		        <a class="btn btn-light" href="#top" role="button">Return to top</a>
+		        <a class="btn btn-secondary mt-2 mb-5" href="#top" role="button">Return to top</a>
 		      </div>
       	</div><!--row-->
 				<!-- Site footer -->
@@ -102,11 +102,11 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
     </div><!-- /.main-section -->
 
     <script>
-	$(document).ready(function () {	 
-	  $("td:eq(0)").css("background","#FFD700").css("text-align", "center").append("£50"); // Create 'rank 1' cell 
-	  $("td:eq(3)").css("background","#C0C0C0").css("text-align", "center").append("£35"); // Create 'rank 2' cell
-	  $("td:eq(6)").css("background","#CD7F32").css("text-align", "center").append("£23"); // Create 'rank 3' cell	  
-	});
+	// $(document).ready(function () {	 
+	//   $("td:eq(0)").css("background","#FFD700").css("text-align", "center").append("£50"); // Create 'rank 1' cell 
+	//   $("td:eq(3)").css("background","#C0C0C0").css("text-align", "center").append("£35"); // Create 'rank 2' cell
+	//   $("td:eq(6)").css("background","#CD7F32").css("text-align", "center").append("£23"); // Create 'rank 3' cell	  
+	// });
     </script>    
   </body>
 </html>

@@ -2,7 +2,7 @@
 
 body {
   background-image: url(../img/football-stadium.jpg);
-  background-color: #CCCCCC; /* Used if the image is unavailable */
+  background-color: #212529; /* Used if the image is unavailable */
   /*height: 500px; /* You must set a specified height */
   background-position: center; /* Center the image */
   background-repeat: no-repeat; /* Do not repeat the image */
@@ -19,10 +19,43 @@ a[href^="#top"] {
   align-items: flex-end !important;
 }
 
+/*--------------------------------------------------------------
+# Back to top button
+--------------------------------------------------------------*/
+.back-to-top {
+  position: fixed;
+  visibility: hidden;
+  opacity: 0;
+  right: 15px;
+  bottom: 15px;
+  z-index: 99999;
+  background: #4154f1;
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  transition: all 0.4s;
+}
+
+.back-to-top i {
+  font-size: 24px;
+  color: #fff;
+  line-height: 0;
+}
+
+.back-to-top:hover {
+  background: #6776f4;
+  color: #fff;
+}
+
+.back-to-top.active {
+  visibility: visible;
+  opacity: 1;
+}
+
 main {
 	background-color: #FFF;
 	box-shadow: inset 0 0 0.5rem rgba(0, 0, 0, .5);
-  min-height: 400px;
+  min-height: 100vh;
 }
 
 h5 .card-title {

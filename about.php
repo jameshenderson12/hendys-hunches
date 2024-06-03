@@ -6,7 +6,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 }
 ?>
 <!DOCTYPE html>
-<html lang="en" class="h-100">
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -26,7 +26,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
   <body>
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark" aria-label="Offcanvas navbar large">
 		    <div class="container">
-					<img src="img/hh-logo-2024.png" class="img-fluid bg-light mx-2" style="--bs-bg-opacity: 0.80" width="50px">
+					<img src="img/hh-icon-2024.png" class="img-fluid bg-light mx-2" style="--bs-bg-opacity: 0.80" width="50px">
 		      <a class="navbar-brand" href="#">Hendy's Hunches</a>
 		      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar2" aria-controls="offcanvasNavbar2">
 		        <span class="navbar-toggler-icon"></span>
