@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Hendy's Hunches</title>
+    <style>
+        .container {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            max-width: 600px;
+            margin: auto;
+        }
+        .header img {
+            max-width: 100%;
+            height: auto;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 20px 0;
+            font-size: 16px;
+            color: #fff;
+            background-color: #007bff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="cid:logo" alt="Hendy's Hunches Logo">
+        </div>
+        <h1>Welcome to Hendy's Hunches, {{firstname}}!</h1>
+        <p>Thank you for registering. We are excited to have you join us. If you haven't already done so, please can you <a href="{{pay_signup_url}}">pay your signup fee.</a></p>
+        <p>Your username is: <strong>{{username}}</strong></p>
+        <p>You can change your password at any time using the button below:</p>
+        <a href="{{change_password_url}}" class="button">Change Password</a>
+    </div>
+</body>
+</html>

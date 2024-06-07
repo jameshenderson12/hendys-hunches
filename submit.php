@@ -10,7 +10,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	submitPredictions();
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-GB">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="refresh" content="3;url=dashboard.php">

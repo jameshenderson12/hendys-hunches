@@ -343,7 +343,7 @@ $footer=implode('',file('footer.txt'));
 $content='
 <?php session_start(); ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-GB">
 <head>
 <title>Hendy&#39;s Hunches: Message Board</title>
 <meta content="text/html; charset=windows-1250">
@@ -740,7 +740,7 @@ header('Pragma: no-cache');
 global $settings;
 echo '
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-GB">
 <head>
 <title>Hendy&#39;s Hunches: Message Board</title>
 <meta content="text/html; charset=windows-1250">
