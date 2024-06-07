@@ -3,76 +3,110 @@
 session_start();
 ?>
 <!DOCTYPE html>
-<html lang="en" class="h-100">
+<html lang="en-GB">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Hendy's Hunches: Predictions Game">
     <meta name="author" content="James Henderson">
-		<title>Hendy's Hunches: Login</title>
+		<title>Login - Hendy's Hunches</title>
     <?php include "php/config.php" ?>
 		<link rel="shortcut icon" href="ico/favicon.ico">
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="css/login.css">
+    <link href="css/registration.css" rel="stylesheet">
+    <link href="css/multi-step-form.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.1"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <style>
+      .fade-in-image { animation: fadeIn 2s; }
+
+      @keyframes fadeIn {
+        0% { opacity: 0; }
+        100% { opacity: 1; }
+      }
+    </style>
 	</head>
 
 	<body class="d-flex h-100 text-center text-bg-dark">
 
   	<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-  		<!-- <header class="mb-auto">
-  			<div>
-  				<h3 class="float-md-start mb-0">Hendy's Hunches</h3>
-  				<nav class="nav nav-masthead justify-content-center float-md-end">
-  					<a class="nav-link fw-bold py-1 px-0" href="registration.php">Register</a>
-  					<a class="nav-link fw-bold py-1 px-0" href="forgot-password.php">Reset Password</a>
-            <a class="nav-link fw-bold py-1 px-0" href="#" data-bs-toggle="modal" data-bs-target="#terms">Terms</a>
-  				</nav>
-  			</div>
-  		</header> -->
 
-      <header class="mb-auto">
+      <header class="">
         <div>
-          <h3 class="float-md-start mb-0"><iframe src="https://free.timeanddate.com/countdown/i8k6yqvc/n4511/cf11/cm0/cu3/ct0/cs1/ca0/co0/cr0/ss0/cacfff/cpc0f0/pct/tcfff/fs100/szw320/szh135/iso2024-06-15T20:00:00/bacfff/pa5" allowtransparency="true" frameborder="0" width="244" height="42"></iframe></h3>
+          <h3 class="float-md-start mb-0">Hendy's Hunches</h3>
           <nav class="nav nav-masthead justify-content-center float-md-end">
-            <a class="nav-link fw-bold py-1 px-0" href="#">Register</a>
+            <a class="nav-link fw-bold py-1 px-0" href="registration.php">Register</a>
   					<a class="nav-link fw-bold py-1 px-0" href="#">Reset Password</a>
             <a class="nav-link fw-bold py-1 px-0" href="#" data-bs-toggle="modal" data-bs-target="#terms">Terms</a>
           </nav>
         </div>
       </header>
+      
 
+      <img src="img/james-scotland-ed-lg.png" alt="James in Scotland kit" class="col-md-5 col-5 mt-3 img-fluid fade-in-image mx-auto d-block">      
   		<main class="px-3">
-  			<!--<h1>Welcome</h1>-->
-  			<img src="img/germany-2024-logo-md.png" alt="Hendy's Hunches logo for Germany 2024" class="w-75 mb-3">
+  			<h1><img src="img/germany-518638_640.png" alt="German nation flag" class="img-fluid col-1 mx-2 mb-2" style="">Germany 2024 Edition</h1>
+        <!-- <h3>Login</h3> -->
 
-        <form id="login" role="form" method="post" action="php/login.php" class="">
+        <!-- <form id="login" role="form" class="d-flex flex-column needs-validation" method="POST" action="php/login.php" style="	border: 1px solid #AAA; border-radius: 0.35rem; min-height: inherit; height: inherit;">
 
-            <div class="mb-3 row d-flex justify-content-center">
-              <label for="username" class="col-sm-2 col-form-label">Username</label>
-              <div class="col-sm-8">
-                <input type="text" class="form-control" id="username" name="username" value="<?php echo $_COOKIE['remember_me']; ?>" required>
-              </div>
+          <div class="mb-3 row d-flex justify-content-center px-5">
+            <label for="username" class="form-label col-5 col-lg-3">Username</label>
+            <input type="text" class="form-control col-6" id="username" name="username" required>
+            <div class="invalid-feedback">
+              Please provide your username.
             </div>
-            <div class="mb-3 row d-flex justify-content-center">
-              <label for="password" class="col-sm-2 col-form-label">Password</label>
-              <div class="col-sm-8">
-                <input type="password" class="form-control" id="password" name="password" required>
-              </div>
-            </div>
+            <label for="password" class="form-label col-5 col-lg-3">Password</label>
+            <input type="password" class="form-control col-6" id="password" name="password" required>
+            <div class="invalid-feedback">
+              Please provide your password.
+            </div>     
 
-            <div class="form-check form-switch">
-              <input id="remember" name="remember" type="checkbox" class="form-check-input" role="switch" value="<?php if(isset($_COOKIE['remember_me'])) { echo 'checked="checked"'; } else { echo ''; } ?>">
-              <label class="form-check-label ml-3" for="remember">Remember my username?</label>
+          </div> -->
+
+          <form id="login" role="form" class="needs-validation" method="POST" action="php/login.php" style="border: 1px solid #AAA; border-radius: 0.35rem; min-height: inherit; height: inherit;">
+            <div class="mb-3 row justify-content-center px-3 px-md-5">
+                <div class="col-12 col-md-10 col-lg-8">
+                    <div class="row mb-3">
+                        <label for="username" class="col-12 col-md-4 col-form-label">Username</label>
+                        <div class="col-12 col-md-8">
+                            <input type="text" class="form-control" id="username" name="username" required>
+                            <div class="invalid-feedback">
+                                Please provide your username.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="password" class="col-12 col-md-4 col-form-label">Password</label>
+                        <div class="col-12 col-md-8">
+                            <input type="password" class="form-control" id="password" name="password" required>
+                            <div class="invalid-feedback">
+                                Please provide your password.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                      <hr>
+                      <div class="col-6">
+                        <iframe src="https://free.timeanddate.com/countdown/i8k6yqvc/n4511/cf11/cm0/cu3/ct0/cs1/ca0/co0/cr0/ss0/cacfff/cpc0f0/pct/tcfff/fs100/szw320/szh135/iso2024-07-15T20:00:00/bacfff/pa5" allowtransparency="true" frameborder="0" width="244" height="42"></iframe>
+                      </div>
+                      <div class="col-6 text-end">
+                        <button type="submit" class="btn btn-primary btn-next w-100 mt-0"><i class="fw-bold bi bi-box-arrow-in-right"></i> Log in</button>
+                      </div>
+                    </div> 
+                </div>
             </div>
-            <hr />          
-    			<p class="lead">
-    				<button class="btn btn-lg btn-primary" type="submit"><i class="fw-bold bi bi-box-arrow-in-right"></i> Log in</button>
-    			</p>
+        </form>          
+
+      
+    				    			
         </form>
+        
   		</main>
+      
+      
 
       <!-- HH Terms Modal -->
       <div class="modal fade" id="terms" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -103,6 +137,7 @@ session_start();
       </div>
 
       <footer class="mt-auto">
+        <!-- <img src="img/germany-2024-logo-md.png" alt="Hendy's Hunches logo for Germany 2024" class="w-25"> -->
         <p class="small fw-light">Predictions game based on <a href="<?=$competition_url?>" class="text-white"><?=$competition?></a><br><?=$title?> <?=$version?> &copy; <?=$year?> <?=$developer?>.</p>
       </footer>
 

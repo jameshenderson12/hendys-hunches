@@ -13,17 +13,17 @@
 
 // Initial config values for error reporting criteria
 ini_set('error_reporting', -1);
-//ini_set('display_errors', 1);
+ini_set('display_errors', 1);
 ini_set('html_errors', 1);
 
 //===============================
-// Global config variables
+// Global variables
 //===============================
 
 $protocol = "https://";
 $acronym = "HH";
 $title = "Hendy's Hunches";
-$version = "v2.5.2";
+$version = "v2.6.3";
 $year = "2024";
 $last_update = "21st Nov 2022";
 $base_url = $protocol."www.hendyshunches.co.uk";
@@ -36,15 +36,34 @@ $date_created = "09/06/2006";
 $date_format = "d/m/Y (H:i)";
 $competition = "UEFA EURO 2024™";
 $competition_url = "https://www.uefa.com/euro2024/";
+$charity = "Notts County Foundation";
+$charity_url = "https://www.nottscountyfoundation.org.uk/programme/on-the-ball/";
+$signup_fee = 5; // No of GBP £
+$charity_fee = 2; // No of GBP £
+$prize_fee = 2; // No of GBP £
+$signup_fee_formatted = sprintf("%01.2f", $signup_fee);
+$charity_fee_formatted = sprintf("%01.2f", $charity_fee);
+$prize_fee_formatted = sprintf("%01.2f", $prize_fee);
+$signup_close_date = "13/06/2024";
+
+
+//===============================
+// Game variables
+//===============================
+
 $no_of_competition_groups = 6;
 $no_of_competition_teams = 24;
-$no_of_prelim_fixtures = 36;
+$no_of_group_fixtures = 36;
 $no_of_knockout_fixtures = 15;
+$no_of_ro16_fixtures = 8;
+$no_of_qf_fixtures = 4;
+$no_of_sf_fixtures = 2;
+$no_of_final_fixtures = 1;
 $no_of_total_fixtures = 51; // p and r values to *2 of this value
 $competition_start_date = "14/06/2024";
-$competition_start_date = "14/07/2024";
-$prelim_fixtures_start_date = "14/06/2024";
-$prelim_fixtures_end_date = "26/06/2024";
+$competition_end_date = "14/07/2024";
+$group_fixtures_start_date = "14/06/2024";
+$group_fixtures_end_date = "26/06/2024";
 $knockout_fixtures_start_date = "29/06/2024";
 $round_of_16_start_date = "29/06/2024";
 $round_of_16_end_date = "02/07/2024";
@@ -53,12 +72,6 @@ $quarter_final_end_date = "06/07/2024";
 $semi_final_start_date = "09/07/2024";
 $semi_final_end_date = "10/07/2024";
 $final_date = "14/07/2024";
-$signup_fee = "£5.00";
-$signup_close_date = "13/06/2024";
-
-//===============================
-// Game variables
-//===============================
 
 // Variable format groupXteamY
 $A1 = "Germany";
@@ -252,12 +265,13 @@ function returnAvatar() {
 	include 'db-connect.php';
 
 	// Get team information from the DB	counting occurrences too
-	$sql_getavatar = "SELECT firstname, avatar FROM live_user_information WHERE username = '".$_SESSION["username"]."'";
+	$sql_getavatar = "SELECT firstname, surname, avatar FROM live_user_information WHERE username = '".$_SESSION["username"]."'";
 	$getavatar = mysqli_query($con, $sql_getavatar);
 	$userid = mysqli_fetch_assoc($getavatar);
 	$firstname = $userid["firstname"];
+	$surname = $userid["surname"];
 	$avatar = $userid["avatar"];
-	print("<img src='$avatar' id='avatar' class='img-fluid rounded-circle mx-1' alt='User Avatar' name='User Avatar' width='25'> $firstname");
+	print("<img src='$avatar' id='avatar' class='img-fluid rounded-circle mx-1' alt='User Avatar' name='User Avatar' width='25'> $firstname " . "$surname");
 }
 
 function formatDateAsSystem($date) {

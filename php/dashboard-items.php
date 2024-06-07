@@ -1,107 +1,107 @@
 <?php
 
-function retrieveScorePrediction($num) {
-	// Connect to the database
-	include 'php/db-connect.php';
-	// Create a query to return a user's specific predictions
-	$sql_getscore = "SELECT * FROM live_user_predictions WHERE id='{$_SESSION['id']}'";
-	// Execute the query and return the results or display an appropriate error message
-	$userpred = mysqli_query($con, $sql_getscore) or die(mysqli_error());
-	// Output score value
-    while($row = mysqli_fetch_assoc($userpred)) {
-        echo $row["score".$num."_p"];
-   	}
-}
+// function retrieveScorePrediction($num) {
+// 	// Connect to the database
+// 	include 'php/db-connect.php';
+// 	// Create a query to return a user's specific predictions
+// 	$sql_getscore = "SELECT * FROM live_user_predictions WHERE id='{$_SESSION['id']}'";
+// 	// Execute the query and return the results or display an appropriate error message
+// 	$userpred = mysqli_query($con, $sql_getscore) or die(mysqli_error());
+// 	// Output score value
+//     while($row = mysqli_fetch_assoc($userpred)) {
+//         echo $row["score".$num."_p"];
+//    	}
+// }
 
-function retrieveScoreResult($num) {
-	// Connect to the database
-	include 'php/db-connect.php';
-	// Create a query to return a user's specific predictions
-	$sql_getscore = "SELECT * FROM live_match_results";
-	// Execute the query and return the results or display an appropriate error message
-	$result = mysqli_query($con, $sql_getscore) or die(mysqli_error());
-	// Output score value
-    if($row = mysqli_fetch_assoc($result)) {
-        echo $row["score".$num."_r"];
-   	}
-	else {
-		echo $row["0"];
-	}
-}
+// function retrieveScoreResult($num) {
+// 	// Connect to the database
+// 	include 'php/db-connect.php';
+// 	// Create a query to return a user's specific predictions
+// 	$sql_getscore = "SELECT * FROM live_match_results";
+// 	// Execute the query and return the results or display an appropriate error message
+// 	$result = mysqli_query($con, $sql_getscore) or die(mysqli_error());
+// 	// Output score value
+//     if($row = mysqli_fetch_assoc($result)) {
+//         echo $row["score".$num."_r"];
+//    	}
+// 	else {
+// 		echo $row["0"];
+// 	}
+// }
 
-function displayRankings() {
-	// Connect to the database
-	include 'php/db-connect.php';
+// function displayRankings() {
+// 	// Connect to the database
+// 	include 'php/db-connect.php';
 
-	// Set up SQL query to retrieve data from database tables
-	$sql_maketable = "SELECT live_user_information.id, live_user_information.firstname, live_user_information.surname, live_user_information.faveteam, live_user_information.startpos, live_user_information.currpos, live_user_information.lastpos, live_user_predictions.points_total,
-						FIND_IN_SET(points_total, (
-							SELECT GROUP_CONCAT( DISTINCT points_total
-							ORDER BY points_total DESC )
-							FROM live_user_predictions )
-						) AS rank
-						FROM live_user_information
-						INNER JOIN live_user_predictions ON live_user_information.id = live_user_predictions.id
-						ORDER BY rank ASC, surname ASC";
+// 	// Set up SQL query to retrieve data from database tables
+// 	$sql_maketable = "SELECT live_user_information.id, live_user_information.firstname, live_user_information.surname, live_user_information.faveteam, live_user_information.startpos, live_user_information.currpos, live_user_information.lastpos, live_user_predictions.points_total,
+// 						FIND_IN_SET(points_total, (
+// 							SELECT GROUP_CONCAT( DISTINCT points_total
+// 							ORDER BY points_total DESC )
+// 							FROM live_user_predictions )
+// 						) AS rank
+// 						FROM live_user_information
+// 						INNER JOIN live_user_predictions ON live_user_information.id = live_user_predictions.id
+// 						ORDER BY rank ASC, surname ASC";
 
-	$sql_matchresults = "SELECT * FROM live_match_results";
+// 	$sql_matchresults = "SELECT * FROM live_match_results";
 
-	// Execute the query and return the results or display an appropriate error message
-	$table = mysqli_query($con, $sql_maketable) or die(mysqli_error());
-	// Execute the query to see if match results table contains any data
-	$result = mysqli_query($con, $sql_matchresults) or die(mysqli_error());
+// 	// Execute the query and return the results or display an appropriate error message
+// 	$table = mysqli_query($con, $sql_maketable) or die(mysqli_error());
+// 	// Execute the query to see if match results table contains any data
+// 	$result = mysqli_query($con, $sql_matchresults) or die(mysqli_error());
 
-	// Start creating the table to display the returned values
-	print "<table class='table table-striped' style='background-color:#FFF'>";
-	print "<tr><th width='10%'></th><th width='10%'>Rank</th><th width='10%'></th><th width='30%'>Name</th><th width='40%'>Favourite Team</th><th width='10%'>Points</th></tr>";
+// 	// Start creating the table to display the returned values
+// 	print "<table class='table table-striped' style='background-color:#FFF'>";
+// 	print "<tr><th width='10%'></th><th width='10%'>Rank</th><th width='10%'></th><th width='30%'>Name</th><th width='40%'>Favourite Team</th><th width='10%'>Points</th></tr>";
 
-	while ($row = mysqli_fetch_assoc($table)) {
+// 	while ($row = mysqli_fetch_assoc($table)) {
 
-		// Check if match results table contains any data
-		if (mysqli_num_rows($result) == 0) {
-			// Set rank value to start position value if there is no match data
-			$rank = $row["startpos"];
-		}
-		else {
-			// Set rank value to rank position once match data exists
-			$rank = $row["rank"];
-		}
+// 		// Check if match results table contains any data
+// 		if (mysqli_num_rows($result) == 0) {
+// 			// Set rank value to start position value if there is no match data
+// 			$rank = $row["startpos"];
+// 		}
+// 		else {
+// 			// Set rank value to rank position once match data exists
+// 			$rank = $row["rank"];
+// 		}
 
-		// Determine if move is upwards, downwards or the same and calculate the difference between current and previous ranking
-		if ($row["lastpos"] > $row["currpos"]) {
-			$diff = $row["lastpos"] - $row["currpos"];
-			$move = "<span style='color: green;'>&#x25B2;</span>";
-		}
-		if ($row["lastpos"] < $row["currpos"]) {
-			$diff = $row["currpos"] - $row["lastpos"];
-			$move = "<span style='color: red;'>&#x25BC;</span>";
-		}
-		if ($row["lastpos"] == $row["currpos"]) {
-			$diff = 0;
-			$move = "<span style='color: #888;'>&#x25B6;</span>";
-		}
+// 		// Determine if move is upwards, downwards or the same and calculate the difference between current and previous ranking
+// 		if ($row["lastpos"] > $row["currpos"]) {
+// 			$diff = $row["lastpos"] - $row["currpos"];
+// 			$move = "<span style='color: green;'>&#x25B2;</span>";
+// 		}
+// 		if ($row["lastpos"] < $row["currpos"]) {
+// 			$diff = $row["currpos"] - $row["lastpos"];
+// 			$move = "<span style='color: red;'>&#x25BC;</span>";
+// 		}
+// 		if ($row["lastpos"] == $row["currpos"]) {
+// 			$diff = 0;
+// 			$move = "<span style='color: #888;'>&#x25B6;</span>";
+// 		}
 
-		print "<tr>";
-		// Ensure both name variables being with upper case letters
-		$uppCaseFN = ucfirst($row["firstname"]);
-		$uppCaseSN = ucfirst($row["surname"]);
+// 		print "<tr>";
+// 		// Ensure both name variables being with upper case letters
+// 		$uppCaseFN = ucfirst($row["firstname"]);
+// 		$uppCaseSN = ucfirst($row["surname"]);
 
-		// Display the table complete with all data variables
-		printf ("<td></td>");
-		printf ("<td><strong>%s</strong> <span class='text-muted'>(%s)</span></td>", $rank, $row["lastpos"]);
-		printf ("<td>%s %s</td>", $move, $diff);
-		printf ("<td><a href='user.php?id=%s'>%s %s</a></td>", $row["id"], $uppCaseFN, $uppCaseSN);
-		printf ("<td>%s</td>", $row["faveteam"]);
-		printf ("<td>%s</td>", $row["points_total"]);
-		print "</tr>";
-	}
-	// Complete the physical table layout
-	print "</tr>";
-	print "</table>";
+// 		// Display the table complete with all data variables
+// 		printf ("<td></td>");
+// 		printf ("<td><strong>%s</strong> <span class='text-muted'>(%s)</span></td>", $rank, $row["lastpos"]);
+// 		printf ("<td>%s %s</td>", $move, $diff);
+// 		printf ("<td><a href='user.php?id=%s'>%s %s</a></td>", $row["id"], $uppCaseFN, $uppCaseSN);
+// 		printf ("<td>%s</td>", $row["faveteam"]);
+// 		printf ("<td>%s</td>", $row["points_total"]);
+// 		print "</tr>";
+// 	}
+// 	// Complete the physical table layout
+// 	print "</tr>";
+// 	print "</table>";
 
-	// Close the database connection
-	mysqli_close($con);
-}
+// 	// Close the database connection
+// 	mysqli_close($con);
+// }
 
 function displayTeamData() {
 	// Create DB connection
@@ -261,30 +261,24 @@ function displayLatestInformation() {
 
 function displayCharityInformation() {
 	// Create DB connection
-	//include 'php/db-connect.php';
+	include 'php/db-connect.php';
 
 	// Get donation information from the DB	(counting occurrences)
-	//$sql_countusers = "SELECT count(*) AS totalusers FROM live_user_information";
+	$sql_countusers = "SELECT count(*) AS totalusers FROM live_user_information";
 
 	// Execute the query and return the result or display appropriate error message
-	//$totalusers = mysqli_query($con, $sql_countusers) or die(mysqli_error());
-	/* For each instance of the returned result
+	$totalusers = mysqli_query($con, $sql_countusers) or die(mysqli_error());
+	// For each instance of the returned result
 	while ($row = mysqli_fetch_assoc($totalusers)) {
 		$countoftotalusers = $row["totalusers"];
-		$donation = ($countoftotalusers * 2);
-	}*/
+		$donation = ($countoftotalusers * $GLOBALS["charity_fee"]);
+	}
+
 	print("<a href='https://www.sands.org.uk' target='_blank' title='Sands charity website'><img src='img/sands-logo.jpg' class='img-fluid w-50'></a>");
-	print("<h4 class='my-3'><strong>£74</strong> has been donated! Thank you.</h4>");
+	//print("<h4 class='my-3'><strong>£74</strong> has been donated! Thank you.</h4>");
 	//printf("<p><strong>Hendy's Hunches donation:</strong> £%d.00 (40&#37; from entry fees)", $donation);
 	//print("<span class='label label-success'>A huge thank you to all players!</span>");
-	print("<p>Thanks to your participation, Hendy's Hunches has donated £74 to Sands for the following:</p>");
-	print("<ul>");
-	print("<li>provide <strong>4</strong> bereaved families with a memory box to help create and keep safe precious and lasting memories of their baby</li>");
-	print("<li>answer <strong>2</strong> calls from someone reaching out for support who has been through pregnancy loss or the death of a baby</li>");
-	print("<li>help ensure every hospital in the UK has a dedicated Sands volunteer to help healthcare professionals access our training, guidance and support</li>");
-	//print("<li></li>");
-	print("</ul>");
-	//print("<img src='img/calm-values.png' class='img-responsive'>");
+	printf("<p>Thanks to your participation, Hendy's Hunches currently has %d to donate to" . $GLOBALS["charity"] .":</p>");	
 	// Free result set
 	//mysqli_free_result($totalusers);
 	// Close DB connection
@@ -503,6 +497,23 @@ function returnProfileData() {
 	$convertedDate = date("l jS \of F", strtotime($originalsignupdate));
 }
 
+function checkSubmitted() {
+	// Create DB connection
+	include 'db-connect.php';
+	$un = $_SESSION["username"];
+	// Get team information from the DB	counting occurrences too
+	$sql_predstatus = sprintf("SELECT username FROM live_user_predictions_groups WHERE username = '%s'", $un);
+	$predstatus = mysqli_query($con, $sql_predstatus);
+
+	if (mysqli_num_rows($predstatus) > 0) {
+		// consoleMsg($predstatus);
+		print("<p class='alert alert-success'><i class='bi bi-check2-square text-success'></i> Successfully submitted your group fixture predictions.</p>");
+	}
+	else {
+		print("<p class='alert alert-danger'><i class='bi bi-exclamation-square text-danger'></i> Please <a href='predictions.php' title='Submit your predictions'>submit your predictions</a> for the group fixtures</a>.</p>");
+	}
+}
+
 function displayMatchesRecorded() {
 	// Create DB connection
 	include 'php/db-connect.php';
@@ -512,17 +523,18 @@ function displayMatchesRecorded() {
 
 	while ($row = mysqli_fetch_assoc($matches_played)) {
 		$no_of_matches_played = $row["matches_played"];
-		console.log($no_of_matches_played);
-		$percent_group_played = round($no_of_matches_played * 100 / 48);
+		// console.log($no_of_matches_played);
+		//$percent_group_played = round($no_of_matches_played * 100 / 48);
 	}
-	print("<p>$no_of_matches_played of 64</p>");
+
+	printf("<p>Matches recorded: %d of 64</p>", $no_of_matches_played);
 	// Close DB connection
 	mysqli_close($con);
 }
 
 function displayGroupMatchesPlayed() {
 	// Create DB connection
-	//include 'php/db-connect.php';
+	include 'php/db-connect.php';
 
 	$sql_get_matches_played = "SELECT COUNT(*) AS matches_played FROM live_match_results";
 	$matches_played = mysqli_query($con, $sql_get_matches_played);
@@ -530,29 +542,22 @@ function displayGroupMatchesPlayed() {
 	while ($row = mysqli_fetch_assoc($matches_played)) {
 		$no_of_matches_played = $row["matches_played"];
 		//console.log($no_of_matches_played);
-		$percent_group_played = round($no_of_matches_played * 100 / 48);
+		$percent_group_played = round($no_of_matches_played * 100 / $GLOBALS["no_of_group_fixtures"]);
 	}
-	print("<div class='progress my-1'><div class='progress-bar bg-success' role='progressbar' aria-label='Competition progress bar' style='width: 100%;' aria-valuenow='100' aria-valuemin='0' aria-valuemax='100'>100%</div></div>");
+	echo "<div class='row'>
+			<div class='col-sm-3'>
+				<p class='text-black'>Group stage:</p>
+			</div>
+			<div class='col-sm-9'>			
+				<div class='progress my-1'><div class='progress-bar bg-success' role='progressbar' aria-label='Competition progress bar' style='width: 0%;' aria-valuenow='$percent_group_played' aria-valuemin='0' aria-valuemax='100'></div></div>
+			</div>
+		</div>";
+
 	// Close DB connection
 	mysqli_close($con);
 }
 
-function checkSubmitted() {
-	// Create DB connection
-	include 'db-connect.php';
-	$un = $_SESSION["username"];
-	// Get team information from the DB	counting occurrences too
-	$sql_predstatus = sprintf("SELECT username FROM live_user_predictions_group WHERE username = '%s'", $un);
-	$predstatus = mysqli_query($con, $sql_predstatus);
 
-	if (mysqli_num_rows($predstatus) > 0) {
-		// consoleMsg($predstatus);
-		print("<p class='alert alert-success p-4'><i class='bi bi-check2-square text-success'></i> You've successfully submitted your predictions for the 3rd Place Playoff and Finals. Good luck.</p>");
-	}
-	else {
-		print("<p class='alert alert-danger p-4'><i class='bi bi-exclamation-square text-danger'></i> Please <a href='predictions.php' title='Submit your predictions'>submit your predictions</a> for the 3rd Place Playoff Finals.</p>");
-	}
-}
 
 function displayRO16MatchesPlayed() {
 	// Create DB connection
@@ -563,12 +568,18 @@ function displayRO16MatchesPlayed() {
 
 	while ($row = mysqli_fetch_assoc($matches_played)) {
 		$no_of_matches_played = $row["matches_played"];
-		$no_of_ro16_matches_played = $no_of_matches_played - 48;
+		$no_of_ro16_matches_played = $no_of_matches_played - $GLOBALS["no_of_group_fixtures"];
 		//console.log($no_of_matches_played);
-		$percent_ro16_played = round($no_of_ro16_matches_played * 100 / 8);
+		$percent_ro16_played = round($no_of_ro16_matches_played * 100 / $GLOBALS["no_of_ro16_fixtures"]);
 	}
-	print("<div class='progress my-1'><div class='progress-bar bg-success' role='progressbar' aria-label='Competition progress bar' style='width: 100%;' aria-valuenow='100' aria-valuemin='0' aria-valuemax='100'>100%</div></div>");
-	//print("<div class='progress'><div class='progress-bar' role='progressbar' aria-label='Competition progress bar' style='width: 0%;' aria-valuenow='0' aria-valuemin='0' aria-valuemax='100'></div></div>");
+	echo "<div class='row'>
+			<div class='col-sm-3'>
+				<p class='text-muted'>Round of 16:</p>
+			</div>
+			<div class='col-sm-9'>			
+				<div class='progress my-1'><div class='progress-bar bg-secondary' role='progressbar' aria-label='Competition progress bar' style='width: 0%;' aria-valuenow='$percent_ro16_played' aria-valuemin='0' aria-valuemax='100'>$percent_ro16_played%</div></div>
+			</div>
+		</div>";	
 	// Close DB connection
 	mysqli_close($con);
 }
@@ -582,12 +593,19 @@ function displayQFMatchesPlayed() {
 
 	while ($row = mysqli_fetch_assoc($matches_played)) {
 		$no_of_matches_played = $row["matches_played"];
-		$no_of_qf_matches_played = $no_of_matches_played - 56;
+		$no_of_qf_matches_played = $no_of_matches_played - ($GLOBALS["no_of_group_fixtures"] + $GLOBALS["no_of_ro16_fixtures"]);
 		//console.log($no_of_matches_played);
-		$percent_qf_played = round($no_of_qf_matches_played * 100 / 4);
+		$percent_qf_played = round($no_of_qf_matches_played * 100 / $GLOBALS["no_of_qf_fixtures"]);
 	}
-	print("<div class='progress my-1'><div class='progress-bar bg-success' role='progressbar' aria-label='Competition progress bar' style='width: $percent_qf_played%;' aria-valuenow='$percent_qf_played' aria-valuemin='0' aria-valuemax='100'>$percent_qf_played%</div></div>");
-	//print("<div class='progress'><div class='progress-bar' role='progressbar' aria-label='Competition progress bar' style='width: 0%;' aria-valuenow='0' aria-valuemin='0' aria-valuemax='100'></div></div>");
+	echo "<div class='row'>
+			<div class='col-sm-3'>
+				<p class='text-muted'>Quarter finals:</p>
+			</div>
+			<div class='col-sm-9'>			
+				<div class='progress my-1'><div class='progress-bar bg-success' role='progressbar' aria-label='Competition progress bar' style='width: 0%;' aria-valuenow='$percent_qf_played' aria-valuemin='0' aria-valuemax='100'></div></div>
+			</div>
+		</div>";	
+	
 	// Close DB connection
 	mysqli_close($con);
 }
@@ -601,12 +619,18 @@ function displaySFMatchesPlayed() {
 
 	while ($row = mysqli_fetch_assoc($matches_played)) {
 		$no_of_matches_played = $row["matches_played"];
-		$no_of_sf_matches_played = $no_of_matches_played - 60;
+		$no_of_sf_matches_played = $no_of_matches_played - ($GLOBALS["no_of_group_fixtures"] + $GLOBALS["no_of_ro16_fixtures"] + $GLOBALS["no_of_qf_fixtures"]);
 		//console.log($no_of_matches_played);
-		$percent_sf_played = round($no_of_sf_matches_played * 100 / 2);
+		$percent_sf_played = round($no_of_sf_matches_played * 100 / $GLOBALS["no_of_sf_fixtures"]);
 	}
-	print("<div class='progress my-1'><div class='progress-bar' role='progressbar' aria-label='Competition progress bar' style='width: $percent_sf_played%;' aria-valuenow='$percent_sf_played' aria-valuemin='0' aria-valuemax='100'>$percent_sf_played%</div></div>");
-	//print("<div class='progress'><div class='progress-bar' role='progressbar' aria-label='Competition progress bar' style='width: 0%;' aria-valuenow='0' aria-valuemin='0' aria-valuemax='100'></div></div>");
+	echo "<div class='row'>
+			<div class='col-sm-3'>
+				<p class='text-muted'>Semi finals:</p>
+			</div>
+			<div class='col-sm-9'>			
+				<div class='progress my-1'><div class='progress-bar bg-success' role='progressbar' aria-label='Competition progress bar' style='width: 0%;' aria-valuenow='$percent_sf_played' aria-valuemin='0' aria-valuemax='100'></div></div>
+			</div>
+		</div>";
 	// Close DB connection
 	mysqli_close($con);
 }
@@ -616,23 +640,28 @@ function displayPersonalInfo() {
 	include 'php/db-connect.php';
 
 	// Get team information from the DB	counting occurrences too
-	$sql_getprofileinfo1 = "SELECT avatar, faveteam, fieldofwork, location, tournwinner, signupdate, haspaid, currpos FROM live_user_information WHERE username = '".$_SESSION["username"]."'";
-	$sql_getprofileinfo2 = "SELECT lastupdate, points_total FROM live_user_predictions_groups WHERE username = '".$_SESSION["username"]."'";
+	$sql_getprofileinfo1 = "SELECT firstname, surname, avatar, faveteam, fieldofwork, location, tournwinner, signupdate, currpos FROM live_user_information WHERE username = '".$_SESSION["username"]."'";
+	$sql_getprofileinfo2 = "SELECT  points_total FROM live_user_predictions_groups WHERE username = '".$_SESSION["username"]."'";
 	/*$sql_getpointstotal = "SELECT live_user_information.id, live_user_predictions_groups.points_total as group_points, live_user_predictions_ro16.points_total as ro16_points, live_user_predictions_qf.points_total as qf_points, live_user_predictions_sf.points_total as sf_points, live_user_predictions_groups.points_total + live_user_predictions_ro16.points_total + live_user_predictions_qf.points_total + live_user_predictions_sf.points_total as points_total
 						FROM live_user_information
 						INNER JOIN live_user_predictions_groups ON live_user_information.id = live_user_predictions_groups.id
 						INNER JOIN live_user_predictions_ro16 ON live_user_information.id = live_user_predictions_ro16.id
 						INNER JOIN live_user_predictions_qf ON live_user_information.id = live_user_predictions_qf.id
 						INNER JOIN live_user_predictions_sf ON live_user_information.id = live_user_predictions_sf.id
-            WHERE live_user_information.id = '".$_SESSION["id"]."'"; */
+            			WHERE live_user_information.id = '".$_SESSION["id"]."'";*/
+	$sql_getpointstotal = "SELECT live_user_information.id, live_user_predictions_groups.points_total
+						FROM live_user_information
+						INNER JOIN live_user_predictions_groups ON live_user_information.id = live_user_predictions_groups.id
+            			WHERE live_user_information.id = '".$_SESSION["id"]."'";
 
 	// Obtain the SQL query result and set corresponding result variables
 	$result1 = mysqli_query($con, $sql_getprofileinfo1);
 	$userdata1 = mysqli_fetch_assoc($result1);
 	$result2 = mysqli_query($con, $sql_getprofileinfo2);
 	$userdata2 = mysqli_fetch_assoc($result2);
-	// $result3 = mysqli_query($con, $sql_getpointstotal);
-	// $userdata3 = mysqli_fetch_assoc($result3);
+	$result3 = mysqli_query($con, $sql_getpointstotal);
+	$userdata3 = mysqli_fetch_assoc($result3);
+
 	// Assign returned data to variables
 	$uppCaseFN = ucfirst($userdata1["firstname"]);
 	$uppCaseSN = ucfirst($userdata1["surname"]);
@@ -642,10 +671,11 @@ function displayPersonalInfo() {
 	$faveteam = $userdata1["faveteam"];
 	$tournwinner = $userdata1["tournwinner"];
 	$originalsignupdate = $userdata1["signupdate"];
-	$haspaid = $userdata1["haspaid"];
 	$currpos = ordinal($userdata1["currpos"]);
-	$pointstotal = $userdata3["points_total"];
-	$convertedDate = date("l jS \of F", strtotime($originalsignupdate));
+	$pointstotal = $userdata3["points_total"] ?? 0;
+	$converteddate = date("jS F Y", strtotime($originalsignupdate));
+	$startyear = "2006";
+	$highestfinish = ordinal(1);
 	//$matchresult = mysqli_fetch_assoc(mysqli_query($con, $sql_getresults));
 
 	// If table contains no data, then display 'not available message'
@@ -655,23 +685,57 @@ function displayPersonalInfo() {
 	}
 	// Else display the user's available data
 	else {
-		print("<div class='text-center'><img src='$avatar' id='avatar' class='img-rounded img-thumbnail img-fluid' alt='User Avatar' name='User Avatar' width='70' style='margin-top:-35px'></div>");
-		printf("<p class='text-center' style='font-size: 1.3em;'><strong>" . $_SESSION["firstname"] . " " . $_SESSION["surname"] . "</strong></p>");
-		//printf("<p class='text-center 'style='font-size: 1.5em; color: #222;'><strong>%s&nbsp;&nbsp;<span style='color:#CCC;'>|</span>&nbsp;&nbsp;%spts</strong></p>", $currpos, $pointstotal);
-		printf("<p class='text-center 'style='font-size: 1.5em; color: #222;'><strong>%s pts</strong></p>", $pointstotal);
-		print("<div class='row'>");
-		printf("<div class='col-md-2'><i class='bi bi-arrow-through-heart'></i></div><div class='col-md-10'>Fan of %s</div>", $faveteam);
-		printf("<div class='col-md-2'><i class='bi bi-person-workspace'></i></div><div class='col-md-10'>Works in %s</div>", $fieldofwork);
-		printf("<div class='col-md-2'><i class='bi bi-lightbulb'></i></div><div class='col-md-10'>Thinks %s will win</div>", $tournwinner);
-		printf("<div class='col-md-2'><i class='bi bi-calendar'></i></div><div class='col-md-10'>Signed up %s</div>", $convertedDate);
-		//printf("<div class='col-md-2'><i class='bi bi-credit-card-2-front'></i></div><div class='col-md-10'>Fee paid? %s</div>", $haspaid);
-		print("</div><hr>");
-		printf("<p class='text-center mt-2 card-link'><a href='user.php?id=%s' title='Show predictions'>View My Predictions</a></p>", $_SESSION['id']);
-		print("<p class='text-center mt-1 card-link'><a href='change-password.php'>Change password</a></p>");
-		//print("<p class='text-center'><a href='change-password.php'>Donate more to Sands</a></p>");
-		print("<p class='text-center mt-1 mb-0 card-link'><a href='logout.php'>Logout</a></p>");
-		//print("<p class='pull-right'><a href='rankings.php'>See current rankings...</a></p>");
+		echo '<div class="row">';
+		echo '    <div class="col-4">';
+		echo '        <img class="img-fluid" alt="Football kit avatar" src="' . $avatar . '">';
+		echo '    </div>';
+		echo '    <div class="col-8">';
+		echo '        <h3>' . $_SESSION["firstname"] . ' ' . $_SESSION["surname"] . '</h3>';
+		echo '        <p class="fs-4 text-dark text-center" style="border: 1px solid #000; padding: 0.5rem;"><strong>' . $currpos . ' <span class="text-muted">|</span> ' . $pointstotal . ' pts</strong></p>';
+		echo '        <ul style="list-style-type: none; margin: 0; padding: 0;"><li><i class="bi bi-heart-fill"></i> ' . $faveteam . ' Football Club</li>';
+		echo '        <li><i class="bi bi-wrench-adjustable-circle-fill"></i> ' . $fieldofwork . '</li>';
+		echo '        <li><i class="bi bi-trophy-fill"></i> Thinks ' . $tournwinner . ' will win '. $GLOBALS['competition'] .'</li>';
+		echo '        <li><i class="bi bi-calendar2-week-fill"></i> Signed up on ' . $converteddate . '</li>';
+		echo '        <li><i class="bi bi-hourglass-split"></i> Playing since ' . $startyear . '</li>';
+		echo '        <li><i class="bi bi-star-fill"></i> Highest finish is ' . $highestfinish . '</li></ul>';	
+		echo '    </div>';
+		echo '</div>';
+		echo '<hr>';
+		echo '<div class="d-flex justify-content-center align-items-center flex-wrap gap-2 mt-2">';
+		echo '    <a class="btn btn-secondary" href="user.php?id=' . $_SESSION['id'] . '" title="Show predictions"><i class="bi bi-person-lines-fill"></i> View my predictions</a>';
+		// echo '    <a class="btn btn-sm btn-secondary" href="change-password.php">Change password</a>';		
+		echo '    <a class="btn btn-secondary" href="rankings.php"><i class="bi bi-list-ol"></i> Check current rankings</a>';
+		echo '</div>';
 	}
+	// Free result set
+	mysqli_free_result($result1);
+	mysqli_free_result($result2);
+	mysqli_free_result($result3);
+	// Close DB connection
+	mysqli_close($con);
+}
+
+
+function displayPayStatus() {
+	// Create DB connection
+	include 'php/db-connect.php';
+
+	// Get team information from the DB	counting occurrences too
+	$sql_getpaystatus = "SELECT haspaid FROM live_user_information WHERE username = '".$_SESSION["username"]."'";
+
+	// Obtain the SQL query result and set corresponding result variables
+	$result = mysqli_query($con, $sql_getpaystatus);
+	$userdata = mysqli_fetch_assoc($result);
+	// Assign returned data to variables
+	$haspaid = $userdata["haspaid"];	
+
+	if ($haspaid == "No") {
+		echo "<p class='alert alert-danger'><i class='bi bi-exclamation-square text-danger'></i> Please pay ". $GLOBALS['signup_fee'] ." to play before $GLOBALS[competition_start_date]. <a class='btn btn-sm btn-primary' href='https://monzo.me/jamescolinhenderson/5.00?d=Hendy%27s%20Hunches%20-%20%5BYour%20Name%5D' role='button' target='_blank'><i class='bi bi-credit-card-fill'></i> Pay Now</a></p>";
+	}
+	else {
+		echo "<p class='alert alert-success'><i class='bi bi-check2-square text-success'></i> You've paid to play! Thank you.</p>";
+	}
+
 	// Free result set
 	mysqli_free_result($result);
 	// Close DB connection

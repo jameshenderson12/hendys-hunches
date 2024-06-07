@@ -1,15 +1,4 @@
 <?php
-if($_POST['remember']) {
-	$year = time() + 31536000;
-	setcookie('remember_me', $_POST['username'], $year);
-}
-elseif(!$_POST['remember']) {
-	if(isset($_COOKIE['remember_me'])) {
-		$past = time() - 100;
-		setcookie('remember_me', $past);
-	}
-}
-
 session_start();
 
 	// Sanitize incoming username and password
@@ -71,19 +60,4 @@ session_start();
 
 	// Close database connection
 	mysqli_close($con);
-?>
-
-<?php
-
-if($_POST['remember']) {
-	$year = time() + 31536000;
-	setcookie('remember_me', $_POST['username'], $year);
-}
-elseif(!$_POST['remember']) {
-	if(isset($_COOKIE['remember_me'])) {
-		$past = time() - 100;
-		setcookie('remember_me', $past);
-	}
-}
-
 ?>

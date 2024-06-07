@@ -1,81 +1,34 @@
 <?php
-// Start the session
 session_start();
+$page_title = 'PAGE_NAME';
+
 if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
-	header ("Location: index.php");
+    header("Location: index.php");
+    exit();
 }
+
+include "php/header.php";
+include "php/navigation.php";
+
 ?>
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Hendy's Hunches: Predictions Game">
-    <meta name="author" content="James Henderson">
-		<title>Hendy's Hunches: How It Works</title>
-    <?php include "php/config.php" ?>
-		<link rel="shortcut icon" href="ico/favicon.ico">
-		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu|Lora">
-		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-		<link rel="stylesheet" href="css/default.css">
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.1"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-  </head>
 
-  <body>
-		<nav class="navbar navbar-expand-lg navbar-dark bg-dark" aria-label="Offcanvas navbar large">
-		    <div class="container">
-					<img src="img/hh-icon-2024.png" class="img-fluid bg-light mx-2" style="--bs-bg-opacity: 0.80" width="50px">
-		      <a class="navbar-brand" href="#">Hendy's Hunches</a>
-		      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar2" aria-controls="offcanvasNavbar2">
-		        <span class="navbar-toggler-icon"></span>
-		      </button>
-		      <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasNavbar2" aria-labelledby="offcanvasNavbar2Label">
-		        <div class="offcanvas-header">
-		          <h5 class="offcanvas-title" id="offcanvasNavbar2Label">Hendy's Hunches</h5>
-		          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-		        </div>
-		        <div class="offcanvas-body">
-		          <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-		            <li class="nav-item">
-		              <a class="nav-link" href="dashboard.php">Home</a>
-		            </li>
-		            <li class="nav-item">
-		              <a class="nav-link disabled" href="predictions.php">Submit Predictions</a>
-		            </li>
-								<li class="nav-item">
-		              <a class="nav-link" href="rankings.php">Rankings</a>
-		            </li>
-								<li class="nav-item">
-		              <a class="nav-link active" aria-current="page" href="how-it-works.php">How It Works</a>
-		            </li>
-								<li class="nav-item">
-									<a class="nav-link" href="about.php">About</a>
-								</li>
-		            <li class="nav-item dropdown">
-									<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-										<?php returnAvatar();	?>
-		              </a>
-		              <ul class="dropdown-menu">
-		                <li><a class="dropdown-item" href="change-password.php">Change my password</a></li>
-		                <li><a class="dropdown-item" href="user.php?id=<?php echo $_SESSION['id']; ?>" class="card-link">View my predictions</a></li>
-		                <li>
-		                  <hr class="dropdown-divider">
-		                </li>
-		                <li><a class="dropdown-item" href="php/logout.php">Logout</a></li>
-		              </ul>
-		            </li>
-		          </ul>
-		        </div>
-		      </div>
-		    </div>
-		  </nav>
+<!-- Main Content Section -->
+<main id="main" class="main">
 
-			<main class="container px-4 py-4">
-	      <h1>How It Works</h1>
-	      <p class="lead">A detailed overview of how the game works.</p>
-				<p>The below indicates how best to approach this game and summarises each page:</p>
+    <div class="pagetitle d-flex justify-content-between">
+    <nav>
+      <h1>How it all works</h1>
+        <!-- <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="home.php">Home</a></li>
+          <li class="breadcrumb-item"><a href="#">Care Episodes</a></li>          
+          <li class="breadcrumb-item active">Part #3 - 11.30</li>
+        </ol> -->
+      </nav> 
+    </div><!-- End Page Title -->
+
+    <section class="section">
+		<p class="lead">A detailed overview of how the game works.</p>
+		<p>The below indicates how best to approach this game and summarises each page:</p>
 	      <ol>
 	      <li>Register to play (you're already registered! <span class="bi bi-check2-square text-success"></span>)</li>
 	      <li>Login using your registered username and password (you're already logged in! <span class="bi bi-check2-square text-success"></span>)</li>
@@ -117,15 +70,11 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	      <tr class="danger"><td>0 - 2</td><td>1 - 1</td><td>Incorrect outcome and no scores predicted</td><td>0</td></tr>
 	      <tr class="danger"><td>3 - 3</td><td>2 - 1</td><td>Incorrect outcome and no scores predicted</td><td>0</td></tr>
 	      </table>
-	    <a class="btn btn-default" href="#top" role="button">Return to top</a>
-			<!-- Site footer -->
-			<footer class="mt-auto">
-				<hr>
-				<p class="small fw-light">Predictions game based on <a href="<?=$competition_url?>"><?=$competition?></a><br><?=$title?> <?=$version?> &copy; <?=$year?> <?=$developer?>.</p>
-			</footer>
-			</main>
+    </section>
+        
+    </div>
+  </div>
+</main>
 
-    </div><!-- /.main-section -->
-
-  </body>
-</html>
+<!-- Footer -->
+<?php include "php/footer.php" ?>

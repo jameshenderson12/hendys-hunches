@@ -18,11 +18,11 @@ include "php/navigation.php";
     <div class="pagetitle d-flex justify-content-between">
     <nav>
       <h1>Template Page H1 Title</h1>
-        <ol class="breadcrumb">
+        <!-- <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="home.php">Home</a></li>
           <li class="breadcrumb-item"><a href="#">Care Episodes</a></li>          
           <li class="breadcrumb-item active">Part #3 - 11.30</li>
-        </ol>
+        </ol> -->
       </nav> 
     </div><!-- End Page Title -->
 
