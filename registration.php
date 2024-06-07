@@ -4,6 +4,7 @@ session_start();
 // Include necessary files for configuration and database connection
 include 'php/config.php';
 include 'php/process.php';
+include 'php/send-welcome-email.php';
 
 // Initialize variables for error messages
 $errorMsg = '';
@@ -63,9 +64,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Set success flag
         $registrationSuccess = true;
+
+        // If registration is successful, send the welcome email
+        if ($registrationSuccess) {
+          // Set the URL for password change
+          $changePasswordUrl = 'https://www.hendyshunches.co.uk/change-password.php'; // Replace with actual URL
+          sendWelcomeEmail($firstname, $username, $email, $changePasswordUrl);
+      }        
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en-GB">
@@ -105,26 +114,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   			</div>
   		</header>
 
-		<main class="px-3">
+		<main class="px-3 my-auto">
       <?php if ($registrationSuccess): ?>
           <h1>Registration</h1>
-          <h3><i class="bi bi-check-circle-fill"></i><br>You have successfully registered!</h3>
-          <p>Thank you for signing up to play Hendy's Hunches.</p>
-          <p>You will now be automatically redirected back to the login page.</p>
-          <p>If you are not redirected automatically, please <a href='index.php'>click here</a>.</p>
+          <h3 class="my-5"><i class="bi bi-check-circle-fill text-success"></i><br>You have successfully registered!</h3>
+          <p class="mb-3">Thank you for signing up to play Hendy's Hunches.</p>
+          <p>You will now be automatically redirected back to the login page. If you are not redirected automatically, please <a href='index.php'>click here</a>.</p>
           <script>
             setTimeout(function() {
-              window.location.href = 'index.php';
+              //window.location.href = 'index.php';
             }, 5000); // Redirect after 5 seconds
           </script>
         <?php else: ?>
 
   			<h1>Registration</h1>
-        <?php if ($errorMsg): ?>
+        <!-- <?php if ($errorMsg): ?>
           <div class="alert alert-danger" role="alert">
             <?php echo $errorMsg; ?>
           </div>
-        <?php endif; ?>
+        <?php endif; ?> -->
         <!-- Progress bar -->
         <div class="progressbar">
           <div class="progress" id="progress"></div>
