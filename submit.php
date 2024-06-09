@@ -25,7 +25,6 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/custom.css" rel="stylesheet">
 
     <style>
 	.spinner {

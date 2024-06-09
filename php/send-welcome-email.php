@@ -6,8 +6,8 @@ require 'vendor/phpmailer/src/SMTP.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-function sendWelcomeEmail($firstname, $username, $userEmail, $changePasswordUrl) {
-    $mail = new PHPMailer(true);
+function sendWelcomeEmail($firstname, $username, $userEmail) {
+    $mail = new PHPMailer();
 
     try {
         // Server settings
@@ -23,8 +23,8 @@ function sendWelcomeEmail($firstname, $username, $userEmail, $changePasswordUrl)
         $mail->setFrom('jameshenderson12@hotmail.com', 'Hendy\'s Hunches');
         $mail->addAddress($userEmail, $username); // Add a recipient
 
-        $imagePath = 'https://www.hendyshunches.co.uk/img/hh-logo-2018.jpg';
-        $mail->addEmbeddedImage($imagePath, 'logo'); // Add the logo as an embedded image
+        //$imagePath = 'https://www.hendyshunches.co.uk/img/hh-logo-2024.jpg';
+        $mail->addEmbeddedImage('img/hh-logo-2024.jpg', 'logo'); // Add the logo as an embedded image
 
 
         // Content
@@ -32,18 +32,22 @@ function sendWelcomeEmail($firstname, $username, $userEmail, $changePasswordUrl)
         $mail->Subject = 'Welcome to Hendy\'s Hunches';
 
         // Load the HTML template
-        $emailTemplate = file_get_contents('../template/email_welcome.html');
+        $emailTemplate = file_get_contents('template/email_welcome.html');
 
         // Replace placeholders with actual values
+        $emailTemplate = str_replace('{{gamename}}', $GLOBALS["title"], $emailTemplate);
         $emailTemplate = str_replace('{{firstname}}', $firstname, $emailTemplate);
+        // $emailTemplate = str_replace('{{competition}}', $GLOBALS["competition"], $emailTemplate);
+        $emailTemplate = str_replace('{{signup_url}}', $GLOBALS["signup_url"], $emailTemplate);
         $emailTemplate = str_replace('{{username}}', $username, $emailTemplate);
-        $emailTemplate = str_replace('{{change_password_url}}', $changePasswordUrl, $emailTemplate);
+        $emailTemplate = str_replace('{{login_url}}', $GLOBALS["base_url"], $emailTemplate);
+        $emailTemplate = str_replace('{{forgot_password_url}}', $GLOBALS["forgot_pwd_url"], $emailTemplate);
 
         $mail->Body = $emailTemplate;
 
         // Send the email
         $mail->send();
-        echo 'Message has been sent';
+        // echo 'Message has been sent';
     } catch (Exception $e) {
         echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
     }

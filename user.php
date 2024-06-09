@@ -66,7 +66,7 @@ include "php/navigation.php";
 							$matchids[] = $row['match_id'];
 					}
 
-					$userdata = mysqli_fetch_assoc(mysqli_query($con, $sql_getuserinfo));
+					$userdata = mysqli_fetch_assoc(mysqli_query($con, $sql_getuserinfo));					
 					// $userdata2 = mysqli_fetch_assoc(mysqli_query($con, $sql_getuserro16));
 					// $userdata3 = mysqli_fetch_assoc(mysqli_query($con, $sql_getuserqf));
 					// $userdata4 = mysqli_fetch_assoc(mysqli_query($con, $sql_getusersf));
@@ -79,6 +79,12 @@ include "php/navigation.php";
 					$location = $userdata["location"];
 					$faveteam = $userdata["faveteam"];
 					$tournwinner = $userdata["tournwinner"];
+						// Get string for tournwinner flag (convert to lowercase)
+						$tournwinner_lower = strtolower($tournwinner);
+						// Replace spaces with hyphens
+						$tournwinner_kebab = str_replace(' ', '-', $tournwinner_lower);
+						// Construct the file path
+						$tournwinnerflag = "flag-icons/24/{$tournwinner_kebab}.png";
 					$currentpos = ordinal($userdata["currpos"]);
 
 					// Check if $userdata3 is not null before accessing its elements
@@ -250,7 +256,11 @@ include "php/navigation.php";
 					// 			}
 					// 		}
 					// }
-			 ?>
+
+	// Convert PHP array to JSON
+	$userdata_json = json_encode($userdata);	
+
+?>
 
 <div class="pagetitle d-flex justify-content-between">
     <nav>
@@ -274,15 +284,15 @@ include "php/navigation.php";
 					    <!--<p class="card-text"><?php printf ("%s thinks %s will win FIFA World Cup 2022.", $uppCaseFN, $tournwinner); ?></p>-->
 					  </div>
 					  <ul class="list-group list-group-flush">
-						<li class="list-group-item"><?php printf ("<strong>Backed to win:</strong><br> %s", $tournwinner); ?></li>
+						<li class="list-group-item"><?php printf ("<strong>Tournament winner:</strong><br> <img src='%s' alt='National flag of %s'> %s", $tournwinnerflag, $tournwinner, $tournwinner); ?></li>
 					    <li class="list-group-item"><?php printf ("<strong>Favourite team:</strong><br> %s", $faveteam); ?></li>
 					    <li class="list-group-item"><?php printf ("<strong>Location:</strong><br> %s", $location); ?></li>
-						<li class="list-group-item"><?php printf ("<strong>Field of work:</strong><br> %s", $fieldofwork); ?></li>
+						<li class="list-group-item"><?php printf ("<strong>Field of expertise:</strong><br> %s", $fieldofwork); ?></li>
 					  </ul>
-					  <div class="card-body">
+					  <!-- <div class="card-body">
 					    <a href="rankings.php" class="card-link">Return to Rankings</a>
-					    <!--<a href="#" class="card-link">Another link</a>-->
-					  </div>
+					    <a href="#" class="card-link">Another link</a>
+					  </div>-->
 					</div>
 				</div>
 				<div class="col-md-9">
@@ -327,49 +337,82 @@ $(document).ready(function () {
 $.getJSON("json/uefa-euro-2024-fixtures-groups.json", function (data) {
 	let fixture = '';
 	let m = 0, x = 1, y = 2;
+	const userdata = <?php echo $userdata_json; ?>;
 
-	// Iterate through objects
-	$.each(data, function (key, value) {
-		const homeTeam = value.HomeTeam;
-		const awayTeam = value.AwayTeam;
-		const homeTeamFlag = `flag-icons/24/${homeTeam.toLowerCase().replaceAll(' ', '-')}.png`;
-		const awayTeamFlag = `flag-icons/24/${awayTeam.toLowerCase().replaceAll(' ', '-')}.png`;
-		const dateStr = value.DateUtc;
-		const [dateValues, timeValues] = dateStr.split(' ');
-		const [year, month, day] = dateValues.split('-');
-		const [hours, minutes] = timeValues.split(':');
-		const date = new Date(+year, +month - 1, +day, +hours, +minutes).toLocaleString().slice(0, -3);
-		const group = value.Group;
-		const matchNumber = value.MatchNumber;
-		const roundNumber = value.RoundNumber;
-		const location = value.Location;
-		const prediction = `${userdata['score' + x + '_p']} - ${userdata['score' + y + '_p']}`;
+        // Function to calculate points
+        function calculatePoints(prediction, result) {
+            const [predictedHome, predictedAway] = prediction.split(' - ').map(Number);
+            const [actualHome, actualAway] = result.split(' - ').map(Number);
 
-		fixture += `
-			<tr>
-				<td class="small text-muted d-none d-md-table-cell">${group}<br>${date}</td>
-				<td style="text-align: right">${homeTeam}</td>
-				<td><img src="${homeTeamFlag}" alt="Flag of ${homeTeam}" title="Flag of ${homeTeam}" class="img-fluid"></td>
-				<td align="center"><span>v</span></td>
-				<td><img src="${awayTeamFlag}" alt="Flag of ${awayTeam}" title="Flag of ${awayTeam}" class="img-fluid"></td>
-				<td class="right-team">${awayTeam}</td>			
-				<td><span class="prediction">${prediction}</span></td>
-								
-				
-			</tr>
-		`;
+            if (isNaN(predictedHome) || isNaN(predictedAway) || isNaN(actualHome) || isNaN(actualAway)) {
+                return ''; // If any score is not a number, return empty string
+            }
 
-		m++;
-		x += 2;
-		y += 2;
-	});
+            const predictedOutcome = predictedHome > predictedAway ? 'home' : predictedHome < predictedAway ? 'away' : 'draw';
+            const actualOutcome = actualHome > actualAway ? 'home' : actualHome < actualAway ? 'away' : 'draw';
 
-	// Insert rows into table
-	$('#table tbody').append(fixture);
-	
-	// Initialize Bootstrap tooltips
-	$('[data-bs-toggle="tooltip"]').tooltip();
+            if (predictedHome === actualHome && predictedAway === actualAway) {
+                return 7; // Both scores correct
+            }
+            if (predictedOutcome === actualOutcome) {
+                if (predictedHome === actualHome || predictedAway === actualAway) {
+                    return 3; // Correct outcome and one correct score
+                }
+                return 2; // Correct outcome only
+            }
+            if (predictedHome === actualHome || predictedAway === actualAway) {
+                return 1; // One correct score only
+            }
+            return 0; // No points
+        }
 
-	});
+
+        // Iterate through objects
+        $.each(data, function (key, value) {
+            const homeTeam = value.HomeTeam;
+            const awayTeam = value.AwayTeam;
+            const homeTeamFlag = `flag-icons/24/${homeTeam.toLowerCase().replaceAll(' ', '-')}.png`;
+            const awayTeamFlag = `flag-icons/24/${awayTeam.toLowerCase().replaceAll(' ', '-')}.png`;
+            const homeTeamScore = value.HomeTeamScore ?? "";
+            const awayTeamScore = value.AwayTeamScore ?? "";
+            const dateStr = value.DateUtc;
+            const [dateValues, timeValues] = dateStr.split(' ');
+            const [year, month, day] = dateValues.split('-');
+            const [hours, minutes] = timeValues.split(':');
+            const date = new Date(+year, +month - 1, +day, +hours, +minutes).toLocaleString().slice(0, -3);
+            const group = value.Group;
+            const matchNumber = value.MatchNumber;
+            const roundNumber = value.RoundNumber;
+            const location = value.Location;
+            const prediction = `${userdata['score' + x + '_p']} - ${userdata['score' + y + '_p']}`;
+            const result = homeTeamScore !== "" && awayTeamScore !== "" ? `${homeTeamScore} - ${awayTeamScore}` : "";
+            const points = result ? calculatePoints(prediction, result) : '';
+
+            fixture += `
+                <tr>
+                    <td class="small text-muted d-none d-md-table-cell">${group}<br>${date}</td>
+                    <td style="text-align: right">${homeTeam}</td>
+                    <td><img src="${homeTeamFlag}" alt="Flag of ${homeTeam}" title="Flag of ${homeTeam}" class="img-fluid"></td>
+                    <td align="center"><span>v</span></td>
+                    <td><img src="${awayTeamFlag}" alt="Flag of ${awayTeam}" title="Flag of ${awayTeam}" class="img-fluid"></td>
+                    <td class="right-team">${awayTeam}</td>            
+                    <td><span class="prediction">${prediction}</span></td>
+                    <td><span class="result">${result}</span></td>
+                    <td><span class="points">${points}</span></td>
+                </tr>
+            `;
+
+            m++;
+            x += 2;
+            y += 2;
+        });
+
+        // Insert rows into table
+        $('#table tbody').append(fixture);
+        
+        // Initialize Bootstrap tooltips
+        $('[data-bs-toggle="tooltip"]').tooltip();
+
+    });
 });
 </script>

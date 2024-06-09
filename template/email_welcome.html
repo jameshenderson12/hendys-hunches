@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to Hendy's Hunches</title>
+    <title>Welcome to {{gamename}}</title>
     <style>
         .container {
             font-family: Arial, sans-serif;
@@ -36,13 +36,14 @@
 <body>
     <div class="container">
         <div class="header">
-            <img src="cid:logo" alt="Hendy's Hunches Logo">
+            <img src="cid:logo" alt="{{gamename}} Logo">
         </div>
-        <h1>Welcome to Hendy's Hunches, {{firstname}}!</h1>
-        <p>Thank you for registering. We are excited to have you join us. If you haven't already done so, please can you <a href="{{pay_signup_url}}">pay your signup fee</a> as soon as possible.</p>
+        <h1>Welcome, {{firstname}}!</h1>
+        <p>Thank you for registering to play {{gamename}}. We are excited to have you join us. Hopefully you will enjoy UEFA Euro 2024 and the experience of highs and lows of point scoring in accordance with your predicted results!</p>
+        <p>If you haven't already done so, please can you <a href="{{signup_url}}">pay your signup fee</a> as soon as possible.</p>
         <p>Your username is: <strong>{{username}}</strong></p>
         <p>You can change your password at any time using the button below.</p>
-        <a href="{{login_url}}" class="button">Log in</a><a href="{{change_password_url}}" class="button">Change Password</a>
+        <a href="{{login_url}}" class="button">Log in</a><a href="{{forgot_password_url}}" class="button">Change Password</a>
     </div>
 </body>
 </html>

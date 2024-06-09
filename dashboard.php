@@ -1,7 +1,7 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
+// error_reporting(E_ALL);
 
 session_start();
 $page_title = 'Dashboard';
@@ -33,7 +33,7 @@ include "php/dashboard-items.php";
     </div><!-- End Page Title -->
 
 	<section class="section dashboard">
-        <p class="lead">Use the dashboard to track your progress</p>
+        <p class="lead">Use the dashboard to track your progress.</p>
 
         <div class="row">
             <!-- Left Column -->
@@ -41,11 +41,11 @@ include "php/dashboard-items.php";
                 <div class="row">
                     <div class="col-xxl-12 col-md-12">
                         <div class="card">
-                            <div class="filter">
+                            <!-- <div class="filter">
                                 <a class="mx-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" data-bs-title="This measures this amount of time you've spent on...">
                                     <i class="bi bi-question-circle"></i>
                                 </a>
-                            </div>
+                            </div> -->
                             <div class="card-body">
                                 <h5 class="card-title">Profile Details</h5>
                                 <?php displayPersonalInfo() ?>
@@ -67,14 +67,16 @@ include "php/dashboard-items.php";
             <!-- Right Column -->
             <div class="col-lg-6">
                 <div class="card">
-                    <div class="filter">
+                    <!-- <div class="filter">
                         <a class="mx-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" data-bs-title="This measures this amount of time you've spent on...">
                             <i class="bi bi-question-circle"></i>
                         </a>
-                    </div>
+                    </div> -->
                     <div class="card-body">
-                        <h5 class="card-title">Game Status</h5>
-                        <?php displayPayStatus() ?>
+                        <h5 class="card-title">Game Status</h5>                        
+                        <?php //displayPayStatus() ?>
+                        
+                        <p>If you've yet to do so, please pay £<?=$GLOBALS['signup_fee_formatted']?> to play before <?=$GLOBALS['competition_start_date']?>. <a class='btn btn-sm btn-primary' href='https://monzo.me/jamescolinhenderson/5.00?d=Hendy%27s%20Hunches%20-%20%5BYour%20Name%5D' role='button' target='_blank'><i class='bi bi-credit-card-fill'></i> Pay sign-up fee</a></p>
                         <?php checkSubmitted() ?>
                         <?php displayMatchesRecorded() ?>
                         <div class="alert alert-light" role="alert">
@@ -83,7 +85,7 @@ include "php/dashboard-items.php";
                             <?php displayQFMatchesPlayed() ?>
                             <?php displaySFMatchesPlayed() ?>
                         </div>
-                        <p>If you experience any issues, please <a href="mailto:jameshenderson12@hotmail.com">send me an email</a>.</p>
+                        <p><i class="bi bi-envelope"></i> If you experience any issues, simply reply to your welcome email.</p>
                     </div>
                 </div>
 

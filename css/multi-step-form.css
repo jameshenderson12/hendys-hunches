@@ -117,13 +117,24 @@
     padding: 1.5rem;
     overflow: hidden;
     min-height: 50vh;
-    height: 650px;
+    /* height: 650px; */
     display: flex;
     flex-direction: column;
   }
 
-  input[type="text"], input[type="email"], input[type="password"], input[list] {
+  #registrationForm input[type="text"],
+  #registrationForm input[type="email"],
+  #registrationForm input[type="password"],
+  #registrationForm input[list] {
     width: 70% !important;
+  }
+  
+  #loginForm input[type="text"],
+  #loginForm input[type="password"] {
+    width: 100% !important;
+  }
+
+  input[type="text"], input[type="email"], input[type="password"], input[list] {    
     display: block;
     border-radius: 0.25rem;
     margin-bottom: 1.5rem;
@@ -131,7 +142,7 @@
 
   input[type="checkbox"] {
     display: block;
-    padding: 1rem;    
+    padding: 1rem;
   }
 
   button.btn-next, button.btn-prev, button[type="submit"] {

@@ -6,8 +6,7 @@ include 'php/config.php';
 include 'php/process.php';
 include 'php/send-welcome-email.php';
 
-// Initialize variables for error messages
-$errorMsg = '';
+// Initialise variable for error messages
 $registrationSuccess = false;
 
 // Check if the form has been submitted
@@ -27,54 +26,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Include database connection
     include 'php/db-connect.php';
 
-    // Check if username already exists
-    $checkUserQuery = "SELECT username FROM live_user_information WHERE username = ?";
-    $stmt = mysqli_prepare($con, $checkUserQuery);
-    mysqli_stmt_bind_param($stmt, 's', $username);
-    mysqli_stmt_execute($stmt);
-    mysqli_stmt_store_result($stmt);
+    // Query to get the total number of users to set positional values
+    $sql1 = "SELECT count(*) AS totalusers FROM live_user_information";
+    $totalusers = mysqli_query($con, $sql1) or die(mysqli_error($con));
+    $row = mysqli_fetch_assoc($totalusers);
+    $setdefstartpos = $row["totalusers"];
+    $setdefcurrpos = $row["totalusers"] + 1;
+    $setdeflastpos = $row["totalusers"] + 1;
 
-    if (mysqli_stmt_num_rows($stmt) > 0) {
-        $errorMsg = 'Username already exists. Please choose another.';
-    } else {
-        // Query to get the total number of users to set positional values
-        $sql1 = "SELECT count(*) AS totalusers FROM live_user_information";
-        $totalusers = mysqli_query($con, $sql1) or die(mysqli_error($con));
-        $row = mysqli_fetch_assoc($totalusers);
-        $setdefstartpos = $row["totalusers"];
-        $setdefcurrpos = $row["totalusers"] + 1;
-        $setdeflastpos = $row["totalusers"] + 1;
+    // Prepare and bind SQL statements
+    $stmt1 = mysqli_prepare($con, "INSERT INTO live_user_information (username, password, firstname, surname, email, avatar, fieldofwork, location, faveteam, tournwinner, startpos, lastpos, currpos) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
+    $stmt2 = mysqli_prepare($con, "INSERT INTO live_temp_information (username) VALUES (?)");
 
-        // Prepare and bind SQL statements
-        $stmt1 = mysqli_prepare($con, "INSERT INTO live_user_information (username, password, firstname, surname, email, avatar, fieldofwork, location, faveteam, tournwinner, startpos, lastpos, currpos) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
-        $stmt2 = mysqli_prepare($con, "INSERT INTO live_temp_information (username) VALUES (?)");
+    mysqli_stmt_bind_param($stmt1, "ssssssssssddd", $username, $password, $firstname, $surname, $email, $avatar, $fieldofwork, $location, $faveteam, $tournwinner, $setdefstartpos, $setdeflastpos, $setdefcurrpos);
+    mysqli_stmt_bind_param($stmt2, "s", $username);
 
-        mysqli_stmt_bind_param($stmt1, "ssssssssssddd", $username, $password, $firstname, $surname, $email, $avatar, $fieldofwork, $location, $faveteam, $tournwinner, $setdefstartpos, $setdeflastpos, $setdefcurrpos);
-        mysqli_stmt_bind_param($stmt2, "s", $username);
+    // Execute the queries
+    mysqli_stmt_execute($stmt1);
+    mysqli_stmt_execute($stmt2);
 
-        // Execute the queries
-        mysqli_stmt_execute($stmt1);
-        mysqli_stmt_execute($stmt2);
+    // Close statement and connection
+    mysqli_stmt_close($stmt1);
+    mysqli_stmt_close($stmt2);
 
-        // Close statement and connection
-        mysqli_stmt_close($stmt1);
-        mysqli_stmt_close($stmt2);
+    mysqli_close($con);
 
-        mysqli_close($con);
+    // Set success flag
+    $registrationSuccess = true;
 
-        // Set success flag
-        $registrationSuccess = true;
-
-        // If registration is successful, send the welcome email
-        if ($registrationSuccess) {
-          // Set the URL for password change
-          $changePasswordUrl = 'https://www.hendyshunches.co.uk/change-password.php'; // Replace with actual URL
-          sendWelcomeEmail($firstname, $username, $email, $changePasswordUrl);
-      }        
-    }
+    // If registration is successful, send the welcome email
+    if ($registrationSuccess) {
+      // Set the URL for password change
+      //$changePasswordUrl = 'https://www.hendyshunches.co.uk/change-password.php'; // Replace with actual URL
+      sendWelcomeEmail($firstname, $username, $email);
+  }
 }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en-GB">
@@ -119,20 +106,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <h1>Registration</h1>
           <h3 class="my-5"><i class="bi bi-check-circle-fill text-success"></i><br>You have successfully registered!</h3>
           <p class="mb-3">Thank you for signing up to play Hendy's Hunches.</p>
-          <p>You will now be automatically redirected back to the login page. If you are not redirected automatically, please <a href='index.php'>click here</a>.</p>
+          <p>You will now be automatically redirected back to the login page.</p> 
+          <p>If you are not redirected automatically, please <a href='index.php'>click here</a>.</p>
           <script>
             setTimeout(function() {
-              //window.location.href = 'index.php';
+              window.location.href = 'index.php';
             }, 5000); // Redirect after 5 seconds
           </script>
         <?php else: ?>
 
   			<h1>Registration</h1>
-        <!-- <?php if ($errorMsg): ?>
-          <div class="alert alert-danger" role="alert">
-            <?php echo $errorMsg; ?>
-          </div>
-        <?php endif; ?> -->
+
         <!-- Progress bar -->
         <div class="progressbar">
           <div class="progress" id="progress"></div>
@@ -170,7 +154,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           </div>
           <div class="form-step">
             <label for="username" class="form-label">Username</label>
-            <input type="text" class="form-control" id="username" name="username" required>
+            <input type="text" class="form-control" id="username" name="username" required autocomplete="off">
             <span class="un-msg"></span>
             <div class="invalid-feedback">
               Please provide a username.
@@ -360,51 +344,65 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 		</main>
 
-    <!-- HH Terms Modal -->
-    <div class="modal fade" id="terms" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="staticBackdropLabel">Hendy's Hunches: Terms &amp; Conditions</h1>
-            <!--<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
-          </div>
-          <div class="modal-body">
-            <img src="img/hh-logo-2018.jpg" class="img-responsive mt-auto" title="Hendy's Hunches Logo" alt="Hendy's Hunches Logo" style="width: 180px; margin-bottom: 10px;">
-            <p>By registering to play Hendy's Hunches, you acknowledge that:</p>
-            <ul>
-              <li>your involvement in this game, and the game itself, is intended only for entertainment; it is not a gambling site</li>
-              <li>the game is based on <?=$competition?></li>
-              <li>only one registration per person is permitted although family and friends are welcome to participate</li>
-              <li>an entry fee of <?=$signup_fee?> is to be paid prior to <?=$signup_close_date?>; split for charity (TBC) donation and prize funds</li>
-              <li>an unpaid entry fee results in removal from the game</li>
-              <li>the number of prize funds, and their amounts, are revealed in due course, awarded to winners after the final tournament fixture and, in the event of a shared winning spot, divided accordingly.</li>
-            </ul>
-          </div>
-          <div class="modal-footer">
-            <!--<button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>-->
-            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Understood</button>
+      <!-- HH Terms Modal -->
+      <div class="modal fade" id="terms" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="staticBackdropLabel">Hendy's Hunches: Terms &amp; Conditions</h1>
+              <!--<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
+            </div>
+            <div class="modal-body">
+              <img src="img/hh-logo-2018.jpg" class="img-responsive mt-auto" title="Hendy's Hunches Logo" alt="Hendy's Hunches Logo" style="width: 180px; margin-bottom: 10px;">
+              <p>By registering to play Hendy's Hunches, you acknowledge that:</p>
+              <ul>
+                <li>your involvement in this game, and the game itself, is intended only for entertainment; it is not a gambling site</li>
+                <li>the game is based on <?=$competition?></li>
+                <li>only one registration per person is permitted although family and friends are welcome to participate</li>
+                <li>an entry fee of £<?=$signup_fee_formatted?> is to be paid prior to <?=$signup_close_date?>; split for charity donation and prize funds</li>
+                <li>an unpaid entry fee results in removal from the game</li>
+                <li>the number of prize funds, and their amounts, are revealed in due course, awarded to winners after the final tournament fixture and, in the event of a shared winning spot, divided accordingly.</li>
+              </ul>
+            </div>
+            <div class="modal-footer">
+              <!--<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
+              <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Understood</button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
     <script type="text/javascript">
     // Example starter JavaScript for disabling form submissions if there are invalid fields
-      (() => {
-      'use strict'
-      // Fetch all the forms we want to apply custom Bootstrap validation styles to
-      const forms = document.querySelectorAll('.needs-validation')
-      // Loop over them and prevent submission
-      Array.from(forms).forEach(form => {
-        form.addEventListener('submit', event => {
-          if (!form.checkValidity()) {
-            event.preventDefault()
-            event.stopPropagation()
-          }
-          form.classList.add('was-validated')
-        }, false)
-      })
-      })()
+    (() => {
+        'use strict';
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        const forms = document.querySelectorAll('.needs-validation');
+        // Loop over them and prevent submission
+        Array.from(forms).forEach(form => {
+          form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+              event.preventDefault();
+              event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+          }, false);
+
+          // Add event listeners to all inputs to handle real-time validation feedback
+          const inputs = form.querySelectorAll('input');
+          inputs.forEach(input => {
+            input.addEventListener('input', () => {
+              if (input.checkValidity()) {
+                input.classList.remove('is-invalid');
+                input.nextElementSibling.classList.remove('d-block');
+              } else {
+                input.classList.add('is-invalid');
+                input.nextElementSibling.classList.add('d-block');
+              }
+            });
+          });
+        });
+      })();
 
   		function chooseImage(imageId) {
   			var x = document.getElementById(imageId).value;
@@ -475,6 +473,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           length.classList.add("invalid");
         }
       }
+/*
+      document.addEventListener('DOMContentLoaded', function () {
+        const usernameInput = document.getElementById('username');
+        const feedbackElement = document.querySelector('#username + .invalid-feedback');
+
+        usernameInput.addEventListener('keyup', function () {
+          const username = usernameInput.value;
+
+          if (username.length >= 3) {
+            // Perform AJAX call to check username availability
+            fetch('php/username-check.php', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+              },
+              body: `username=${encodeURIComponent(username)}`
+            })
+            .then(response => response.text())
+            .then(data => {
+              if (data === '1') {
+                // Username exists
+                usernameInput.classList.add('is-invalid');
+                feedbackElement.classList.add('d-block');
+                feedbackElement.textContent = 'Username is already taken.';
+              } else {
+                // Username is available
+                usernameInput.classList.remove('is-invalid');
+                feedbackElement.classList.remove('d-block');
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+            });
+          } else {
+            // Hide invalid feedback if less than 3 characters
+            usernameInput.classList.remove('is-invalid');
+            feedbackElement.classList.remove('d-block');
+          }
+        });
+      });
+      */
 	</script>
 
   <!-- Footer -->

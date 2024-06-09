@@ -49,8 +49,8 @@ input {
 		<!-- <p class="alert alert-warning" id="submitMsg"><strong>Note:</strong> You can predict a draw as predictions are for 90 mins only (do not include extra time and penalties).</p> -->
 		<a name="matches"></a><!--anchor point for filters-->				
 		<form id="predictionForm" name="predictionForm" class="form-horizontal" action="submit.php" method="POST">
-		<button type="button" class="btn btn-secondary mb-2 populate-scores"><i class="bi bi-magic"></i> Populate for me</button>
-		<button type="submit" class="btn btn-primary mb-2" name="predictionsSubmitted"><i class="bi bi-send-check-fill"></i> Submit predictions</button>		
+		<button type="button" class="btn btn-secondary mb-3 populate-scores"><i class="bi bi-magic"></i> Populate for me</button>
+		<button type="submit" class="btn btn-primary mb-3" name="predictionsSubmitted"><i class="bi bi-send-check-fill"></i> Submit predictions</button>		
 		<div class="row">		
 		<!-- Placeholder for JSON table construction -->
 		<table id="table" class="table table-sm table-striped">
@@ -70,8 +70,8 @@ input {
 			<tbody></tbody>
 		</table>
 		</div><!--row-->
-		<button type="button" class="btn btn-secondary mt-5 mb-2 populate-scores"><i class="bi bi-magic"></i> Populate scores for me</button>
-		<button type="submit" class="btn btn-primary mt-5 mb-2" name="predictionsSubmitted"><i class="bi bi-send-check-fill"></i> Submit my predictions</button>
+		<button type="button" class="btn btn-secondary mt-3 mb-2 populate-scores"><i class="bi bi-magic"></i> Populate scores for me</button>
+		<button type="submit" class="btn btn-primary mt-3 mb-2" name="predictionsSubmitted"><i class="bi bi-send-check-fill"></i> Submit my predictions</button>
 		</form>
     </section>
         

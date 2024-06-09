@@ -27,7 +27,7 @@ include "php/navigation.php";
     </div><!-- End Page Title -->
 
     <section class="section">
-		<p class="lead">Check your progress against others</p>
+		<p class="lead">Check your progress against others.</p>
 		<!-- <p class="alert alert-success">Congratulations to our winners Chloe (1st), Howard (2nd) and Andrew (3rd).</p> -->
 		<!-- Display table of rankings from process.php -->		
 		
@@ -35,7 +35,7 @@ include "php/navigation.php";
     </section>
 
 </main>
-
+<!-- 
 <script src="vendor/simple-datatables/simple-datatables.js"></script>
 <script>
   $(document).ready(function () {
@@ -46,7 +46,7 @@ include "php/navigation.php";
 //   $("td:eq(3)").css("background","#C0C0C0").css("text-align", "center").append("£35"); // Create 'rank 2' cell
 //   $("td:eq(6)").css("background","#CD7F32").css("text-align", "center").append("£23"); // Create 'rank 3' cell	  
 // });
-</script> 
+</script>  -->
 
 <!-- Footer -->
 <?php include "php/footer.php" ?>   

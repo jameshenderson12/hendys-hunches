@@ -46,23 +46,28 @@ main {
   background-color: #EEE;
 }
 .invalid-feedback {
-  background-color: #AAA !important;
-  color: #000 !important;
+  background-color: darkred !important;
+  color: #FFF !important;
   text-shadow: none !important;
+  text-align: left !important;
+  margin-top: -20px;
+  margin-bottom: 20px;
+  padding: 5px;
+  /* transition: transform 1s ease; Smooth hover effect */
 }
+
 #togglePassword {
     cursor: pointer;
 }
 /* The message box is shown when the user clicks on the password field */
 #pwdMsg, #avatarMsg {
   display:none;
-  background-color: #AAA !important;
-  color: #000;
+  background-color: darkred !important;
+  color: #FFF;
   position: relative;
   margin-top: 5px;
   text-align: left;
-  text-shadow: none !important;
-  border-radius: 5px;
+  text-shadow: none !important;  
 }
 #pwdMsg p {
   padding: 0px 5px;
@@ -224,4 +229,9 @@ svg{
   text-align: center;
   white-space: nowrap;
   -webkit-overflow-scrolling: touch;
+}
+
+footer p {
+  font-weight: 300 !important;
+  font-size: .875em;
 }

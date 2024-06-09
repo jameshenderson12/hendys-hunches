@@ -38,16 +38,16 @@ session_start();
           <h3 class="float-md-start mb-0">Hendy's Hunches</h3>
           <nav class="nav nav-masthead justify-content-center float-md-end">
             <a class="nav-link fw-bold py-1 px-0" href="registration.php">Register</a>
-  					<a class="nav-link fw-bold py-1 px-0" href="#">Reset Password</a>
+  					<a class="nav-link fw-bold py-1 px-0" href="forgot-password.php">Reset Password</a>
             <a class="nav-link fw-bold py-1 px-0" href="#" data-bs-toggle="modal" data-bs-target="#terms">Terms</a>
           </nav>
         </div>
       </header>
       
 
-      <img src="img/james-scotland-ed-lg.png" alt="James in Scotland kit" class="col-md-5 col-5 mt-3 img-fluid fade-in-image mx-auto d-block">      
+      <img src="img/james-scotland-ed-lg.png" alt="James in Scotland kit" class="col-md-5 col-5 img-fluid fade-in-image mx-auto d-block">      
   		<main class="px-3">
-  			<h1><img src="img/germany-518638_640.png" alt="German nation flag" class="img-fluid col-1 mx-2 mb-2" style="">Germany 2024 Edition</h1>
+  			<h1><img src="img/germany-518638_640.png" alt="German nation flag" class="img-fluid col-1 mx-2 mb-2" style="">Germany 2024</h1>
         <!-- <h3>Login</h3> -->
 
         <!-- <form id="login" role="form" class="d-flex flex-column needs-validation" method="POST" action="php/login.php" style="	border: 1px solid #AAA; border-radius: 0.35rem; min-height: inherit; height: inherit;">
@@ -66,22 +66,22 @@ session_start();
 
           </div> -->
 
-          <form id="login" role="form" class="needs-validation" method="POST" action="php/login.php" style="border: 1px solid #AAA; border-radius: 0.35rem; min-height: inherit; height: inherit;">
+          <form id="loginForm" role="form" class="needs-validation" method="POST" action="php/login.php" style="border: 1px solid #AAA; border-radius: 0.35rem; min-height: inherit; height: inherit;">
             <div class="mb-3 row justify-content-center px-3 px-md-5">
                 <div class="col-12 col-md-10 col-lg-8">
                     <div class="row mb-3">
                         <label for="username" class="col-12 col-md-4 col-form-label">Username</label>
                         <div class="col-12 col-md-8">
-                            <input type="text" class="form-control" id="username" name="username" required>
+                            <input type="text" class="form-control" id="username" name="username" style="width: 100%" required>
                             <div class="invalid-feedback">
                                 Please provide your username.
                             </div>
                         </div>
                     </div>
-                    <div class="row mb-3">
+                    <div class="row">
                         <label for="password" class="col-12 col-md-4 col-form-label">Password</label>
                         <div class="col-12 col-md-8">
-                            <input type="password" class="form-control" id="password" name="password" required>
+                            <input type="password" class="form-control" id="password" name="password" style="width: 100%" required>
                             <div class="invalid-feedback">
                                 Please provide your password.
                             </div>
@@ -89,19 +89,15 @@ session_start();
                     </div>
                     <div class="row">
                       <hr>
-                      <div class="col-6">
-                        <iframe src="https://free.timeanddate.com/countdown/i8k6yqvc/n4511/cf11/cm0/cu3/ct0/cs1/ca0/co0/cr0/ss0/cacfff/cpc0f0/pct/tcfff/fs100/szw320/szh135/iso2024-07-15T20:00:00/bacfff/pa5" allowtransparency="true" frameborder="0" width="244" height="42"></iframe>
+                      <div class="col-12 col-md-4">                        
                       </div>
-                      <div class="col-6 text-end">
-                        <button type="submit" class="btn btn-primary btn-next w-100 mt-0"><i class="fw-bold bi bi-box-arrow-in-right"></i> Log in</button>
+                      <div class="col-12 col-md-8">
+                        <button type="submit" class="btn btn-primary w-100 mt-0"><i class="fw-bold bi bi-box-arrow-in-right"></i> Log in</button>
                       </div>
-                    </div> 
+                    </div>                    
                 </div>
             </div>
-        </form>          
-
-      
-    				    			
+            <iframe src="https://free.timeanddate.com/countdown/i8k6yqvc/n4511/cf11/cm0/cu3/ct0/cs1/ca0/co0/cr0/ss0/cacfff/cpc0f0/pct/tcfff/fs100/szw320/szh135/iso2024-06-14T20:00:00/bacfff/pa5" allowtransparency="true" frameborder="0" width="244" height="42" class="mt-5 mx-auto"></iframe> 
         </form>
         
   		</main>
@@ -123,7 +119,7 @@ session_start();
                 <li>your involvement in this game, and the game itself, is intended only for entertainment; it is not a gambling site</li>
                 <li>the game is based on <?=$competition?></li>
                 <li>only one registration per person is permitted although family and friends are welcome to participate</li>
-                <li>an entry fee of <?=$signup_fee?> is to be paid prior to <?=$signup_close_date?>; split for charity (TBC) donation and prize funds</li>
+                <li>an entry fee of £<?=$signup_fee_formatted?> is to be paid prior to <?=$signup_close_date?>; split for charity donation and prize funds</li>
                 <li>an unpaid entry fee results in removal from the game</li>
                 <li>the number of prize funds, and their amounts, are revealed in due course, awarded to winners after the final tournament fixture and, in the event of a shared winning spot, divided accordingly.</li>
               </ul>

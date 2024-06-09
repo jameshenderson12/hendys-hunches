@@ -1,6 +1,6 @@
 <?php
 session_start();
-$page_title = 'PAGE_NAME';
+$page_title = 'How It Works';
 
 if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
     header("Location: index.php");

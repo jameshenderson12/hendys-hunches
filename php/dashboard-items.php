@@ -274,15 +274,18 @@ function displayCharityInformation() {
 		$donation = ($countoftotalusers * $GLOBALS["charity_fee"]);
 	}
 
-	print("<a href='https://www.sands.org.uk' target='_blank' title='Sands charity website'><img src='img/sands-logo.jpg' class='img-fluid w-50'></a>");
 	//print("<h4 class='my-3'><strong>£74</strong> has been donated! Thank you.</h4>");
 	//printf("<p><strong>Hendy's Hunches donation:</strong> £%d.00 (40&#37; from entry fees)", $donation);
 	//print("<span class='label label-success'>A huge thank you to all players!</span>");
-	printf("<p>Thanks to your participation, Hendy's Hunches currently has %d to donate to" . $GLOBALS["charity"] .":</p>");	
+
+	print("<a href='" . $GLOBALS["charity_url"] . "' target='_blank' title='" . $GLOBALS["charity"] ." website'><img src='img/notts-county-foundation-logo.png' class='img-fluid w-50 bg-dark mb-3 p-3'></a>");
+	printf("<p>Thanks to your participation, Hendy's Hunches currently has <strong>£%d to donate</strong> to %s's <a href='" . $GLOBALS["charity_url"] . "' target='_blank' title='" . $GLOBALS["charity"] ." website'>On The Ball programme</a>, which addresses mental health through football.", $donation, $GLOBALS['charity']);
+	print("<p>Donations will support Dr. Alan Pringle's work, a late colleague who promoted this research during his three-decade career in mental health at the University of Nottingham.</p>");
+	//print('<iframe src="https://player.vimeo.com/video/2045424?h=b1ecb1c8d3" width="320" height="257" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe><p><a href="https://vimeo.com/2045424">Mad About Football: Dr Alan Pringle (Oct, 2008)</a> from <a href="https://vimeo.com/shiftstigma">Shift</a> on <a href="https://vimeo.com">Vimeo</a>.</p>');
 	// Free result set
-	//mysqli_free_result($totalusers);
+	mysqli_free_result($totalusers);
 	// Close DB connection
-	//mysqli_close($con);
+	mysqli_close($con);
 }
 
 function displayTopRankings() {
@@ -527,7 +530,7 @@ function displayMatchesRecorded() {
 		//$percent_group_played = round($no_of_matches_played * 100 / 48);
 	}
 
-	printf("<p>Matches recorded: %d of 64</p>", $no_of_matches_played);
+	printf("<p>Matches recorded: %d of %d</p>", $no_of_matches_played, $GLOBALS["no_of_total_fixtures"]);
 	// Close DB connection
 	mysqli_close($con);
 }
@@ -556,8 +559,6 @@ function displayGroupMatchesPlayed() {
 	// Close DB connection
 	mysqli_close($con);
 }
-
-
 
 function displayRO16MatchesPlayed() {
 	// Create DB connection
@@ -640,8 +641,8 @@ function displayPersonalInfo() {
 	include 'php/db-connect.php';
 
 	// Get team information from the DB	counting occurrences too
-	$sql_getprofileinfo1 = "SELECT firstname, surname, avatar, faveteam, fieldofwork, location, tournwinner, signupdate, currpos FROM live_user_information WHERE username = '".$_SESSION["username"]."'";
-	$sql_getprofileinfo2 = "SELECT  points_total FROM live_user_predictions_groups WHERE username = '".$_SESSION["username"]."'";
+	$sql_getprofileinfo1 = "SELECT * FROM live_user_information WHERE username = '".$_SESSION["username"]."'";
+	$sql_getprofileinfo2 = "SELECT points_total FROM live_user_predictions_groups WHERE username = '".$_SESSION["username"]."'";
 	/*$sql_getpointstotal = "SELECT live_user_information.id, live_user_predictions_groups.points_total as group_points, live_user_predictions_ro16.points_total as ro16_points, live_user_predictions_qf.points_total as qf_points, live_user_predictions_sf.points_total as sf_points, live_user_predictions_groups.points_total + live_user_predictions_ro16.points_total + live_user_predictions_qf.points_total + live_user_predictions_sf.points_total as points_total
 						FROM live_user_information
 						INNER JOIN live_user_predictions_groups ON live_user_information.id = live_user_predictions_groups.id
@@ -674,8 +675,12 @@ function displayPersonalInfo() {
 	$currpos = ordinal($userdata1["currpos"]);
 	$pointstotal = $userdata3["points_total"] ?? 0;
 	$converteddate = date("jS F Y", strtotime($originalsignupdate));
-	$startyear = "2006";
-	$highestfinish = ordinal(1);
+	// $startyear = $userdata1["startyear"];
+	// if ($userdata1["highestfinish"] == null) {
+	// 	$highestfinish = "not yet recorded";
+	// }
+	// else 
+	// 	$highestfinish = ordinal($userdata1["highestfinish"]);
 	//$matchresult = mysqli_fetch_assoc(mysqli_query($con, $sql_getresults));
 
 	// If table contains no data, then display 'not available message'
@@ -691,13 +696,13 @@ function displayPersonalInfo() {
 		echo '    </div>';
 		echo '    <div class="col-8">';
 		echo '        <h3>' . $_SESSION["firstname"] . ' ' . $_SESSION["surname"] . '</h3>';
-		echo '        <p class="fs-4 text-dark text-center" style="border: 1px solid #000; padding: 0.5rem;"><strong>' . $currpos . ' <span class="text-muted">|</span> ' . $pointstotal . ' pts</strong></p>';
+		//echo '        <p class="fs-4 text-dark text-center" style="border: 1px solid #000; padding: 0.5rem;"><strong>' . $currpos . ' <span class="text-muted">|</span> ' . $pointstotal . ' pts</strong></p>';
 		echo '        <ul style="list-style-type: none; margin: 0; padding: 0;"><li><i class="bi bi-heart-fill"></i> ' . $faveteam . ' Football Club</li>';
 		echo '        <li><i class="bi bi-wrench-adjustable-circle-fill"></i> ' . $fieldofwork . '</li>';
 		echo '        <li><i class="bi bi-trophy-fill"></i> Thinks ' . $tournwinner . ' will win '. $GLOBALS['competition'] .'</li>';
 		echo '        <li><i class="bi bi-calendar2-week-fill"></i> Signed up on ' . $converteddate . '</li>';
-		echo '        <li><i class="bi bi-hourglass-split"></i> Playing since ' . $startyear . '</li>';
-		echo '        <li><i class="bi bi-star-fill"></i> Highest finish is ' . $highestfinish . '</li></ul>';	
+		// echo '        <li><i class="bi bi-hourglass-split"></i> Playing since ' . $startyear . '</li>';
+		// echo '        <li><i class="bi bi-star-fill"></i> Highest finish is ' . $highestfinish . '</li></ul>';	
 		echo '    </div>';
 		echo '</div>';
 		echo '<hr>';
@@ -730,7 +735,7 @@ function displayPayStatus() {
 	$haspaid = $userdata["haspaid"];	
 
 	if ($haspaid == "No") {
-		echo "<p class='alert alert-danger'><i class='bi bi-exclamation-square text-danger'></i> Please pay ". $GLOBALS['signup_fee'] ." to play before $GLOBALS[competition_start_date]. <a class='btn btn-sm btn-primary' href='https://monzo.me/jamescolinhenderson/5.00?d=Hendy%27s%20Hunches%20-%20%5BYour%20Name%5D' role='button' target='_blank'><i class='bi bi-credit-card-fill'></i> Pay Now</a></p>";
+		echo "<p class='alert alert-danger'><i class='bi bi-exclamation-square text-danger'></i> Please pay £". $GLOBALS['signup_fee_formatted'] ." to play before $GLOBALS[competition_start_date]. <a class='btn btn-sm btn-primary' href='https://monzo.me/jamescolinhenderson/5.00?d=Hendy%27s%20Hunches%20-%20%5BYour%20Name%5D' role='button' target='_blank'><i class='bi bi-credit-card-fill'></i> Pay Now</a></p>";
 	}
 	else {
 		echo "<p class='alert alert-success'><i class='bi bi-check2-square text-success'></i> You've paid to play! Thank you.</p>";

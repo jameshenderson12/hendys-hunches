@@ -12,23 +12,23 @@
 //===============================
 
 // Initial error reporting criteria
-ini_set('error_reporting', -1);
-ini_set('display_errors', 1);
-ini_set('html_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+// ini_set('error_reporting', -1);
+// ini_set('display_errors', 1);
+// ini_set('html_errors', 1);
+// ini_set('display_startup_errors', 1);
+// error_reporting(E_ALL);
 
 //===============================
 // Global variables
 //===============================
 
-$protocol = "https://";
 $acronym = "HH";
 $title = "Hendy's Hunches";
-$version = "v2.6.3";
+$version = "v2.6.4";
 $year = "2024";
 $last_update = "21st Nov 2022";
-$base_url = $protocol."www.hendyshunches.co.uk";
+$base_url = "https://www.hendyshunches.co.uk";
+$forgot_pwd_url = "https://www.hendyshunches.co.uk/forgot-password.php";
 $backup_dir = "/bak";
 $datalists_dir = "/text";
 $sql_dir = "/sql";
@@ -47,6 +47,7 @@ $signup_fee_formatted = sprintf("%01.2f", $signup_fee);
 $charity_fee_formatted = sprintf("%01.2f", $charity_fee);
 $prize_fee_formatted = sprintf("%01.2f", $prize_fee);
 $signup_close_date = "13/06/2024";
+$signup_url = "https://monzo.me/jamescolinhenderson/5.00?d=Hendy%27s%20Hunches%20-%20%5BYour%20Name%5D";
 
 
 //===============================
