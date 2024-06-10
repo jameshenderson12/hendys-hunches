@@ -34,7 +34,7 @@
 		              <ul class="dropdown-menu">
 										<!-- <li><a class="dropdown-item" href="overview.php">Application overview</a></li> -->
 										<li><a class="dropdown-item" href="change-password.php">Change my password</a></li>
-										<li><a class="dropdown-item card-link" href="user.php?id=<?php echo $_SESSION['id']; ?>">View my predictions</a></li>
+										<!-- <li><a class="dropdown-item card-link" href="user.php?id=<?php echo $_SESSION['id']; ?>">View my predictions</a></li> -->
 		                <li>
 		                  <hr class="dropdown-divider">
 		                </li>

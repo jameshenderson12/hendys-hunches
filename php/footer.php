@@ -19,10 +19,10 @@
   <script src="js/multi-step-form.js"></script>
   <!-- Template Main JS File -->
   <script src="js/main.js"></script>
-  <script>
+  <!-- <script>
     // Initialize Bootstrap tooltips
     $('[data-bs-toggle="tooltip"]').tooltip();
-  </script>
+  </script> -->
 
   </body>
 </html>
