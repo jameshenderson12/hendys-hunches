@@ -29,7 +29,6 @@ include "php/navigation.php";
     <section class="section">
 		<p class="lead">Let's start with a little bit of history...</p>
 		<p>Hendy's Hunches has grown over the years from an idea that I had, back in 2005, for a little game to add some fun to World Cup 2006. Today, it has become something of a project that I have developed in my spare time around the clock (see below for the history). The online version began back in 2013 and, despite the coding of it throwing many challenges, I hope that it holds up well from kick-off and that you, colleagues, family and friends all continue to enjoy it. It may not be much to look at but if it adds some fun to the big competitions then that I am very pleased with that.<p>
-		      <p>Please be mindful of the game <a href="" data-toggle="modal" data-target="#HHterms">terms and conditions</a> you acknowledged upon registration, but let me wish you good luck with your quest for some prize fund winnings and those all-important bragging rights over others!</p>
 		      <p>A special mention of thanks to my very supportive wife, EJ, whose patience has been much appreciated in the hours of our time I've dedicated to this project!</p>
 		      <div class="row">
 		      <div class="col-sm-12 col-md-4">
@@ -40,9 +39,9 @@ include "php/navigation.php";
 						    <p class="card-text">The first origins of Hendy's Hunches - complete with no game name and no supporting website! It was a very monotonous process which consisted simply of sending friends a basic spreadsheet template, having them input their scores for each game and return it to me before the competition began. It was flaky at best although it did seem to be well perceived by those who had taken part. I'd spend a couple of hours a day trauling through each player's spreadsheet and manually calculating points before sending a daily email update of a table with scores and rankings. Despite the tedious effort, it left me thinking that it would be great to repeat the event again some time in the future.</p>
 						  </div>
 						  <ul class="list-group list-group-flush">
-						    <li class="list-group-item"><strong>1st:</strong> Steven Lough & James Henderson</li>
+						    <li class="list-group-item"><strong>1st:</strong> Steven Lough, James Henderson</li>
 						    <li class="list-group-item"><strong>2nd:</strong> Kirsty Yarnold</li>
-						    <li class="list-group-item"><strong>3rd:</strong> Julien Alégre & Andrew Lough</li>
+						    <li class="list-group-item"><strong>3rd:</strong> Julien Alégre, Andrew Lough</li>
 						  </ul>
 						</div>
 					</div>
@@ -72,7 +71,7 @@ include "php/navigation.php";
 						  <ul class="list-group list-group-flush">
 						    <li class="list-group-item"><strong>1st:</strong> Jonathan Lamley</li>
 						    <li class="list-group-item"><strong>2nd:</strong> Sam McGuigan</li>
-						    <li class="list-group-item"><strong>3rd:</strong> Steve Butt & Kirsty Yarnold</li>
+						    <li class="list-group-item"><strong>3rd:</strong> Steve Butt, Kirsty Yarnold</li>
 						  </ul>
 						</div>
 					</div>
@@ -81,10 +80,10 @@ include "php/navigation.php";
 
 					<div class="col-sm-12 col-md-4">
 						<div class="card">
-					  	<img src="img/euro2016-site-v3.png" alt="Euro 2016 Game Image" class="card-img-top">
+					  	<img src="img/qatar-2022-logo.png" alt="FIFA World Cup 2016 Game Image" class="card-img-top">
 						  <div class="card-body">
-						    <h5 class="card-title">FIFA World Cup 2022<h5>
-						    <p class="card-text">...</p>
+						    <h5 class="card-title">FIFA World Cup 2022</h5>
+						    <p class="card-text"></p>
 						  </div>
 						  <ul class="list-group list-group-flush">
 						    <li class="list-group-item"><strong>1st:</strong> Chloe McCandlish</li>
@@ -92,7 +91,23 @@ include "php/navigation.php";
 						    <li class="list-group-item"><strong>3rd:</strong> Andrew Lough</li>
 						  </ul>
 						</div>
-					</div>					
+					</div>	
+					
+					<div class="col-sm-12 col-md-4">
+						<div class="card">
+					  	<img src="img/germany-2024-logo-md.png" alt="UEFA Euro 2024 Game Image" class="card-img-top">
+						  <div class="card-body">
+						    <h5 class="card-title">UEFA Euro 2024</h5>
+						    <p class="card-text"></p>
+						  </div>
+						  <ul class="list-group list-group-flush">
+						    <li class="list-group-item"><strong>1st:</strong> ??</li>
+						    <li class="list-group-item"><strong>2nd:</strong> ??</li>
+						    <li class="list-group-item"><strong>3rd:</strong> ??</li>
+						  </ul>
+						</div>
+					</div>	
+					
 				</div>
 		    </div>
     </section>        
