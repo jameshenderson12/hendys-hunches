@@ -805,7 +805,7 @@ function displayRankingsTT() {
 
     echo "<div class='datatable-container'>";
     echo "<table id='rankingsTable' class='table table-borderless datatable datatable-table'>";
-    echo "<thead><tr><th></th><th>Player</th><th>Points</th></tr></thead>";
+    echo "<thead><tr><th></th><th></th><th>Player</th><th>Points</th></tr></thead>";
     echo "<tbody>";
 
     while ($row = mysqli_fetch_assoc($table)) {
@@ -834,7 +834,8 @@ function displayRankingsTT() {
 
         // Display the table complete with all data variables
         echo "<tr>";
-        echo "<td></td>";
+        echo "<td>".$row["rank"]."</td>";
+		echo "<td>".$move."</td>";
         echo "<td><img src='".$row["avatar"]."' class='img-responsive pull-left' width='20px'>&nbsp;<a href='user.php?id=".$row["id"]."'>".$uppCaseFN." ".$uppCaseSN."</a></td>";
         echo "<td>".$row["points_total"]."</td>";
         echo "</tr>";

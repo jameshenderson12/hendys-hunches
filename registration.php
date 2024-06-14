@@ -66,12 +66,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!DOCTYPE html>
 <html lang="en-GB">
   <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QN708QFJSD"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-QN708QFJSD');
+    </script>    
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">    
     <meta http-equiv="Content-Type" content="text/html">    
     <meta name="description" content="Hendy's Hunches: Predictions Game">
     <meta name="author" content="James Henderson">
-    <meta name="keywords" content="">
+    <meta name="keywords" content="football, predictions, game">
 	  <title>Registration - Hendy's Hunches</title>
     <link href="ico/favicon.ico" rel="icon">
     <!-- Vendor CSS Files -->

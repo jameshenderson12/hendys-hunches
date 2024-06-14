@@ -102,7 +102,7 @@ include "php/navigation.php";
 			<tr>
 				<th scope="row">PHP Version</th>
 				<td><?php echo phpversion(); ?></td>
-			</tr>
+			</tr>			
 			<tr>
 				<th scope="row">MySQL Version</th>
 				<td><?php echo $mysql_info; ?></td>

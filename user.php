@@ -273,15 +273,15 @@ include "php/navigation.php";
       </nav> 
     </div><!-- End Page Title -->
 
-<section class="section">	
+<section class="section">
     <p>Currently viewing predictions by <?php print "$uppCaseFN $uppCaseSN" ?>. Return to the <a href="rankings.php">rankings</a> table.</p>
 	      <div class="row">
-					<div class="col-3">
+					<div class="col-md-3 col-sm-12">
 					<div class="card">
 					  <img src="<?php echo $avatar ?>" id="avatar" class="img-fluid mx-auto p-2" alt="User Avatar" name="User Avatar" width="100">
 					  <div class="card-body">
-					    <h5 class="card-title" style="text-align: center; font-weight: bolder; margin:-15px 0px;"><?php printf("%s pts", $pointstotal); ?></h5>
-					    <!--<p class="card-text"><?php printf ("%s thinks %s will win FIFA World Cup 2022.", $uppCaseFN, $tournwinner); ?></p>-->
+						<!-- <h5 class="card-title"></h5> -->
+					    <p style="text-align: center; font-weight: bolder; font-size: 30px;"><?php printf("%s pts", $pointstotal); ?></p>					    
 					  </div>
 					  <ul class="list-group list-group-flush">
 						<li class="list-group-item"><?php printf ("<strong>Tournament winner:</strong><br> <img src='%s' alt='National flag of %s'> %s", $tournwinnerflag, $tournwinner, $tournwinner); ?></li>
@@ -289,13 +289,9 @@ include "php/navigation.php";
 					    <li class="list-group-item"><?php printf ("<strong>Location:</strong><br> %s", $location); ?></li>
 						<li class="list-group-item"><?php printf ("<strong>Field of expertise:</strong><br> %s", $fieldofwork); ?></li>
 					  </ul>
-					  <!-- <div class="card-body">
-					    <a href="rankings.php" class="card-link">Return to Rankings</a>
-					    <a href="#" class="card-link">Another link</a>
-					  </div>-->
 					</div>
 				</div>
-				<div class="col-md-9">
+				<div class="col-md-9 col-sm-12">
 					<div class="card">
 						<div class="card-body">
 							<!-- Placeholder for JSON table construction -->
@@ -308,9 +304,9 @@ include "php/navigation.php";
 										<th></th>
 										<th></th>
 										<th></th>
-										<th>Prediction</th>
-										<th>Result</th>
-										<th>Points</th>
+										<th>Pred.</th>
+										<th>Res.</th>
+										<th>Pts</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -393,7 +389,7 @@ $.getJSON("json/uefa-euro-2024-fixtures-groups.json", function (data) {
                     <td class="small text-muted d-none d-md-table-cell">${group}<br>${date}</td>
                     <td style="text-align: right">${homeTeam}</td>
                     <td><img src="${homeTeamFlag}" alt="Flag of ${homeTeam}" title="Flag of ${homeTeam}" class="img-fluid"></td>
-                    <td align="center"><span>v</span></td>
+                    <td><span>v</span></td>
                     <td><img src="${awayTeamFlag}" alt="Flag of ${awayTeam}" title="Flag of ${awayTeam}" class="img-fluid"></td>
                     <td class="right-team">${awayTeam}</td>            
                     <td><span class="prediction">${prediction}</span></td>

@@ -271,7 +271,7 @@ function displayCharityInformation() {
 	// For each instance of the returned result
 	while ($row = mysqli_fetch_assoc($totalusers)) {
 		$countoftotalusers = $row["totalusers"];
-		$donation = ($countoftotalusers * $GLOBALS["charity_fee"]);
+		$donation = ($countoftotalusers * $GLOBALS["charity_fee"] + 14);
 	}
 
 	//print("<h4 class='my-3'><strong>£74</strong> has been donated! Thank you.</h4>");
@@ -734,11 +734,11 @@ function displayPayStatus() {
 	// Assign returned data to variables
 	$haspaid = $userdata["haspaid"];	
 
-	if ($haspaid == "No") {
-		echo "<p class='alert alert-danger'><i class='bi bi-exclamation-square text-danger'></i> Please pay £". $GLOBALS['signup_fee_formatted'] ." to play before $GLOBALS[competition_start_date]. <a class='btn btn-sm btn-primary' href='https://monzo.me/jamescolinhenderson/5.00?d=Hendy%27s%20Hunches%20-%20%5BYour%20Name%5D' role='button' target='_blank'><i class='bi bi-credit-card-fill'></i> Pay Now</a></p>";
+	if ($haspaid == "Yes") {
+		echo "<p class='alert alert-success'><i class='bi bi-check2-square text-success'></i> You've paid to play! Thank you and good luck!</p>";
 	}
 	else {
-		echo "<p class='alert alert-success'><i class='bi bi-check2-square text-success'></i> You've paid to play! Thank you.</p>";
+		echo "<p>If you've yet to do so, please pay £$GLOBALS[signup_fee_formatted] to play before $GLOBALS[competition_start_date]. <a class='btn btn-sm btn-primary' href='https://monzo.me/jamescolinhenderson/5.00?d=Hendy%27s%20Hunches%20-%20%5BYour%20Name%5D' role='button' target='_blank'><i class='bi bi-credit-card-fill'></i> Pay sign-up fee</a></p>";
 	}
 
 	// Free result set

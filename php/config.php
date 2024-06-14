@@ -24,9 +24,9 @@
 
 $acronym = "HH";
 $title = "Hendy's Hunches";
-$version = "v2.7.3";
+$version = "v2.8.0";
 $year = "2024";
-$last_update = "10th June 2024";
+$last_update = "12th June 2024";
 $base_url = "https://www.hendyshunches.co.uk";
 $forgot_pwd_url = "https://www.hendyshunches.co.uk/forgot-password.php";
 $backup_dir = "/bak";

@@ -74,9 +74,8 @@ include "php/dashboard-items.php";
                     </div> -->
                     <div class="card-body">
                         <h5 class="card-title">Game Status</h5>                        
-                        <?php //displayPayStatus() ?>
-                        
-                        <p>If you've yet to do so, please pay £<?=$GLOBALS['signup_fee_formatted']?> to play before <?=$GLOBALS['competition_start_date']?>. <a class='btn btn-sm btn-primary' href='https://monzo.me/jamescolinhenderson/5.00?d=Hendy%27s%20Hunches%20-%20%5BYour%20Name%5D' role='button' target='_blank'><i class='bi bi-credit-card-fill'></i> Pay sign-up fee</a></p>
+                        <?php displayPayStatus() ?>
+                                                
                         <?php checkSubmitted() ?>
                         <?php displayMatchesRecorded() ?>
                         <div class="alert alert-light" role="alert">
