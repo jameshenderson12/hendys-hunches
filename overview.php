@@ -71,7 +71,7 @@ include "php/navigation.php";
 		<div class="table-responsive">
 			<table class="table table-striped">
 			<tr>
-				<th scope="row">Application Name</th>
+				<th scope="row">Title</th>
 				<td><?php echo $GLOBALS['title'] ?></td>
 			</tr>
 			<tr>
@@ -108,6 +108,22 @@ include "php/navigation.php";
 				<td><?php echo $mysql_info; ?></td>
 			</tr>
 		-->
+			<tr>
+				<th scope="row">Location</th>
+				<td><?= $GLOBALS["competition_location"] ?></td>
+			</tr>			
+			<tr>
+				<th scope="row">Favourites</th>
+				<td><?= $GLOBALS["competition_favourites"] ?></td>
+			</tr>
+			<tr>
+				<th scope="row">Start Date</th>
+				<td><?= $GLOBALS["competition_start_date"] ?></td>
+			</tr>
+			<tr>
+				<th scope="row">End Date</th>
+				<td><?= $GLOBALS["competition_end_date"] ?></td>
+			</tr>			
 			<tr>
 				<th scope="row">No. of Matches</th>
 				<td><?php printf("%d (%d at Group Stage and %d in Knockout Stages)", $GLOBALS['no_of_total_fixtures'], $GLOBALS['no_of_group_fixtures'], $GLOBALS['no_of_knockout_fixtures']); ?></td>

@@ -24,9 +24,9 @@
 
 $acronym = "HH";
 $title = "Hendy's Hunches";
-$version = "v2.8.0";
+$version = "v2.8.4";
 $year = "2024";
-$last_update = "12th June 2024";
+$last_update = "15/06/2024";
 $base_url = "https://www.hendyshunches.co.uk";
 $forgot_pwd_url = "https://www.hendyshunches.co.uk/forgot-password.php";
 $backup_dir = "/bak";
@@ -38,6 +38,8 @@ $date_created = "09/06/2006";
 $date_format = "d/m/Y (H:i)";
 $competition = "UEFA EURO 2024™";
 $competition_url = "https://www.uefa.com/euro2024/";
+$competition_location = "Germany";
+$competition_favourites = "England";
 $charity = "Notts County Foundation";
 $charity_url = "https://www.nottscountyfoundation.org.uk/programme/on-the-ball/";
 $signup_fee = 5; // No of GBP £

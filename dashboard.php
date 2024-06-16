@@ -57,6 +57,8 @@ include "php/dashboard-items.php";
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">Announcements</h5>
+                                <p><strong>15/06/2024 14:11 Update:</strong><br>Many apologies for the delay in updating the first result for the current rankings. This is done now. I must admit I was slightly scarred from a late night of drowning my sorrows! Good luck everyone.</p>
+                                <hr>
                                 <?php displayCharityInformation() ?>
                             </div>
                         </div>
@@ -73,9 +75,8 @@ include "php/dashboard-items.php";
                         </a>
                     </div> -->
                     <div class="card-body">
-                        <h5 class="card-title">Game Status</h5>                        
-                        <?php displayPayStatus() ?>
-                                                
+                        <h5 class="card-title">Game Status</h5>
+                        <?php displayTodaysFixtures() ?>                                                                                                                         
                         <?php checkSubmitted() ?>
                         <?php displayMatchesRecorded() ?>
                         <div class="alert alert-light" role="alert">
@@ -84,10 +85,11 @@ include "php/dashboard-items.php";
                             <?php displayQFMatchesPlayed() ?>
                             <?php displaySFMatchesPlayed() ?>
                         </div>
+                        <?php displayPayStatus() ?>
                         <p><i class="bi bi-envelope"></i> If you experience any issues, simply reply to your welcome email.</p>
                     </div>
                 </div>
-
+              
                 <div class="row mt-4">
                     <div class="col-xxl-6 col-md-6">
                         <div class="card">

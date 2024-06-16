@@ -203,16 +203,16 @@ function displayLatestInformation() {
 	//printf("<p><strong>Total players:</strong> %d</p>", $countoftotalusers);
 	//printf("<p><strong>Total prize fund:</strong> £%d.00</p>", $prizefund);
 
- 	print("<p><strong>Game complete:</strong><br>Thank you all for your participation!</p>");
-	print("<p>Congratulations to the prize winners who are as follows:</p>");
-	print("<table class='table table-condensed table-responsive table-bordered'>");
-	print("<tr><td>1st</td><td>£100</td><td>Nick Chandler</td></tr>");
-	print("<tr><td>2nd =</td><td>£37.50</td><td>Snigdha Dutta</td></tr>");
-	print("<tr><td>2nd =</td><td>£37.50</td><td>Sonia Fernandez</td></tr>");
-	print("<tr><td>3rd</td><td>£50</td><td>Daniel Waite</td></tr>");
-	print("<tr><td>4th</td><td>£25</td><td>Paul Hendrick</td></tr>");
-	print("<tr><td>5th</td><td>£10</td><td>Rebecca Reeves</td></tr>");
-	print("</table>");
+ 	// print("<p><strong>Game complete:</strong><br>Thank you all for your participation!</p>");
+	// print("<p>Congratulations to the prize winners who are as follows:</p>");
+	// print("<table class='table table-condensed table-responsive table-bordered'>");
+	// print("<tr><td>1st</td><td>£100</td><td>Nick Chandler</td></tr>");
+	// print("<tr><td>2nd =</td><td>£37.50</td><td>Snigdha Dutta</td></tr>");
+	// print("<tr><td>2nd =</td><td>£37.50</td><td>Sonia Fernandez</td></tr>");
+	// print("<tr><td>3rd</td><td>£50</td><td>Daniel Waite</td></tr>");
+	// print("<tr><td>4th</td><td>£25</td><td>Paul Hendrick</td></tr>");
+	// print("<tr><td>5th</td><td>£10</td><td>Rebecca Reeves</td></tr>");
+	// print("</table>");
 
 	/*print("<p><strong>Prizes announced:</strong></p>");
 	print("<table class='table table-condensed table-responsive table-bordered table-striped'>");
@@ -271,7 +271,7 @@ function displayCharityInformation() {
 	// For each instance of the returned result
 	while ($row = mysqli_fetch_assoc($totalusers)) {
 		$countoftotalusers = $row["totalusers"];
-		$donation = ($countoftotalusers * $GLOBALS["charity_fee"] + 14);
+		$donation = ($countoftotalusers * $GLOBALS["charity_fee"] + 19);
 	}
 
 	//print("<h4 class='my-3'><strong>£74</strong> has been donated! Thank you.</h4>");
@@ -429,7 +429,7 @@ function displayTodaysFixtures() {
 	$gamedata = mysqli_query($con, $sql_gettodaysgames);
 
 	$today = date("jS F, Y");
-	printf ("<p class='text-center'>%s</p>", $today);
+	printf ("<p class='text-center'>Today, %s</p>", $today);
 
 	while($row = mysqli_fetch_assoc($gamedata)) {
 		// Assign variables for printing
@@ -447,7 +447,7 @@ function displayTodaysFixtures() {
 			$as = '';
 		}
 
-		printf ("<div class='text-center'><img src=".$row['hometeamimg']." alt='Nation Flag' name='Nation Flag' style=''> <strong>%s</strong> <span class='label label-default'>%s</span> v <span class='label label-default'>%s</span> <strong>%s</strong> <img src=".$row['awayteamimg']." alt='Nation Flag' name='Nation Flag' style=''><br/><span style='font-size: 11px;'>(%s @ %s)<br><br></span></div>", $htabb, $hs, $as, $atabb, $kotime, $venue);
+		printf ("<div class='text-center mb-3'><img src=".$row['hometeamimg']." alt='Nation Flag' name='Nation Flag' style=''> <strong>%s</strong> <span class='label label-default'>%s</span> v <span class='label label-default'>%s</span> <strong>%s</strong> <img src=".$row['awayteamimg']." alt='Nation Flag' name='Nation Flag' style=''><br><span class='fw-light small mb-3'>(K.O. %s @ %s)</span></div>", $htabb, $hs, $as, $atabb, $kotime, $venue);
    	}
 
 	if (mysqli_num_rows($gamedata) == 0) {
@@ -510,7 +510,8 @@ function checkSubmitted() {
 
 	if (mysqli_num_rows($predstatus) > 0) {
 		// consoleMsg($predstatus);
-		print("<p class='alert alert-success'><i class='bi bi-check2-square text-success'></i> Successfully submitted your group fixture predictions.</p>");
+		print("");
+		//print("<p class='alert alert-success'><i class='bi bi-check2-square text-success'></i> Successfully submitted your group fixture predictions.</p>");
 	}
 	else {
 		print("<p class='alert alert-danger'><i class='bi bi-exclamation-square text-danger'></i> Please <a href='predictions.php' title='Submit your predictions'>submit your predictions</a> for the group fixtures</a>.</p>");
@@ -552,7 +553,7 @@ function displayGroupMatchesPlayed() {
 				<p class='text-black'>Group stage:</p>
 			</div>
 			<div class='col-sm-9'>			
-				<div class='progress my-1'><div class='progress-bar bg-success' role='progressbar' aria-label='Competition progress bar' style='width: 0%;' aria-valuenow='$percent_group_played' aria-valuemin='0' aria-valuemax='100'></div></div>
+				<div class='progress my-1'><div class='progress-bar bg-primary' role='progressbar' aria-label='Competition progress bar' style='width: $percent_group_played%;' aria-valuenow='$percent_group_played' aria-valuemin='0' aria-valuemax='100'></div></div>
 			</div>
 		</div>";
 
@@ -696,7 +697,7 @@ function displayPersonalInfo() {
 		echo '    </div>';
 		echo '    <div class="col-8">';
 		echo '        <h3>' . $_SESSION["firstname"] . ' ' . $_SESSION["surname"] . '</h3>';
-		//echo '        <p class="fs-4 text-dark text-center" style="border: 1px solid #000; padding: 0.5rem;"><strong>' . $currpos . ' <span class="text-muted">|</span> ' . $pointstotal . ' pts</strong></p>';
+		echo '        <p class="fs-4 text-dark text-center" style="border: 1px solid #000; padding: 0.5rem;"><strong>' . $currpos . ' <span class="text-muted">|</span> ' . $pointstotal . ' pts</strong></p>';
 		echo '        <ul style="list-style-type: none; margin: 0; padding: 0;"><li><i class="bi bi-heart-fill"></i> ' . $faveteam . ' Football Club</li>';
 		echo '        <li><i class="bi bi-wrench-adjustable-circle-fill"></i> ' . $fieldofwork . '</li>';
 		echo '        <li><i class="bi bi-trophy-fill"></i> Thinks ' . $tournwinner . ' will win '. $GLOBALS['competition'] .'</li>';
@@ -707,9 +708,9 @@ function displayPersonalInfo() {
 		echo '</div>';
 		echo '<hr>';
 		echo '<div class="d-flex justify-content-center align-items-center flex-wrap gap-2 mt-2">';
-		echo '    <a class="btn btn-secondary" href="user.php?id=' . $_SESSION['id'] . '" title="Show predictions"><i class="bi bi-person-lines-fill"></i> View my predictions</a>';
+		echo '    <a class="btn btn-secondary btn-sm" href="user.php?id=' . $_SESSION['id'] . '" title="Show predictions"><i class="bi bi-person-lines-fill"></i> View my predictions</a>';
 		// echo '    <a class="btn btn-sm btn-secondary" href="change-password.php">Change password</a>';		
-		echo '    <a class="btn btn-secondary" href="rankings.php"><i class="bi bi-list-ol"></i> Check current rankings</a>';
+		echo '    <a class="btn btn-secondary btn-sm" href="rankings.php"><i class="bi bi-list-ol"></i> Check rankings</a>';
 		echo '</div>';
 	}
 	// Free result set
@@ -735,10 +736,12 @@ function displayPayStatus() {
 	$haspaid = $userdata["haspaid"];	
 
 	if ($haspaid == "Yes") {
-		echo "<p class='alert alert-success'><i class='bi bi-check2-square text-success'></i> You've paid to play! Thank you and good luck!</p>";
+		//echo "<p class='alert alert-success'><i class='bi bi-check2-square text-success'></i> You've paid to play! Thank you and good luck!</p>";
+		echo "";
 	}
 	else {
-		echo "<p>If you've yet to do so, please pay £$GLOBALS[signup_fee_formatted] to play before $GLOBALS[competition_start_date]. <a class='btn btn-sm btn-primary' href='https://monzo.me/jamescolinhenderson/5.00?d=Hendy%27s%20Hunches%20-%20%5BYour%20Name%5D' role='button' target='_blank'><i class='bi bi-credit-card-fill'></i> Pay sign-up fee</a></p>";
+		//echo "<p>If you've yet to do so, please pay £$GLOBALS[signup_fee_formatted] to play before $GLOBALS[competition_start_date]. <a class='btn btn-sm btn-primary' href='https://monzo.me/jamescolinhenderson/5.00?d=Hendy%27s%20Hunches%20-%20%5BYour%20Name%5D' role='button' target='_blank'><i class='bi bi-credit-card-fill'></i> Pay sign-up fee</a></p>";
+		echo "<p>It appears you've yet to pay to take part. Please pay £$GLOBALS[signup_fee_formatted] ASAP. <a class='btn btn-sm btn-primary' href='https://monzo.me/jamescolinhenderson/5.00?d=Hendy%27s%20Hunches%20-%20%5BYour%20Name%5D' role='button' target='_blank'><i class='bi bi-credit-card-fill'></i> Pay sign-up fee</a></p>";
 	}
 
 	// Free result set

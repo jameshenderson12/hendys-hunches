@@ -298,12 +298,12 @@ include "php/navigation.php";
 							<table id="table" class="table table-sm table-striped">
 								<thead>
 									<tr>
+										<th class="d-none d-md-table-cell"></th>
+										<th class="d-none d-md-table-cell"></th>
 										<th></th>
 										<th></th>
 										<th></th>
-										<th></th>
-										<th></th>
-										<th></th>
+										<th class="d-none d-md-table-cell"></th>
 										<th>Pred.</th>
 										<th>Res.</th>
 										<th>Pts</th>
@@ -322,9 +322,6 @@ include "php/navigation.php";
     </div>
   </div>
 </main>
-
-<!-- Footer -->
-<?php include "php/footer.php" ?>
 
 
 <script>
@@ -387,11 +384,11 @@ $.getJSON("json/uefa-euro-2024-fixtures-groups.json", function (data) {
             fixture += `
                 <tr>
                     <td class="small text-muted d-none d-md-table-cell">${group}<br>${date}</td>
-                    <td style="text-align: right">${homeTeam}</td>
+                    <td class="d-none d-md-table-cell" style="text-align: right">${homeTeam}</td>
                     <td><img src="${homeTeamFlag}" alt="Flag of ${homeTeam}" title="Flag of ${homeTeam}" class="img-fluid"></td>
-                    <td><span>v</span></td>
+                    <td>v</td>
                     <td><img src="${awayTeamFlag}" alt="Flag of ${awayTeam}" title="Flag of ${awayTeam}" class="img-fluid"></td>
-                    <td class="right-team">${awayTeam}</td>            
+                    <td class="d-none d-md-table-cell" class="right-team">${awayTeam}</td>            
                     <td><span class="prediction">${prediction}</span></td>
                     <td><span class="result">${result}</span></td>
                     <td><span class="points">${points}</span></td>
@@ -412,3 +409,6 @@ $.getJSON("json/uefa-euro-2024-fixtures-groups.json", function (data) {
     });
 });
 </script>
+
+<!-- Footer -->
+<?php include "php/footer.php" ?>

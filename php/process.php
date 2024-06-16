@@ -698,76 +698,6 @@ function displayRankings() {
     // Connect to the database
     include 'php/db-connect.php';
 
-    // Hardcoded sample data
-    $sampleData = [
-        ['football-kits/green-white.png', 'John Doe', 100],
-        ['football-kits/blue-white.png', 'Jane Smith', 95],
-        ['football-kits/orange-purple.png', 'Mike Johnson', 90],
-        ['football-kits/blue-white.png', 'Anna Brown', 85],
-        ['football-kits/pink-white.png', 'Chris Davis', 80],
-        ['football-kits/blue-white.png', 'Patricia Miller', 75],
-        ['football-kits/blue-white.png', 'Robert Wilson', 70],
-    ];
-
-    echo "<div class='datatable-wrapper datatable-loading no-footer sortable searchable fixed-columns'>";
-    echo "<div class='datatable-top'>";
-    echo "<div class='datatable-dropdown'>";
-    echo "<label>";
-    echo "<select class='datatable-selector'>";
-    echo "<option value='5'>5</option>";
-    echo "<option value='10' selected>10</option>";
-    echo "<option value='15'>15</option>";
-    echo "<option value='20'>20</option>";
-    echo "<option value='25'>25</option>";
-    echo "</select> entries per page";
-    echo "</label>";
-    echo "</div>";
-    echo "<div class='datatable-search'>";
-    echo "<input class='datatable-input' placeholder='Search...' type='search' title='Search within table'>";
-    echo "</div>";
-    echo "</div>";
-
-    echo "<div class='datatable-container'>";
-    echo "<table id='rankingsTable' class='table table-borderless datatable datatable-table'>";
-    echo "<thead><tr><th>Player</th><th>Points</th></tr></thead>";
-    echo "<tbody>";
-
-    // Iterate through the sample data to populate the table
-    foreach ($sampleData as $data) {
-        $avatar = $data[0];
-        $name = $data[1];
-        $points = $data[2];
-
-        $nameParts = explode(' ', $name);
-        $firstname = ucfirst($nameParts[0]);
-        $surname = ucfirst($nameParts[1]);
-
-        echo "<tr>";
-        echo "<td><img src='".$avatar."' class='img-responsive' width='20px'>&nbsp;<a href='#'>".$firstname." ".$surname."</a></td>";
-        echo "<td>".$points."</td>";
-        echo "</tr>";
-    }
-
-    echo "</tbody>";
-    echo "</table>";
-    echo "</div>";
-
-    echo "<div class='datatable-bottom'>";
-    echo "<div class='datatable-info'>Showing 1 to ".count($sampleData)." of ".count($sampleData)." entries</div>";
-    echo "<nav class='datatable-pagination'>";
-    echo "<ul class='datatable-pagination-list'></ul>";
-    echo "</nav>";
-    echo "</div>";
-    echo "</div>";
-
-    // Close the database connection
-    mysqli_close($con);
-}
-
-function displayRankingsTT() {
-    // Connect to the database
-    include 'php/db-connect.php';
-
     // Set up SQL query to retrieve data from database tables
     $sql_maketable = "SELECT live_user_information.id, live_user_information.firstname, live_user_information.surname, live_user_information.avatar, live_user_information.faveteam, live_user_information.startpos, live_user_information.currpos, live_user_information.lastpos, live_user_predictions_groups.points_total,
                         FIND_IN_SET(points_total, (
@@ -784,28 +714,9 @@ function displayRankingsTT() {
     $table = mysqli_query($con, $sql_maketable) or die(mysqli_error($con));
     $result = mysqli_query($con, $sql_matchresults) or die(mysqli_error($con));
 
-    // Start creating the table to display the returned values
-    echo "<div class='datatable-wrapper datatable-loading no-footer sortable searchable fixed-columns'>";
-    echo "<div class='datatable-top'>";
-    echo "<div class='datatable-dropdown'>";
-    echo "<label>";
-    echo "<select class='datatable-selector'>";
-    echo "<option value='5'>5</option>";
-    echo "<option value='10' selected>10</option>";
-    echo "<option value='15'>15</option>";
-    echo "<option value='20'>20</option>";
-    echo "<option value='25'>25</option>";
-    echo "</select> entries per page";
-    echo "</label>";
-    echo "</div>";
-    echo "<div class='datatable-search'>";
-    echo "<input class='datatable-input' placeholder='Search...' type='search' title='Search within table'>";
-    echo "</div>";
-    echo "</div>";
-
-    echo "<div class='datatable-container'>";
-    echo "<table id='rankingsTable' class='table table-borderless datatable datatable-table'>";
-    echo "<thead><tr><th></th><th></th><th>Player</th><th>Points</th></tr></thead>";
+    echo "<div class='table-responsive'>";
+    echo "<table id='rankingsTable' class='table table-striped'>";
+    echo "<thead><tr><th>Rank</th><th>Player</th><th>Points</th></tr></thead>";
     echo "<tbody>";
 
     while ($row = mysqli_fetch_assoc($table)) {
@@ -834,8 +745,7 @@ function displayRankingsTT() {
 
         // Display the table complete with all data variables
         echo "<tr>";
-        echo "<td>".$row["rank"]."</td>";
-		echo "<td>".$move."</td>";
+        echo "<td>".$row["rank"]."</span><span style='margin-left: 5px'>".$move."</span></td>";        
         echo "<td><img src='".$row["avatar"]."' class='img-responsive pull-left' width='20px'>&nbsp;<a href='user.php?id=".$row["id"]."'>".$uppCaseFN." ".$uppCaseSN."</a></td>";
         echo "<td>".$row["points_total"]."</td>";
         echo "</tr>";
@@ -845,17 +755,167 @@ function displayRankingsTT() {
     echo "</table>";
     echo "</div>";
 
-    echo "<div class='datatable-bottom'>";
-    echo "<div class='datatable-info'>Showing 1 to 10 of 10 entries</div>";
-    echo "<nav class='datatable-pagination'>";
-    echo "<ul class='datatable-pagination-list'></ul>";
-    echo "</nav>";
-    echo "</div>";
+    // Close the database connection
+    mysqli_close($con);
+}
+
+
+function displayRankingsEq2() {
+    // Connect to the database
+    include 'php/db-connect.php';
+
+    // Set up SQL query to retrieve data from database tables
+    $sql_maketable = "SELECT live_user_information.id, live_user_information.firstname, live_user_information.surname, live_user_information.avatar, live_user_information.faveteam, live_user_information.startpos, live_user_information.currpos, live_user_information.lastpos, live_user_predictions_groups.points_total,
+                        FIND_IN_SET(points_total, (
+                            SELECT GROUP_CONCAT(DISTINCT points_total ORDER BY points_total DESC)
+                            FROM live_user_predictions_groups )
+                        ) AS rank
+                        FROM live_user_information
+                        INNER JOIN live_user_predictions_groups ON live_user_information.id = live_user_predictions_groups.id
+                        ORDER BY rank ASC, surname ASC";
+
+    $sql_matchresults = "SELECT * FROM live_match_results";
+
+    // Execute the query and return the results or display an appropriate error message
+    $table = mysqli_query($con, $sql_maketable) or die(mysqli_error($con));
+    $result = mysqli_query($con, $sql_matchresults) or die(mysqli_error($con));
+
+    echo "<div class='table-responsive'>";
+    echo "<table id='rankingsTable' class='table table-striped'>";
+    echo "<thead><tr><th>Rank</th><th>Move</th><th>Player</th><th>Points</th></tr></thead>";
+    echo "<tbody>";
+
+    // Keep track of the previous rank to identify non-unique ranks
+    $prevRank = null;
+    while ($row = mysqli_fetch_assoc($table)) {
+        // Check if match results table contains any data
+        if (mysqli_num_rows($result) == 0) {
+            $rank = $row["startpos"];
+        } else {
+            $rank = $row["rank"];
+        }
+
+        // Append '=' if the rank is not unique
+        if ($rank == $prevRank) {
+            $displayRank = '<strong>'. $rank . '</strong>'."=";
+        } else {
+            $displayRank = '<strong>'. $rank . '</strong>';
+        }
+
+        // Determine if move is upwards, downwards or the same and calculate the difference between current and previous ranking
+        if ($row["lastpos"] > $row["currpos"]) {
+            $diff = $row["lastpos"] - $row["currpos"];
+            $move = "<span class='text-success'><i class='bi bi-caret-up-fill'></i>" . $diff . "</span>";
+        } elseif ($row["lastpos"] < $row["currpos"]) {
+            $diff = $row["currpos"] - $row["lastpos"];
+            $move = "<span class='text-danger'><i class='bi bi-caret-down-fill'></i>" . $diff . "</span>";
+        } else {
+            $diff = 0;
+            $move = "<span class='text-secondary'><i class='bi bi-caret-right-fill'></i>" . $diff . "</span>";
+        }
+
+        // Ensure both name variables begin with upper case letters
+        $uppCaseFN = ucfirst($row["firstname"]);
+        $uppCaseSN = ucfirst($row["surname"]);
+
+        // Display the table complete with all data variables
+        echo "<tr>";		
+        echo "<td><span class=''>" . $displayRank . "</span></td>";
+		echo "<td><span class=''>" . $move . "</span></td>";		
+        echo "<td><img src='".$row["avatar"]."' class='img-responsive pull-left' width='20px'>&nbsp;<a href='user.php?id=".$row["id"]."'>".$uppCaseFN." ".$uppCaseSN."</a></td>";
+        echo "<td>".$row["points_total"]."</td>";		
+        echo "</tr>";
+
+        // Update the previous rank
+        $prevRank = $rank;
+    }
+
+    echo "</tbody>";
+    echo "</table>";
     echo "</div>";
 
     // Close the database connection
     mysqli_close($con);
 }
+
+
+function displayRankingsEq() {
+    // Connect to the database
+    include 'php/db-connect.php';
+
+    // Set up SQL query to retrieve data from database tables
+    $sql_maketable = "SELECT live_user_information.id, live_user_information.firstname, live_user_information.surname, live_user_information.avatar, live_user_information.faveteam, live_user_information.startpos, live_user_information.currpos, live_user_information.lastpos, live_user_predictions_groups.points_total,
+                        FIND_IN_SET(points_total, (
+                            SELECT GROUP_CONCAT(DISTINCT points_total ORDER BY points_total DESC)
+                            FROM live_user_predictions_groups )
+                        ) AS rank
+                        FROM live_user_information
+                        INNER JOIN live_user_predictions_groups ON live_user_information.id = live_user_predictions_groups.id
+                        ORDER BY rank ASC, surname ASC";
+
+    $sql_matchresults = "SELECT * FROM live_match_results";
+
+    // Execute the query and return the results or display an appropriate error message
+    $table = mysqli_query($con, $sql_maketable) or die(mysqli_error($con));
+    $result = mysqli_query($con, $sql_matchresults) or die(mysqli_error($con));
+
+    echo "<div class='table-responsive'>";
+    echo "<table id='rankingsTable' class='table table-striped'>";
+    echo "<thead><tr><th>Rank</th><th>Player</th><th>Points</th></tr></thead>";
+    echo "<tbody>";
+
+    // Keep track of the previous rank to identify non-unique ranks
+    $prevRank = null;
+    while ($row = mysqli_fetch_assoc($table)) {
+        // Check if match results table contains any data
+        if (mysqli_num_rows($result) == 0) {
+            $rank = $row["startpos"];
+        } else {
+            $rank = $row["rank"];
+        }
+
+        // Append '=' if the rank is not unique
+        if ($rank == $prevRank) {
+            $displayRank = $rank . "=";
+        } else {
+            $displayRank = $rank;
+        }
+
+        // Determine if move is upwards, downwards or the same and calculate the difference between current and previous ranking
+        if ($row["lastpos"] > $row["currpos"]) {
+            $diff = $row["lastpos"] - $row["currpos"];
+            $move = "<i class='bi bi-arrow-up-circle-fill text-success'></i>";
+        } elseif ($row["lastpos"] < $row["currpos"]) {
+            $diff = $row["currpos"] - $row["lastpos"];
+            $move = "<i class='bi bi-arrow-down-circle-fill text-danger'></i>";
+        } else {
+            $diff = 0;
+            $move = "<i class='bi bi-arrow-right-circle-fill text-secondary'></i>";
+        }
+
+        // Ensure both name variables begin with upper case letters
+        $uppCaseFN = ucfirst($row["firstname"]);
+        $uppCaseSN = ucfirst($row["surname"]);
+
+        // Display the table complete with all data variables
+        echo "<tr>";
+        echo "<td><span class=''>".$displayRank."</span><span style='margin-right: 8px'>".$move."</span></td>";        
+        echo "<td><img src='".$row["avatar"]."' class='img-responsive pull-left' width='20px'>&nbsp;<a href='user.php?id=".$row["id"]."'>".$uppCaseFN." ".$uppCaseSN."</a></td>";
+        echo "<td>".$row["points_total"]."</td>";
+        echo "</tr>";
+
+        // Update the previous rank
+        $prevRank = $rank;
+    }
+
+    echo "</tbody>";
+    echo "</table>";
+    echo "</div>";
+
+    // Close the database connection
+    mysqli_close($con);
+}
+
 
 function displayRankingsXX() {
 	// Connect to the database
