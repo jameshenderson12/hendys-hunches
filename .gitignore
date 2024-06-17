@@ -1,3 +1,5 @@
 
 sql/bak
 php/db-connect.php
+php/send-welcome-email.php
+php/send-temppass-email.php
