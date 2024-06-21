@@ -24,7 +24,7 @@
 
 $acronym = "HH";
 $title = "Hendy's Hunches";
-$version = "v2.8.4";
+$version = "v2.9.1";
 $year = "2024";
 $last_update = "15/06/2024";
 $base_url = "https://www.hendyshunches.co.uk";

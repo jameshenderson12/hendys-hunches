@@ -84,8 +84,8 @@
         "HomeTeam": "Romania",
         "AwayTeam": "Ukraine",
         "Group": "Group E",
-        "HomeTeamScore": null,
-        "AwayTeamScore": null
+        "HomeTeamScore": 3,
+        "AwayTeamScore": 0
     },
     {
         "MatchNumber": 9,
@@ -95,8 +95,8 @@
         "HomeTeam": "Belgium",
         "AwayTeam": "Slovakia",
         "Group": "Group E",
-        "HomeTeamScore": null,
-        "AwayTeamScore": null
+        "HomeTeamScore": 0,
+        "AwayTeamScore": 1
     },
     {
         "MatchNumber": 8,
@@ -106,8 +106,8 @@
         "HomeTeam": "Austria",
         "AwayTeam": "France",
         "Group": "Group D",
-        "HomeTeamScore": null,
-        "AwayTeamScore": null
+        "HomeTeamScore": 0,
+        "AwayTeamScore": 1
     },
     {
         "MatchNumber": 11,
@@ -117,8 +117,8 @@
         "HomeTeam": "Türkiye",
         "AwayTeam": "Georgia",
         "Group": "Group F",
-        "HomeTeamScore": null,
-        "AwayTeamScore": null
+        "HomeTeamScore": 3,
+        "AwayTeamScore": 1
     },
     {
         "MatchNumber": 12,
@@ -128,8 +128,8 @@
         "HomeTeam": "Portugal",
         "AwayTeam": "Czechia",
         "Group": "Group F",
-        "HomeTeamScore": null,
-        "AwayTeamScore": null
+        "HomeTeamScore": 2,
+        "AwayTeamScore": 1
     },
     {
         "MatchNumber": 15,
@@ -139,8 +139,8 @@
         "HomeTeam": "Croatia",
         "AwayTeam": "Albania",
         "Group": "Group B",
-        "HomeTeamScore": null,
-        "AwayTeamScore": null
+        "HomeTeamScore": 2,
+        "AwayTeamScore": 2
     },
     {
         "MatchNumber": 14,
@@ -150,8 +150,8 @@
         "HomeTeam": "Germany",
         "AwayTeam": "Hungary",
         "Group": "Group A",
-        "HomeTeamScore": null,
-        "AwayTeamScore": null
+        "HomeTeamScore": 2,
+        "AwayTeamScore": 0
     },
     {
         "MatchNumber": 13,
@@ -161,8 +161,8 @@
         "HomeTeam": "Scotland",
         "AwayTeam": "Switzerland",
         "Group": "Group A",
-        "HomeTeamScore": null,
-        "AwayTeamScore": null
+        "HomeTeamScore": 1,
+        "AwayTeamScore": 1
     },
     {
         "MatchNumber": 18,
@@ -172,8 +172,8 @@
         "HomeTeam": "Slovenia",
         "AwayTeam": "Serbia",
         "Group": "Group C",
-        "HomeTeamScore": null,
-        "AwayTeamScore": null
+        "HomeTeamScore": 1,
+        "AwayTeamScore": 1
     },
     {
         "MatchNumber": 17,
@@ -183,8 +183,8 @@
         "HomeTeam": "Denmark",
         "AwayTeam": "England",
         "Group": "Group C",
-        "HomeTeamScore": null,
-        "AwayTeamScore": null
+        "HomeTeamScore": 1,
+        "AwayTeamScore": 1
     },
     {
         "MatchNumber": 16,
@@ -194,8 +194,8 @@
         "HomeTeam": "Spain",
         "AwayTeam": "Italy",
         "Group": "Group B",
-        "HomeTeamScore": null,
-        "AwayTeamScore": null
+        "HomeTeamScore": 1,
+        "AwayTeamScore": 0
     },
     {
         "MatchNumber": 21,
@@ -205,8 +205,8 @@
         "HomeTeam": "Slovakia",
         "AwayTeam": "Ukraine",
         "Group": "Group E",
-        "HomeTeamScore": null,
-        "AwayTeamScore": null
+        "HomeTeamScore": 1,
+        "AwayTeamScore": 2
     },
     {
         "MatchNumber": 19,
@@ -216,8 +216,8 @@
         "HomeTeam": "Poland",
         "AwayTeam": "Austria",
         "Group": "Group D",
-        "HomeTeamScore": null,
-        "AwayTeamScore": null
+        "HomeTeamScore": 1,
+        "AwayTeamScore": 3
     },
     {
         "MatchNumber": 20,
@@ -227,8 +227,8 @@
         "HomeTeam": "Netherlands",
         "AwayTeam": "France",
         "Group": "Group D",
-        "HomeTeamScore": null,
-        "AwayTeamScore": null
+        "HomeTeamScore": 0,
+        "AwayTeamScore": 0
     },
     {
         "MatchNumber": 24,

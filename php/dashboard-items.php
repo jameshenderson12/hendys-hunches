@@ -271,7 +271,7 @@ function displayCharityInformation() {
 	// For each instance of the returned result
 	while ($row = mysqli_fetch_assoc($totalusers)) {
 		$countoftotalusers = $row["totalusers"];
-		$donation = ($countoftotalusers * $GLOBALS["charity_fee"] + 19);
+		$donation = ($countoftotalusers * $GLOBALS["charity_fee"] + 10);
 	}
 
 	//print("<h4 class='my-3'><strong>£74</strong> has been donated! Thank you.</h4>");
@@ -279,8 +279,9 @@ function displayCharityInformation() {
 	//print("<span class='label label-success'>A huge thank you to all players!</span>");
 
 	print("<a href='" . $GLOBALS["charity_url"] . "' target='_blank' title='" . $GLOBALS["charity"] ." website'><img src='img/notts-county-foundation-logo.png' class='img-fluid w-50 bg-dark mb-3 p-3'></a>");
-	printf("<p>Thanks to your participation, Hendy's Hunches currently has <strong>£%d to donate</strong> to %s's <a href='" . $GLOBALS["charity_url"] . "' target='_blank' title='" . $GLOBALS["charity"] ." website'>On The Ball programme</a>, which addresses mental health through football.", $donation, $GLOBALS['charity']);
+	printf("<p>Thanks to your participation, Hendy's Hunches currently has <strong>£%d to donate<sup>*</sup></strong> to %s's <a href='" . $GLOBALS["charity_url"] . "' target='_blank' title='" . $GLOBALS["charity"] ." website'>On The Ball programme</a>, which addresses mental health through football.", $donation, $GLOBALS['charity']);
 	print("<p>Donations will support Dr. Alan Pringle's work, a late colleague who promoted this research during his three-decade career in mental health at the University of Nottingham.</p>");
+	print("<p class='small'><sup>*</sup>Adjusted based on those who signed up but have not taken part.</p>");
 	//print('<iframe src="https://player.vimeo.com/video/2045424?h=b1ecb1c8d3" width="320" height="257" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe><p><a href="https://vimeo.com/2045424">Mad About Football: Dr Alan Pringle (Oct, 2008)</a> from <a href="https://vimeo.com/shiftstigma">Shift</a> on <a href="https://vimeo.com">Vimeo</a>.</p>');
 	// Free result set
 	mysqli_free_result($totalusers);
@@ -447,7 +448,7 @@ function displayTodaysFixtures() {
 			$as = '';
 		}
 
-		printf ("<div class='text-center mb-3'><img src=".$row['hometeamimg']." alt='Nation Flag' name='Nation Flag' style=''> <strong>%s</strong> <span class='label label-default'>%s</span> v <span class='label label-default'>%s</span> <strong>%s</strong> <img src=".$row['awayteamimg']." alt='Nation Flag' name='Nation Flag' style=''><br><span class='fw-light small mb-3'>(K.O. %s @ %s)</span></div>", $htabb, $hs, $as, $atabb, $kotime, $venue);
+		printf ("<div class='text-center mb-3'><img src=".$row['hometeamimg']." alt='Nation Flag' name='Nation Flag' style=''> %s <span class='badge bg-dark'>%s</span> v <span class='badge bg-dark'>%s</span> %s <img src=".$row['awayteamimg']." alt='Nation Flag' name='Nation Flag' style=''><br><span class='fw-light small mb-3'>(K.O. %s @ %s)</span></div>", $row['hometeam'], $hs, $as, $row['awayteam'], $kotime, $venue);
    	}
 
 	if (mysqli_num_rows($gamedata) == 0) {
@@ -553,7 +554,7 @@ function displayGroupMatchesPlayed() {
 				<p class='text-black'>Group stage:</p>
 			</div>
 			<div class='col-sm-9'>			
-				<div class='progress my-1'><div class='progress-bar bg-primary' role='progressbar' aria-label='Competition progress bar' style='width: $percent_group_played%;' aria-valuenow='$percent_group_played' aria-valuemin='0' aria-valuemax='100'></div></div>
+				<div class='progress my-1'><div class='progress-bar bg-primary' role='progressbar' aria-label='Competition progress bar' style='width: $percent_group_played%;' aria-valuenow='$percent_group_played' aria-valuemin='0' aria-valuemax='100'>$percent_group_played%</div></div>
 			</div>
 		</div>";
 

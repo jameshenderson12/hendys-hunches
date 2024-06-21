@@ -78,9 +78,24 @@ include "php/navigation.php";
 					
 				<div class="row">
 
+				<div class="col-sm-12 col-md-4">
+						<div class="card">
+					  	<img src="img/hh-logo-2024.jpg" alt="FIFA World Cup 2018 Game Image" class="card-img-top">
+						  <div class="card-body">
+						    <h5 class="card-title">FIFA World Cup 2018</h5>
+						    <p class="card-text"></p>
+						  </div>
+						  <ul class="list-group list-group-flush">
+						    <li class="list-group-item"><strong>1st:</strong> Nick Chandler</li>
+						    <li class="list-group-item"><strong>2nd:</strong> Snigdha Dutta, Sonia Fernandez</li>
+						    <li class="list-group-item"><strong>3rd:</strong> Daniel Waite</li>
+						  </ul>
+						</div>
+					</div>	
+
 					<div class="col-sm-12 col-md-4">
 						<div class="card">
-					  	<img src="img/qatar-2022-logo.png" alt="FIFA World Cup 2016 Game Image" class="card-img-top">
+					  	<img src="img/qatar-2022-logo.png" alt="FIFA World Cup 2022 Game Image" class="card-img-top">
 						  <div class="card-body">
 						    <h5 class="card-title">FIFA World Cup 2022</h5>
 						    <p class="card-text"></p>

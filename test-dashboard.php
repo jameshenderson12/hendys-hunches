@@ -163,7 +163,7 @@ include "php/dashboard-items.php";
                     <div class="col-xxl-12 col-md-6">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">Anonymous Poll</h5>
+                                <h5 class="card-title">Anonymous Player Poll</h5>
                                 <div id="poll">
                                     <h6 id="question"></h6>
                                     <div id="answers">
@@ -264,7 +264,7 @@ function updateResults(data) {
 function disableVoting() {
     const answersDiv = document.getElementById("answers");
     answersDiv.innerHTML = "<p><i class='bi bi-check-circle-fill text-success'></i> You have voted on this poll.</p>";
-}    
+}
 </script>
 
 <!-- Footer -->

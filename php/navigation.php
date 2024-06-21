@@ -13,20 +13,33 @@
 		        <div class="offcanvas-body">
 		          <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
 		            <li class="nav-item">
-		              <a class="nav-link" aria-current="page" href="dashboard.php">Dashboard</a>
+		              <a class="nav-link" href="dashboard.php">Dashboard</a>
 		            </li>
+					<li class="nav-item position-relative">
+					<a class="nav-link" href="tournament-groups.php">
+						Groups
+						<!-- <span class="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-success">
+						new
+						</span> -->
+					</a>
+					</li>					
 		            <li class="nav-item">
-		              <a class="nav-link" href="predictions.php">Submit Predictions</a>
+		              <a class="nav-link disabled" aria-disabled="true" href="predictions.php">
+						Submit Predictions
+						<!-- <span class="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-success">
+						open
+						</span> -->
+					  </a>
 		            </li>
-								<li class="nav-item">
+					<li class="nav-item">
 		              <a class="nav-link" href="rankings.php">Rankings</a>
 		            </li>
-								<li class="nav-item">
+					<li class="nav-item">
 		              <a class="nav-link" href="how-it-works.php">How It Works</a>
 		            </li>
-								<li class="nav-item">
-									<a class="nav-link" href="about.php">About</a>
-								</li>
+					<li class="nav-item">
+						<a class="nav-link" href="about.php">About</a>
+					</li>
 		            <li class="nav-item dropdown">
 									<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     <?php returnAvatar(); ?>

@@ -45,7 +45,9 @@ echo PHP_EOL;
 echo "Tournament Name: $tournament_name" . PHP_EOL;
 echo "Number of Teams: $num_teams" . PHP_EOL;
 echo "Number of Groups: $num_groups" . PHP_EOL;
-echo "Teams per Group: $teams_per_group" . PHP_EOL;
+echo "Number of Teams/Group: $teams_per_group" . PHP_EOL;
+echo "Tournament Start Date: $tournament_start_date" . PHP_EOL;
+echo "Tournament End Date: $tournament_start_date" . PHP_EOL;
 
 echo PHP_EOL;
 echo "Now let's configure your database..." . PHP_EOL;
