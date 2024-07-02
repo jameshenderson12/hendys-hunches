@@ -294,7 +294,13 @@ function displayTopRankings() {
 	include 'php/db-connect.php';
 
 	// Get team information from the DB	counting occurrences too
-	$sql_gettop5 = "SELECT firstname, surname, points_total FROM live_user_predictions_groups ORDER BY points_total DESC, surname ASC LIMIT 0, 5";
+	//$sql_gettop5 = "SELECT firstname, surname, points_total FROM live_user_predictions_groups ORDER BY points_total DESC, surname ASC LIMIT 0, 5";
+	$sql_gettop5 = "SELECT lui.firstname, lui.surname, (lup_groups.points_total + IFNULL(lup_ro16.points_total, 0)) AS points_total
+    				FROM live_user_information lui
+    				INNER JOIN live_user_predictions_groups lup_groups ON lui.id = lup_groups.id
+    				LEFT JOIN live_user_predictions_ro16 lup_ro16 ON lui.id = lup_ro16.id
+    				ORDER BY points_total DESC, lui.surname ASC
+    				LIMIT 5";
 	// Check if any results have been recorded
 	$sql_findmatches = "SELECT * FROM live_match_results";
 
@@ -330,7 +336,16 @@ function displayBottomRankings() {
 	include 'php/db-connect.php';
 
 	// Get team information from the DB	counting occurrences too
-	$sql_getbottom5 = "SELECT * FROM (SELECT firstname, surname, points_total FROM live_user_predictions_groups ORDER BY points_total ASC, surname DESC LIMIT 0, 5) TmpTable ORDER BY points_total DESC, surname ASC";
+	//$sql_getbottom5 = "SELECT * FROM (SELECT firstname, surname, points_total FROM live_user_predictions_groups ORDER BY points_total ASC, surname DESC LIMIT 0, 5) TmpTable ORDER BY points_total DESC, surname ASC";
+	$sql_getbottom5 = "SELECT * FROM (
+							SELECT lui.firstname, lui.surname, (lup_groups.points_total + IFNULL(lup_ro16.points_total, 0)) AS points_total
+							FROM live_user_information lui
+							INNER JOIN live_user_predictions_groups lup_groups ON lui.id = lup_groups.id
+							LEFT JOIN live_user_predictions_ro16 lup_ro16 ON lui.id = lup_ro16.id
+							ORDER BY points_total ASC, lui.surname DESC
+							LIMIT 5
+						) TmpTable
+						ORDER BY points_total DESC, surname ASC";
 	// Check if any results have been recorded
 	$sql_findmatches = "SELECT * FROM live_match_results";
 
@@ -430,7 +445,7 @@ function displayTodaysFixtures() {
 	$gamedata = mysqli_query($con, $sql_gettodaysgames);
 
 	$today = date("jS F, Y");
-	printf ("<p class='text-center'>Today, %s</p>", $today);
+	printf ("<p class='text-center fw-bold'>Today, %s</p>", $today);
 
 	while($row = mysqli_fetch_assoc($gamedata)) {
 		// Assign variables for printing
@@ -506,16 +521,17 @@ function checkSubmitted() {
 	include 'db-connect.php';
 	$un = $_SESSION["username"];
 	// Get team information from the DB	counting occurrences too
-	$sql_predstatus = sprintf("SELECT username FROM live_user_predictions_groups WHERE username = '%s'", $un);
+	//$sql_predstatus = sprintf("SELECT username FROM live_user_predictions_groups WHERE username = '%s'", $un);
+	$sql_predstatus = sprintf("SELECT username FROM live_user_predictions_qf WHERE username = '%s'", $un);
 	$predstatus = mysqli_query($con, $sql_predstatus);
 
 	if (mysqli_num_rows($predstatus) > 0) {
 		// consoleMsg($predstatus);
-		print("");
-		//print("<p class='alert alert-success'><i class='bi bi-check2-square text-success'></i> Successfully submitted your group fixture predictions.</p>");
+		//print("");
+		print("<p class='alert alert-success'><i class='bi bi-check2-square text-success'></i> Successfully submitted your Quarter-Final predictions.</p>");
 	}
 	else {
-		print("<p class='alert alert-danger'><i class='bi bi-exclamation-square text-danger'></i> Please <a href='predictions.php' title='Submit your predictions'>submit your predictions</a> for the group fixtures</a>.</p>");
+		print("<p class='alert alert-danger'><i class='bi bi-exclamation-square text-danger'></i> Please <a href='predictions.php' title='Submit your predictions'>submit your predictions</a> for the Quarter-Final fixtures</a>.</p>");
 	}
 }
 
@@ -554,7 +570,7 @@ function displayGroupMatchesPlayed() {
 				<p class='text-black'>Group stage:</p>
 			</div>
 			<div class='col-sm-9'>			
-				<div class='progress my-1'><div class='progress-bar bg-primary' role='progressbar' aria-label='Competition progress bar' style='width: $percent_group_played%;' aria-valuenow='$percent_group_played' aria-valuemin='0' aria-valuemax='100'>$percent_group_played%</div></div>
+				<div class='progress my-1'><div class='progress-bar bg-success' role='progressbar' aria-label='Competition progress bar' style='width: $percent_group_played%;' aria-valuenow='$percent_group_played' aria-valuemin='0' aria-valuemax='100'></div></div>
 			</div>
 		</div>";
 
@@ -580,7 +596,7 @@ function displayRO16MatchesPlayed() {
 				<p class='text-muted'>Round of 16:</p>
 			</div>
 			<div class='col-sm-9'>			
-				<div class='progress my-1'><div class='progress-bar bg-secondary' role='progressbar' aria-label='Competition progress bar' style='width: 0%;' aria-valuenow='$percent_ro16_played' aria-valuemin='0' aria-valuemax='100'>$percent_ro16_played%</div></div>
+				<div class='progress my-1'><div class='progress-bar bg-success' role='progressbar' aria-label='Competition progress bar' style='width: $percent_ro16_played%;' aria-valuenow='$percent_ro16_played' aria-valuemin='0' aria-valuemax='100'></div></div>
 			</div>
 		</div>";	
 	// Close DB connection
@@ -602,7 +618,7 @@ function displayQFMatchesPlayed() {
 	}
 	echo "<div class='row'>
 			<div class='col-sm-3'>
-				<p class='text-muted'>Quarter finals:</p>
+				<p class='text-muted'>Quarter-finals:</p>
 			</div>
 			<div class='col-sm-9'>			
 				<div class='progress my-1'><div class='progress-bar bg-success' role='progressbar' aria-label='Competition progress bar' style='width: 0%;' aria-valuenow='$percent_qf_played' aria-valuemin='0' aria-valuemax='100'></div></div>
@@ -628,7 +644,7 @@ function displaySFMatchesPlayed() {
 	}
 	echo "<div class='row'>
 			<div class='col-sm-3'>
-				<p class='text-muted'>Semi finals:</p>
+				<p class='text-muted'>Semi-finals:</p>
 			</div>
 			<div class='col-sm-9'>			
 				<div class='progress my-1'><div class='progress-bar bg-success' role='progressbar' aria-label='Competition progress bar' style='width: 0%;' aria-valuenow='$percent_sf_played' aria-valuemin='0' aria-valuemax='100'></div></div>
@@ -652,10 +668,13 @@ function displayPersonalInfo() {
 						INNER JOIN live_user_predictions_qf ON live_user_information.id = live_user_predictions_qf.id
 						INNER JOIN live_user_predictions_sf ON live_user_information.id = live_user_predictions_sf.id
             			WHERE live_user_information.id = '".$_SESSION["id"]."'";*/
-	$sql_getpointstotal = "SELECT live_user_information.id, live_user_predictions_groups.points_total
-						FROM live_user_information
-						INNER JOIN live_user_predictions_groups ON live_user_information.id = live_user_predictions_groups.id
-            			WHERE live_user_information.id = '".$_SESSION["id"]."'";
+	$sql_getpointstotal = "SELECT lui.id, 
+						(COALESCE(lup_groups.points_total, 0) + COALESCE(lup_ro16.points_total, 0) + COALESCE(lup_qf.points_total, 0)) AS points_total
+				 FROM live_user_information lui
+				 INNER JOIN live_user_predictions_groups lup_groups ON lui.id = lup_groups.id
+				 LEFT JOIN live_user_predictions_ro16 lup_ro16 ON lui.id = lup_ro16.id
+				 LEFT JOIN live_user_predictions_qf lup_qf ON lui.id = lup_qf.id
+				 WHERE lui.id = '".$_SESSION["id"]."'";
 
 	// Obtain the SQL query result and set corresponding result variables
 	$result1 = mysqli_query($con, $sql_getprofileinfo1);

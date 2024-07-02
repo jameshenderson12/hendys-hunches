@@ -15,25 +15,41 @@
 		            <li class="nav-item">
 		              <a class="nav-link" href="dashboard.php">Dashboard</a>
 		            </li>
-					<li class="nav-item position-relative">
+					<!-- <li class="nav-item position-relative">
 					<a class="nav-link" href="tournament-groups.php">
 						Groups
-						<!-- <span class="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-success">
+						<span class="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-success">
 						new
-						</span> -->
+						</span>
 					</a>
-					</li>					
-		            <li class="nav-item">
-		              <a class="nav-link disabled" aria-disabled="true" href="predictions.php">
+					</li>
+					<li class="nav-item position-relative">
+					<a class="nav-link" href="tournament-knockouts.php">
+						Knockouts
+						<span class="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-success">
+						new
+						</span>
+					</a>
+					</li> -->
+
+		            <li class="nav-item position-relative">
+		              <a class="nav-link" href="predictions.php">
 						Submit Predictions
-						<!-- <span class="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-success">
-						open
-						</span> -->
+						<span class="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-success">
+						quarter-finals
+						</span>
 					  </a>
 		            </li>
 					<li class="nav-item">
 		              <a class="nav-link" href="rankings.php">Rankings</a>
 		            </li>
+					<li class="nav-item dropdown">
+									<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Competition</a>
+		              	<ul class="dropdown-menu">
+							<li><a class="dropdown-item" href="tournament-groups.php">Group stage</a></li>
+							<li><a class="dropdown-item" href="tournament-knockouts.php">Knockout stages</a></li>
+						</ul>
+		            </li>										
 					<li class="nav-item">
 		              <a class="nav-link" href="how-it-works.php">How It Works</a>
 		            </li>

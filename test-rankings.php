@@ -27,7 +27,7 @@ include "php/navigation.php";
 
     <div class="pagetitle d-flex justify-content-between">
     <nav>
-      <h1>Rankings</h1>
+      <h1>Test Rankings</h1>
         <!-- <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="home.php">Home</a></li>
           <li class="breadcrumb-item"><a href="#">Care Episodes</a></li>          
@@ -41,7 +41,7 @@ include "php/navigation.php";
 		<!-- <p class="alert alert-success">Congratulations to our winners Chloe (1st), Howard (2nd) and Andrew (3rd).</p> -->
 		<!-- Display table of rankings from process.php -->		
 		
-		<?php displayRankingsEq2(); ?>
+		<?php displayRankingsEq4(); ?>
     </section>
 
 </main>

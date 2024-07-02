@@ -165,7 +165,24 @@ include "php/navigation.php";
                         elseif ($team['name'] == "Poland") {
                             $rowClass = 'table-danger';
                         }
+                        elseif ($team['name'] == "England") {
+                            $rowClass = 'table-success';
+                        }
                     }
+                    if ($team['played'] == 3) {
+                        if ($team['points'] >= 5) {
+                            $rowClass = 'table-success';
+                        } 
+                        elseif ($team['points'] < 3) {
+                             $rowClass = 'table-danger';
+                        }
+                        elseif ( ($team['name'] == "Poland") || ($team['name'] == "Ukraine") || ($team['name'] == "Hungary") ) {
+                            $rowClass = 'table-danger';
+                        }
+                        elseif ( ($team['name'] == "Slovenia") || ($team['name'] == "Georgia") || ($team['name'] == "Denmark") || ($team['name'] == "Netherlands")  || ($team['name'] == "Italy")  || ($team['name'] == "Romania")  || ($team['name'] == "Belgium")  || ($team['name'] == "Slovakia")) {
+                            $rowClass = 'table-success';
+                        }
+                    }                    
 
                     echo "<tr class='$rowClass'>
                             <td><img src='{$team['img']}' alt='{$team['name']}' style='width: 36px; border-radius: 50%; margin-right: 10px;' /> {$team['name']}</td>

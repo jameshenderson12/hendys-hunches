@@ -45,8 +45,7 @@ input {
 
     <section class="section">
 		<p class="lead">Turn your predictions into points and prizes!</p>
-		<p>Predict the results of each of the following Round of 16 fixtures and then 'submit' to lock in your predictions. Once submitted, predictions cannot be changed.</p>
-		<p class="alert alert-warning"><i class="bi bi-exclamation-triangle-fill"></i> Predictions can include draws as they <strong>do not include extra time</strong>.</p>
+		<p>Predict the results of each of the following 36 group stage fixtures and then 'submit' to lock in your predictions. Predictions will not be submitted unless you have completed for all 36 fixtures. Once submitted, predictions cannot be changed. Forms for the knockout fixtures will be available from <?= $GLOBALS['group_fixtures_end_date'] ?>.
 		<!-- <p class="alert alert-warning" id="submitMsg"><strong>Note:</strong> You can predict a draw as predictions are for 90 mins only (do not include extra time and penalties).</p> -->
 		<a name="matches"></a><!--anchor point for filters-->				
 		<form id="predictionForm" name="predictionForm" class="form-horizontal" action="submit.php" method="POST">
@@ -57,7 +56,7 @@ input {
 		<table id="table" class="table table-sm table-striped">
 			<thead>
 				<tr>
-					<th class="d-none d-md-table-cell">Group</th>
+					<th class="d-none d-md-table-cell">Stage</th>
 					<th></th>
 					<th></th>
 					<th></th>
@@ -81,9 +80,9 @@ input {
 <script>
     $(document).ready(function () {
         // Fetch data from JSON file
-        $.getJSON("json/uefa-euro-2024-fixtures-quarters.json", function (data) {
+        $.getJSON("json/uefa-euro-2024-fixtures-ro16.json", function (data) {
             let fixture = '';
-            let x = 89, y = 90;
+            let x = 73, y = 74;
 
             // Iterate through objects
             $.each(data, function (key, value) {
@@ -126,15 +125,6 @@ input {
 		});
 	});
 
-	// function populateScores() {
-	// 	const weightedScores = [0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 4]; // 0, 1, and 2 appear more frequently
-	// 	for (let i = 1; i <= 72; i++) {
-	// 		const randomIndex = Math.floor(Math.random() * weightedScores.length);
-	// 		const randomScore = weightedScores[randomIndex];
-	// 		$('#score' + i + '_p').val(randomScore);
-	// 	}
-	// }
-
 	function populateScores() {
 		function getRandomScore() {
 			const rand = Math.random();
@@ -147,11 +137,11 @@ input {
 			else if (rand < 0.67) return 1;  // 30% chance of 1
 			else if (rand < 0.88) return 2;  // 21% chance of 2
 			else if (rand < 0.95) return 3;  // 7% chance of 3
-			else if (rand < 0.99) return 4;  // 4% chance of 3
+			else if (rand < 0.99) return 4;  // 4% chance of 4
 			else return 5;  // 1% chance of 5			
 		}
 
-		for (let i = 89; i <= 96; i += 2) {
+		for (let i = 73; i <= 88; i += 2) {
 			const homeScore = getRandomScore();
 			let awayScore = getRandomScore();
 

@@ -1,0 +1,42 @@
+[
+    {
+        "MatchNumber": 45,
+        "RoundNumber": "QF",
+        "DateUtc": "2024-07-05 17:00",
+        "Location": "Stuttgart",
+        "HomeTeam": "Spain",
+        "AwayTeam": "Germany",
+        "HomeTeamScore": null,
+        "AwayTeamScore": null
+    },
+    {
+        "MatchNumber": 46,
+        "RoundNumber": "QF",
+        "DateUtc": "2024-07-05 20:00",
+        "Location": "Hamburg",
+        "HomeTeam": "Portugal",
+        "AwayTeam": "France",
+        "HomeTeamScore": null,
+        "AwayTeamScore": null
+    },
+    {
+        "MatchNumber": 48,
+        "RoundNumber": "QF",
+        "DateUtc": "2024-07-06 17:00",
+        "Location": "Dusseldorf",
+        "HomeTeam": "England",
+        "AwayTeam": "Switzerland",
+        "HomeTeamScore": null,
+        "AwayTeamScore": null
+    },
+    {
+        "MatchNumber": 47,
+        "RoundNumber": "QF",
+        "DateUtc": "2024-07-06 20:00",
+        "Location": "Berlin",
+        "HomeTeam": "Netherlands",
+        "AwayTeam": "Türkiye",
+        "HomeTeamScore": null,
+        "AwayTeamScore": null
+    }
+]

@@ -1,0 +1,22 @@
+[
+    {
+        "MatchNumber": 49,
+        "RoundNumber": "SF",
+        "DateUtc": "2024-07-09 20:00",
+        "Location": "Munich",
+        "HomeTeam": "W45",
+        "AwayTeam": "W46",
+        "HomeTeamScore": null,
+        "AwayTeamScore": null
+    },
+    {
+        "MatchNumber": 50,
+        "RoundNumber": "SF",
+        "DateUtc": "2024-07-10 20:00",
+        "Location": "Dortmund",
+        "HomeTeam": "W47",
+        "AwayTeam": "W48",
+        "HomeTeamScore": null,
+        "AwayTeamScore": null
+    }
+]

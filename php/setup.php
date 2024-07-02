@@ -50,7 +50,10 @@ echo "Tournament Start Date: $tournament_start_date" . PHP_EOL;
 echo "Tournament End Date: $tournament_start_date" . PHP_EOL;
 
 echo PHP_EOL;
+echo "------------------------------------" . PHP_EOL;
 echo "Now let's configure your database..." . PHP_EOL;
+echo "------------------------------------" . PHP_EOL;
+$teams_per_group = prompt("Enter the name of your database (e.g. 'hh_eu2024')");
 echo PHP_EOL;
 
 // Placeholder for setup logic

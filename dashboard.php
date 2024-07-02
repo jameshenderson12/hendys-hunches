@@ -57,37 +57,39 @@ include "php/dashboard-items.php";
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">Announcements</h5>
-                                </p>
-                                <p><strong>18/06/2024 22:03 Update:</strong><br>We've reached the end of the 1st round of group matches. Still everything to play for so well done everyone so far!</p>
-                                <p>Prizes will be awarded as:</p>
-                                <table class="table table-striped table-sm table-info">
+                                <p><strong>30/06/2024 12:10 Update:</strong><br>As you may have noticed, I've had a slight hiccup in processing the first knockout results. Rest assured all your predictions are retained in the database and hopefully things will be resolved shortly.</p>
+                                <!-- <hr> -->
+                                <!-- <p><strong>26/06/2024 23:21 Update:</strong><br>You can now <a href="predictions.php" title="Submit predictions">submit your predictions</a> for the 'Round of 16'. Please do so before 16.00 on <?= $GLOBALS['round_of_16_start_date'] ?> so you don't miss out!</p> -->
+                                <hr>
+                                <p><strong>18/06/2024 22:03 Update:</strong><br>Prizes will be awarded as:</p>
+                                <table class="table table-striped table-sm">
                                     <tbody>
                                         <tr>
-                                            <td>1st:</td>
+                                            <td>1st</td>
                                             <td>£60 (40% of the prize fund)</td>
                                         </tr>
                                         <tr>
-                                            <td>2nd:</td>
+                                            <td>2nd</td>
                                             <td>£40 (27% of the prize fund)</td>
                                         </tr>
                                         <tr>
-                                            <td>3rd:</td>
+                                            <td>3rd</td>
                                             <td>£25 (17% of the prize fund)</td>
                                         </tr>
                                         <tr>
-                                            <td>4th:</td>
+                                            <td>4th</td>
                                             <td>£15 (10% of the prize fund)</td>
                                         </tr>
                                         <tr>
-                                            <td>5th:</td>
+                                            <td>5th</td>
                                             <td>£10 (6% of the prize fund)</td>
                                         </tr>
                                     </tbody>
                                 </table>
                                 <p>Any positions shared will have prizes split equally.</p>
                                 <hr>
-                                <p><strong>15/06/2024 14:11 Update:</strong><br>Many apologies for the delay in updating the first result for the current rankings. This is done now. I must admit I was slightly scarred from a late night of drowning my sorrows! Good luck everyone.</p>
-                                <hr>
+                                <!-- <p><strong>15/06/2024 14:11 Update:</strong><br>Many apologies for the delay in updating the first result for the current rankings. This is done now. I must admit I was slightly scarred from a late night of drowning my sorrows! Good luck everyone.</p> -->
+                                <!-- <hr> -->
                                 <?php displayCharityInformation() ?>
                             </div>
                         </div>
@@ -115,7 +117,7 @@ include "php/dashboard-items.php";
                             <?php displaySFMatchesPlayed() ?>
                         </div>
                         <?php displayPayStatus() ?>
-                        <p><i class="bi bi-envelope"></i> If you experience any issues, simply reply to your welcome email.</p>
+                        <!-- <p><i class="bi bi-envelope"></i> If you experience any issues, simply reply to your welcome email.</p> -->
                     </div>
                 </div>
               
@@ -163,14 +165,14 @@ include "php/dashboard-items.php";
                     <div class="col-xxl-12 col-md-6">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">Anonymous Poll</h5>
+                                <h5 class="card-title">Anonymous Poll #02</h5>                                
                                 <div id="poll">
-                                    <h6 id="question"></h6>
+                                    <h6 id="question"></h6><!-- class="p-3 mb-2 border border-danger border-2" -->
                                     <div id="answers">
-                                        <!-- Answers will be dynamically added here -->
+                                         <!-- Answers will be dynamically added here -->
                                     </div>
                                     <div id="results">
-                                        <!-- Results will be dynamically updated here -->
+                                         <!-- Results will be dynamically updated here -->
                                     </div>
                                 </div>
                             </div>
@@ -214,7 +216,7 @@ function vote(answerId) {
         },
         body: 'answerId=' + answerId
     }).then(() => {
-        localStorage.setItem("hasVoted", true);
+        localStorage.setItem("hasVotedPoll02", true);
         disableVoting();
         fetchPollData(); // Refresh poll data after voting
     });
@@ -224,7 +226,7 @@ function renderPoll(data) {
     const question = data[0].question;
     document.getElementById("question").textContent = question;
     const answersDiv = document.getElementById("answers");
-    const hasVoted = localStorage.getItem("hasVoted");
+    const hasVoted = localStorage.getItem("hasVotedPoll02");
     answersDiv.innerHTML = ""; // Clear previous answers
     if (hasVoted) {
         answersDiv.innerHTML = "<p><i class='bi bi-check-circle-fill text-success'></i> You have voted on this poll.</p>";
@@ -233,7 +235,7 @@ function renderPoll(data) {
             const answerElem = document.createElement("div");
             answerElem.classList.add("form-check");
             answerElem.innerHTML = `
-                <div class="my-4">
+                <div class="my-3">
                 <input class="form-check-input" type="radio" name="answer" id="answer${answer.id}" value="${answer.id}">
                 <label class="form-check-label" for="answer${answer.id}">
                     ${answer.answer}
@@ -248,14 +250,15 @@ function renderPoll(data) {
 function updateResults(data) {
     const resultsDiv = document.getElementById("results");
     resultsDiv.innerHTML = ""; // Clear previous results
-    const totalVotes = data.reduce((total, answer) => total + answer.count, 0);
+    //const totalVotes = data.reduce((total, answer) => total + answer.count, 0);
+    const totalVotes = data.reduce((total, answer) => total + Number(answer.count), 0);
     data.forEach(answer => {
         const resultElem = document.createElement("div");
         resultElem.innerHTML = `            
-            <div class="progress" style="height: 50px">
+            <div class="progress" style="height: 40px">
                 <div class="progress-bar bg-info" role="progressbar" style="width: ${(answer.count / totalVotes) * 100}%" aria-valuenow="${answer.count}" aria-valuemin="0" aria-valuemax="${totalVotes}"></div>
             </div>
-            <p>${answer.answer}: ${answer.count}</p>
+            <p style="text-align: right;">${answer.answer}: <strong>${answer.count}</strong></p>
         `;
         resultsDiv.appendChild(resultElem);
     });

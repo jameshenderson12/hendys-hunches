@@ -150,11 +150,11 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	            <script>
 	                $(document).ready(function () {
 	                    // Fetch data from JSON file
-	                    $.getJSON("../json/uefa-euro-2024-fixtures-groups.json",
+	                    $.getJSON("../json/uefa-euro-2024-fixtures-ro16.json",
 	                    	function (data) {
 	                        var fixture = '';
-													var x = 1;
-													var y = 2;
+													var x = 73;
+													var y = 74;
 	                        // Iterate through objects
 	                        $.each(data, function (key, value) {
 								var homeTeam = value.HomeTeam;
@@ -167,7 +167,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 								const [hours, minutes] = timeValues.split(':');
 								const date = new Date(+year, +month - 1, +day, +hours, +minutes).toLocaleString().slice(0, -3);
 	                            fixture += '<tr>';
-								fixture += '<td class="small text-muted">' + value.Group + '</td>';
+								fixture += '<td class="small text-muted">' + value.RoundNumber + '</td>';
 	                            fixture += '<td>' + value.HomeTeam + '</td>';
 								fixture += '<td><img src="' + homeTeamFlag + '" alt="Flag of ' + homeTeam + '" title="Flag of ' + homeTeam + '"></td>';
 								fixture += '<td><input type="text" id="score' + x + '_r" name="score' + x + '_r" class="form-control" /></td>';

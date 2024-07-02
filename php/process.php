@@ -25,15 +25,16 @@ function updateMoveStatus() {
 	include 'db-connect.php';
 
 	// Create a query to return the rankings information
-	$sql_getrankings = "SELECT live_user_information.id, live_user_information.firstname, live_user_information.surname, live_user_information.faveteam, live_user_information.startpos, live_user_information.currpos, live_user_information.lastpos, live_user_predictions_groups.points_total,
-				FIND_IN_SET(points_total, (
-					SELECT GROUP_CONCAT( DISTINCT points_total
-					ORDER BY points_total DESC )
-					FROM live_user_predictions_groups )
-				) AS rank
-				FROM live_user_information
-				INNER JOIN live_user_predictions_groups ON live_user_information.id = live_user_predictions_groups.id
-				ORDER BY rank ASC, surname ASC";
+	$sql_getrankings = "SELECT lui.id, lui.firstname, lui.surname, lui.avatar, lui.faveteam, lui.startpos, lui.currpos, lui.lastpos, (lup_groups.points_total + lup_ro16.points_total) AS points_total,
+						FIND_IN_SET((lup_groups.points_total + lup_ro16.points_total), (
+							SELECT GROUP_CONCAT(DISTINCT (lup_groups.points_total + lup_ro16.points_total) ORDER BY (lup_groups.points_total + lup_ro16.points_total) DESC)
+							FROM live_user_predictions_groups lup_groups
+							JOIN live_user_predictions_ro16 lup_ro16 ON lup_groups.id = lup_ro16.id)
+						) AS rank
+						FROM live_user_information lui
+						INNER JOIN live_user_predictions_groups lup_groups ON lui.id = lup_groups.id
+						INNER JOIN live_user_predictions_ro16 lup_ro16 ON lui.id = lup_ro16.id
+						ORDER BY rank ASC, surname ASC";
 
 	// Execute the query and return the results or display an appropriate error message
 	$rankings = mysqli_query($con, $sql_getrankings) or die(mysqli_error());
@@ -176,11 +177,10 @@ function compareRO16Values() {
 	$ids = array();
 
 	// Connect to the database
-	include '../php/db-connect.php';
+	include 'db-connect.php';
 
 	// Global SQL query strings
-	$sql_getresults = "SELECT SUM(score97_r) as score97_r, SUM(score98_r) as score98_r, SUM(score99_r) as score99_r, SUM(score100_r) as score100_r, SUM(score101_r) as score101_r, SUM(score102_r) as score102_r, SUM(score103_r) as score103_r, SUM(score104_r) as score104_r, SUM(score105_r) as score105_r, SUM(score106_r) as score106_r,
-	SUM(score107_r) as score107_r, SUM(score108_r) as score108_r, SUM(score109_r) as score109_r, SUM(score110_r) as score110_r, SUM(score111_r) as score111_r, SUM(score112_r) as score112_r FROM live_match_results";
+	$sql_getresults = "SELECT SUM(score73_r) as score73_r, SUM(score74_r) as score74_r, SUM(score75_r) as score75_r, SUM(score76_r) as score76_r, SUM(score77_r) as score77_r, SUM(score78_r) as score78_r, SUM(score79_r) as score79_r, SUM(score80_r) as score80_r, SUM(score81_r) as score81_r, SUM(score82_r) as score82_r, SUM(score83_r) as score83_r, SUM(score84_r) as score84_r, SUM(score85_r) as score85_r, SUM(score86_r) as score86_r, SUM(score87_r) as score87_r, SUM(score88_r) as score88_r FROM live_match_results";
 	$sql_getusernames = "SELECT username FROM live_user_predictions_ro16";
 	$sql_setzero = "UPDATE live_user_predictions_ro16 SET points_total = 0";
 
@@ -203,7 +203,7 @@ function compareRO16Values() {
 	foreach ($usernames as $usernamevalue) {
 
 		// SQL query strings to be looped on username value
-		$sql_getspecificuser = "SELECT username, firstname, surname, score97_p, score98_p, score99_p, score100_p, score101_p, score102_p, score103_p, score104_p, score105_p, score106_p, score107_p, score108_p, score109_p, score110_p, score111_p, score112_p FROM live_user_predictions_ro16 WHERE username='".$usernamevalue."'";
+		$sql_getspecificuser = "SELECT username, firstname, surname, score73_p, score74_p, score75_p, score76_p, score77_p, score78_p, score79_p, score80_p, score81_p, score82_p, score83_p, score84_p, score85_p, score86_p, score87_p, score88_p FROM live_user_predictions_ro16 WHERE username='".$usernamevalue."'";
 		$sql_setblankpoints = "UPDATE live_user_predictions_ro16 SET points_total = points_total + '".$blank_points."' WHERE username='".$usernamevalue."'";
 		$sql_setscorepoints = "UPDATE live_user_predictions_ro16 SET points_total = points_total + '".$score_points."' WHERE username='".$usernamevalue."'";
 
@@ -216,7 +216,7 @@ function compareRO16Values() {
 		// Cycle through the number of potential matches (e.g. 1-48)
 		$length = sizeof($matchids) * 2;
 
-		for ($i=97; $i<=$length; $i++) {
+		for ($i=73; $i<=$length; $i++) {
 			if($pvalue["score".$i."_p"] === $rvalue["score".$i."_r"]) {
 				//printf ("%s %s's Prediction: %s, Result: %s", $pvalue["firstname"], $pvalue["surname"], $pvalue["score".$i."_p"], $rvalue["score".$i."_r"]);
 				mysqli_query($con, $sql_setscorepoints);
@@ -232,7 +232,7 @@ function compareRO16Values() {
 		//===========================================================
 		// Cycle through the home and away scores
 
-		for ($j=97, $k=98; $j<=$length, $k<=$length; $j+=2, $k+=2) {
+		for ($j=73, $k=74; $j<=$length, $k<=$length; $j+=2, $k+=2) {
 
 			$sql_setoutcomepoints = "UPDATE live_user_predictions_ro16 SET points_total = points_total + '".$outcome_points."' WHERE username='".$usernamevalue."'";
 			$sql_setidenticalpoints = "UPDATE live_user_predictions_ro16 SET points_total = points_total + '".$identical_points."' WHERE username='".$usernamevalue."'";
@@ -251,8 +251,8 @@ function compareRO16Values() {
 				}
 			}
 		}
-		mysqli_free_result($pvalue);
-		mysqli_free_result($rvalue);
+		//mysqli_free_result($pvalue);
+		//mysqli_free_result($rvalue);
 	}
 	// Close the database connection
 	mysqli_close($con);
@@ -270,7 +270,7 @@ function compareQFValues() {
 	$ids = array();
 
 	// Connect to the database
-	include '../php/db-connect.php';
+	include 'db-connect.php';
 
 	// Global SQL query strings
 	$sql_getresults = "SELECT SUM(score113_r) as score113_r, SUM(score114_r) as score114_r, SUM(score115_r) as score115_r, SUM(score116_r) as score116_r, SUM(score117_r) as score117_r, SUM(score118_r) as score118_r, SUM(score119_r) as score119_r, SUM(score120_r) as score120_r FROM live_match_results";
@@ -344,8 +344,8 @@ function compareQFValues() {
 				}
 			}
 		}
-		mysqli_free_result($pvalue);
-		mysqli_free_result($rvalue);
+		//mysqli_free_result($pvalue);
+		//mysqli_free_result($rvalue);
 	}
 	// Close the database connection
 	mysqli_close($con);
@@ -362,7 +362,7 @@ function compareSFValues() {
 	$ids = array();
 
 	// Connect to the database
-	include '../php/db-connect.php';
+	include 'db-connect.php';
 
 	// Global SQL query strings
 	$sql_getresults = "SELECT SUM(score121_r) as score121_r, SUM(score122_r) as score122_r, SUM(score123_r) as score123_r, SUM(score124_r) as score124_r FROM live_match_results";
@@ -436,8 +436,8 @@ function compareSFValues() {
 				}
 			}
 		}
-		mysqli_free_result($pvalue);
-		mysqli_free_result($rvalue);
+		//mysqli_free_result($pvalue);
+		//mysqli_free_result($rvalue);
 	}
 	// Close the database connection
 	mysqli_close($con);
@@ -488,7 +488,10 @@ function insertMatchResult() {
     $stmt->close();
     mysqli_close($con);
 
-	compareValues();
+	//compareValues();
+	compareRO16Values();
+	//compareQFValues();
+	// compareSFValues();
 
     // Debug message
     //echo "Record inserted successfully<br>";
@@ -513,8 +516,8 @@ function insertMatchResultZZ() {
 	// Close the DB connection
 	mysqli_close($con);
 	// Now update table by comparing match results against user predictions
-	compareValues();
-	//compareRO16Values();
+	//compareValues();
+	compareRO16Values();
 	//compareQFValues();
 	// compareSFValues();
 }
@@ -621,8 +624,8 @@ function insertRO16Predictions() {
 	include 'php/db-connect.php';
 	// SQL query to insert predictions initially
 	$sql_insert = "INSERT INTO live_user_predictions_ro16 (id, username, firstname, surname, score73_p, score74_p, score75_p, score76_p, score77_p, score78_p, score79_p, score80_p, score81_p, score82_p, score83_p, score84_p, score85_p, score86_p, score87_p, score88_p, lastupdate)
-			   VALUES ('{$_SESSION['id']}','{$_SESSION['username']}','{$_SESSION['firstname']}','{$_SESSION['surname']}','$_POST[score97_p]','$_POST[score98_p]','$_POST[score99_p]','$_POST[score100_p]','$_POST[score101_p]','$_POST[score102_p]','$_POST[score103_p]','$_POST[score104_p]','$_POST[score105_p]','$_POST[score106_p]','$_POST[score107_p]','$_POST[score108_p]','$_POST[score109_p]','$_POST[score110_p]',
-					 '$_POST[score111_p]','$_POST[score112_p]', NOW())";
+			   VALUES ('{$_SESSION['id']}','{$_SESSION['username']}','{$_SESSION['firstname']}','{$_SESSION['surname']}','$_POST[score73_p]','$_POST[score74_p]','$_POST[score75_p]','$_POST[score76_p]','$_POST[score77_p]','$_POST[score78_p]','$_POST[score79_p]','$_POST[score80_p]','$_POST[score81_p]','$_POST[score82_p]','$_POST[score83_p]','$_POST[score84_p]','$_POST[score85_p]','$_POST[score86_p]',
+					 '$_POST[score87_p]','$_POST[score88_p]', NOW())";
 	mysqli_query($con, $sql_insert) or die('Error: ' . mysqli_error($con));
 	mysqli_close($con);
 }
@@ -631,8 +634,8 @@ function insertQFPredictions() {
 	// Connect to the database
 	include 'php/db-connect.php';
 	// SQL query to insert predictions initially
-	$sql_insert = "INSERT INTO live_user_predictions_qf (id, username, firstname, surname, score113_p, score114_p, score115_p, score116_p, score117_p, score118_p, score119_p, score120_p, lastupdate)
-			   VALUES ('{$_SESSION['id']}','{$_SESSION['username']}','{$_SESSION['firstname']}','{$_SESSION['surname']}','$_POST[score113_p]','$_POST[score114_p]','$_POST[score115_p]','$_POST[score116_p]','$_POST[score117_p]','$_POST[score118_p]','$_POST[score119_p]','$_POST[score120_p]', NOW())";
+	$sql_insert = "INSERT INTO live_user_predictions_qf (id, username, firstname, surname, score89_p, score90_p, score91_p, score92_p, score93_p, score94_p, score95_p, score96_p, lastupdate)
+			   VALUES ('{$_SESSION['id']}','{$_SESSION['username']}','{$_SESSION['firstname']}','{$_SESSION['surname']}','$_POST[score89_p]','$_POST[score90_p]','$_POST[score91_p]','$_POST[score92_p]','$_POST[score93_p]','$_POST[score94_p]','$_POST[score95_p]','$_POST[score96_p]', NOW())";
 	mysqli_query($con, $sql_insert) or die('Error: ' . mysqli_error($con));
 	mysqli_close($con);
 }
@@ -662,15 +665,15 @@ function submitPredictions() {
 	include 'php/db-connect.php';
 
   	//$sql_exists = "SELECT * FROM live_user_predictions_groups WHERE id='{$_SESSION['id']}'";
-	$sql_exists = "SELECT * FROM live_user_predictions_groups WHERE id='{$_SESSION['id']}'";
+	$sql_exists = "SELECT * FROM live_user_predictions_qf WHERE id='{$_SESSION['id']}'";
 
 	$result = mysqli_query($con, $sql_exists);
 	if(mysqli_num_rows($result) == 0) {
+		//insertGroupPredictions();
 		//insertRO16Predictions();
-		//insertQFPredictions();
+		insertQFPredictions();
 		//insertSFPredictions();
-		//insertFiPredictions();
-		insertGroupPredictions();
+		//insertFiPredictions();		
 		/* Alert to check if predictions are inserted...
 		print '<script type="text/javascript">';
 		print 'alert("Predictions have been inserted! '. $_SESSION['firstname'].' '. $_SESSION['surname'].' yeah.")';
@@ -689,8 +692,8 @@ function submitPredictions() {
 
 	// Close the DB connection
 	mysqli_close($con);
-	updateTotalUsers();
-	setInitialRanking();
+	//updateTotalUsers();
+	//setInitialRanking();
 //	  }
 }
 
@@ -760,18 +763,18 @@ function displayRankings() {
 }
 
 
-function displayRankingsEq2() {
+function displayRankingsEq3() {
     // Connect to the database
     include 'php/db-connect.php';
 
     // Set up SQL query to retrieve data from database tables
-    $sql_maketable = "SELECT live_user_information.id, live_user_information.firstname, live_user_information.surname, live_user_information.avatar, live_user_information.faveteam, live_user_information.startpos, live_user_information.currpos, live_user_information.lastpos, live_user_predictions_groups.points_total,
+    $sql_maketable = "SELECT live_user_information.id, live_user_information.firstname, live_user_information.surname, live_user_information.avatar, live_user_information.faveteam, live_user_information.startpos, live_user_information.currpos, live_user_information.lastpos, test_user_predictions_groups.points_total,
                         FIND_IN_SET(points_total, (
                             SELECT GROUP_CONCAT(DISTINCT points_total ORDER BY points_total DESC)
-                            FROM live_user_predictions_groups )
+                            FROM test_user_predictions_groups )
                         ) AS rank
                         FROM live_user_information
-                        INNER JOIN live_user_predictions_groups ON live_user_information.id = live_user_predictions_groups.id
+                        INNER JOIN test_user_predictions_groups ON live_user_information.id = test_user_predictions_groups.id
                         ORDER BY rank ASC, surname ASC";
 
     $sql_matchresults = "SELECT * FROM live_match_results";
@@ -838,20 +841,22 @@ function displayRankingsEq2() {
     mysqli_close($con);
 }
 
-
-function displayRankingsEq() {
+function displayRankingsEq4() {
     // Connect to the database
     include 'php/db-connect.php';
 
     // Set up SQL query to retrieve data from database tables
-    $sql_maketable = "SELECT live_user_information.id, live_user_information.firstname, live_user_information.surname, live_user_information.avatar, live_user_information.faveteam, live_user_information.startpos, live_user_information.currpos, live_user_information.lastpos, live_user_predictions_groups.points_total,
-                        FIND_IN_SET(points_total, (
-                            SELECT GROUP_CONCAT(DISTINCT points_total ORDER BY points_total DESC)
-                            FROM live_user_predictions_groups )
-                        ) AS rank
-                        FROM live_user_information
-                        INNER JOIN live_user_predictions_groups ON live_user_information.id = live_user_predictions_groups.id
-                        ORDER BY rank ASC, surname ASC";
+    $sql_maketable = "SELECT lui.id, lui.firstname, lui.surname, lui.avatar, lui.faveteam, lui.startpos, lui.currpos, lui.lastpos, 
+						(lup_groups.points_total + IFNULL(lup_ro16.points_total, 0)) AS points_total,
+						FIND_IN_SET((lup_groups.points_total + IFNULL(lup_ro16.points_total, 0)), (
+							SELECT GROUP_CONCAT(DISTINCT (lup_groups.points_total + IFNULL(lup_ro16.points_total, 0)) ORDER BY (lup_groups.points_total + IFNULL(lup_ro16.points_total, 0)) DESC)
+							FROM live_user_predictions_groups lup_groups
+							LEFT JOIN live_user_predictions_ro16 lup_ro16 ON lup_groups.id = lup_ro16.id)
+						) AS rank
+					FROM live_user_information lui
+					INNER JOIN live_user_predictions_groups lup_groups ON lui.id = lup_groups.id
+					LEFT JOIN live_user_predictions_ro16 lup_ro16 ON lui.id = lup_ro16.id
+					ORDER BY rank ASC, surname ASC";
 
     $sql_matchresults = "SELECT * FROM live_match_results";
 
@@ -861,7 +866,7 @@ function displayRankingsEq() {
 
     echo "<div class='table-responsive'>";
     echo "<table id='rankingsTable' class='table table-striped'>";
-    echo "<thead><tr><th>Rank</th><th>Player</th><th>Points</th></tr></thead>";
+    echo "<thead><tr><th>Rank</th><th>Move</th><th>Player</th><th>Points</th></tr></thead>";
     echo "<tbody>";
 
     // Keep track of the previous rank to identify non-unique ranks
@@ -876,21 +881,21 @@ function displayRankingsEq() {
 
         // Append '=' if the rank is not unique
         if ($rank == $prevRank) {
-            $displayRank = $rank . "=";
+            $displayRank = '<strong>'. $rank . '</strong>'."=";
         } else {
-            $displayRank = $rank;
+            $displayRank = '<strong>'. $rank . '</strong>';
         }
 
         // Determine if move is upwards, downwards or the same and calculate the difference between current and previous ranking
         if ($row["lastpos"] > $row["currpos"]) {
             $diff = $row["lastpos"] - $row["currpos"];
-            $move = "<i class='bi bi-arrow-up-circle-fill text-success'></i>";
+            $move = "<span class='text-success'><i class='bi bi-caret-up-fill'></i>" . $diff . "</span>";
         } elseif ($row["lastpos"] < $row["currpos"]) {
             $diff = $row["currpos"] - $row["lastpos"];
-            $move = "<i class='bi bi-arrow-down-circle-fill text-danger'></i>";
+            $move = "<span class='text-danger'><i class='bi bi-caret-down-fill'></i>" . $diff . "</span>";
         } else {
             $diff = 0;
-            $move = "<i class='bi bi-arrow-right-circle-fill text-secondary'></i>";
+            $move = "<span class='text-secondary'><i class='bi bi-caret-right-fill'></i>" . $diff . "</span>";
         }
 
         // Ensure both name variables begin with upper case letters
@@ -898,10 +903,11 @@ function displayRankingsEq() {
         $uppCaseSN = ucfirst($row["surname"]);
 
         // Display the table complete with all data variables
-        echo "<tr>";
-        echo "<td><span class=''>".$displayRank."</span><span style='margin-right: 8px'>".$move."</span></td>";        
+        echo "<tr>";		
+        echo "<td><span class=''>" . $displayRank . "</span></td>";
+		echo "<td><span class=''>" . $move . "</span></td>";		
         echo "<td><img src='".$row["avatar"]."' class='img-responsive pull-left' width='20px'>&nbsp;<a href='user.php?id=".$row["id"]."'>".$uppCaseFN." ".$uppCaseSN."</a></td>";
-        echo "<td>".$row["points_total"]."</td>";
+        echo "<td>".$row["points_total"]."</td>";		
         echo "</tr>";
 
         // Update the previous rank
@@ -916,88 +922,84 @@ function displayRankingsEq() {
     mysqli_close($con);
 }
 
+function displayRankingsEq2() {
+    // Connect to the database
+    include 'php/db-connect.php';
 
-function displayRankingsXX() {
-	// Connect to the database
-	include 'php/db-connect.php';
-
-	// Set up SQL query to retrieve data from database tables
-	
-	$sql_maketable = "SELECT live_user_information.id, live_user_information.firstname, live_user_information.surname, live_user_information.avatar, live_user_information.faveteam, live_user_information.startpos, live_user_information.currpos, live_user_information.lastpos, live_user_predictions_groups.points_total,
-						FIND_IN_SET(points_total, (
-							SELECT GROUP_CONCAT( DISTINCT points_total
-							ORDER BY points_total DESC )
-							FROM live_user_predictions_groups )
+    // Set up SQL query to retrieve data from database tables
+    $sql_maketable = "SELECT lui.id, lui.firstname, lui.surname, lui.avatar, lui.faveteam, lui.startpos, lui.currpos, lui.lastpos, (lup_groups.points_total + lup_ro16.points_total) AS points_total,
+						FIND_IN_SET((lup_groups.points_total + lup_ro16.points_total), (
+							SELECT GROUP_CONCAT(DISTINCT (lup_groups.points_total + lup_ro16.points_total) ORDER BY (lup_groups.points_total + lup_ro16.points_total) DESC)
+							FROM live_user_predictions_groups lup_groups
+							JOIN live_user_predictions_ro16 lup_ro16 ON lup_groups.id = lup_ro16.id)
 						) AS rank
-						FROM live_user_information
-						INNER JOIN live_user_predictions_groups ON live_user_information.id = live_user_predictions_groups.id
+						FROM live_user_information lui
+						INNER JOIN live_user_predictions_groups lup_groups ON lui.id = lup_groups.id
+						INNER JOIN live_user_predictions_ro16 lup_ro16 ON lui.id = lup_ro16.id
 						ORDER BY rank ASC, surname ASC";
-/*
-	$sql_maketable = "SELECT live_user_information.id, live_user_information.firstname, live_user_information.surname, live_user_information.avatar, live_user_information.faveteam, live_user_information.startpos, live_user_information.currpos, live_user_information.lastpos, live_user_predictions_groups.points_total as group_points, live_user_predictions_ro16.points_total as ro16_points, live_user_predictions_qf.points_total as qf_points, live_user_predictions_groups.points_total + live_user_predictions_ro16.points_total + live_user_predictions_qf.points_total + live_user_predictions_sf.points_total as points_total
-						FROM live_user_information
-						INNER JOIN live_user_predictions_groups ON live_user_information.id = live_user_predictions_groups.id
-						INNER JOIN live_user_predictions_ro16 ON live_user_information.id = live_user_predictions_ro16.id
-						INNER JOIN live_user_predictions_qf ON live_user_information.id = live_user_predictions_qf.id
-						INNER JOIN live_user_predictions_sf ON live_user_information.id = live_user_predictions_sf.id
-						ORDER BY points_total DESC, surname ASC";
-*/
-	$sql_matchresults = "SELECT * FROM live_match_results";
 
-	// Execute the query and return the results or display an appropriate error message
-	$table = mysqli_query($con, $sql_maketable) or die(mysqli_error());
-	// Execute the query to see if match results table contains any data
-	$result = mysqli_query($con, $sql_matchresults) or die(mysqli_error());
+    $sql_matchresults = "SELECT * FROM live_match_results";
 
-	// Start creating the table to display the returned values
-	print "<table class='table table-striped' style='background-color:#FFF'>";
-	//print "<tr><th></th><th>Rank</th><th>Move</th><th>Player</th><th>Favourite Team</th><th>Points</th></tr>";
-	print "<tr><th></th><th>Player</th><th>Points</th></tr>";
+    // Execute the query and return the results or display an appropriate error message
+    $table = mysqli_query($con, $sql_maketable) or die(mysqli_error($con));
+    $result = mysqli_query($con, $sql_matchresults) or die(mysqli_error($con));
 
-	while ($row = mysqli_fetch_assoc($table)) {
+    echo "<div class='table-responsive'>";
+    echo "<table id='rankingsTable' class='table table-striped'>";
+    echo "<thead><tr><th>Rank</th><th>Move</th><th>Player</th><th>Points</th></tr></thead>";
+    echo "<tbody>";
 
-		// Check if match results table contains any data
-		if (mysqli_num_rows($result) == 0) {
-			// Set rank value to start position value if there is no match data
-			$rank = $row["startpos"];
-		}
-		else {
-			// Set rank value to rank position once match data exists
-			$rank = $row["rank"];
-		}
+    // Keep track of the previous rank to identify non-unique ranks
+    $prevRank = null;
+    while ($row = mysqli_fetch_assoc($table)) {
+        // Check if match results table contains any data
+        if (mysqli_num_rows($result) == 0) {
+            $rank = $row["startpos"];
+        } else {
+            $rank = $row["rank"];
+        }
 
-		// Determine if move is upwards, downwards or the same and calculate the difference between current and previous ranking
-		if ($row["lastpos"] > $row["currpos"]) {
-			$diff = $row["lastpos"] - $row["currpos"];
-			$move = "<i class='bi bi-arrow-up-circle-fill text-success'></i>";
-		}
-		if ($row["lastpos"] < $row["currpos"]) {
-			$diff = $row["currpos"] - $row["lastpos"];
-			$move = "<i class='bi bi-arrow-down-circle-fill text-danger'></i>";
-		}
-		if ($row["lastpos"] == $row["currpos"]) {
-			$diff = 0;
-			$move = "<i class='bi bi-arrow-right-circle-fill text-secondary'></i>";
-		}
+        // Append '=' if the rank is not unique
+        if ($rank == $prevRank) {
+            $displayRank = '<strong>'. $rank . '</strong>'."=";
+        } else {
+            $displayRank = '<strong>'. $rank . '</strong>';
+        }
 
-		print "<tr>";
-		// Ensure both name variables being with upper case letters
-		$uppCaseFN = ucfirst($row["firstname"]);
-		$uppCaseSN = ucfirst($row["surname"]);
+        // Determine if move is upwards, downwards or the same and calculate the difference between current and previous ranking
+        if ($row["lastpos"] > $row["currpos"]) {
+            $diff = $row["lastpos"] - $row["currpos"];
+            $move = "<span class='text-success'><i class='bi bi-caret-up-fill'></i>" . $diff . "</span>";
+        } elseif ($row["lastpos"] < $row["currpos"]) {
+            $diff = $row["currpos"] - $row["lastpos"];
+            $move = "<span class='text-danger'><i class='bi bi-caret-down-fill'></i>" . $diff . "</span>";
+        } else {
+            $diff = 0;
+            $move = "<span class='text-secondary'><i class='bi bi-caret-right-fill'></i>" . $diff . "</span>";
+        }
 
-		// Display the table complete with all data variables
-		printf ("<td></td>");
-		//printf ("<td><strong>%s</strong> <span class='text-muted'>(%s)</span></td>", $rank, $row["lastpos"]);
-		//printf ("<td>%s %s</td>", $move, $diff);
-		printf ("<td><img src=".$row["avatar"]." class='img-responsive' width='20px'>&nbsp;<a href='user.php?id=%s'>%s %s</a></td>", $row["id"], $uppCaseFN, $uppCaseSN);
-		//printf ("<td>%s</td>", $row["faveteam"]);
-		printf ("<td>%s</td>", $row["points_total"]);
-		print "</tr>";
-	}
-	// Complete the physical table layout
-	print "</table>";
+        // Ensure both name variables begin with upper case letters
+        $uppCaseFN = ucfirst($row["firstname"]);
+        $uppCaseSN = ucfirst($row["surname"]);
 
-	// Close the database connection
-	mysqli_close($con);
+        // Display the table complete with all data variables
+        echo "<tr>";		
+        echo "<td><span class=''>" . $displayRank . "</span></td>";
+		echo "<td><span class=''>" . $move . "</span></td>";		
+        echo "<td><img src='".$row["avatar"]."' class='img-responsive pull-left' width='20px'>&nbsp;<a href='user.php?id=".$row["id"]."'>".$uppCaseFN." ".$uppCaseSN."</a></td>";
+        echo "<td>".$row["points_total"]."</td>";		
+        echo "</tr>";
+
+        // Update the previous rank
+        $prevRank = $rank;
+    }
+
+    echo "</tbody>";
+    echo "</table>";
+    echo "</div>";
+
+    // Close the database connection
+    mysqli_close($con);
 }
 
 function displayInfo() {

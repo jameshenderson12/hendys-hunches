@@ -10,7 +10,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->close();
 }
 
-$query = "SELECT * FROM live_poll_results WHERE question = 'Do you think Scotland will qualify from the group stage?'";
+// $query = "SELECT * FROM live_poll_results WHERE question = 'Do you think Scotland will qualify from the group stage?'";
+$query = "SELECT * FROM live_poll_results WHERE question = 'What stage do you think England will reach?'";
 $result = $con->query($query);
 
 $pollData = [];
