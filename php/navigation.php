@@ -33,11 +33,11 @@
 					</li> -->
 
 		            <li class="nav-item position-relative">
-		              <a class="nav-link" href="predictions.php">
-						Submit Predictions
-						<span class="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-success">
-						quarter-finals
-						</span>
+		              <a class="nav-link disabled" href="predictions.php">
+						Submit Prediction
+						<!-- <span class="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-success">
+						Final
+						</span> -->
 					  </a>
 		            </li>
 					<li class="nav-item">

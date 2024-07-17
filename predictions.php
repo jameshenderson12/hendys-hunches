@@ -45,7 +45,7 @@ input {
 
     <section class="section">
 		<p class="lead">Turn your predictions into points and prizes!</p>
-		<p>Predict the results of each of the following Round of 16 fixtures and then 'submit' to lock in your predictions. Once submitted, predictions cannot be changed.</p>
+		<p>Predict the Final fixture and then 'submit' to lock in your prediction. Once submitted, your prediction cannot be changed.</p>
 		<p class="alert alert-warning"><i class="bi bi-exclamation-triangle-fill"></i> Predictions can include draws as they <strong>do not include extra time</strong>.</p>
 		<!-- <p class="alert alert-warning" id="submitMsg"><strong>Note:</strong> You can predict a draw as predictions are for 90 mins only (do not include extra time and penalties).</p> -->
 		<a name="matches"></a><!--anchor point for filters-->				
@@ -57,7 +57,7 @@ input {
 		<table id="table" class="table table-sm table-striped">
 			<thead>
 				<tr>
-					<th class="d-none d-md-table-cell">Group</th>
+					<th class="d-none d-md-table-cell">Stage</th>
 					<th></th>
 					<th></th>
 					<th></th>
@@ -81,9 +81,9 @@ input {
 <script>
     $(document).ready(function () {
         // Fetch data from JSON file
-        $.getJSON("json/uefa-euro-2024-fixtures-quarters.json", function (data) {
+        $.getJSON("json/uefa-euro-2024-fixtures-final.json", function (data) {
             let fixture = '';
-            let x = 89, y = 90;
+            let x = 101, y = 102;
 
             // Iterate through objects
             $.each(data, function (key, value) {
@@ -151,7 +151,7 @@ input {
 			else return 5;  // 1% chance of 5			
 		}
 
-		for (let i = 89; i <= 96; i += 2) {
+		for (let i = 101; i <= 102; i += 2) {
 			const homeScore = getRandomScore();
 			let awayScore = getRandomScore();
 

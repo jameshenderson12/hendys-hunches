@@ -4,9 +4,9 @@
         "RoundNumber": "Final",
         "DateUtc": "2024-07-14 20:00",
         "Location": "Berlin",
-        "HomeTeam": "W49",
-        "AwayTeam": "W50",
-        "HomeTeamScore": null,
-        "AwayTeamScore": null
+        "HomeTeam": "Spain",
+        "AwayTeam": "England",
+        "HomeTeamScore": 2,
+        "AwayTeamScore": 1
     }
 ]

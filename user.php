@@ -35,15 +35,15 @@ include "php/navigation.php";
 					 										ON live_user_predictions_qf.id = live_user_information.id
 					 										WHERE live_user_predictions_qf.id='".$_GET["id"]."'";
 
-					// $sql_getusersf = "SELECT live_user_predictions_sf.*, live_user_information.avatar, live_user_information.faveteam, live_user_information.fieldofwork, live_user_information.location, live_user_information.tournwinner, live_user_information.currpos
-					// 										FROM live_user_predictions_sf INNER JOIN live_user_information
-					// 										ON live_user_predictions_sf.id = live_user_information.id
-					// 										WHERE live_user_predictions_sf.id='".$_GET["id"]."'";
+					$sql_getusersf = "SELECT live_user_predictions_sf.*, live_user_information.avatar, live_user_information.faveteam, live_user_information.fieldofwork, live_user_information.location, live_user_information.tournwinner, live_user_information.currpos
+															FROM live_user_predictions_sf INNER JOIN live_user_information
+															ON live_user_predictions_sf.id = live_user_information.id
+															WHERE live_user_predictions_sf.id='".$_GET["id"]."'";
 
-					// $sql_getuserfi = "SELECT live_user_predictions_final.*, live_user_information.avatar, live_user_information.faveteam, live_user_information.fieldofwork, live_user_information.location, live_user_information.tournwinner, live_user_information.currpos
-					// 										FROM live_user_predictions_final INNER JOIN live_user_information
-					// 										ON live_user_predictions_final.id = live_user_information.id
-					// 										WHERE live_user_predictions_final.id='".$_GET["id"]."'";															
+					$sql_getuserfi = "SELECT live_user_predictions_final.*, live_user_information.avatar, live_user_information.faveteam, live_user_information.fieldofwork, live_user_information.location, live_user_information.tournwinner, live_user_information.currpos
+					 										FROM live_user_predictions_final INNER JOIN live_user_information
+					 										ON live_user_predictions_final.id = live_user_information.id
+					 										WHERE live_user_predictions_final.id='".$_GET["id"]."'";															
 
 					// Global SQL query strings
 					$sql_getresults = "SELECT SUM(score1_r) as score1_r, SUM(score2_r) as score2_r, SUM(score3_r) as score3_r, SUM(score4_r) as score4_r, SUM(score5_r) as score5_r, SUM(score6_r) as score6_r, SUM(score7_r) as score7_r, SUM(score8_r) as score8_r, SUM(score9_r) as score9_r, SUM(score10_r) as score10_r,
@@ -68,13 +68,14 @@ include "php/navigation.php";
 
 					$userdata = mysqli_fetch_assoc(mysqli_query($con, $sql_getuserinfo));					
 					$userdata2 = mysqli_fetch_assoc(mysqli_query($con, $sql_getuserro16));
-					$result = mysqli_query($con, $sql_getuserqf);
+					$userdata3 = mysqli_fetch_assoc(mysqli_query($con, $sql_getuserqf));
+					$userdata4 = mysqli_fetch_assoc(mysqli_query($con, $sql_getusersf));
+					$result = mysqli_query($con, $sql_getuserfi);
 					if (!$result || mysqli_num_rows($result) == 0) {
-						$userdata3 = array('message' => 'No data available');
+						$userdata5 = array('message' => 'No data available');
 					} else {
-						$userdata3 = mysqli_fetch_assoc($result);
-					}
-					// $userdata4 = mysqli_fetch_assoc(mysqli_query($con, $sql_getusersf));
+						$userdata5 = mysqli_fetch_assoc($result);
+					}					
 					// $userdata5 = mysqli_fetch_assoc(mysqli_query($con, $sql_getuserfi));
 					$uppCaseFN = ucfirst($userdata["firstname"]);
 					$uppCaseSN = ucfirst($userdata["surname"]);
@@ -95,10 +96,9 @@ include "php/navigation.php";
 					$pointstotal = $userdata["points_total"];
 					$pointstotal2 = $userdata2["points_total"];
 					$pointstotal3 = $userdata3["points_total"];
-					// $pointstotal4 = $userdata4["points_total"];
-					// $pointstotal5 = $userdata5["points_total"];
-					//$pointstotal = $pointstotal1 + $pointstotal2 + $pointstotal3 + $pointstotal4 + $pointstotal5;
-					$pointstotal = $pointstotal + $pointstotal2 + $pointstotal3;
+					$pointstotal4 = $userdata4["points_total"];
+					$pointstotal5 = $userdata5["points_total"];
+					$pointstotal = $pointstotal1 + $pointstotal2 + $pointstotal3 + $pointstotal4 + $pointstotal5;					
 					$matchresult = mysqli_fetch_assoc(mysqli_query($con, $sql_getresults));
 
 		// Function for adding correct extention to a number
@@ -179,10 +179,60 @@ include "php/navigation.php";
 					// 		}
 					// }
 
-					$sql_getspecidqf = "SELECT id, firstname, surname, score89_p, score90_p, score91_p, score92_p, score93_p, score94_p, score95_p, score96_p FROM live_user_predictions_qf WHERE id='".$userid."'";
-					$pval = mysqli_fetch_assoc(mysqli_query($con, $sql_getspecidqf));
+					// $sql_getspecidqf = "SELECT id, firstname, surname, score89_p, score90_p, score91_p, score92_p, score93_p, score94_p, score95_p, score96_p FROM live_user_predictions_qf WHERE id='".$userid."'";
+					// $pval = mysqli_fetch_assoc(mysqli_query($con, $sql_getspecidqf));
 
-					for ($i=44; $i<=48; $i++) {
+					// for ($i=44; $i<=48; $i++) {
+					// 		$matchpoints[$i] = 0;
+
+					// 		if( is_numeric($pval["score".$oddgameno[$i]."_p"]) && is_numeric($pval["score".$evengameno[$i]."_p"]) ) {
+
+					// 			if($pval["score".$oddgameno[$i]."_p"] === $rvalue["score".$oddgameno[$i]."_r"]) {
+					// 				$matchpoints[$i] += 1;
+					// 			}
+					// 			if($pval["score".$evengameno[$i]."_p"] === $rvalue["score".$evengameno[$i]."_r"]) {
+					// 				$matchpoints[$i] += 1;
+					// 			}
+					// 			if (($pval["score".$oddgameno[$i]."_p"] === $rvalue["score".$oddgameno[$i]."_r"]) && ($pval["score".$evengameno[$i]."_p"] === $rvalue["score".$evengameno[$i]."_r"])) {
+					// 				$matchpoints[$i] += 3;
+					// 			}
+					// 			if ((($pval["score".$oddgameno[$i]."_p"] > $pval["score".$evengameno[$i]."_p"]) && ($rvalue["score".$oddgameno[$i]."_r"] > $rvalue["score".$evengameno[$i]."_r"]))
+					// 			|| (($pval["score".$oddgameno[$i]."_p"] < $pval["score".$evengameno[$i]."_p"]) && ($rvalue["score".$oddgameno[$i]."_r"] < $rvalue["score".$evengameno[$i]."_r"]))
+					// 			|| (($pval["score".$oddgameno[$i]."_p"] === $pval["score".$evengameno[$i]."_p"]) && ($rvalue["score".$oddgameno[$i]."_r"] === $rvalue["score".$evengameno[$i]."_r"])) ) {
+					// 				$matchpoints[$i] += 2;
+					// 			}
+					// 		}
+					// }
+
+					// $sql_getspecidsf = "SELECT id, firstname, surname, score97_p, score98_p, score99_p, score100_p FROM live_user_predictions_sf WHERE id='".$userid."'";
+					// $pval = mysqli_fetch_assoc(mysqli_query($con, $sql_getspecidsf));
+
+					// for ($i=49; $i<=50; $i++) {
+					// 		$matchpoints[$i] = 0;
+
+					// 		if( is_numeric($pval["score".$oddgameno[$i]."_p"]) && is_numeric($pval["score".$evengameno[$i]."_p"]) ) {
+
+					// 			if($pval["score".$oddgameno[$i]."_p"] === $rvalue["score".$oddgameno[$i]."_r"]) {
+					// 				$matchpoints[$i] += 1;
+					// 			}
+					// 			if($pval["score".$evengameno[$i]."_p"] === $rvalue["score".$evengameno[$i]."_r"]) {
+					// 				$matchpoints[$i] += 1;
+					// 			}
+					// 			if (($pval["score".$oddgameno[$i]."_p"] === $rvalue["score".$oddgameno[$i]."_r"]) && ($pval["score".$evengameno[$i]."_p"] === $rvalue["score".$evengameno[$i]."_r"])) {
+					// 				$matchpoints[$i] += 3;
+					// 			}
+					// 			if ((($pval["score".$oddgameno[$i]."_p"] > $pval["score".$evengameno[$i]."_p"]) && ($rvalue["score".$oddgameno[$i]."_r"] > $rvalue["score".$evengameno[$i]."_r"]))
+					// 			|| (($pval["score".$oddgameno[$i]."_p"] < $pval["score".$evengameno[$i]."_p"]) && ($rvalue["score".$oddgameno[$i]."_r"] < $rvalue["score".$evengameno[$i]."_r"]))
+					// 			|| (($pval["score".$oddgameno[$i]."_p"] === $pval["score".$evengameno[$i]."_p"]) && ($rvalue["score".$oddgameno[$i]."_r"] === $rvalue["score".$evengameno[$i]."_r"])) ) {
+					// 				$matchpoints[$i] += 2;
+					// 			}
+					// 		}
+					// }
+
+					$sql_getspecidfi = "SELECT id, firstname, surname, score101_p, score102_p FROM live_user_predictions_final WHERE id='".$userid."'";
+					$pval = mysqli_fetch_assoc(mysqli_query($con, $sql_getspecidfi));
+
+					for ($i=51; $i<=51; $i++) {
 							$matchpoints[$i] = 0;
 
 							if( is_numeric($pval["score".$oddgameno[$i]."_p"]) && is_numeric($pval["score".$evengameno[$i]."_p"]) ) {
@@ -204,58 +254,8 @@ include "php/navigation.php";
 							}
 					}
 
-					// $sql_getspecidsf = "SELECT id, firstname, surname, score121_p, score122_p, score123_p, score124_p FROM live_user_predictions_sf WHERE id='".$userid."'";
-					// $pval = mysqli_fetch_assoc(mysqli_query($con, $sql_getspecidsf));
-
-					// for ($i=60; $i<=61; $i++) {
-					// 		$matchpoints[$i] = 0;
-
-					// 		if( is_numeric($pval["score".$oddgameno[$i]."_p"]) && is_numeric($pval["score".$evengameno[$i]."_p"]) ) {
-
-					// 			if($pval["score".$oddgameno[$i]."_p"] === $rvalue["score".$oddgameno[$i]."_r"]) {
-					// 				$matchpoints[$i] += 1;
-					// 			}
-					// 			if($pval["score".$evengameno[$i]."_p"] === $rvalue["score".$evengameno[$i]."_r"]) {
-					// 				$matchpoints[$i] += 1;
-					// 			}
-					// 			if (($pval["score".$oddgameno[$i]."_p"] === $rvalue["score".$oddgameno[$i]."_r"]) && ($pval["score".$evengameno[$i]."_p"] === $rvalue["score".$evengameno[$i]."_r"])) {
-					// 				$matchpoints[$i] += 3;
-					// 			}
-					// 			if ((($pval["score".$oddgameno[$i]."_p"] > $pval["score".$evengameno[$i]."_p"]) && ($rvalue["score".$oddgameno[$i]."_r"] > $rvalue["score".$evengameno[$i]."_r"]))
-					// 			|| (($pval["score".$oddgameno[$i]."_p"] < $pval["score".$evengameno[$i]."_p"]) && ($rvalue["score".$oddgameno[$i]."_r"] < $rvalue["score".$evengameno[$i]."_r"]))
-					// 			|| (($pval["score".$oddgameno[$i]."_p"] === $pval["score".$evengameno[$i]."_p"]) && ($rvalue["score".$oddgameno[$i]."_r"] === $rvalue["score".$evengameno[$i]."_r"])) ) {
-					// 				$matchpoints[$i] += 2;
-					// 			}
-					// 		}
-					// }
-
-					// $sql_getspecidfi = "SELECT id, firstname, surname, score125_p, score126_p, score127_p, score128_p FROM live_user_predictions_final WHERE id='".$userid."'";
-					// $pval = mysqli_fetch_assoc(mysqli_query($con, $sql_getspecidfi));
-
-					// for ($i=62; $i<=63; $i++) {
-					// 		$matchpoints[$i] = 0;
-
-					// 		if( is_numeric($pval["score".$oddgameno[$i]."_p"]) && is_numeric($pval["score".$evengameno[$i]."_p"]) ) {
-
-					// 			if($pval["score".$oddgameno[$i]."_p"] === $rvalue["score".$oddgameno[$i]."_r"]) {
-					// 				$matchpoints[$i] += 1;
-					// 			}
-					// 			if($pval["score".$evengameno[$i]."_p"] === $rvalue["score".$evengameno[$i]."_r"]) {
-					// 				$matchpoints[$i] += 1;
-					// 			}
-					// 			if (($pval["score".$oddgameno[$i]."_p"] === $rvalue["score".$oddgameno[$i]."_r"]) && ($pval["score".$evengameno[$i]."_p"] === $rvalue["score".$evengameno[$i]."_r"])) {
-					// 				$matchpoints[$i] += 3;
-					// 			}
-					// 			if ((($pval["score".$oddgameno[$i]."_p"] > $pval["score".$evengameno[$i]."_p"]) && ($rvalue["score".$oddgameno[$i]."_r"] > $rvalue["score".$evengameno[$i]."_r"]))
-					// 			|| (($pval["score".$oddgameno[$i]."_p"] < $pval["score".$evengameno[$i]."_p"]) && ($rvalue["score".$oddgameno[$i]."_r"] < $rvalue["score".$evengameno[$i]."_r"]))
-					// 			|| (($pval["score".$oddgameno[$i]."_p"] === $pval["score".$evengameno[$i]."_p"]) && ($rvalue["score".$oddgameno[$i]."_r"] === $rvalue["score".$evengameno[$i]."_r"])) ) {
-					// 				$matchpoints[$i] += 2;
-					// 			}
-					// 		}
-					// }
-
 	// Convert PHP array to JSON
-	$userdata_json = json_encode($userdata3);	
+	$userdata_json = json_encode($userdata5);	
 
 ?>
 
@@ -322,10 +322,10 @@ include "php/navigation.php";
 <script>
 $(document).ready(function () {
 // Fetch data from JSON file
-$.getJSON("json/uefa-euro-2024-fixtures-quarters.json", function (data) {
+$.getJSON("json/uefa-euro-2024-fixtures-final.json", function (data) {
 	let fixture = '';
-	let m = 0, x = 89, y = 90;
-	const userdata3 = <?php echo $userdata_json; ?>;
+	let m = 0, x = 101, y = 102;
+	const userdata5 = <?php echo $userdata_json; ?>;
 
         // Function to calculate points
         function calculatePoints(prediction, result) {
@@ -373,7 +373,7 @@ $.getJSON("json/uefa-euro-2024-fixtures-quarters.json", function (data) {
             const matchNumber = value.MatchNumber;
             const roundNumber = value.RoundNumber;
             const location = value.Location;
-            const prediction = `${userdata3['score' + x + '_p']} - ${userdata3['score' + y + '_p']}`;
+            const prediction = `${userdata5['score' + x + '_p']} - ${userdata5['score' + y + '_p']}`;
             const result = homeTeamScore !== "" && awayTeamScore !== "" ? `${homeTeamScore} - ${awayTeamScore}` : "";
             const points = result ? calculatePoints(prediction, result) : '';
 

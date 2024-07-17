@@ -41,7 +41,7 @@ include "php/navigation.php";
 		<!-- <p class="alert alert-success">Congratulations to our winners Chloe (1st), Howard (2nd) and Andrew (3rd).</p> -->
 		<!-- Display table of rankings from process.php -->		
 		
-		<?php displayRankingsEq4(); ?>
+		<?php displayRankingsEq5(); ?>
     </section>
 
 </main>

@@ -38,10 +38,11 @@ include "php/navigation.php";
 
     <section class="section">
 		<p class="lead">Check your progress against others.</p>
-		<!-- <p class="alert alert-success">Congratulations to our winners Chloe (1st), Howard (2nd) and Andrew (3rd).</p> -->
+    <!-- <p><strong>Note:</strong> The ability to view others' predictions has been purposefully removed temporarily.</p> -->
+		<p class="alert alert-success">Congratulations to our winners Jonathan (1st), Paul (2nd), David (3rd), Ketan (4th) and Romina (5th).</p>
 		<!-- Display table of rankings from process.php -->		
 		
-		<?php displayRankingsEq4(); ?>
+		<?php displayRankingsEq5(); ?>
     </section>
 
 </main>
@@ -67,15 +68,15 @@ $(document).ready(function() {
         ]   
     });
 });
-</script>
 
-<!--
-// $(document).ready(function () {	 
-//   $("td:eq(0)").css("background","#FFD700").css("text-align", "center").append("£50"); // Create 'rank 1' cell 
-//   $("td:eq(3)").css("background","#C0C0C0").css("text-align", "center").append("£35"); // Create 'rank 2' cell
-//   $("td:eq(6)").css("background","#CD7F32").css("text-align", "center").append("£23"); // Create 'rank 3' cell	  
-// });
-</script>  -->
+ $(document).ready(function () {	 
+   $("td:eq(0)").css("background","#FFD700");
+   $("td:eq(4)").css("background","#C0C0C0");
+   $("td:eq(8)").css("background","#CD7F32");
+   $("td:eq(12)").css("background","#b1d8b7");
+   $("td:eq(16)").css("background","#b1d8b7");
+ });
+</script>
 
 <!-- Footer -->
 <?php include "php/footer.php" ?>   

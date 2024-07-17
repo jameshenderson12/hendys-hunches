@@ -11,7 +11,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // $query = "SELECT * FROM live_poll_results WHERE question = 'Do you think Scotland will qualify from the group stage?'";
-$query = "SELECT * FROM live_poll_results WHERE question = 'What stage do you think England will reach?'";
+// $query = "SELECT * FROM live_poll_results WHERE question = 'What stage do you think England will reach?'";
+$query = "SELECT * FROM live_poll_results WHERE question = 'Who should start as centre forward for England in the final?'";
 $result = $con->query($query);
 
 $pollData = [];

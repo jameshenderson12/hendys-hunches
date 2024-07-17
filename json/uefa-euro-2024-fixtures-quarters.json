@@ -6,8 +6,8 @@
         "Location": "Stuttgart",
         "HomeTeam": "Spain",
         "AwayTeam": "Germany",
-        "HomeTeamScore": null,
-        "AwayTeamScore": null
+        "HomeTeamScore": 1,
+        "AwayTeamScore": 1
     },
     {
         "MatchNumber": 46,
@@ -16,8 +16,8 @@
         "Location": "Hamburg",
         "HomeTeam": "Portugal",
         "AwayTeam": "France",
-        "HomeTeamScore": null,
-        "AwayTeamScore": null
+        "HomeTeamScore": 0,
+        "AwayTeamScore": 0
     },
     {
         "MatchNumber": 48,
@@ -26,8 +26,8 @@
         "Location": "Dusseldorf",
         "HomeTeam": "England",
         "AwayTeam": "Switzerland",
-        "HomeTeamScore": null,
-        "AwayTeamScore": null
+        "HomeTeamScore": 1,
+        "AwayTeamScore": 1
     },
     {
         "MatchNumber": 47,
@@ -36,7 +36,7 @@
         "Location": "Berlin",
         "HomeTeam": "Netherlands",
         "AwayTeam": "Türkiye",
-        "HomeTeamScore": null,
-        "AwayTeamScore": null
+        "HomeTeamScore": 2,
+        "AwayTeamScore": 1  
     }
 ]

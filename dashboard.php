@@ -57,10 +57,16 @@ include "php/dashboard-items.php";
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">Announcements</h5>
-                                <p><strong>30/06/2024 12:10 Update:</strong><br>As you may have noticed, I've had a slight hiccup in processing the first knockout results. Rest assured all your predictions are retained in the database and hopefully things will be resolved shortly.</p>
-                                <!-- <hr> -->
-                                <!-- <p><strong>26/06/2024 23:21 Update:</strong><br>You can now <a href="predictions.php" title="Submit predictions">submit your predictions</a> for the 'Round of 16'. Please do so before 16.00 on <?= $GLOBALS['round_of_16_start_date'] ?> so you don't miss out!</p> -->
+                                <p><strong>14/07/2024 22:37 Update:</strong></p><p class="alert alert-success">Congratulations to our winners Jonathan (1st), Paul (2nd), David (3rd), Ketan (4th) and Romina (5th).</span></p><p>I hope everyone enjoyed playing the game and thank you all for taking part and raising money for charity.</p>
                                 <hr>
+                                <p><strong>14/07/2024 19:33 Update:</strong><br>Tonight's final average score prediction is:<br>Spain <span class="badge bg-danger">1.79</span> vs <span class="badge bg-primary">1.43</span> England</p>
+                                <!-- <p><strong>10/07/2024 22:16 Update:</strong><br>You can now <a href="predictions.php" title="Submit predictions">submit your prediction</a> for the Final! Please do so before 7pm on <?= $GLOBALS['final_start_date'] ?> so you don't miss out!</p> -->
+                                <!-- <p><strong>02/07/2024 22:59 Update:</strong><br>You can now <a href="predictions.php" title="Submit predictions">submit your predictions</a> for the Semi-Finals. Please do so before 7pm on <?= $GLOBALS['semi_final_start_date'] ?> so you don't miss out!</p> -->
+                                <hr>
+                                <!-- <p><strong>02/07/2024 22:59 Update:</strong><br>You can now <a href="predictions.php" title="Submit predictions">submit your predictions</a> for the Quarter-Finals. Please do so before 16.00 on <?= $GLOBALS['quarter_final_start_date'] ?> so you don't miss out!</p> -->
+                                <!-- <hr> -->
+                                <!-- <p><strong>30/06/2024 12:10 Update:</strong><br>As you may have noticed, I've had a slight hiccup in processing the first knockout results. Rest assured all your predictions are retained in the database and hopefully things will be resolved shortly.</p>                                                                
+                                <hr> -->
                                 <p><strong>18/06/2024 22:03 Update:</strong><br>Prizes will be awarded as:</p>
                                 <table class="table table-striped table-sm">
                                     <tbody>
@@ -108,19 +114,40 @@ include "php/dashboard-items.php";
                     <div class="card-body">
                         <h5 class="card-title">Game Status</h5>
                         <?php displayTodaysFixtures() ?>                                                                                                                         
-                        <?php checkSubmitted() ?>
+                        <!-- <?php checkSubmitted() ?> -->
                         <?php displayMatchesRecorded() ?>
                         <div class="alert alert-light" role="alert">
                             <?php displayGroupMatchesPlayed() ?>
                             <?php displayRO16MatchesPlayed() ?>
                             <?php displayQFMatchesPlayed() ?>
                             <?php displaySFMatchesPlayed() ?>
+                            <?php displayFinalMatchPlayed() ?>
                         </div>
                         <?php displayPayStatus() ?>
                         <!-- <p><i class="bi bi-envelope"></i> If you experience any issues, simply reply to your welcome email.</p> -->
                     </div>
                 </div>
-              
+
+                <div class="row mt-4">
+                    <div class="col-xxl-6 col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Winners</h5>
+                                <?php displayTopRankings() ?>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xxl-6 col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Bottom 5</h5>
+                                <?php displayBottomRankings() ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="row mt-4">
                     <div class="col-xxl-6 col-md-6">
                         <div class="card">
@@ -142,39 +169,19 @@ include "php/dashboard-items.php";
                 </div>
 
                 <div class="row mt-4">
-                    <div class="col-xxl-6 col-md-6">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Current Top 5</h5>
-                                <?php displayTopRankings() ?>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-xxl-6 col-md-6">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Current Bottom 5</h5>
-                                <?php displayBottomRankings() ?>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row mt-4">
                     <div class="col-xxl-12 col-md-6">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">Anonymous Poll #02</h5>                                
+                                <!-- <h5 class="card-title">Anonymous Poll #04</h5>
                                 <div id="poll">
-                                    <h6 id="question"></h6><!-- class="p-3 mb-2 border border-danger border-2" -->
-                                    <div id="answers">
-                                         <!-- Answers will be dynamically added here -->
+                                     <h6 id="question"></h6> class="p-3 mb-2 border border-danger border-2"
+                                     <div id="answers">
+                                          Answers will be dynamically added here
                                     </div>
                                     <div id="results">
-                                         <!-- Results will be dynamically updated here -->
+                                          Results will be dynamically updated here
                                     </div>
-                                </div>
+                                </div> -->
                             </div>
                         </div>
                     </div>
@@ -184,6 +191,43 @@ include "php/dashboard-items.php";
         </div><!-- End Row -->
 
     </section>
+
+      <!-- Modal for Badge Earning Congratulations -->
+  <div class="modal fade" id="congratsModal" tabindex="-1" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="congratsModalLabel" aria-hidden="true">
+        <div class="confetti-container">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="congratsModalLabel">Hendy's Hunches 2024 Winners!</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center mt-3">
+                    <i class="bi bi-check-circle-fill" style="font-size: 60px; color: green;"></i>
+                    <h1>Congratulations!</h1>
+                    <p class="fs-5"></p>
+                    <p>Well played to our winners, the top 5, of Hendy's Hunches 2024.</p>
+                    <img src="" class="w-25 img-fluid" alt="...">
+                    <!--
+                    <div class="row g-0 bg-body-secondary position-relative">
+                        <div class="col-md-4 mb-md-0 p-md-4">
+                            <img src="images/logos/vp-logo-sq.png" class="w-100" alt="...">
+                        </div>
+                        <div class="col-md-8 p-4 ps-md-0">
+                            <i class="bi bi-check-circle-fill" style="font-size: 60px; color: green;"></i>
+                            <h1>Congratulations!</h1>
+                            <p class="fs-5">You've just earned yourself a badge for completing this episode!</p>
+                        </div>
+                    </div>-->
+                    <p class="mt-3">I hope you all enjoyed this game and thank you once again for taking part and raising money for charity.</p>
+                </div>
+                <div class="modal-footer">
+                    <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button> -->
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close" id=""><i class="bi bi-arrow-right"></i> Continue</button>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
         
 </main>
 
@@ -216,7 +260,7 @@ function vote(answerId) {
         },
         body: 'answerId=' + answerId
     }).then(() => {
-        localStorage.setItem("hasVotedPoll02", true);
+        localStorage.setItem("hasVotedPoll04", true);
         disableVoting();
         fetchPollData(); // Refresh poll data after voting
     });
@@ -226,7 +270,7 @@ function renderPoll(data) {
     const question = data[0].question;
     document.getElementById("question").textContent = question;
     const answersDiv = document.getElementById("answers");
-    const hasVoted = localStorage.getItem("hasVotedPoll02");
+    const hasVoted = localStorage.getItem("hasVotedPoll04");
     answersDiv.innerHTML = ""; // Clear previous answers
     if (hasVoted) {
         answersDiv.innerHTML = "<p><i class='bi bi-check-circle-fill text-success'></i> You have voted on this poll.</p>";
@@ -255,7 +299,7 @@ function updateResults(data) {
     data.forEach(answer => {
         const resultElem = document.createElement("div");
         resultElem.innerHTML = `            
-            <div class="progress" style="height: 40px">
+            <div class="progress" style="height: 30px">
                 <div class="progress-bar bg-info" role="progressbar" style="width: ${(answer.count / totalVotes) * 100}%" aria-valuenow="${answer.count}" aria-valuemin="0" aria-valuemax="${totalVotes}"></div>
             </div>
             <p style="text-align: right;">${answer.answer}: <strong>${answer.count}</strong></p>

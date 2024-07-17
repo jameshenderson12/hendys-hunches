@@ -150,11 +150,11 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	            <script>
 	                $(document).ready(function () {
 	                    // Fetch data from JSON file
-	                    $.getJSON("../json/uefa-euro-2024-fixtures-ro16.json",
+	                    $.getJSON("../json/uefa-euro-2024-fixtures-final.json",
 	                    	function (data) {
 	                        var fixture = '';
-													var x = 73;
-													var y = 74;
+													var x = 101;
+													var y = 102;
 	                        // Iterate through objects
 	                        $.each(data, function (key, value) {
 								var homeTeam = value.HomeTeam;

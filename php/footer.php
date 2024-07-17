@@ -16,7 +16,7 @@
   <!-- <script async src="vendor/bootbox/bootbox.min.js"></script>
   <script async src="vendor/lodash/lodash.min.js"></script> -->
   <!-- <script async src="vendor/highlight-text/highlight-text.js"></script> -->
-  <!-- <script async src="js/confetti.js"></script> -->
+  <script async src="js/confetti.js"></script>
   <script src="js/multi-step-form.js"></script>
   <!-- Template Main JS File -->
   <script src="js/main.js"></script>
