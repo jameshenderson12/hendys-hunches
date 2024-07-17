@@ -1,36 +1,16 @@
 <?php
-// Start the session
 session_start();
+$page_title = 'Rankings';
+
 if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
-	header ("Location: index.php");
+    header("Location: index.php");
+    exit();
 }
+
+include "php/header.php";
+include "php/navigation.php";
+
 ?>
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Hendy's Hunches: Predictions Game">
-    <meta name="author" content="James Henderson">
-    <?php include "php/config.php" ?>
-	<?php include "php/process.php" ?>
-    <link rel="shortcut icon" href="ico/favicon.ico">
-
-    <title>Hendy's Hunches: Change Password</title>
-
-    <!-- Bootstrap core CSS -->
-    <link href="css/bootstrap.css" rel="stylesheet">
-    <link href="css/registration.css" rel="stylesheet">
-    
-    <!-- Just for debugging purposes. Don't actually copy this line! -->
-    <!--[if lt IE 9]><script src="../../docs-assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
-    <![endif]-->
     <script type="text/javascript">	
 	function validateFullForm() {
 		// Validate the password input
@@ -132,55 +112,57 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		alert("<?php echo $_SESSION["username"]; ?>");
 	}
 	</script>
-  </head>
 
-  <body>
   
-  <div class="container">
-  
-    <h1>Hendy's Hunches: Change Password</h1>
-    <p>Please enter a new password or return to the <a href="dashboard.php">dashboard page</a>.</p>       
-    <form id="changePassForm" name="changePassForm" class="form-horizontal" onSubmit="return false;">
-        <!-- New Password -->
-        <div class="form-group">
-            <label for="password" class="col-sm-3 control-label">New Password: </label>
-            <div class="col-sm-5">
-            <input type="password" class="form-control" id="password" name="password" placeholder="Set new password" onBlur="return validatePassword();" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" onchange="form.password2.pattern = this.value;" />
-            </div>
-            <div class="col-sm-4"><p id="status"></p></div>
-        </div>
-        <!-- Confirm New Password -->
-        <div class="form-group">
-            <label for="password2" class="col-sm-3 control-label">Confirm New Password: </label>
-            <div class="col-sm-5">
-            <input type="password" class="form-control" id="password2" name="password2" placeholder="Confirm new password" onBlur="return validatePassword2();" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" />
-            </div>
-            <div class="col-sm-4"></div>
-        </div>                        
+<!-- Main Content Section -->
+<main id="main" class="main">
+
+    <div class="pagetitle d-flex justify-content-between">
+    <nav>
+      <h1>Change Password</h1>
+        <!-- <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="home.php">Home</a></li>
+          <li class="breadcrumb-item"><a href="#">Care Episodes</a></li>          
+          <li class="breadcrumb-item active">Part #3 - 11.30</li>
+        </ol> -->
+      </nav> 
+    </div><!-- End Page Title -->
+
+    <section class="section">
+	<p>Please enter a new password or return to the <a href="dashboard.php">dashboard page</a>.</p>
+        <form id="changePassForm" name="changePassForm" class="form-horizontal" onSubmit="return false;">
+			<!-- New Password -->
+			<div class="form-group">
+				<label for="password" class="col-sm-3 control-label">New Password: </label>
+				<div class="col-sm-5">
+				<input type="password" class="form-control" id="password" name="password" onBlur="return validatePassword();" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" onchange="form.password2.pattern = this.value;" />
+				</div>
+				<div class="col-sm-4"><p id="status"></p></div>
+			</div>
+			<!-- Confirm New Password -->
+			<div class="form-group">
+				<label for="password2" class="col-sm-3 control-label">Confirm New Password: </label>
+				<div class="col-sm-5">
+				<input type="password" class="form-control" id="password2" name="password2" onBlur="return validatePassword2();" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" />
+				</div>
+				<div class="col-sm-4"></div>
+			</div>                        
+			
+			<div class="form-group mt-3">
+				<div class="col-sm-3"></div>           
+				<div class="col-sm-5">
+				<input type="button" id="changepassbtn" class="btn btn-primary" value="Change password" onClick="changePass()" />   			            
+				</div>
+				<div class="col-sm-4">                
+				</div>
+			</div>                        
+		
+		</form>
+	</section>
         
-        <div class="form-group">
-            <div class="col-sm-3"></div>           
-            <div class="col-sm-5">
-            <input type="button" id="changepassbtn" class="btn btn-primary" value="Change password" onClick="changePass()" />   			            
-            </div>
-            <div class="col-sm-4">                
-            </div>
-        </div>                        
-    
-    </form>         
-    
-      <!-- Site footer -->
-      <div class="footer">
-      <?php include "includes/footer.php" ?>
-      </div>             	                 
-     
-    </div><!-- /.container -->
+    </div>
+  </div>
+</main>
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>    
-    <script src="js/bootstrap.min.js"></script>
-  </body>
-</html>
+<!-- Footer -->
+<?php include "php/footer.php" ?>

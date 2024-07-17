@@ -1,0 +1,22 @@
+[
+    {
+        "MatchNumber": 49,
+        "RoundNumber": "SF",
+        "DateUtc": "2024-07-09 20:00",
+        "Location": "Munich",
+        "HomeTeam": "Spain",
+        "AwayTeam": "France",
+        "HomeTeamScore": 2,
+        "AwayTeamScore": 1
+    },
+    {
+        "MatchNumber": 50,
+        "RoundNumber": "SF",
+        "DateUtc": "2024-07-10 20:00",
+        "Location": "Dortmund",
+        "HomeTeam": "Netherlands",
+        "AwayTeam": "England",
+        "HomeTeamScore": 1,
+        "AwayTeamScore": 2
+    }
+]

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to {{gamename}}</title>
+    <style>
+        .container {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            max-width: 600px;
+            margin: auto;
+        }
+        .header img {
+            max-width: 100%;
+            height: auto;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;            
+            margin-right: 10px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #007bff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        p {
+            color: #111;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="cid:logo" alt="{{gamename}} Logo">
+        </div>
+        <h1>Welcome, {{firstname}}!</h1>
+        <p>Thank you for registering to play {{gamename}}. We are excited to have you join us. Hopefully you will enjoy UEFA Euro 2024 and the experience of highs and lows of point scoring in accordance with your predicted results!</p>
+        <p>If you haven't already done so, please can you <a href="{{signup_url}}">pay your signup fee</a> as soon as possible.</p>
+        <p>Your username is: <strong>{{username}}</strong></p>
+        <p>You can change your password at any time using the button below.</p>
+        <a href="{{login_url}}" class="button">Log in</a><a href="{{forgot_password_url}}" class="button">Reset Password</a>
+        <p>Best Regards</p>
+        <p>James Henderson<br>Developer of Hendy's Hunches</p>
+    </div>
+</body>
+</html>

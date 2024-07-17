@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Reset for {{gamename}}</title>
+    <style>
+        .container {
+            font-family: Arial, sans-serif;            
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border: 1px solid #ddd;
+            margin: auto;            
+            max-width: 600px;
+        }
+        .header img {
+            max-width: 100%;
+            height: auto;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        p {
+            color: #111;
+        }
+        a {
+            color: #0066cc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="cid:logo" alt="{{gamename}} Logo">
+        </div>
+        <h1>We&#x27;ve got you, {{firstname}}!</h1>
+        <p>This is a message from {{gamename}}. Use the temporary password and link below to get logged in again. You can then change your password to one of your own choice using the 'Change Password' link (under the drop-down menu of your name).</p>
+        <ol>
+            <li>Note your username: <b>{{username}}</b></li>
+            <li>Note your temporary password: <b>{{temp_password}}</b></li>
+            <li><a href="{{temp_password_link}}">Apply this temporary password and use this to log in</a></li>
+        </ol>
+        <p>If you do not click the link in this email, no changes will be made to your account. In order to set your login password to the temporary password you must click the link above.</p>
+        <p>Best Regards</p>
+        <p>James Henderson<br>Developer of Hendy's Hunches</p>
+    </div>
+</body>
+</html>

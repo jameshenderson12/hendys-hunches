@@ -1,209 +1,318 @@
 <?php
-// Start the session
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
+// error_reporting(E_ALL);
+
 session_start();
+$page_title = 'Dashboard';
+
 if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
-	header ("Location: index.php");
+    header("Location: index.php");
+    exit();
 }
+
+include "php/header.php";
+include "php/navigation.php";
+include "php/dashboard-items.php";
+
 ?>
-<!DOCTYPE html>
-<html lang="en" class="h-100">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Hendy's Hunches: Predictions Game">
-    <meta name="author" content="James Henderson">
-		<title>Hendy's Hunches: Dashboard</title>
-    <?php include "php/config.php" ?>
-		<link rel="shortcut icon" href="ico/favicon.ico">
-		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu|Lora">
-		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
-		<link rel="stylesheet" href="css/default.css">
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.1"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
-		<?php include 'php/dashboard-items.php' ?>
-  </head>
 
-  <body>
-		<nav class="navbar navbar-expand-lg navbar-dark bg-dark" aria-label="Offcanvas navbar large">
-		    <div class="container">
-					<img src="ico/favicon.ico" class="img-fluid bg-light mx-2" style="--bs-bg-opacity: 0.80" width="50px">
-		      <a class="navbar-brand" href="#">Hendy's Hunches</a>
-		      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar2" aria-controls="offcanvasNavbar2">
-		        <span class="navbar-toggler-icon"></span>
-		      </button>
-		      <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasNavbar2" aria-labelledby="offcanvasNavbar2Label">
-		        <div class="offcanvas-header">
-		          <h5 class="offcanvas-title" id="offcanvasNavbar2Label">Hendy's Hunches</h5>
-		          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-		        </div>
-		        <div class="offcanvas-body">
-		          <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-		            <li class="nav-item">
-		              <a class="nav-link active" aria-current="page" href="dashboard.php">Home</a>
-		            </li>
-		            <li class="nav-item">
-		              <a class="nav-link disabled" href="predictions.php">Submit Predictions</a>
-		            </li>
-								<li class="nav-item">
-		              <a class="nav-link" href="rankings.php">Rankings</a>
-		            </li>
-								<li class="nav-item">
-		              <a class="nav-link" href="howitworks.php">How It Works</a>
-		            </li>
-								<li class="nav-item">
-									<a class="nav-link" href="about.php">About</a>
-								</li>
-		            <li class="nav-item dropdown">
-									<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-										<?php returnAvatar();	?>
-		              </a>
-		              <ul class="dropdown-menu">
-										<!--<li><a class="dropdown-item" href="overview.php">Application overview</a></li>-->
-										<li><a class="dropdown-item" href="change-password.php">Change my password</a></li>
-										<li><a class="dropdown-item" href="user.php?id=<?php echo $_SESSION['id']; ?>" class="card-link">View my predictions</a></li>
-		                <li>
-		                  <hr class="dropdown-divider">
-		                </li>
-		                <li><a class="dropdown-item" href="php/logout.php">Logout</a></li>
-		              </ul>
-		            </li>
-		          </ul>
-		        </div>
-		      </div>
-		    </div>
-		  </nav>
 
-			<main class="container px-4 py-4">
-				<!--
-	      <h1>My Dashboard</h1>
-	      <p class="lead mb-4">Use the dashboard to track your progress.</p>
-			-->
-					<div class="row g-4">
-						<div class="col-lg-3">
-							<div class="card">
-								<div class="card-body">
-									<?php displayPersonalInfo() ?>
-								</div>
-							</div>
-						</div>
-						<div class="col-md-8 col-lg-6">
-							<div class="card">
-								<div class="card-body">
-									<h5 class="card-title">Status</h5>
-									<!--<?php checkSubmitted() ?>-->
+<!-- Main Content Section -->
+<main id="main" class="main">
 
-									<div class="row">
-										<div class="col-sm-4">
-											<p class="small">Matches recorded:</p>
-										</div>
-										<div class="col-sm-8">
-											<?php displayMatchesRecorded() ?>
-										</div>
-										<div class="alert alert-success" role="alert">
-											<h4><strong>Game complete!</strong></h4>
-											<p>Congratulations to the winners who share a £108 total prize fund.</p>
-											<table class='table table-condensed table-bordered table-striped'>
-											<tr><td>1st</td><td>£50</td><td>Chloe McCandlish-Boyd</td></tr>
-											<tr><td>2nd</td><td>£35</td><td>Howard Kilbourn</td></tr>
-											<tr><td>3rd</td><td>£23</td><td>Andrew Lough</td></tr>
-											</table>
-											<p>Thank you all for your participation and well done!</p>
-										</div>
-										<p>It is possible that this game will take place next year for the FIFA Women’s World Cup Australia & New Zealand 2023. If you have any comments or suggestions for new features or improvements you'd like to see, please feel free to drop me a quick line at <a href="mailto:jameshenderson12@hotmail.com">jameshenderson12@hotmail.com</a>.</p>
-									</div>
-									<!--
-									<div class="row">
-										<div class="col-sm-3">
-											<p class="small">Group fixtures:</p>
-										</div>
-										<div class="col-sm-9">
-											<?php displayGroupMatchesPlayed() ?>
-										</div>
-									</div>
-									<div class="row">
-										<div class="col-sm-3">
-											<p class="small">RO16 fixtures:</p>
-										</div>
-										<div class="col-sm-9">
-											<?php displayRO16MatchesPlayed() ?>
-										</div>
-									</div>
-									<div class="row">
-										<div class="col-sm-3">
-											<p class="small">QF fixtures:</p>
-										</div>
-										<div class="col-sm-9">
-											<?php displayQFMatchesPlayed() ?>
-										</div>
-									</div>
-									<div class="row">
-										<div class="col-sm-3">
-											<p class="small">SF fixtures:</p>
-										</div>
-										<div class="col-sm-9">
-											<?php displaySFMatchesPlayed() ?>
-										</div>
-									</div>
-								-->
-								</div>
-							</div>
-							<div class="card mt-4">
-								<div class="card-body">
-									<h5 class="card-title">Announcements</h5>
+    <div class="pagetitle d-flex justify-content-between">
+    <nav>
+      <h1>Dashboard</h1>
+        <!-- <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="home.php">Home</a></li>
+          <li class="breadcrumb-item"><a href="#">Care Episodes</a></li>          
+          <li class="breadcrumb-item active">Part #3 - 11.30</li>
+        </ol> -->
+      </nav> 
+    </div><!-- End Page Title -->
 
-									<!--
-									<div class="alert alert-danger alert-dismissible fade show" role="alert">
-									  <strong>Deadline 15:00, Sat, 9th Dec</strong> Predict the Quarter Final stage now. You have until 15:00 on Saturday 9th December.
-									  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-									</div>
-								-->
+	<section class="section dashboard">
+        <p class="lead">Use the dashboard to track your progress.</p>
 
-									<?php displayCharityInformation() ?>
-								</div>
-							</div>
-						</div>
-						<div class="col-lg-3">
-							<div class="card">
-								<div class="card-body">
-									<h5 class="card-title">Biggest climbers</h5>
-									<?php displayBestMovers() ?>
-								</div>
-							</div>
-							<div class="card mt-4">
-								<div class="card-body">
-									<h5 class="card-title">Biggest droppers</h5>
-									<?php displayWorstMovers() ?>
-								</div>
-							</div>
-							<div class="card mt-4">
-								<div class="card-body">
-									<h5 class="card-title">Current top 5</h5>
-									<!--<?php displayTopRankings() ?>-->
-								</div>
-							</div>
-							<div class="card mt-4">
-								<div class="card-body">
-									<h5 class="card-title">Current bottom 5</h5>
-									<!--<?php displayBottomRankings() ?>-->
-								</div>
-							</div>
-							<!--
-							<div class="card mt-4">
-								<div class="card-body">
-									<h5 class="card-title">Social Feed</h5>
-										<a class="twitter-timeline" data-lang="en" data-height="600" data-theme="light" href="https://twitter.com/FIFAWorldCup" data-chrome="noheader nofooter noborders">Tweets by FIFAWorldCup</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
-								</div>
-							</div>
-						-->
-						</div>
-      		</div><!--row-->
-				<!-- Site footer -->
-				<footer class="mt-auto">
-					<hr>
-					<p class="small fw-light">Predictions game based on <a href="https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/qatar2022">FIFA World Cup 2022™</a><br><?=$title?> <?=$version?> &copy; <?=$year?> <?=$developer?>.</p>
-				</footer>
-			</main>
+        <div class="row">
+            <!-- Left Column -->
+            <div class="col-lg-6">
+                <div class="row">
+                    <div class="col-xxl-12 col-md-12">
+                        <div class="card">
+                            <!-- <div class="filter">
+                                <a class="mx-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" data-bs-title="This measures this amount of time you've spent on...">
+                                    <i class="bi bi-question-circle"></i>
+                                </a>
+                            </div> -->
+                            <div class="card-body">
+                                <h5 class="card-title">Profile Details</h5>
+                                <?php displayPersonalInfo() ?>
+                            </div>
+                        </div>
+                    </div>
 
-  </body>
-</html>
+                    <div class="col-xxl-12 col-md-12 mt-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Announcements</h5>
+                                <p><strong>14/07/2024 22:37 Update:</strong></p><p class="alert alert-success">Congratulations to our winners Jonathan (1st), Paul (2nd), David (3rd), Ketan (4th) and Romina (5th).</span></p><p>I hope everyone enjoyed playing the game and thank you all for taking part and raising money for charity.</p>
+                                <hr>
+                                <p><strong>14/07/2024 19:33 Update:</strong><br>Tonight's final average score prediction is:<br>Spain <span class="badge bg-danger">1.79</span> vs <span class="badge bg-primary">1.43</span> England</p>
+                                <!-- <p><strong>10/07/2024 22:16 Update:</strong><br>You can now <a href="predictions.php" title="Submit predictions">submit your prediction</a> for the Final! Please do so before 7pm on <?= $GLOBALS['final_start_date'] ?> so you don't miss out!</p> -->
+                                <!-- <p><strong>02/07/2024 22:59 Update:</strong><br>You can now <a href="predictions.php" title="Submit predictions">submit your predictions</a> for the Semi-Finals. Please do so before 7pm on <?= $GLOBALS['semi_final_start_date'] ?> so you don't miss out!</p> -->
+                                <hr>
+                                <!-- <p><strong>02/07/2024 22:59 Update:</strong><br>You can now <a href="predictions.php" title="Submit predictions">submit your predictions</a> for the Quarter-Finals. Please do so before 16.00 on <?= $GLOBALS['quarter_final_start_date'] ?> so you don't miss out!</p> -->
+                                <!-- <hr> -->
+                                <!-- <p><strong>30/06/2024 12:10 Update:</strong><br>As you may have noticed, I've had a slight hiccup in processing the first knockout results. Rest assured all your predictions are retained in the database and hopefully things will be resolved shortly.</p>                                                                
+                                <hr> -->
+                                <p><strong>18/06/2024 22:03 Update:</strong><br>Prizes will be awarded as:</p>
+                                <table class="table table-striped table-sm">
+                                    <tbody>
+                                        <tr>
+                                            <td>1st</td>
+                                            <td>£60 (40% of the prize fund)</td>
+                                        </tr>
+                                        <tr>
+                                            <td>2nd</td>
+                                            <td>£40 (27% of the prize fund)</td>
+                                        </tr>
+                                        <tr>
+                                            <td>3rd</td>
+                                            <td>£25 (17% of the prize fund)</td>
+                                        </tr>
+                                        <tr>
+                                            <td>4th</td>
+                                            <td>£15 (10% of the prize fund)</td>
+                                        </tr>
+                                        <tr>
+                                            <td>5th</td>
+                                            <td>£10 (6% of the prize fund)</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <p>Any positions shared will have prizes split equally.</p>
+                                <hr>
+                                <!-- <p><strong>15/06/2024 14:11 Update:</strong><br>Many apologies for the delay in updating the first result for the current rankings. This is done now. I must admit I was slightly scarred from a late night of drowning my sorrows! Good luck everyone.</p> -->
+                                <!-- <hr> -->
+                                <?php displayCharityInformation() ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- End Left Column -->
+
+            <!-- Right Column -->
+            <div class="col-lg-6">
+                <div class="card">
+                    <!-- <div class="filter">
+                        <a class="mx-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" data-bs-title="This measures this amount of time you've spent on...">
+                            <i class="bi bi-question-circle"></i>
+                        </a>
+                    </div> -->
+                    <div class="card-body">
+                        <h5 class="card-title">Game Status</h5>
+                        <?php displayTodaysFixtures() ?>                                                                                                                         
+                        <!-- <?php checkSubmitted() ?> -->
+                        <?php displayMatchesRecorded() ?>
+                        <div class="alert alert-light" role="alert">
+                            <?php displayGroupMatchesPlayed() ?>
+                            <?php displayRO16MatchesPlayed() ?>
+                            <?php displayQFMatchesPlayed() ?>
+                            <?php displaySFMatchesPlayed() ?>
+                            <?php displayFinalMatchPlayed() ?>
+                        </div>
+                        <?php displayPayStatus() ?>
+                        <!-- <p><i class="bi bi-envelope"></i> If you experience any issues, simply reply to your welcome email.</p> -->
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-xxl-6 col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Winners</h5>
+                                <?php displayTopRankings() ?>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xxl-6 col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Bottom 5</h5>
+                                <?php displayBottomRankings() ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-xxl-6 col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Biggest Climbers</h5>
+                                <?php displayBestMovers() ?>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xxl-6 col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Biggest Droppers</h5>
+                                <?php displayWorstMovers() ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-xxl-12 col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <!-- <h5 class="card-title">Anonymous Poll #04</h5>
+                                <div id="poll">
+                                     <h6 id="question"></h6> class="p-3 mb-2 border border-danger border-2"
+                                     <div id="answers">
+                                          Answers will be dynamically added here
+                                    </div>
+                                    <div id="results">
+                                          Results will be dynamically updated here
+                                    </div>
+                                </div> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- End Right Column -->
+        </div><!-- End Row -->
+
+    </section>
+
+      <!-- Modal for Badge Earning Congratulations -->
+  <div class="modal fade" id="congratsModal" tabindex="-1" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="congratsModalLabel" aria-hidden="true">
+        <div class="confetti-container">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="congratsModalLabel">Hendy's Hunches 2024 Winners!</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center mt-3">
+                    <i class="bi bi-check-circle-fill" style="font-size: 60px; color: green;"></i>
+                    <h1>Congratulations!</h1>
+                    <p class="fs-5"></p>
+                    <p>Well played to our winners, the top 5, of Hendy's Hunches 2024.</p>
+                    <img src="" class="w-25 img-fluid" alt="...">
+                    <!--
+                    <div class="row g-0 bg-body-secondary position-relative">
+                        <div class="col-md-4 mb-md-0 p-md-4">
+                            <img src="images/logos/vp-logo-sq.png" class="w-100" alt="...">
+                        </div>
+                        <div class="col-md-8 p-4 ps-md-0">
+                            <i class="bi bi-check-circle-fill" style="font-size: 60px; color: green;"></i>
+                            <h1>Congratulations!</h1>
+                            <p class="fs-5">You've just earned yourself a badge for completing this episode!</p>
+                        </div>
+                    </div>-->
+                    <p class="mt-3">I hope you all enjoyed this game and thank you once again for taking part and raising money for charity.</p>
+                </div>
+                <div class="modal-footer">
+                    <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button> -->
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close" id=""><i class="bi bi-arrow-right"></i> Continue</button>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+        
+</main>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    fetchPollData();
+
+    document.addEventListener("change", function(event) {
+        if (event.target.matches('input[type="radio"][name="answer"]')) {
+            const answerId = parseInt(event.target.value);
+            vote(answerId);
+        }
+    });
+});
+
+function fetchPollData() {
+    fetch('php/poll.php')
+        .then(response => response.json())
+        .then(data => {
+            renderPoll(data);
+            updateResults(data);
+        });
+}
+
+function vote(answerId) {
+    fetch('php/poll.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'answerId=' + answerId
+    }).then(() => {
+        localStorage.setItem("hasVotedPoll04", true);
+        disableVoting();
+        fetchPollData(); // Refresh poll data after voting
+    });
+}
+
+function renderPoll(data) {
+    const question = data[0].question;
+    document.getElementById("question").textContent = question;
+    const answersDiv = document.getElementById("answers");
+    const hasVoted = localStorage.getItem("hasVotedPoll04");
+    answersDiv.innerHTML = ""; // Clear previous answers
+    if (hasVoted) {
+        answersDiv.innerHTML = "<p><i class='bi bi-check-circle-fill text-success'></i> You have voted on this poll.</p>";
+    } else {
+        data.forEach(answer => {
+            const answerElem = document.createElement("div");
+            answerElem.classList.add("form-check");
+            answerElem.innerHTML = `
+                <div class="my-3">
+                <input class="form-check-input" type="radio" name="answer" id="answer${answer.id}" value="${answer.id}">
+                <label class="form-check-label" for="answer${answer.id}">
+                    ${answer.answer}
+                </label>
+                </div>
+            `;
+            answersDiv.appendChild(answerElem);
+        });
+    }
+}
+
+function updateResults(data) {
+    const resultsDiv = document.getElementById("results");
+    resultsDiv.innerHTML = ""; // Clear previous results
+    //const totalVotes = data.reduce((total, answer) => total + answer.count, 0);
+    const totalVotes = data.reduce((total, answer) => total + Number(answer.count), 0);
+    data.forEach(answer => {
+        const resultElem = document.createElement("div");
+        resultElem.innerHTML = `            
+            <div class="progress" style="height: 30px">
+                <div class="progress-bar bg-info" role="progressbar" style="width: ${(answer.count / totalVotes) * 100}%" aria-valuenow="${answer.count}" aria-valuemin="0" aria-valuemax="${totalVotes}"></div>
+            </div>
+            <p style="text-align: right;">${answer.answer}: <strong>${answer.count}</strong></p>
+        `;
+        resultsDiv.appendChild(resultElem);
+    });
+}
+
+function disableVoting() {
+    const answersDiv = document.getElementById("answers");
+    answersDiv.innerHTML = "<p><i class='bi bi-check-circle-fill text-success'></i> You have voted on this poll.</p>";
+}    
+</script>
+
+<!-- Footer -->
+<?php include "php/footer.php" ?>

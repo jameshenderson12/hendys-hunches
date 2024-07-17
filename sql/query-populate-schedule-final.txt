@@ -1,0 +1,1 @@
+INSERT INTO live_match_schedule (`hometeamimg`, `hometeam`, `homescore`, `awayscore`, `awayteam`, `awayteamimg`, `venue`, `kotime`, `date`) VALUES ('flag-icons/24/russia.png', 'Russia', NULL, NULL, 'Saudi Arabia', 'flag-icons/24/saudi-arabia.png', 'Luzhniki Stadium, Moscow', '4pm', '2018-06-14');

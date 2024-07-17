@@ -1,34 +1,35 @@
 <?php
-// Start the session
 session_start();
+$page_title = 'Results';
+
 if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
-	header ("Location: index.php");
+    header("Location: index.php");
+    exit();
 }
+
 ?>
 <!DOCTYPE html>
-<html lang="en" class="h-100">
+<html lang="en-GB">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">    
+    <meta http-equiv="Content-Type" content="text/html">    
     <meta name="description" content="Hendy's Hunches: Predictions Game">
     <meta name="author" content="James Henderson">
-		<title>Hendy's Hunches: Results</title>
+    <meta name="keywords" content="">
+	<title><?= $page_title ?> - Hendy's Hunches</title>
+    <link href="../ico/favicon.ico" rel="icon">
+    <!-- Vendor CSS Files -->
+    <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <!-- Custom CSS Files -->
+    <link href="../css/styles.css" rel="stylesheet">    
+    <!-- Include PHP Config File -->
     <?php include "../php/config.php" ?>
-		<link rel="shortcut icon" href="../ico/favicon.ico">
-		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu|Lora">
-		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
-		<link rel="stylesheet" href="../css/default.css">
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.1"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
-
-		<style>
-		body {
-			font-family: 'Lora';
-		}
-		h1, h2, h3 {
-			font-family: 'Ubuntu';
-		}
+    <!--jQuery Files -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+	<style>
 		table {
 			width: 100%;
 		}
@@ -51,9 +52,9 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
   </head>
 
 	<body>
-		<nav class="navbar navbar-expand-lg navbar-dark bg-dark" aria-label="Offcanvas navbar large">
-		    <div class="container">
-					<img src="../img/hh-favicon-2018.jpg" class="img-responsive" style="margin: 0px 20px 0px; height:50px">
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark" aria-label="Offcanvas navbar large">
+	<div class="container">
+			<img src="../img/hh-icon-2024.png" class="img-fluid bg-light mx-2" style="--bs-bg-opacity: 0.80" width="50px">
 		      <a class="navbar-brand" href="#">Hendy's Hunches</a>
 		      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar2" aria-controls="offcanvasNavbar2">
 		        <span class="navbar-toggler-icon"></span>
@@ -66,7 +67,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		        <div class="offcanvas-body">
 		          <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
 		            <li class="nav-item">
-		              <a class="nav-link active" aria-current="page" href="../dashboard.php">Home</a>
+		              <a class="nav-link" aria-current="page" href="../dashboard.php">Dashboard</a>
 		            </li>
 		            <li class="nav-item">
 		              <a class="nav-link" href="../predictions.php">Submit Predictions</a>
@@ -75,24 +76,11 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 		              <a class="nav-link" href="../rankings.php">Rankings</a>
 		            </li>
 								<li class="nav-item">
-		              <a class="nav-link" href="../howitworks.php">How It Works</a>
+		              <a class="nav-link" href="../how-it-works.php">How It Works</a>
 		            </li>
-								<li class="nav-item">
-									<a class="nav-link" href="../about.php">About</a>
-								</li>
-		            <li class="nav-item dropdown">
-									<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-										<?php returnAvatar();	?>
-		              </a>
-		              <ul class="dropdown-menu">
-		                <li><a class="dropdown-item" href="../change-password.php">Change Password</a></li>
-		                <li><a class="dropdown-item" href="#">Another action</a></li>
-		                <li>
-		                  <hr class="dropdown-divider">
-		                </li>
-		                <li><a class="dropdown-item" href="../php/logout.php">Logout</a></li>
-		              </ul>
-		            </li>
+					<li class="nav-item">
+						<a class="nav-link" href="../about.php">About</a>
+					</li>
 		          </ul>
 		        </div>
 		      </div>
@@ -125,25 +113,36 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 			$matchids[] = $row['match_id'];
 		}
 
-		for ($i=0; $i<59; $i++) {
-			if ($matchids[$i]) {
-				$matchstatus[$i] = 'True';
-				// Return existing match values from DB
-				// Disable input buttons
-			}
-			else $matchstatus[$i] = 'False';
-		}
+		// for ($i=0; $i<35; $i++) {
+		// 	if ($matchids[$i]) {
+		// 		$matchstatus[$i] = 'True';
+		// 		// Return existing match values from DB
+		// 		// Disable input buttons
+		// 	}
+		// 	else $matchstatus[$i] = 'False';
+		// }
 
 		$matchresult = mysqli_fetch_assoc(mysqli_query($con, $sql_getresults));
 		?>
 
 
+	<!-- Main Content Section -->
+	<main id="main" class="main">
 
-		<main class="container px-4 py-4">
-			<h1>Match Results (Admin)</h1>
-			<p class="lead" style="color: red">This page is used to record the match results by administrator only.</p>
-			<div class="row">
-				<div class="col-xs-12">
+		<div class="pagetitle d-flex justify-content-between">
+		<nav>
+		<h1>Record Match Results (Admin)</h1>
+			<!-- <ol class="breadcrumb">
+			<li class="breadcrumb-item"><a href="home.php">Home</a></li>
+			<li class="breadcrumb-item"><a href="#">Care Episodes</a></li>          
+			<li class="breadcrumb-item active">Part #3 - 11.30</li>
+			</ol> -->
+		</nav> 
+		</div><!-- End Page Title -->
+
+		<section class="section">
+			<p class="lead">Admin page to record match results and update the game.</p>
+
         <form id="resultForm" action="../php/insert-result.php" method="POST">
 
 					<!-- Placeholder for JSON table construction -->
@@ -151,59 +150,54 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	            <script>
 	                $(document).ready(function () {
 	                    // Fetch data from JSON file
-	                    $.getJSON("../json/fifa-world-cup-2022-fixtures-final.json",
+	                    $.getJSON("../json/uefa-euro-2024-fixtures-final.json",
 	                    	function (data) {
 	                        var fixture = '';
-													var x = 125;
-													var y = 126;
+													var x = 101;
+													var y = 102;
 	                        // Iterate through objects
 	                        $.each(data, function (key, value) {
-															var homeTeam = value.HomeTeam;
-															var awayTeam = value.AwayTeam;
-															var homeTeamFlag = "../flag-icons/24/" + homeTeam.toLowerCase().replaceAll(' ', '-') + ".png";
-															var awayTeamFlag = "../flag-icons/24/" + awayTeam.toLowerCase().replaceAll(' ', '-') + ".png";
-															const str = value.DateUtc;
-															const [dateValues, timeValues] = str.split(' ');
-															const [year, month, day] = dateValues.split('-');
-															const [hours, minutes] = timeValues.split(':');
-															const date = new Date(+year, +month - 1, +day, +hours, +minutes).toLocaleString().slice(0, -3);
+								var homeTeam = value.HomeTeam;
+								var awayTeam = value.AwayTeam;
+								var homeTeamFlag = "../flag-icons/24/" + homeTeam.toLowerCase().replaceAll(' ', '-') + ".png";
+								var awayTeamFlag = "../flag-icons/24/" + awayTeam.toLowerCase().replaceAll(' ', '-') + ".png";
+								const str = value.DateUtc;
+								const [dateValues, timeValues] = str.split(' ');
+								const [year, month, day] = dateValues.split('-');
+								const [hours, minutes] = timeValues.split(':');
+								const date = new Date(+year, +month - 1, +day, +hours, +minutes).toLocaleString().slice(0, -3);
 	                            fixture += '<tr>';
-															fixture += '<td class="small text-muted">' + value.Group + '</td>';
+								fixture += '<td class="small text-muted">' + value.RoundNumber + '</td>';
 	                            fixture += '<td>' + value.HomeTeam + '</td>';
-															fixture += '<td><img src="' + homeTeamFlag + '" alt="Flag of ' + homeTeam + '" title="Flag of ' + homeTeam + '"></td>';
-															fixture += '<td><input type="text" id="score' + x + '_r" name="score' + x + '_r" class="form-control" /></td>';
-															fixture += '<td align="center">v<br><span class="badge bg-light text-primary">' + value.MatchNumber + '</span></td>';
-															fixture += '<td><input type="text" id="score' + y + '_r" name="score' + y + '_r" class="form-control" /></td>';
-															fixture += '<td><img src="' + awayTeamFlag + '" alt="Flag of ' + awayTeam + '" title="Flag of ' + awayTeam + '"></td>';
+								fixture += '<td><img src="' + homeTeamFlag + '" alt="Flag of ' + homeTeam + '" title="Flag of ' + homeTeam + '"></td>';
+								fixture += '<td><input type="text" id="score' + x + '_r" name="score' + x + '_r" class="form-control" /></td>';
+								fixture += '<td align="center">v<br><span class="badge bg-light text-primary">' + value.MatchNumber + '</span></td>';
+								fixture += '<td><input type="text" id="score' + y + '_r" name="score' + y + '_r" class="form-control" /></td>';
+								fixture += '<td><img src="' + awayTeamFlag + '" alt="Flag of ' + awayTeam + '" title="Flag of ' + awayTeam + '"></td>';
 	                            fixture += '<td>' + value.AwayTeam + '</td>';
 	                            fixture += '<td class="small text-muted"> ' + date + '</td>';
-															fixture += '<td class="date-venue">Match Recorded: <?php echo $matchstatus[$i]; ?></td>';
+								fixture += '<td class="date-venue">Match Recorded: </td>';
 	                            fixture += '</tr>';
-															x+=2;
-															y+=2;
+								
+								x+=2;
+								y+=2;
 	                        });
 	                      // Insert rows into table
 	                      $('#table').append(fixture);
 	                    });
 	                });
 	            </script>
-						</table>
-						<input type="submit" class="btn btn-primary" value="Submit Results" />
-						<input type="reset" class="btn btn-default" value="Reset All" />
-						</form>
-						</div><!--col-md-12-->
-					</div><!--row-->
-				<!-- Site footer -->
-				<footer class="mt-auto">
-					<hr>
-					<p class="small fw-light">Predictions game based on <a href="https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/qatar2022">FIFA World Cup 2022™</a><br><?=$title?> <?=$version?> &copy; <?=$year?> <?=$developer?>.</p>
-				</footer>
+				</table>
+				<input type="submit" class="btn btn-primary" value="Submit Results" />
+				<input type="reset" class="btn btn-default" value="Reset All" />
+				</form>
+			</section>
+
 			</main>
 <!--
 		<td class="date-venue">Match Recorded: <?php echo $matchstatus[0]; ?></td>
 		<td class="update-button"><input type="submit" id="updateBtn1" class="btn btn-success btn-sm" value="Update this result" /></td>
 		</tr>
 -->
-
-  </body>
-</html>
+    <!-- Footer -->
+    <?php include "php/footer.php" ?>

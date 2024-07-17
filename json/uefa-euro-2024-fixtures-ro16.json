@@ -1,0 +1,82 @@
+[
+    {
+        "MatchNumber": 38,
+        "RoundNumber": "RO16",
+        "DateUtc": "2024-06-29 17:00",
+        "Location": "Berlin",
+        "HomeTeam": "Switzerland",
+        "AwayTeam": "Italy",
+        "HomeTeamScore": 2,
+        "AwayTeamScore": 0
+    },
+    {
+        "MatchNumber": 37,
+        "RoundNumber": "RO16",
+        "DateUtc": "2024-06-29 20:00",
+        "Location": "Dortmund",
+        "HomeTeam": "Germany",
+        "AwayTeam": "Denmark",
+        "HomeTeamScore": 2,
+        "AwayTeamScore": 0
+    },
+    {
+        "MatchNumber": 40,
+        "RoundNumber": "RO16",
+        "DateUtc": "2024-06-30 17:00",
+        "Location": "Gelsenkirchen",
+        "HomeTeam": "England",
+        "AwayTeam": "Slovakia",
+        "HomeTeamScore": 1,
+        "AwayTeamScore": 1
+    },
+    {
+        "MatchNumber": 39,
+        "RoundNumber": "RO16",
+        "DateUtc": "2024-06-30 20:00",
+        "Location": "Cologne",
+        "HomeTeam": "Spain",
+        "AwayTeam": "Georgia",
+        "HomeTeamScore": 4,
+        "AwayTeamScore": 1
+    },
+    {
+        "MatchNumber": 42,
+        "RoundNumber": "RO16",
+        "DateUtc": "2024-07-01 17:00",
+        "Location": "Dusseldorf",
+        "HomeTeam": "France",
+        "AwayTeam": "Belgium",
+        "HomeTeamScore": 1,
+        "AwayTeamScore": 0
+    },
+    {
+        "MatchNumber": 41,
+        "RoundNumber": "RO16",
+        "DateUtc": "2024-07-01 20:00",
+        "Location": "Frankfurt",
+        "HomeTeam": "Portugal",
+        "AwayTeam": "Slovenia",
+        "HomeTeamScore": 0,
+        "AwayTeamScore": 0
+    },
+    {
+        "MatchNumber": 43,
+        "RoundNumber": "RO16",
+        "DateUtc": "2024-07-02 17:00",
+        "Location": "Munich",
+        "HomeTeam": "Romania",
+        "AwayTeam": "Netherlands",
+        "HomeTeamScore": 0,
+        "AwayTeamScore": 3
+    },
+    {
+        "MatchNumber": 44,
+        "RoundNumber": "RO16",
+        "DateUtc": "2024-07-02 20:00",
+        "Location": "Leipzig",
+        "HomeTeam": "Austria",
+        "AwayTeam": "Türkiye",
+        "HomeTeamScore": 1,
+        "AwayTeamScore": 2
+    }
+]

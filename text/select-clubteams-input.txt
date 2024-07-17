@@ -84,7 +84,6 @@ Milton Keynes Dons
 Montrose
 Morecambe
 Motherwell
-N/A
 Newcastle United
 Newport County AFC
 Northampton Town
@@ -135,6 +134,7 @@ West Bromwich Albion
 West Ham United
 Wigan Athletic
 Wolverhampton Wanderers
+Wrexham AFC
 Wycombe Wanderers
 Yeovil Town
 York City
