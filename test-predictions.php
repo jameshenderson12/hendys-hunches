@@ -81,6 +81,19 @@ input {
     $(document).ready(function () {
         // Fetch data from JSON file
         $.getJSON("json/uefa-euro-2024-fixtures-ro16.json", function (data) {
+            const expectedCount = 8;
+            if (!Array.isArray(data) || data.length !== expectedCount) {
+                const actualCount = Array.isArray(data) ? data.length : 'non-array data';
+                console.error(`Fixture data count mismatch. Expected ${expectedCount}, got ${actualCount}.`);
+                if (!$('#fixtures-alert').length) {
+                    $('#table').before(`
+                        <div id="fixtures-alert" class="alert alert-danger" role="alert">
+                            Test failed: expected ${expectedCount} fixtures, but received ${actualCount}.
+                        </div>
+                    `);
+                }
+                return;
+            }
             let fixture = '';
             let x = 73, y = 74;
 
