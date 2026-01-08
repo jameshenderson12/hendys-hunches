@@ -1,6 +1,6 @@
 # Hendy's Hunches
 
-A respository for my "Hendy's Hunches" football competition application.
+A repository for my "Hendy's Hunches" football competition application.
 
 <img src="https://github.com/jameshenderson12/hendys-hunches/blob/main/img/logo2018.jpg" alt="Hendy's Hunches logo" width="40%">
 
