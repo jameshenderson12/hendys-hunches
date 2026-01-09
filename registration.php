@@ -4,7 +4,7 @@ session_start();
 // Include necessary files for configuration and database connection
 include 'php/config.php';
 include 'php/process.php';
-include 'php/send-welcome-email.php';
+//include 'php/send-welcome-email.php';
 
 // Initialise variable for error messages
 $registrationSuccess = false;
