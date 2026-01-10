@@ -70,8 +70,8 @@ session_start();
             <div class="mb-3 row justify-content-center px-3 px-md-5">
                 <div class="col-12 col-md-10 col-lg-8">
                     <div class="row mb-3">
-                        <label for="username" class="col-12 col-md-3 col-form-label">Username</label>
-                        <div class="col-12 col-md-9">
+                        <label for="username" class="col-12 col-md-4 col-form-label">Username</label>
+                        <div class="col-12 col-md-8">
                             <input type="text" class="form-control" id="username" name="username" style="width: 100%" required autocomplete="username" autofocus>
                             <div class="invalid-feedback">
                                 Please provide your username.
@@ -79,16 +79,19 @@ session_start();
                         </div>
                     </div>
                     <div class="row">
-                        <label for="password" class="col-12 col-md-3 col-form-label">Password</label>
-                        <div class="col-12 col-md-9">
-                            <div class="d-flex align-items-center gap-2">
-                              <input type="password" class="form-control flex-grow-1" id="password" name="password" required autocomplete="current-password">
+                        <label for="password" class="col-12 col-md-4 col-form-label">Password</label>
+                        <div class="col-12 col-md-8">
+                            <div class="input-group">
+                              <input type="password" class="form-control" id="password" name="password" style="width: 100%" required autocomplete="current-password">
                               <button class="btn btn-outline-light" type="button" id="toggleLoginPwd" aria-label="Show password">
                                 <i class="bi bi-eye-slash-fill"></i>
                               </button>
                             </div>
                             <div class="invalid-feedback">
                                 Please provide your password.
+                            </div>
+                            <div class="text-start small mt-2">
+                              <a href="forgot-password.php" class="text-white">Forgot password?</a>
                             </div>
                         </div>
                     </div>
