@@ -135,25 +135,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <div class="progress-step" data-title="Details"></div>
           <div class="progress-step" data-title="Terms"></div>
         </div>
+        <div class="text-start small text-white-50 mt-2" id="stepLabel">Step 1 of 5: Contact</div>
+        <div class="text-start small text-white-50 mt-1">Fields marked with <span class="text-warning">*</span> are required.</div>
 
       <form class="d-flex flex-column needs-validation" method="POST" action="" id="registrationForm" name="registrationForm" novalidate> <!--  onsubmit="validateAvatar()" onSubmit="return validateFullForm()" border border-white p-2 my-2 border-opacity-25   -->
           <!-- Steps -->
           <div class="form-step form-step-active">
-            <label for="firstname" class="form-label">First Name</label>
-            <input type="text" class="form-control" id="firstname" name="firstname" required>
+            <label for="firstname" class="form-label">First Name <span class="text-warning">*</span></label>
+            <input type="text" class="form-control" id="firstname" name="firstname" required autocomplete="given-name">
             <div class="invalid-feedback">
               Please provide your first name.
             </div>
-            <label for="surname" class="form-label">Last Name</label>
-            <input type="text" class="form-control" id="surname" name="surname" required>
+            <label for="surname" class="form-label">Last Name <span class="text-warning">*</span></label>
+            <input type="text" class="form-control" id="surname" name="surname" required autocomplete="family-name">
             <div class="invalid-feedback">
               Please provide your last name.
             </div>
-            <label for="email" class="form-label">Email</label>
-            <input type="email" class="form-control" id="email" name="email" required>
+            <label for="email" class="form-label">Email <span class="text-warning">*</span></label>
+            <input type="email" class="form-control" id="email" name="email" required autocomplete="email">
             <div class="invalid-feedback">
               Please provide a valid email address.
-            </div>        
+            </div>
+            <label for="emailConfirm" class="form-label">Confirm Email <span class="text-warning">*</span></label>
+            <input type="email" class="form-control" id="emailConfirm" name="emailConfirm" required autocomplete="email">
+            <div class="invalid-feedback">
+              Email addresses must match.
+            </div>
               <div class="row">
                 <hr>
                 <div class="col-12 text-end">
@@ -162,14 +169,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               </div>
           </div>
           <div class="form-step">
-            <label for="username" class="form-label">Username</label>
-            <input type="text" class="form-control" id="username" name="username" required autocomplete="off">
+            <label for="username" class="form-label">Username <span class="text-warning">*</span></label>
+            <input type="text" class="form-control" id="username" name="username" required autocomplete="username">
             <span class="un-msg"></span>
             <div class="invalid-feedback">
               Please provide a username.
             </div>
-            <label for="pwd1" class="form-label">Password <i class="bi bi-eye-slash-fill m-4" id="togglePwd1"></i></label>
-            <input type="password" class="form-control" id="pwd1" name="pwd1" onBlur="return validatePassword();" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" onchange="form.pwd2.pattern = this.value;" />
+            <label for="pwd1" class="form-label">Password <span class="text-warning">*</span> <i class="bi bi-eye-slash-fill m-4" id="togglePwd1"></i></label>
+            <input type="password" class="form-control" id="pwd1" name="pwd1" onBlur="return validatePassword();" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" onchange="form.pwd2.pattern = this.value;" autocomplete="new-password" />
+            <div class="form-text text-start text-white-50">
+              Use at least 6 characters with uppercase, lowercase, and a number.
+            </div>
             <div class="invalid-feedback">
               Password does not meet criteria.
               <div id="pwdMsg">
@@ -180,8 +190,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </ul>
               </div>
             </div>
-            <label for="pwd2" class="form-label">Confirm Password <i class="bi bi-eye-slash-fill m-4" id="togglePwd2"></i></label> 
-            <input type="password" class="form-control" id="pwd2" name="pwd2" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}">
+            <label for="pwd2" class="form-label">Confirm Password <span class="text-warning">*</span> <i class="bi bi-eye-slash-fill m-4" id="togglePwd2"></i></label> 
+            <input type="password" class="form-control" id="pwd2" name="pwd2" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" autocomplete="new-password">
             <div class="invalid-feedback">
               Passwords do not meet criteria or match.
             </div>
@@ -197,7 +207,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>      
         <div class="form-step">
           <div class="container text-center g-3">
-              <label for="avatar" class="form-label">Choose Your Avatar</label>
+              <label for="avatar" class="form-label">Choose Your Avatar <span class="text-warning">*</span></label>
               <div class="row row-cols-6 g-1">
                   <?php
                   $avatars = [$fk1, $fk2, $fk3, $fk4, $fk5, $fk6, $fk7, $fk8, $fk9, $fk10, $fk11, $fk12, $fk13, $fk14, $fk15, $fk16, $fk17, $fk18];
@@ -228,11 +238,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
         <div class="form-step">
           <span class="badge text-bg-light">Begin typing to search or use drop-down menus</span>
-          <label for="fieldofwork" class="form-label">Field of Expertise</label>
-          <input id="fieldofwork" name="fieldofwork" class="form-select" list="datalistOptions1" required>
-          <div class="invalid-feedback">
-            Please tell us your field of expertise.
-          </div>
+          <label for="fieldofwork" class="form-label">Field of Expertise <span class="text-white-50">(Optional)</span></label>
+          <input id="fieldofwork" name="fieldofwork" class="form-select" list="datalistOptions1" placeholder="Start typing to filter">
           <datalist id="datalistOptions1">
             <option value="Prefer Not To Say"></option>        
             <?php
@@ -249,11 +256,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ?>
           </datalist>
           <!-- Repeat similar structure for other input fields -->
-          <label for="location" class="form-label">Location (Nearest Town/City)</label>
-          <input id="location" name="location" class="form-select" list="datalistOptions4" required>
-          <div class="invalid-feedback">
-            Please tell us your nearest city.
-          </div>
+          <label for="location" class="form-label">Location (Nearest Town/City) <span class="text-white-50">(Optional)</span></label>
+          <input id="location" name="location" class="form-select" list="datalistOptions4" placeholder="Start typing to filter">
           <datalist id="datalistOptions4">
           <option value="Prefer Not To Say"></option>
             <?php
@@ -269,11 +273,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               }
             ?>
           </datalist>
-          <label for="faveteam" class="form-label">Favourite Team</label>
-          <input id="faveteam" name="faveteam" class="form-select" list="datalistOptions2" required>
-          <div class="invalid-feedback">
-            Please tell us your team.
-          </div>
+          <label for="faveteam" class="form-label">Favourite Team <span class="text-white-50">(Optional)</span></label>
+          <input id="faveteam" name="faveteam" class="form-select" list="datalistOptions2" placeholder="Start typing to filter">
           <datalist id="datalistOptions2">
             <option value="None"></option>
             <?php
@@ -289,11 +290,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               }
             ?>
           </datalist>
-          <label for="tournwinner" class="form-label">Who'll Win <?= $competition ?>?</label>
-          <input id="tournwinner" name="tournwinner" class="form-select" list="datalistOptions3" required>
-          <div class="invalid-feedback">
-            Please tell us who'll win <?= $competition ?>.
-          </div>
+          <label for="tournwinner" class="form-label">Who'll Win <?= $competition ?>? <span class="text-white-50">(Optional)</span></label>
+          <input id="tournwinner" name="tournwinner" class="form-select" list="datalistOptions3" placeholder="Start typing to filter">
           <datalist id="datalistOptions3">
           <option value="Prefer Not To Say"></option>        
             <?php
@@ -341,6 +339,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               <div class="col-6 text-end">
                 <button type="submit" class="btn btn-success w-100">Sign up!</button><!-- <i class="fw-bold bi bi-hand-thumbs-up"></i> -->
               </div>
+            </div>
+            <div class="text-white-50 small text-start mt-2">
+              You can update your profile details after signup.
             </div>
           </div>
             <!-- <hr />
@@ -401,12 +402,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           const inputs = form.querySelectorAll('input');
           inputs.forEach(input => {
             input.addEventListener('input', () => {
+              const feedback = input.parentElement?.querySelector('.invalid-feedback');
               if (input.checkValidity()) {
                 input.classList.remove('is-invalid');
-                input.nextElementSibling.classList.remove('d-block');
+                if (feedback) {
+                  feedback.classList.remove('d-block');
+                }
               } else {
                 input.classList.add('is-invalid');
-                input.nextElementSibling.classList.add('d-block');
+                if (feedback) {
+                  feedback.classList.add('d-block');
+                }
               }
             });
           });
@@ -422,6 +428,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       const togglePwd2 = document.querySelector('#togglePwd2');
       const pwd1 = document.querySelector('#pwd1');
       const pwd2 = document.querySelector('#pwd2');
+      const email = document.querySelector('#email');
+      const emailConfirm = document.querySelector('#emailConfirm');
+
+      const validateMatchingFields = (field, confirmField, message) => {
+        if (!field || !confirmField) {
+          return;
+        }
+
+        const checkMatch = () => {
+          if (confirmField.value && field.value !== confirmField.value) {
+            confirmField.setCustomValidity(message);
+          } else {
+            confirmField.setCustomValidity('');
+          }
+        };
+
+        field.addEventListener('input', checkMatch);
+        confirmField.addEventListener('input', checkMatch);
+      };
+
+      validateMatchingFields(email, emailConfirm, 'Email addresses must match.');
+      validateMatchingFields(pwd1, pwd2, 'Passwords must match.');
 
       togglePwd1.addEventListener('click', function (e) {
           // Toggle the type attribute
