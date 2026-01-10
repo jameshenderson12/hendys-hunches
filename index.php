@@ -81,14 +81,17 @@ session_start();
                     <div class="row">
                         <label for="password" class="col-12 col-md-4 col-form-label">Password</label>
                         <div class="col-12 col-md-8">
-                            <div class="d-flex align-items-center gap-2">
-                              <input type="password" class="form-control flex-grow-1" id="password" name="password" required autocomplete="current-password">
+                            <div class="input-group">
+                              <input type="password" class="form-control" id="password" name="password" style="width: 100%" required autocomplete="current-password">
                               <button class="btn btn-outline-light" type="button" id="toggleLoginPwd" aria-label="Show password">
                                 <i class="bi bi-eye-slash-fill"></i>
                               </button>
                             </div>
                             <div class="invalid-feedback">
                                 Please provide your password.
+                            </div>
+                            <div class="text-start small mt-2">
+                              <a href="forgot-password.php" class="text-white">Forgot password?</a>
                             </div>
                         </div>
                     </div>
