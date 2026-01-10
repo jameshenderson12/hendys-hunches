@@ -36,6 +36,11 @@ main {
   --bs-btn-active-bg: lightgreen !important;
 }
 
+.btn-check:checked + .btn-outline-light {
+  border: 2px solid #7CFC00;
+  box-shadow: 0 0 0 0.2rem rgba(124, 252, 0, 0.35);
+}
+
 .btn-outline-light img {
   border-radius: 0.25rem; /* Optional: rounded corners */
   transition: transform 0.3s ease; /* Smooth hover effect */
@@ -123,6 +128,16 @@ main {
 }
 .modal img {
   text-align: center;
+}
+.login-hero {
+  max-height: 240px;
+  width: auto;
+}
+
+@media (max-width: 576px) {
+  .login-hero {
+    max-height: 180px;
+  }
 }
 
 /* -------------- loader1 -------------- */
