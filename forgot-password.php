@@ -2,7 +2,7 @@
 // Include necessary files for configuration and database connection
 include 'php/config.php';
 include 'php/db-connect.php';
-include 'php/send-temppass-email.php';
+//include 'php/send-temppass-email.php';
 
 // Initialise variable for error messages
 $generateTempPassSuccess = false;
