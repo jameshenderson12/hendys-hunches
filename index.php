@@ -96,11 +96,17 @@ session_start();
                         </div>
                     </div>
                     <div class="row">
-                      <hr>
                       <div class="col-12 col-md-4">                        
                       </div>
                       <div class="col-12 col-md-8">
                         <button type="submit" class="btn btn-primary w-100 mt-0"><i class="fw-bold bi bi-box-arrow-in-right"></i> Log in</button>
+                      </div>
+                      <div class="col-12 col-md-4"></div>
+                      <div class="col-12 col-md-8">
+                        <hr>
+                        <div class="text-start small mt-2">
+                          <a href="forgot-password.php" class="text-white">Forgot password?</a>
+                        </div>
                       </div>
                     </div>                    
                 </div>
