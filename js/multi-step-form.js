@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const formSteps = document.querySelectorAll(".form-step");
   const progress = document.getElementById("progress");
   const progressSteps = document.querySelectorAll(".progress-step");
+  const stepLabel = document.getElementById("stepLabel");
   let currentStep = 0;
 
   nextButtons.forEach(button => {
@@ -66,5 +67,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const progressActive = document.querySelectorAll(".progress-step-active");
       progress.style.width = ((progressActive.length - 1) / (progressSteps.length - 1)) * 100 + "%";
+
+      if (stepLabel) {
+        const currentTitle = progressSteps[currentStep]?.dataset?.title || "";
+        stepLabel.textContent = `Step ${currentStep + 1} of ${progressSteps.length}: ${currentTitle}`;
+      }
   }
+
+  updateProgressbar();
 });

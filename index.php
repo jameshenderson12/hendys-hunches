@@ -45,7 +45,7 @@ session_start();
       </header>
       
 
-      <img src="img/james-scotland-ed-lg.png" alt="James in Scotland kit" class="col-md-5 col-5 img-fluid fade-in-image mx-auto d-block">      
+      <img src="img/james-scotland-ed-lg.png" alt="James in Scotland kit" class="col-md-5 col-5 img-fluid fade-in-image mx-auto d-block login-hero">      
   		<main class="px-3">
   			<h1><img src="img/germany-518638_640.png" alt="German nation flag" class="img-fluid col-1 mx-2 mb-2" style="">Germany 2024</h1>
         <!-- <h3>Login</h3> -->
@@ -72,7 +72,7 @@ session_start();
                     <div class="row mb-3">
                         <label for="username" class="col-12 col-md-4 col-form-label">Username</label>
                         <div class="col-12 col-md-8">
-                            <input type="text" class="form-control" id="username" name="username" style="width: 100%" required>
+                            <input type="text" class="form-control" id="username" name="username" style="width: 100%" required autocomplete="username" autofocus>
                             <div class="invalid-feedback">
                                 Please provide your username.
                             </div>
@@ -81,9 +81,17 @@ session_start();
                     <div class="row">
                         <label for="password" class="col-12 col-md-4 col-form-label">Password</label>
                         <div class="col-12 col-md-8">
-                            <input type="password" class="form-control" id="password" name="password" style="width: 100%" required>
+                            <div class="input-group">
+                              <input type="password" class="form-control" id="password" name="password" style="width: 100%" required autocomplete="current-password">
+                              <button class="btn btn-outline-light" type="button" id="toggleLoginPwd" aria-label="Show password">
+                                <i class="bi bi-eye-slash-fill"></i>
+                              </button>
+                            </div>
                             <div class="invalid-feedback">
                                 Please provide your password.
+                            </div>
+                            <div class="text-start small mt-2">
+                              <a href="forgot-password.php" class="text-white">Forgot password?</a>
                             </div>
                         </div>
                     </div>
@@ -138,5 +146,20 @@ session_start();
       </footer>
 
 	  </div>
+    <script>
+      const toggleLoginPwd = document.querySelector('#toggleLoginPwd');
+      const loginPassword = document.querySelector('#password');
+
+      if (toggleLoginPwd && loginPassword) {
+        toggleLoginPwd.addEventListener('click', () => {
+          const type = loginPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+          loginPassword.setAttribute('type', type);
+          const icon = toggleLoginPwd.querySelector('i');
+          if (icon) {
+            icon.classList.toggle('bi-eye');
+          }
+        });
+      }
+    </script>
   </body>
 </html>
