@@ -47,9 +47,8 @@ session_start();
 
       <img src="img/james-scotland-ed-lg.png" alt="James in Scotland kit" class="col-md-5 col-5 img-fluid fade-in-image mx-auto d-block login-hero">      
   		<main class="px-3">
-			<span class="font-size:8px">Game based on</span>
+			<span>Game based on</span>
   			<h1>FIFA World Cup 2026</h1>
-				<br>
 				<img src="https://flagcdn.com/h20/ca.png" srcset="https://flagcdn.com/h40/ca.png 2x, https://flagcdn.com/h60/ca.png 3x" height="20" alt="Canada">
 				<img src="https://flagcdn.com/h20/mx.png" srcset="https://flagcdn.com/h40/mx.png 2x, https://flagcdn.com/h60/mx.png 3x" height="20" alt="Mexico">
 				<img src="https://flagcdn.com/h20/us.png" srcset="https://flagcdn.com/h40/us.png 2x, https://flagcdn.com/h60/us.png 3x" height="20" alt="United States">
