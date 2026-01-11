@@ -47,7 +47,7 @@ session_start();
 
       <img src="img/james-scotland-ed-lg.png" alt="James in Scotland kit" class="col-md-5 col-5 img-fluid fade-in-image mx-auto d-block login-hero">      
   		<main class="px-3">
-  			<h1><img src="img/germany-518638_640.png" alt="German nation flag" class="img-fluid col-1 mx-2 mb-2" style="">Germany 2024</h1>
+  			<h1><img src="https://flagcdn.com/h20/ca.png" srcset="https://flagcdn.com/h40/ca.png 2x, https://flagcdn.com/h60/ca.png 3x" height="20" alt="Canada">FIFA World Cup 2026</h1>
         <!-- <h3>Login</h3> -->
 
         <!-- <form id="login" role="form" class="d-flex flex-column needs-validation" method="POST" action="php/login.php" style="	border: 1px solid #AAA; border-radius: 0.35rem; min-height: inherit; height: inherit;">
