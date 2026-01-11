@@ -120,6 +120,17 @@ main {
 .form-check .form-check-input {
    float: none !important;
 }
+.terms-panel {
+  max-height: 220px;
+  overflow-y: auto;
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+}
+.terms-panel ul {
+  margin-bottom: 0;
+}
 .modal {
   color: #000;
 }
@@ -137,6 +148,12 @@ main {
 @media (max-width: 576px) {
   .login-hero {
     max-height: 180px;
+  }
+
+  .form-step .form-control,
+  .form-step .form-select,
+  .form-step .input-group {
+    width: 100%;
   }
 }
 
