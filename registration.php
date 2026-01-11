@@ -18,10 +18,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
     $password = md5($_POST['pwd1']);
     $avatar = $_POST['avatar'];
-    $fieldofwork = $_POST['fieldofwork'];
-    $location = $_POST['location'];
-    $faveteam = $_POST['faveteam'];
-    $tournwinner = $_POST['tournwinner'];
+    $fieldofwork = trim($_POST['fieldofwork'] ?? '');
+    $location = trim($_POST['location'] ?? '');
+    $faveteam = trim($_POST['faveteam'] ?? '');
+    $tournwinner = trim($_POST['tournwinner'] ?? '');
+
+    $fieldofwork = $fieldofwork !== '' ? $fieldofwork : 'Prefer Not To Say';
+    $location = $location !== '' ? $location : 'Prefer Not To Say';
+    $faveteam = $faveteam !== '' ? $faveteam : 'Prefer Not To Say';
+    $tournwinner = $tournwinner !== '' ? $tournwinner : 'Prefer Not To Say';
 
     // Include database connection
     include 'php/db-connect.php';
@@ -105,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   				<nav class="nav nav-masthead justify-content-center float-md-end">
   					<a class="nav-link fw-bold py-1 px-0" href="index.php">Login</a>
   					<a class="nav-link fw-bold py-1 px-0" href="forgot-password.php">Reset Password</a>
-            <a class="nav-link fw-bold py-1 px-0" href="#" data-bs-toggle="modal" data-bs-target="#terms">Terms</a>
+            <a class="nav-link fw-bold py-1 px-0" href="#terms-panel">Terms</a>
   				</nav>
   			</div>
   		</header>
@@ -125,6 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php else: ?>
 
   			<h1>Registration</h1>
+        <div class="text-start small text-white-50 mt-2" id="stepLabel">Step 1 of 5: Contact</div>
 
         <!-- Progress bar -->
         <div class="progressbar">
@@ -135,7 +141,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <div class="progress-step" data-title="Details"></div>
           <div class="progress-step" data-title="Terms"></div>
         </div>
-        <div class="text-start small text-white-50 mt-2" id="stepLabel">Step 1 of 5: Contact</div>
         <div class="text-start small text-white-50 mt-1">Fields marked with <span class="text-warning">*</span> are required.</div>
 
       <form class="d-flex flex-column needs-validation" method="POST" action="" id="registrationForm" name="registrationForm" novalidate> <!--  onsubmit="validateAvatar()" onSubmit="return validateFullForm()" border border-white p-2 my-2 border-opacity-25   -->
@@ -164,7 +169,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               <div class="row">
                 <hr>
                 <div class="col-12 text-end">
-                  <button type="button" class="btn btn-primary btn-next w-50">Next</button>
+                  <button type="button" class="btn btn-primary btn-next w-50">Next <i class="bi bi-arrow-right ms-2"></i></button>
                 </div>
               </div>
           </div>
@@ -175,10 +180,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="invalid-feedback">
               Please provide a username.
             </div>
-            <label for="pwd1" class="form-label">Password <span class="text-warning">*</span> <i class="bi bi-eye-slash-fill m-4" id="togglePwd1"></i></label>
-            <input type="password" class="form-control" id="pwd1" name="pwd1" onBlur="return validatePassword();" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" onchange="form.pwd2.pattern = this.value;" autocomplete="new-password" />
-            <div class="form-text text-start text-white-50">
-              Use at least 6 characters with uppercase, lowercase, and a number.
+            <label for="pwd1" class="form-label">Password <span class="text-warning">*</span></label>
+            <div class="input-group">
+              <input type="password" class="form-control" id="pwd1" name="pwd1" onBlur="return validatePassword();" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" onchange="form.pwd2.pattern = this.value;" autocomplete="new-password" />
+              <button class="btn btn-outline-secondary" type="button" id="togglePwd1" aria-label="Show password">
+                <i class="bi bi-eye-slash-fill"></i>
+              </button>
+            </div>
+            <div class="mt-2">
+              <div class="progress" role="progressbar" aria-label="Password strength">
+                <div class="progress-bar" id="passwordStrengthBar" style="width: 0%"></div>
+              </div>
+              <div class="small text-white-50 mt-1" id="passwordStrengthText">Strength: Not set</div>
             </div>
             <div class="invalid-feedback">
               Password does not meet criteria.
@@ -190,18 +203,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </ul>
               </div>
             </div>
-            <label for="pwd2" class="form-label">Confirm Password <span class="text-warning">*</span> <i class="bi bi-eye-slash-fill m-4" id="togglePwd2"></i></label> 
-            <input type="password" class="form-control" id="pwd2" name="pwd2" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" autocomplete="new-password">
+            <label for="pwd2" class="form-label">Confirm Password <span class="text-warning">*</span></label>
+            <div class="input-group">
+              <input type="password" class="form-control" id="pwd2" name="pwd2" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" autocomplete="new-password">
+              <button class="btn btn-outline-secondary" type="button" id="togglePwd2" aria-label="Show password confirmation">
+                <i class="bi bi-eye-slash-fill"></i>
+              </button>
+            </div>
             <div class="invalid-feedback">
               Passwords do not meet criteria or match.
             </div>
             <div class="row">
               <hr>
               <div class="col-6">
-                <button type="button" class="btn btn-primary btn-prev w-100">Previous</button>
+                <button type="button" class="btn btn-primary btn-prev w-100"><i class="bi bi-arrow-left me-2"></i>Previous</button>
               </div>
               <div class="col-6 text-end">
-                <button type="button" class="btn btn-primary btn-next w-100">Next</button>
+                <button type="button" class="btn btn-primary btn-next w-100">Next <i class="bi bi-arrow-right ms-2"></i></button>
               </div>
             </div>
         </div>      
@@ -229,15 +247,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <div class="row">
             <hr>
             <div class="col-6">
-              <button type="button" class="btn btn-primary btn-prev w-100">Previous</button>
+              <button type="button" class="btn btn-primary btn-prev w-100"><i class="bi bi-arrow-left me-2"></i>Previous</button>
             </div>
             <div class="col-6 text-end">
-              <button type="button" class="btn btn-primary btn-next w-100">Next</button>
+              <button type="button" class="btn btn-primary btn-next w-100">Next <i class="bi bi-arrow-right ms-2"></i></button>
             </div>
           </div>
         </div>
         <div class="form-step">
-          <span class="badge text-bg-light">Begin typing to search or use drop-down menus</span>
           <label for="fieldofwork" class="form-label">Field of Expertise <span class="text-white-50">(Optional)</span></label>
           <input id="fieldofwork" name="fieldofwork" class="form-select" list="datalistOptions1" placeholder="Start typing to filter">
           <datalist id="datalistOptions1">
@@ -276,7 +293,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <label for="faveteam" class="form-label">Favourite Team <span class="text-white-50">(Optional)</span></label>
           <input id="faveteam" name="faveteam" class="form-select" list="datalistOptions2" placeholder="Start typing to filter">
           <datalist id="datalistOptions2">
-            <option value="None"></option>
+            <option value="Prefer Not To Say"></option>
             <?php
               $file = 'text/select-clubteams-input.txt';
               $handle = @fopen($file, 'r');
@@ -310,38 +327,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <div class="row">
             <hr>
             <div class="col-6">
-              <button type="button" class="btn btn-primary btn-prev w-100">Previous</button>
+              <button type="button" class="btn btn-primary btn-prev w-100"><i class="bi bi-arrow-left me-2"></i>Previous</button>
             </div>
             <div class="col-6 text-end">
-              <button type="button" class="btn btn-primary btn-next w-100">Next</button>
+              <button type="button" class="btn btn-primary btn-next w-100">Next <i class="bi bi-arrow-right ms-2"></i></button>
             </div>
           </div>
         </div>
 
           <div class="form-step">             
             <div class="row">
-            <img src="img/hh-logo-2018.jpg" class="img-fluid mt-auto" title="Hendy's Hunches Logo" alt="Hendy's Hunches Logo"> 
+            <div class="terms-panel text-start" id="terms-panel">
+              <h5 class="text-center">Hendy's Hunches: Terms &amp; Conditions</h5>
+              <p>By registering to play Hendy's Hunches, you acknowledge that:</p>
+              <ul>
+                <li>your involvement in this game, and the game itself, is intended only for entertainment; it is not a gambling site</li>
+                <li>the game is based on <?=$competition?></li>
+                <li>only one registration per person is permitted although family and friends are welcome to participate</li>
+                <li>an entry fee of £<?=$signup_fee_formatted?> is to be paid prior to <?=$signup_close_date?>; split for charity donation and prize funds</li>
+                <li>an unpaid entry fee results in removal from the game</li>
+                <li>the number of prize funds, and their amounts, are revealed in due course, awarded to winners after the final tournament fixture and, in the event of a shared winning spot, divided accordingly.</li>
+              </ul>
+            </div>
               <div class="col-auto d-flex align-items-center my-4 mx-auto">                        
                 <input class="form-check-input" type="checkbox" id="disclaimer" name="disclaimer" value="disclaimer" required>
                 <label class="form-check-label m-3" for="disclaimer">
-                  I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#terms" class="text-white">terms and conditions</a> of Hendy's Hunches.
+                  I agree to the terms and conditions of Hendy's Hunches.
                 </label>
               </div>
               <div class="invalid-feedback">
                 You must agree before submitting.
               </div>
             </div>
+            <div class="text-white-50 small text-start mt-2">
+              You can update your profile details after signup.
+            </div>
             <div class="row">
               <hr>
               <div class="col-6">
-                <button type="button" class="btn btn-primary btn-prev w-100">Previous</button>
+                <button type="button" class="btn btn-primary btn-prev w-100"><i class="bi bi-arrow-left me-2"></i>Previous</button>
               </div>
               <div class="col-6 text-end">
-                <button type="submit" class="btn btn-success w-100">Sign up!</button><!-- <i class="fw-bold bi bi-hand-thumbs-up"></i> -->
+                <button type="submit" class="btn btn-success w-100"><i class="bi bi-person-plus-fill me-2"></i>Sign up!</button><!-- <i class="fw-bold bi bi-hand-thumbs-up"></i> -->
               </div>
-            </div>
-            <div class="text-white-50 small text-start mt-2">
-              You can update your profile details after signup.
             </div>
           </div>
             <!-- <hr />
@@ -353,34 +381,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <?php endif; ?>
 
 		</main>
-
-      <!-- HH Terms Modal -->
-      <div class="modal fade" id="terms" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h1 class="modal-title fs-5" id="staticBackdropLabel">Hendy's Hunches: Terms &amp; Conditions</h1>
-              <!--<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
-            </div>
-            <div class="modal-body">
-              <img src="img/hh-logo-2018.jpg" class="img-responsive mt-auto" title="Hendy's Hunches Logo" alt="Hendy's Hunches Logo" style="width: 180px; margin-bottom: 10px;">
-              <p>By registering to play Hendy's Hunches, you acknowledge that:</p>
-              <ul>
-                <li>your involvement in this game, and the game itself, is intended only for entertainment; it is not a gambling site</li>
-                <li>the game is based on <?=$competition?></li>
-                <li>only one registration per person is permitted although family and friends are welcome to participate</li>
-                <li>an entry fee of £<?=$signup_fee_formatted?> is to be paid prior to <?=$signup_close_date?>; split for charity donation and prize funds</li>
-                <li>an unpaid entry fee results in removal from the game</li>
-                <li>the number of prize funds, and their amounts, are revealed in due course, awarded to winners after the final tournament fixture and, in the event of a shared winning spot, divided accordingly.</li>
-              </ul>
-            </div>
-            <div class="modal-footer">
-              <!--<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
-              <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Understood</button>
-            </div>
-          </div>
-        </div>
-      </div>
 
     <script type="text/javascript">
     // Example starter JavaScript for disabling form submissions if there are invalid fields
@@ -398,11 +398,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             form.classList.add('was-validated');
           }, false);
 
+          const findInvalidFeedback = (element) => {
+            if (!element) {
+              return null;
+            }
+
+            if (element.parentElement?.classList.contains('input-group')) {
+              return element.parentElement.nextElementSibling?.classList.contains('invalid-feedback')
+                ? element.parentElement.nextElementSibling
+                : null;
+            }
+
+            let sibling = element.nextElementSibling;
+            while (sibling) {
+              if (sibling.classList?.contains('invalid-feedback')) {
+                return sibling;
+              }
+              sibling = sibling.nextElementSibling;
+            }
+            return null;
+          };
+
           // Add event listeners to all inputs to handle real-time validation feedback
-          const inputs = form.querySelectorAll('input');
+          const inputs = form.querySelectorAll('input, select, textarea');
           inputs.forEach(input => {
             input.addEventListener('input', () => {
-              const feedback = input.parentElement?.querySelector('.invalid-feedback');
+              const feedback = findInvalidFeedback(input);
               if (input.checkValidity()) {
                 input.classList.remove('is-invalid');
                 if (feedback) {
@@ -426,10 +447,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
       const togglePwd1 = document.querySelector('#togglePwd1');
       const togglePwd2 = document.querySelector('#togglePwd2');
+      const togglePwd1Icon = togglePwd1?.querySelector('i');
+      const togglePwd2Icon = togglePwd2?.querySelector('i');
       const pwd1 = document.querySelector('#pwd1');
       const pwd2 = document.querySelector('#pwd2');
       const email = document.querySelector('#email');
       const emailConfirm = document.querySelector('#emailConfirm');
+      const passwordStrengthBar = document.querySelector('#passwordStrengthBar');
+      const passwordStrengthText = document.querySelector('#passwordStrengthText');
 
       const validateMatchingFields = (field, confirmField, message) => {
         if (!field || !confirmField) {
@@ -456,7 +481,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           const type = pwd1.getAttribute('type') === 'password' ? 'text' : 'password';
           pwd1.setAttribute('type', type);
           // Toggle the eye / eye slash icon
-          this.classList.toggle('bi-eye');
+          togglePwd1Icon?.classList.toggle('bi-eye');
+          togglePwd1Icon?.classList.toggle('bi-eye-slash-fill');
       });
 
       togglePwd2.addEventListener('click', function (e) {
@@ -464,7 +490,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           const type = pwd2.getAttribute('type') === 'password' ? 'text' : 'password';
           pwd2.setAttribute('type', type);
           // Toggle the eye / eye slash icon
-          this.classList.toggle('bi-eye');
+          togglePwd2Icon?.classList.toggle('bi-eye');
+          togglePwd2Icon?.classList.toggle('bi-eye-slash-fill');
       });
 
       var myInput = document.getElementById("pwd1");
@@ -508,6 +535,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
           length.classList.remove("valid");
           length.classList.add("invalid");
+        }
+
+        if (passwordStrengthBar && passwordStrengthText) {
+          const hasLower = lowerCaseLetters.test(myInput.value);
+          const hasUpper = upperCaseLetters.test(myInput.value);
+          const hasNumber = numbers.test(myInput.value);
+          const longEnough = myInput.value.length >= 6;
+          const extraLength = myInput.value.length >= 10;
+          let score = 0;
+
+          if (hasLower && hasUpper) score += 1;
+          if (hasNumber) score += 1;
+          if (longEnough) score += 1;
+          if (extraLength) score += 1;
+
+          const percent = Math.min((score / 4) * 100, 100);
+          passwordStrengthBar.style.width = `${percent}%`;
+          passwordStrengthBar.classList.remove('bg-danger', 'bg-warning', 'bg-success');
+
+          if (score <= 1) {
+            passwordStrengthBar.classList.add('bg-danger');
+            passwordStrengthText.textContent = 'Strength: Weak';
+          } else if (score === 2) {
+            passwordStrengthBar.classList.add('bg-warning');
+            passwordStrengthText.textContent = 'Strength: Fair';
+          } else {
+            passwordStrengthBar.classList.add('bg-success');
+            passwordStrengthText.textContent = 'Strength: Strong';
+          }
         }
       }
 /*
