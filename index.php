@@ -53,29 +53,12 @@ session_start();
 				<img src="https://flagcdn.com/h20/mx.png" srcset="https://flagcdn.com/h40/mx.png 2x, https://flagcdn.com/h60/mx.png 3x" height="20" alt="Mexico">
 				<img src="https://flagcdn.com/h20/us.png" srcset="https://flagcdn.com/h40/us.png 2x, https://flagcdn.com/h60/us.png 3x" height="20" alt="United States">			
 			</div>
-        <!-- <h3>Login</h3> -->
-
-        <!-- <form id="login" role="form" class="d-flex flex-column needs-validation" method="POST" action="php/login.php" style="	border: 1px solid #AAA; border-radius: 0.35rem; min-height: inherit; height: inherit;">
-
-          <div class="mb-3 row d-flex justify-content-center px-5">
-            <label for="username" class="form-label col-5 col-lg-3">Username</label>
-            <input type="text" class="form-control col-6" id="username" name="username" required>
-            <div class="invalid-feedback">
-              Please provide your username.
-            </div>
-            <label for="password" class="form-label col-5 col-lg-3">Password</label>
-            <input type="password" class="form-control col-6" id="password" name="password" required>
-            <div class="invalid-feedback">
-              Please provide your password.
-            </div>     
-
-          </div> -->
 
           <form id="loginForm" role="form" class="needs-validation" method="POST" action="php/login.php" style="border: 1px solid #AAA; border-radius: 0.35rem; min-height: inherit; height: inherit;">
             <div class="mb-3 row justify-content-center px-3 px-md-5">
                 <div class="col-12 col-md-10 col-lg-8">
                     <div class="row mb-3">
-                        <label for="username" class="col-12 col-md-4 col-form-label">Username</label>
+                        <label for="username" class="col-12 col-md-3 col-form-label">Username</label>
                         <div class="col-12 col-md-8">
                             <input type="text" class="form-control" id="username" name="username" style="width: 100%" required autocomplete="username" autofocus>
                             <div class="invalid-feedback">
@@ -84,27 +67,25 @@ session_start();
                         </div>
                     </div>
                     <div class="row">
-                        <label for="password" class="col-12 col-md-4 col-form-label">Password</label>
+                        <label for="password" class="col-12 col-md-3 col-form-label">Password</label>
                         <div class="col-12 col-md-8">
-                            <div class="input-group">
-                              <input type="password" class="form-control" id="password" name="password" style="width: 100%" required autocomplete="current-password">
-                              <button class="btn btn-outline-light" type="button" id="toggleLoginPwd" aria-label="Show password">
-                                <i class="bi bi-eye-slash-fill"></i>
-                              </button>
-                            </div>
-                            <div class="invalid-feedback">
+                        	<input type="password" class="form-control" id="password" name="password" style="width: 100%" required autocomplete="current-password">                             
+                        	<div class="invalid-feedback">
                                 Please provide your password.
                             </div>
                         </div>
+						<button class="col-1 btn btn-outline-light" type="button" id="toggleLoginPwd" aria-label="Show password">
+                        	<i class="bi bi-eye-slash-fill"></i>
+                        </button>
                     </div>
 					<hr>
                     <div class="row">
-                      <div class="col-12 col-md-4">                        
+                      <div class="col-12 col-md-3">                        
                       </div>
                       <div class="col-12 col-md-8">
                         <button type="submit" class="btn btn-primary w-100 mt-0"><i class="fw-bold bi bi-box-arrow-in-right"></i> Log in</button>
                       </div>
-                      <div class="col-12 col-md-4"></div>
+                      <div class="col-12 col-md-3"></div>
                       <div class="col-12 col-md-8">                        
                         <div class="text-start small mt-2">
                           <a href="forgot-password.php" class="text-white">Forgot password?</a>
