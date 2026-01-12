@@ -84,7 +84,7 @@ session_start();
                         <button type="submit" class="btn btn-primary w-100 mt-0"><i class="fw-bold bi bi-box-arrow-in-right"></i> Log in</button>
                       </div>
 					  <div class="col-12 col-md-7 mt-3">
-						  <button class="btn w-100" style="background-color: var(--primary-colour)">
+						  <button class="btn w-100 text-black" style="background-color: var(--primary-color)">
 					  		  <i class="bi bi-person-fill-add"></i> Register
 						  </button>
 					  </div>
