@@ -48,9 +48,9 @@ session_start();
       <img src="img/james-scotland-ed-lg.png" alt="James in Scotland kit" class="col-md-5 col-5 img-fluid fade-in-image mx-auto d-block login-hero">      
   		<main class="px-3"> 			
 			<div id="countryFlags" class="m-0">	
-				<img class="mx-1" src="https://flagcdn.com/h20/ca.png" srcset="https://flagcdn.com/h40/ca.png 2x, https://flagcdn.com/h60/ca.png 3x" height="20" alt="Canada">				
-				<img class="mx-1" src="https://flagcdn.com/h20/us.png" srcset="https://flagcdn.com/h40/us.png 2x, https://flagcdn.com/h60/us.png 3x" height="20" alt="United States">
-				<img class="mx-1" src="https://flagcdn.com/h20/mx.png" srcset="https://flagcdn.com/h40/mx.png 2x, https://flagcdn.com/h60/mx.png 3x" height="20" alt="Mexico">
+				<img class="mx-1" src="https://flagcdn.com/h20/ca.png" srcset="https://flagcdn.com/h40/ca.png 2x, https://flagcdn.com/h60/ca.png 3x" height="30" alt="Canada">				
+				<img class="mx-1" src="https://flagcdn.com/h20/us.png" srcset="https://flagcdn.com/h40/us.png 2x, https://flagcdn.com/h60/us.png 3x" height="30" alt="United States">
+				<img class="mx-1" src="https://flagcdn.com/h20/mx.png" srcset="https://flagcdn.com/h40/mx.png 2x, https://flagcdn.com/h60/mx.png 3x" height="30" alt="Mexico">
 			</div>
 			<h1>FIFA World Cup 2026™</h1> 
           <form id="loginForm" role="form" class="needs-validation" method="POST" action="php/login.php" style="border: 1px solid #AAA; border-radius: 0.35rem; min-height: inherit; height: inherit;">
