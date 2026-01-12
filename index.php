@@ -78,16 +78,13 @@ session_start();
                         	<i class="bi bi-eye-slash-fill"></i>
                         </button>
                     </div>
-					<hr>
+					<hr class="mt-0">
                     <div class="row">
-                      <div class="col-12 col-md-3">                        
-                      </div>
-                      <div class="col-12 col-md-8">
+                      <div class="col-12">
                         <button type="submit" class="btn btn-primary w-100 mt-0"><i class="fw-bold bi bi-box-arrow-in-right"></i> Log in</button>
                       </div>
-                      <div class="col-12 col-md-3"></div>
-                      <div class="col-12 col-md-8">                        
-                        <div class="text-start small mt-2">
+                      <div class="col-12">                        
+                        <div class="text-end small mt-4">
                           <a href="forgot-password.php" class="text-white">Forgot password?</a>
                         </div>
                       </div>
