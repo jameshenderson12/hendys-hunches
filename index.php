@@ -57,7 +57,7 @@ session_start();
           <form id="loginForm" role="form" class="needs-validation" method="POST" action="php/login.php" style="border: 1px solid #AAA; border-radius: 0.35rem; min-height: inherit; height: inherit;">
             <div class="mb-3 row justify-content-center px-3 px-md-5">
                 <div class="col-12 col-md-10 col-lg-8">
-                    <div class="row mb-3">
+                    <div class="row mb-1">
                         <label for="username" class="col-12 col-md-3 col-form-label">Username</label>
                         <div class="col-12 col-md-8">
                             <input type="text" class="form-control" id="username" name="username" style="width: 100%" required autocomplete="username" autofocus>
@@ -66,7 +66,7 @@ session_start();
                             </div>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row mb-1">
                         <label for="password" class="col-12 col-md-3 col-form-label">Password</label>
                         <div class="col-12 col-md-8">
                         	<input type="password" class="form-control" id="password" name="password" style="width: 100%" required autocomplete="current-password">                             
@@ -74,7 +74,7 @@ session_start();
                                 Please provide your password.
                             </div>
                         </div>
-						<button class="col-1 btn btn-outline-light" type="button" id="toggleLoginPwd" aria-label="Show password">
+						<button class="col-1 btn btn-outline-light" type="button" id="toggleLoginPwd" aria-label="Show password" style="height:38px">
                         	<i class="bi bi-eye-slash-fill"></i>
                         </button>
                     </div>
