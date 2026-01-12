@@ -59,7 +59,7 @@ session_start();
                 <div class="col-12 col-md-10 col-lg-8">
                     <div class="row mb-1">
                         <label for="username" class="col-12 col-md-3 col-form-label">Username</label>
-                        <div class="col-12 col-md-8">
+                        <div class="col-11 col-md-8">
                             <input type="text" class="form-control" id="username" name="username" style="width: 100%" required autocomplete="username" autofocus>
                             <div class="invalid-feedback">
                                 Please provide your username.
@@ -68,7 +68,7 @@ session_start();
                     </div>
                     <div class="row mb-1">
                         <label for="password" class="col-12 col-md-3 col-form-label">Password</label>
-                        <div class="col-12 col-md-8">
+                        <div class="col-11 col-md-8">
                         	<input type="password" class="form-control" id="password" name="password" style="width: 100%" required autocomplete="current-password">                             
                         	<div class="invalid-feedback">
                                 Please provide your password.
