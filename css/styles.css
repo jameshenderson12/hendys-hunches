@@ -254,6 +254,19 @@
     line-height: 1.55;
   }
 
+  .about-card .about-readmore {
+    font-size: inherit;
+    font-weight: 600;
+    color: #4154f1;
+    text-decoration: none;
+    vertical-align: baseline;
+  }
+
+  .about-card .about-readmore:hover,
+  .about-card .about-readmore:focus {
+    text-decoration: underline;
+  }
+
   .about-insights {
     display: grid;
     gap: 8px;
