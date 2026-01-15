@@ -254,6 +254,34 @@
     line-height: 1.55;
   }
 
+  .about-insights {
+    display: grid;
+    gap: 8px;
+    margin: 0 24px 16px;
+    padding: 0;
+  }
+
+  .about-insights__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 0.9rem;
+    color: #4b5563;
+  }
+
+  .about-insights__item i {
+    font-size: 1rem;
+    margin-top: 2px;
+  }
+
+  .about-insights__item--pro i {
+    color: #16a34a;
+  }
+
+  .about-insights__item--con i {
+    color: #dc2626;
+  }
+
   .about-podium {
     display: grid;
     gap: 10px;
