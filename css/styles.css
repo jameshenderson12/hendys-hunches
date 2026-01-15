@@ -165,6 +165,155 @@
   .dropdown-menu .dropdown-item:hover {
     background-color: #f6f9ff;
   }
+
+  /*--------------------------------------------------------------
+  # About page
+  --------------------------------------------------------------*/
+  .about-page {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .about-hero {
+    border-radius: 20px;
+    background: linear-gradient(120deg, rgba(65, 84, 241, 0.12), rgba(33, 37, 41, 0.03));
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+  }
+
+  .about-hero .card-body {
+    padding: 28px 32px;
+  }
+
+  .about-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #4154f1;
+  }
+
+  .about-headline {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 10px 0 12px;
+    color: #1f2937;
+  }
+
+  .about-grid {
+    align-items: stretch;
+  }
+
+  .about-card {
+    border: none;
+    border-radius: 18px;
+    overflow: hidden;
+    background: #ffffff;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .about-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 36px rgba(15, 23, 42, 0.18);
+  }
+
+  .about-card .card-img-top {
+    height: 200px;
+    width: 100%;
+    object-fit: cover;
+    background: #f5f7fb;
+  }
+
+  .about-card .card-body {
+    padding: 20px 24px 12px;
+  }
+
+  .about-season {
+    display: inline-block;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    color: #6c757d;
+    margin-bottom: 8px;
+  }
+
+  .about-card .card-title {
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #212529;
+  }
+
+  .about-card .card-text {
+    color: #4b5563;
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+
+  .about-podium {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+    padding: 16px 24px 24px;
+    background: #f8fafc;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  .about-podium__item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 14px;
+    background: #ffffff;
+    border-radius: 999px;
+    box-shadow: 0 8px 16px rgba(15, 23, 42, 0.08);
+  }
+
+  .about-podium__rank {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #ffffff;
+    background: linear-gradient(135deg, #4154f1, #7c3aed);
+  }
+
+  .about-podium__name {
+    font-weight: 600;
+    color: #1f2937;
+    flex: 1;
+  }
+
+  .about-podium__item--pending {
+    background: #eef2ff;
+    box-shadow: none;
+  }
+
+  .about-podium__item--pending .about-podium__name {
+    color: #6b7280;
+    font-weight: 600;
+  }
+
+  @media (max-width: 576px) {
+    .about-hero .card-body {
+      padding: 22px;
+    }
+
+    .about-headline {
+      font-size: 1.5rem;
+    }
+
+    .about-card .card-img-top {
+      height: 180px;
+    }
+  }
   
   @media (min-width: 768px) {
     .dropdown-menu-arrow::before {
