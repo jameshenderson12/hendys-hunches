@@ -290,5 +290,44 @@ include "php/navigation.php";
   </div>
 </main>
 
+<script>
+	document.addEventListener('DOMContentLoaded', () => {
+		const wordLimit = 28;
+		const descriptions = document.querySelectorAll('.about-card .card-text');
+
+		descriptions.forEach((description) => {
+			const fullText = description.textContent.trim();
+			const words = fullText.split(/\s+/);
+
+			if (words.length <= wordLimit) {
+				return;
+			}
+
+			const shortText = `${words.slice(0, wordLimit).join(' ')}...`;
+			const toggle = document.createElement('button');
+
+			toggle.type = 'button';
+			toggle.className = 'about-readmore btn btn-link p-0';
+			toggle.textContent = 'read more';
+			toggle.setAttribute('aria-expanded', 'false');
+
+			const updateText = (expanded) => {
+				description.classList.toggle('is-expanded', expanded);
+				description.textContent = expanded ? fullText : shortText;
+				description.append(' ');
+				description.appendChild(toggle);
+				toggle.textContent = expanded ? 'read less' : 'read more';
+				toggle.setAttribute('aria-expanded', expanded.toString());
+			};
+
+			toggle.addEventListener('click', () => {
+				updateText(!description.classList.contains('is-expanded'));
+			});
+
+			updateText(false);
+		});
+	});
+</script>
+
 <!-- Footer -->
 <?php include "php/footer.php" ?>
