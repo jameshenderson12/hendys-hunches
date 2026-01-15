@@ -57,6 +57,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function updateProgressbar() {
+      if (!progress || progressSteps.length === 0) {
+          return;
+      }
+
       progressSteps.forEach((progressStep, idx) => {
           if (idx < currentStep + 1) {
               progressStep.classList.add("progress-step-active");
