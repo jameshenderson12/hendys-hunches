@@ -2,11 +2,9 @@
 session_start();
 $page_title = 'About';
 
-if (!IS_PREVIEW) {
-	if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
-	    header("Location: index.php");
-	    exit();
-	}
+if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
+	header("Location: index.php");
+	exit();
 }
 
 include "php/header.php";
