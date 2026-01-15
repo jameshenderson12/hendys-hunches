@@ -174,15 +174,15 @@ include "php/navigation.php";
 					<ul class="about-podium list-unstyled">
 						<li class="about-podium__item about-podium__item--pending">
 							<span class="about-podium__rank">1st</span>
-							<span class="about-podium__name">TBD</span>
+							<span class="about-podium__name">Jonathan Lamley</span>
 						</li>
 						<li class="about-podium__item about-podium__item--pending">
 							<span class="about-podium__rank">2nd</span>
-							<span class="about-podium__name">TBD</span>
+							<span class="about-podium__name">Paul Hendrick</span>
 						</li>
 						<li class="about-podium__item about-podium__item--pending">
 							<span class="about-podium__rank">3rd</span>
-							<span class="about-podium__name">TBD</span>
+							<span class="about-podium__name">David Holmes</span>
 						</li>
 					</ul>
 				</div>
