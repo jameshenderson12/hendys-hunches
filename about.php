@@ -62,8 +62,9 @@ include "php/navigation.php";
 						<div class="about-card__content">
 							<div class="card-body">
 								<span class="about-season">FIFA World Cup 2006</span>
-								<h5 class="card-title">The spreadsheet era begins</h5>
-								<p class="card-text">Hendy’s Hunches began as a very simple idea, long before there was a name or website. Friends submitted their predictions using a shared spreadsheet, with scores calculated and updated manually each day. It was far from slick, but the positive response showed there was something worth returning to in the future.</p>
+								<h5 class="card-title">No name, just spreadsheet pain</h5>
+								<!--<p class="card-text"><!Hendy’s Hunches began as a very simple idea, long before there was a name or website. Friends submitted their predictions using a shared spreadsheet, with scores calculated and updated manually each day. It was far from slick, but the positive response showed there was something worth returning to in the future.</p>-->
+								<p class="card-text">The first origins of Hendy's Hunches - complete with no game name and no supporting website! It was a very monotonous process which consisted simply of sending friends a basic spreadsheet template, having them input their scores for each game and return it to me before the competition began. It was flaky at best although it did seem to be well perceived by those who had taken part. I'd spend a couple of hours a day trauling through each player's spreadsheet and manually calculating points before sending a daily email update of a table with scores and rankings. Despite the tedious effort, it left me thinking that it would be great to repeat the event again some time in the future.</p>
 							</div>
 							<ul class="about-insights list-unstyled">
 								<li class="about-insights__item about-insights__item--pro">
