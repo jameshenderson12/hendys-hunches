@@ -33,8 +33,8 @@ include "php/navigation.php";
 				<h2 class="about-headline">"Fun and friendly-natured competiveness - bringing people together."</h2>
 				<p class="lead">Let's start with a little bit of history...</p>
 				<p>Hendy's Hunches has grown over the years from an idea that I had, back in 2005, for a little game to add some fun to World Cup 2006. Today, it has become something of a hobby project that I continue to develop in my spare time around the clock. The online version began in 2013 and, despite coding challenges, many colleagues, family and friends all continue to enjoy it and look forward to taking part. Don't get me wrong, it may not match the achievements of a team of developers, but if it helps adds some fun to the big-stage competitions then that I am delighted with that!</p>
-				<p class="mb-0">I always like to give a special mention of thanks to my very supportive wife, EJ, whose patience has been much appreciated in the hours of our time I've dedicated to this project!</p>
-				<p class="mb-0">Please see below for the journey of Hendy's Hunches including past winners and notable charity causes supported.</p>
+				<p>I always like to give a special mention of thanks to my very supportive wife, EJ, whose patience has been much appreciated in the hours of our time I've dedicated to this project!</p>
+				<p class="mb-0">The following details the journey of Hendy's Hunches including past winners and notable charity causes supported.</p>
 			</div>
 		</div>
 
