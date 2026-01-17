@@ -360,7 +360,7 @@ include "php/navigation.php";
 
 <script>
 	document.addEventListener('DOMContentLoaded', () => {
-		const wordLimit = 28;
+		const wordLimit = 200;
 		const descriptions = document.querySelectorAll('.about-card .card-text');
 
 		descriptions.forEach((description) => {
