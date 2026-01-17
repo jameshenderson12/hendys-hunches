@@ -30,10 +30,11 @@ include "php/navigation.php";
 		<div class="about-hero card border-0 mb-4">
 			<div class="card-body">
 				<span class="about-kicker">Since 2006</span>
-				<h2 class="about-headline">A friendly tournament tradition with a competitive streak.</h2>
+				<h2 class="about-headline">"Fun and friendly-natured competiveness - bringing people together."</h2>
 				<p class="lead">Let's start with a little bit of history...</p>
-				<p>Hendy's Hunches has grown over the years from an idea that I had, back in 2005, for a little game to add some fun to World Cup 2006. Today, it has become something of a project that I have developed in my spare time around the clock (see below for the history). The online version began back in 2013 and, despite the coding of it throwing many challenges, I hope that it holds up well from kick-off and that you, colleagues, family and friends all continue to enjoy it. It may not be much to look at but if it adds some fun to the big competitions then that I am very pleased with that.</p>
-				<p class="mb-0">A special mention of thanks to my very supportive wife, EJ, whose patience has been much appreciated in the hours of our time I've dedicated to this project!</p>
+				<p>Hendy's Hunches has grown over the years from an idea that I had, back in 2005, for a little game to add some fun to World Cup 2006. Today, it has become something of a hobby project that I continue to develop in my spare time around the clock. The online version began in 2013 and, despite coding challenges, many colleagues, family and friends all continue to enjoy it and look forward to taking part. Don't get me wrong, it may not match the achievements of a team of developers, but if it helps adds some fun to the big-stage competitions then that I am delighted with that!</p>
+				<p class="mb-0">I always like to give a special mention of thanks to my very supportive wife, EJ, whose patience has been much appreciated in the hours of our time I've dedicated to this project!</p>
+				<p class="mb-0">Please see below for the journey of Hendy's Hunches including past winners and notable charity causes supported.</p>
 			</div>
 		</div>
 
