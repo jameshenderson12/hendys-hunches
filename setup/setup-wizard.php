@@ -5,6 +5,12 @@ $errors = [];
 $messages = [];
 $sql_output = [];
 $fixture_preview = [];
+$wizard_errors = [];
+$wizard_messages = [];
+$wizard_summary = [];
+$wizard_permission_checks = [];
+$wizard_db_template = '';
+$wizard_action = $_POST['wizard_action'] ?? '';
 
 if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
     header("Location: index.php");
@@ -228,7 +234,81 @@ function parse_fixture_json(string $payload, string $default_time, string $defau
     return $rows;
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+function resolve_directory_path(string $root, string $relative): string {
+    $relative = ltrim($relative, '/');
+    return rtrim($root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $relative;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'installation') {
+    $site_title = trim($_POST['site_title'] ?? ($title ?? 'Hendy\'s Hunches'));
+    $site_url = trim($_POST['site_url'] ?? ($base_url ?? ''));
+    $timezone = trim($_POST['timezone'] ?? (date_default_timezone_get() ?: 'Europe/London'));
+    $admin_email = trim($_POST['admin_email'] ?? '');
+    $db_host = trim($_POST['db_host'] ?? 'localhost');
+    $db_name = trim($_POST['db_name'] ?? '');
+    $db_user = trim($_POST['db_user'] ?? '');
+    $db_pass = trim($_POST['db_pass'] ?? '');
+    $storage_dir = trim($_POST['storage_dir'] ?? ($backup_dir ?? '/bak'));
+
+    if ($site_title === '') {
+        $wizard_errors[] = 'Site name is required.';
+    }
+    if ($site_url === '' || !filter_var($site_url, FILTER_VALIDATE_URL)) {
+        $wizard_errors[] = 'A valid base URL is required.';
+    }
+    if ($db_name === '') {
+        $wizard_errors[] = 'Database name is required.';
+    }
+    if ($db_user === '') {
+        $wizard_errors[] = 'Database user is required.';
+    }
+    if ($admin_email !== '' && !filter_var($admin_email, FILTER_VALIDATE_EMAIL)) {
+        $wizard_errors[] = 'Admin email must be a valid email address.';
+    }
+
+    if (empty($wizard_errors)) {
+        $root_path = realpath(__DIR__ . '/..');
+        $permission_targets = [
+            'Backups' => $storage_dir,
+            'Text lists' => $datalists_dir ?? '/text',
+            'SQL exports' => $sql_dir ?? '/sql',
+            'Forum uploads' => $forum_dir ?? '/mboard',
+            'JSON data' => '/json',
+            'Images' => '/img',
+        ];
+
+        foreach ($permission_targets as $label => $relative_path) {
+            $resolved = $root_path ? resolve_directory_path($root_path, $relative_path) : $relative_path;
+            $wizard_permission_checks[] = [
+                'label' => $label,
+                'path' => $resolved,
+                'exists' => is_dir($resolved),
+                'writable' => is_writable($resolved),
+            ];
+        }
+
+        $wizard_db_template = "<?php\nreturn [\n";
+        $wizard_db_template .= "  'host' => '" . addslashes($db_host) . "',\n";
+        $wizard_db_template .= "  'db'   => '" . addslashes($db_name) . "',\n";
+        $wizard_db_template .= "  'user' => '" . addslashes($db_user) . "',\n";
+        $wizard_db_template .= "  'pass' => '" . addslashes($db_pass) . "',\n";
+        $wizard_db_template .= "];\n";
+
+        $wizard_summary = [
+            'Site title' => $site_title,
+            'Base URL' => $site_url,
+            'Timezone' => $timezone,
+            'Admin email' => $admin_email === '' ? 'Not set' : $admin_email,
+            'Database host' => $db_host,
+            'Database name' => $db_name,
+            'Database user' => $db_user,
+        ];
+
+        $wizard_messages[] = 'Installation summary generated. Review the checklist and update your configuration files.';
+    }
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action !== 'installation') {
     $tournament_name = trim($_POST['tournament_name'] ?? '');
     $num_groups = (int)($_POST['num_groups'] ?? 0);
     $teams_per_group = (int)($_POST['teams_per_group'] ?? 0);
@@ -475,6 +555,101 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
 
+    <?php if (!empty($wizard_errors)) : ?>
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                <?php foreach ($wizard_errors as $error) : ?>
+                    <li><?= htmlspecialchars($error) ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    <?php endif; ?>
+
+    <?php if (!empty($wizard_messages)) : ?>
+        <div class="alert alert-success">
+            <ul class="mb-0">
+                <?php foreach ($wizard_messages as $message) : ?>
+                    <li><?= htmlspecialchars($message) ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    <?php endif; ?>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3">
+                <div>
+                    <h2 class="h5 mb-1">Installation Manager</h2>
+                    <p class="text-muted mb-0">Guide the initial site setup with a multi-step checklist for URLs, database credentials, and file permissions.</p>
+                </div>
+                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#installManagerModal">
+                    Launch Installation Manager
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <?php if (!empty($wizard_summary)) : ?>
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h2 class="h5">Installation Summary</h2>
+                <p class="text-muted">Use this overview to update your configuration files and verify required folders.</p>
+
+                <div class="row g-3">
+                    <?php foreach ($wizard_summary as $label => $value) : ?>
+                        <div class="col-md-6">
+                            <div class="border rounded p-3 h-100">
+                                <div class="small text-muted"><?= htmlspecialchars($label) ?></div>
+                                <div class="fw-semibold"><?= htmlspecialchars($value) ?></div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+
+                <h3 class="h6 mt-4">Filesystem & Permissions</h3>
+                <div class="table-responsive">
+                    <table class="table table-sm table-striped align-middle">
+                        <thead>
+                            <tr>
+                                <th>Folder</th>
+                                <th>Path</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($wizard_permission_checks as $check) : ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($check['label']) ?></td>
+                                    <td><code><?= htmlspecialchars($check['path']) ?></code></td>
+                                    <td>
+                                        <?php if (!$check['exists']) : ?>
+                                            <span class="badge bg-danger">Missing</span>
+                                        <?php elseif (!$check['writable']) : ?>
+                                            <span class="badge bg-warning text-dark">Not writable</span>
+                                        <?php else : ?>
+                                            <span class="badge bg-success">Ready</span>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3 class="h6 mt-4">Database Connection Template</h3>
+                <p class="text-muted mb-2">Save this as <code>php/db-connect.php</code> to wire up the database connection.</p>
+                <pre class="bg-light p-3 border rounded" style="max-height: 220px; overflow: auto;"><?= htmlspecialchars($wizard_db_template) ?></pre>
+
+                <h3 class="h6 mt-4">Next Steps</h3>
+                <ul class="mb-0">
+                    <li>Copy <code>php/db-connect.php.example</code> to <code>php/db-connect.php</code> and paste the template above.</li>
+                    <li>Update <code>php/config.php</code> with your competition details and base URL.</li>
+                    <li>Use the Tournament Setup section below to generate or import fixtures.</li>
+                </ul>
+            </div>
+        </div>
+    <?php endif; ?>
+
     <?php if (!empty($errors)) : ?>
         <div class="alert alert-danger">
             <ul class="mb-0">
@@ -494,6 +669,99 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </ul>
         </div>
     <?php endif; ?>
+
+    <div class="modal fade" id="installManagerModal" tabindex="-1" aria-labelledby="installManagerModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <form method="POST">
+                    <input type="hidden" name="wizard_action" value="installation">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="installManagerModalLabel">Installation Manager</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <div class="d-flex gap-2 flex-wrap">
+                                <span class="badge bg-primary" data-step-indicator="0">1. Site</span>
+                                <span class="badge bg-secondary" data-step-indicator="1">2. Database</span>
+                                <span class="badge bg-secondary" data-step-indicator="2">3. Storage</span>
+                                <span class="badge bg-secondary" data-step-indicator="3">4. Review</span>
+                            </div>
+                        </div>
+
+                        <div class="wizard-step" data-step="0">
+                            <h6>Site & Location</h6>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label" for="site_title">Site name</label>
+                                    <input type="text" class="form-control" id="site_title" name="site_title" value="<?= htmlspecialchars($_POST['site_title'] ?? ($title ?? 'Hendy\'s Hunches')) ?>" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label" for="site_url">Base URL</label>
+                                    <input type="url" class="form-control" id="site_url" name="site_url" value="<?= htmlspecialchars($_POST['site_url'] ?? ($base_url ?? '')) ?>" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label" for="timezone">Timezone</label>
+                                    <input type="text" class="form-control" id="timezone" name="timezone" value="<?= htmlspecialchars($_POST['timezone'] ?? (date_default_timezone_get() ?: 'Europe/London')) ?>">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label" for="admin_email">Admin email (optional)</label>
+                                    <input type="email" class="form-control" id="admin_email" name="admin_email" value="<?= htmlspecialchars($_POST['admin_email'] ?? '') ?>">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="wizard-step d-none" data-step="1">
+                            <h6>Database Configuration</h6>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label" for="db_host">Database host</label>
+                                    <input type="text" class="form-control" id="db_host" name="db_host" value="<?= htmlspecialchars($_POST['db_host'] ?? 'localhost') ?>" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label" for="db_name">Database name</label>
+                                    <input type="text" class="form-control" id="db_name" name="db_name" value="<?= htmlspecialchars($_POST['db_name'] ?? '') ?>" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label" for="db_user">Database user</label>
+                                    <input type="text" class="form-control" id="db_user" name="db_user" value="<?= htmlspecialchars($_POST['db_user'] ?? '') ?>" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label" for="db_pass">Database password</label>
+                                    <input type="password" class="form-control" id="db_pass" name="db_pass" value="<?= htmlspecialchars($_POST['db_pass'] ?? '') ?>">
+                                </div>
+                            </div>
+                            <div class="form-text mt-2">You can paste these into <code>php/db-connect.php</code>.</div>
+                        </div>
+
+                        <div class="wizard-step d-none" data-step="2">
+                            <h6>Storage & Permissions</h6>
+                            <div class="row g-3">
+                                <div class="col-md-12">
+                                    <label class="form-label" for="storage_dir">Backups folder</label>
+                                    <input type="text" class="form-control" id="storage_dir" name="storage_dir" value="<?= htmlspecialchars($_POST['storage_dir'] ?? ($backup_dir ?? '/bak')) ?>">
+                                    <div class="form-text">Adjust if backups live outside the default <code>/bak</code> folder.</div>
+                                </div>
+                            </div>
+                            <div class="alert alert-info mt-3 mb-0">
+                                The installer will check folder permissions for backups, text lists, SQL exports, forum uploads, JSON, and images.
+                            </div>
+                        </div>
+
+                        <div class="wizard-step d-none" data-step="3">
+                            <h6>Review & Generate</h6>
+                            <p class="text-muted mb-0">Submit to generate the setup checklist and configuration template.</p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-wizard-prev>Back</button>
+                        <button type="button" class="btn btn-outline-primary" data-wizard-next>Next</button>
+                        <button type="submit" class="btn btn-primary d-none" data-wizard-submit>Generate Checklist</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <form method="POST" class="card shadow-sm mb-4" enctype="multipart/form-data">
         <div class="card-body">
@@ -627,5 +895,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </main>
 
 <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script>
+    const wizardSteps = Array.from(document.querySelectorAll('.wizard-step'));
+    const wizardIndicators = Array.from(document.querySelectorAll('[data-step-indicator]'));
+    const wizardPrev = document.querySelector('[data-wizard-prev]');
+    const wizardNext = document.querySelector('[data-wizard-next]');
+    const wizardSubmit = document.querySelector('[data-wizard-submit]');
+    let wizardIndex = 0;
+
+    const updateWizard = () => {
+        wizardSteps.forEach((step, index) => {
+            step.classList.toggle('d-none', index !== wizardIndex);
+        });
+        wizardIndicators.forEach((badge, index) => {
+            badge.classList.toggle('bg-primary', index === wizardIndex);
+            badge.classList.toggle('bg-secondary', index !== wizardIndex);
+        });
+        wizardPrev.disabled = wizardIndex === 0;
+        wizardNext.classList.toggle('d-none', wizardIndex === wizardSteps.length - 1);
+        wizardSubmit.classList.toggle('d-none', wizardIndex !== wizardSteps.length - 1);
+    };
+
+    if (wizardSteps.length) {
+        updateWizard();
+        wizardPrev.addEventListener('click', () => {
+            wizardIndex = Math.max(0, wizardIndex - 1);
+            updateWizard();
+        });
+        wizardNext.addEventListener('click', () => {
+            wizardIndex = Math.min(wizardSteps.length - 1, wizardIndex + 1);
+            updateWizard();
+        });
+    }
+</script>
 </body>
 </html>
