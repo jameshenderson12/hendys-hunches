@@ -1,6 +1,8 @@
 <?php
 // Start the session
 session_start();
+require_once __DIR__ . '/php/auth.php';
+hh_handle_dev_bypass_request();
 ?>
 <!DOCTYPE html>
 <html lang="en-GB">
@@ -10,7 +12,6 @@ session_start();
     <meta name="description" content="Hendy's Hunches: Predictions Game">
     <meta name="author" content="James Henderson">
 		<title>Login - Hendy's Hunches</title>
-    <?php include "php/config.php" ?>
 		<link rel="shortcut icon" href="ico/favicon.ico">
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -82,6 +83,16 @@ session_start();
                       <div class="col-12">
                         <button type="submit" class="btn btn-primary w-100 mt-0"><i class="fw-bold bi bi-box-arrow-in-right"></i> Log in</button>
                       </div>
+                      <?php if (hh_dev_bypass_available()) : ?>
+                      <div class="col-12 mt-3">
+                        <a class="btn btn-outline-warning w-100" href="index.php?dev_bypass=1&redirect=dashboard.php">
+                          <i class="bi bi-tools"></i> Developer Preview
+                        </a>
+                        <div class="small text-start text-white-50 mt-2">
+                          Localhost only. Starts a temporary development session without checking credentials.
+                        </div>
+                      </div>
+                      <?php endif; ?>
 					  <div class="col-12 col-md-7 mt-3">
 						  <a class="btn w-100 text-black" href="registration.php" style="background-color: var(--primary-color)">
 					  		  <i class="bi bi-person-fill-add"></i> Register

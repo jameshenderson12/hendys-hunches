@@ -2,10 +2,9 @@
 session_start();
 $page_title = 'View Predictions';
 
-if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
-    header("Location: index.php");
-    exit();
-}
+require_once __DIR__ . '/php/auth.php';
+require_once __DIR__ . '/php/flags.php';
+hh_require_login('index.php');
 
 include "php/header.php";
 include "php/navigation.php";
@@ -85,12 +84,7 @@ include "php/navigation.php";
 					$location = $userdata["location"];
 					$faveteam = $userdata["faveteam"];
 					$tournwinner = $userdata["tournwinner"];
-						// Get string for tournwinner flag (convert to lowercase)
-						$tournwinner_lower = strtolower($tournwinner);
-						// Replace spaces with hyphens
-						$tournwinner_kebab = str_replace(' ', '-', $tournwinner_lower);
-						// Construct the file path
-						$tournwinnerflag = "flag-icons/24/{$tournwinner_kebab}.png";
+						$tournwinnerflag = hh_get_team_flag_path($tournwinner);
 					$currentpos = ordinal($userdata["currpos"]);
 
 					$pointstotal = $userdata["points_total"];
@@ -321,6 +315,7 @@ include "php/navigation.php";
 
 <script>
 $(document).ready(function () {
+const teamFlagMap = <?= json_encode(hh_get_known_team_flag_paths('')) ?>;
 // Fetch data from JSON file
 $.getJSON("json/uefa-euro-2024-fixtures-final.json", function (data) {
 	let fixture = '';
@@ -359,8 +354,8 @@ $.getJSON("json/uefa-euro-2024-fixtures-final.json", function (data) {
         $.each(data, function (key, value) {
             const homeTeam = value.HomeTeam;
             const awayTeam = value.AwayTeam;
-            const homeTeamFlag = `flag-icons/24/${homeTeam.toLowerCase().replaceAll(' ', '-')}.png`;
-            const awayTeamFlag = `flag-icons/24/${awayTeam.toLowerCase().replaceAll(' ', '-')}.png`;
+            const homeTeamFlag = teamFlagMap[homeTeam] || "";
+            const awayTeamFlag = teamFlagMap[awayTeam] || "";
             const homeTeamScore = value.HomeTeamScore ?? "";
             const awayTeamScore = value.AwayTeamScore ?? "";
             const dateStr = value.DateUtc;

@@ -1,192 +1,197 @@
 <?php
 session_start();
-$page_title = 'Setup Wizard';
+require_once dirname(__DIR__) . '/php/auth.php';
+require_once dirname(__DIR__) . '/php/flags.php';
+require_once __DIR__ . '/../php/config.php';
+
+hh_require_login('../index.php');
+
+$page_title = 'Installation Manager';
+
 $errors = [];
 $messages = [];
 $sql_output = [];
 $fixture_preview = [];
-$wizard_errors = [];
-$wizard_messages = [];
-$wizard_summary = [];
-$wizard_permission_checks = [];
-$wizard_db_template = '';
+$group_preview = [];
+$tournament_summary = [];
+$config_preview = [];
+$database_preview = [];
+$setup_summary = [];
+$permission_checks = [];
+$db_connect_template = '';
 $wizard_action = $_POST['wizard_action'] ?? '';
 
-if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
-    header("Location: index.php");
-    exit();
+$mysql_diagnostics = [
+    'status' => 'Not tested',
+    'message' => '',
+    'server' => '',
+    'target_database' => '',
+    'database_exists' => false,
+    'table_count' => 0,
+    'tables' => [],
+];
+
+function resolve_directory_path(string $root, string $relative): string {
+    $relative = ltrim($relative, '/');
+    return rtrim($root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $relative;
 }
 
-include '../php/config.php';
-$con = null;
-$db_path = '../php/db-connect.php';
-if (file_exists($db_path)) {
-    include $db_path;
-} else {
-    $errors[] = 'Database connection file not found. SQL generation will still work, but applying changes is disabled.';
+function slugify_value(string $value): string {
+    $value = strtolower(trim($value));
+    $value = preg_replace('/[^a-z0-9]+/', '_', $value) ?? '';
+    return trim($value, '_');
 }
 
-function normalize_team_entry(string $entry): array {
-    $parts = array_map('trim', explode('|', $entry));
-    $team = $parts[0] ?? '';
-    $flag = $parts[1] ?? '';
-
-    return [$team, $flag];
+function mysql_quote_identifier(string $identifier): string {
+    return '`' . str_replace('`', '``', $identifier) . '`';
 }
 
-function build_group_labels(int $num_groups): array {
-    $labels = [];
-    for ($i = 0; $i < $num_groups; $i++) {
-        $labels[] = chr(65 + $i);
-    }
-    return $labels;
+function mysql_quote_string(string $value): string {
+    return "'" . addslashes($value) . "'";
 }
 
-function parse_teams(string $teams_input, int $num_groups, int $teams_per_group): array {
-    $groups = [];
-    $labels = build_group_labels($num_groups);
-
-    if (trim($teams_input) === '') {
-        $counter = 1;
-        foreach ($labels as $label) {
-            $group = [];
-            for ($i = 0; $i < $teams_per_group; $i++) {
-                $group[] = ["Team {$counter}", ''];
-                $counter++;
-            }
-            $groups[$label] = $group;
-        }
-        return $groups;
+function infer_tournament_name(string $explicitName, string $sourceReference): string {
+    if ($explicitName !== '') {
+        return $explicitName;
     }
 
-    $lines = preg_split('/\r\n|\r|\n/', trim($teams_input));
-    foreach ($lines as $index => $line) {
-        $line = trim($line);
-        if ($line === '') {
-            continue;
-        }
+    $path = parse_url($sourceReference, PHP_URL_PATH) ?: $sourceReference;
+    $basename = pathinfo($path, PATHINFO_FILENAME);
+    $basename = preg_replace('/[-_]+/', ' ', $basename) ?? $basename;
+    $basename = trim($basename);
 
-        if (str_contains($line, ':')) {
-            [$group_label, $entries] = array_map('trim', explode(':', $line, 2));
-            $group_label = strtoupper(str_replace('Group ', '', $group_label));
+    return $basename === '' ? 'Imported Tournament' : ucwords($basename);
+}
+
+function format_config_date(?string $date): string {
+    $date = trim((string)$date);
+    if ($date === '') {
+        return '';
+    }
+
+    $dt = DateTimeImmutable::createFromFormat('Y-m-d', $date);
+    if ($dt instanceof DateTimeImmutable) {
+        return $dt->format('d/m/Y');
+    }
+
+    return $date;
+}
+
+function read_fixture_source_payload(string $fixturesUrl): array {
+    $payload = '';
+    $sourceReference = '';
+    $sourceType = '';
+    $detectedFormat = '';
+    $errors = [];
+
+    if ($fixturesUrl !== '') {
+        $payload = @file_get_contents($fixturesUrl);
+        if ($payload === false) {
+            $errors[] = 'Unable to fetch fixture data from the provided feed URL.';
         } else {
-            $group_label = $labels[$index] ?? chr(65 + $index);
-            $entries = $line;
+            $sourceReference = $fixturesUrl;
+            $sourceType = 'Feed URL';
         }
-
-        $teams = array_filter(array_map('trim', explode(',', $entries)));
-        $group = [];
-        foreach ($teams as $team_entry) {
-            [$team, $flag] = normalize_team_entry($team_entry);
-            if ($team !== '') {
-                $group[] = [$team, $flag];
-            }
-        }
-
-        $groups[$group_label] = $group;
+    } elseif (!empty($_FILES['fixtures_file']['tmp_name'])) {
+        $payload = file_get_contents($_FILES['fixtures_file']['tmp_name']);
+        $sourceReference = $_FILES['fixtures_file']['name'] ?? 'uploaded-file';
+        $sourceType = 'Uploaded file';
+    } else {
+        $errors[] = 'Provide either a feed URL or upload a local CSV/JSON fixture file.';
     }
 
-    return $groups;
+    if ($payload !== '') {
+        $trimmed = ltrim($payload);
+        $extension = strtolower(pathinfo($sourceReference, PATHINFO_EXTENSION));
+        $isJson = $extension === 'json' || str_starts_with($trimmed, '{') || str_starts_with($trimmed, '[');
+        $detectedFormat = $isJson ? 'JSON' : 'CSV';
+    }
+
+    return [$payload, $sourceReference, $sourceType, $detectedFormat, $errors];
 }
 
-function round_robin(array $teams): array {
-    $participants = $teams;
-    $bye = ['BYE', ''];
-
-    if (count($participants) % 2 !== 0) {
-        $participants[] = $bye;
+function parse_fixture_datetime(?string $raw): array {
+    $raw = trim((string)$raw);
+    if ($raw === '') {
+        return ['date' => null, 'time' => '', 'datetime' => null];
     }
 
-    $num_teams = count($participants);
-    $half = $num_teams / 2;
-    $rounds = $num_teams - 1;
-    $fixtures = [];
-
-    for ($round = 0; $round < $rounds; $round++) {
-        for ($i = 0; $i < $half; $i++) {
-            $home = $participants[$i];
-            $away = $participants[$num_teams - 1 - $i];
-
-            if ($home[0] !== 'BYE' && $away[0] !== 'BYE') {
-                $fixtures[] = [$home, $away];
-            }
+    try {
+        $dt = new DateTimeImmutable($raw);
+    } catch (Throwable $exception) {
+        $timestamp = strtotime($raw);
+        if ($timestamp === false) {
+            return ['date' => null, 'time' => '', 'datetime' => null];
         }
-
-        $fixed = array_shift($participants);
-        $rotated = array_splice($participants, -1);
-        $participants = array_merge([$fixed], $rotated, $participants);
+        $dt = (new DateTimeImmutable('@' . $timestamp))->setTimezone(new DateTimeZone('UTC'));
     }
 
-    return $fixtures;
+    $utc = $dt->setTimezone(new DateTimeZone('UTC'));
+
+    return [
+        'date' => $utc->format('Y-m-d'),
+        'time' => $utc->format('H:i'),
+        'datetime' => $utc->format(DateTimeInterface::ATOM),
+    ];
 }
 
-function build_fixture_rows(array $groups, string $start_date, int $matches_per_day, string $default_time, string $default_venue): array {
-    $rows = [];
-    $date = new DateTime($start_date);
-    $match_index = 0;
-
-    foreach ($groups as $label => $teams) {
-        $fixtures = round_robin($teams);
-        foreach ($fixtures as $fixture) {
-            $day_offset = intdiv($match_index, $matches_per_day);
-            $scheduled_date = (clone $date)->modify("+{$day_offset} days");
-            $rows[] = [
-                'hometeamimg' => $fixture[0][1],
-                'hometeam' => $fixture[0][0],
-                'homescore' => null,
-                'awayscore' => null,
-                'awayteam' => $fixture[1][0],
-                'awayteamimg' => $fixture[1][1],
-                'venue' => $default_venue,
-                'kotime' => $default_time,
-                'date' => $scheduled_date->format('Y-m-d'),
-                'group' => $label,
-            ];
-            $match_index++;
-        }
-    }
-
-    return $rows;
+function resolve_knockout_stage(?int $roundNumber): string {
+    return match ($roundNumber) {
+        4 => 'Round of 32',
+        5 => 'Round of 16',
+        6 => 'Quarter-Finals',
+        7 => 'Semi-Finals',
+        8 => 'Final Stage',
+        default => 'Knockout Stage',
+    };
 }
 
-function normalize_fixture_row(array $row, string $default_time, string $default_venue): array {
-    $home = trim($row['hometeam'] ?? $row['home'] ?? $row['HomeTeam'] ?? '');
-    $away = trim($row['awayteam'] ?? $row['away'] ?? $row['AwayTeam'] ?? '');
+function normalize_fixture_row(array $row): array {
+    $home = trim((string)($row['hometeam'] ?? $row['home'] ?? $row['HomeTeam'] ?? ''));
+    $away = trim((string)($row['awayteam'] ?? $row['away'] ?? $row['AwayTeam'] ?? ''));
+
     if ($home === '' || $away === '') {
         return [];
     }
 
-    $date = trim($row['date'] ?? $row['Date'] ?? '');
-    $time = trim($row['time'] ?? $row['Time'] ?? $default_time);
-    $venue = trim($row['venue'] ?? $row['Venue'] ?? $default_venue);
-    $group = trim($row['group'] ?? $row['Group'] ?? '');
-    $home_flag = trim($row['hometeamimg'] ?? $row['home_flag'] ?? $row['HomeFlag'] ?? $row['HomeTeamFlag'] ?? '');
-    $away_flag = trim($row['awayteamimg'] ?? $row['away_flag'] ?? $row['AwayFlag'] ?? $row['AwayTeamFlag'] ?? '');
+    $group = trim((string)($row['group'] ?? $row['Group'] ?? ''));
+    $roundNumber = isset($row['round_number']) ? (int)$row['round_number'] : (isset($row['RoundNumber']) ? (int)$row['RoundNumber'] : null);
+    $matchNumber = isset($row['match_number']) ? (int)$row['match_number'] : (isset($row['MatchNumber']) ? (int)$row['MatchNumber'] : null);
+    $venue = trim((string)($row['venue'] ?? $row['Venue'] ?? $row['Location'] ?? 'TBD'));
+    $homeFlag = trim((string)($row['hometeamimg'] ?? $row['home_flag'] ?? $row['HomeFlag'] ?? $row['HomeTeamFlag'] ?? ''));
+    $awayFlag = trim((string)($row['awayteamimg'] ?? $row['away_flag'] ?? $row['AwayFlag'] ?? $row['AwayTeamFlag'] ?? ''));
+    $datetime = parse_fixture_datetime($row['DateUtc'] ?? $row['date_utc'] ?? $row['date'] ?? $row['Date'] ?? '');
+    $stage = $group !== '' ? $group : resolve_knockout_stage($roundNumber);
 
-    if ($date !== '') {
-        $date = date('Y-m-d', strtotime($date));
-    } else {
-        $date = null;
+    if ($homeFlag === '') {
+        $homeFlag = hh_get_team_flag_path($home);
+    }
+    if ($awayFlag === '') {
+        $awayFlag = hh_get_team_flag_path($away);
     }
 
     return [
-        'hometeamimg' => $home_flag,
+        'match_number' => $matchNumber,
+        'round_number' => $roundNumber,
+        'stage' => $stage,
+        'group' => $group,
+        'hometeamimg' => $homeFlag,
         'hometeam' => $home,
         'homescore' => null,
         'awayscore' => null,
         'awayteam' => $away,
-        'awayteamimg' => $away_flag,
+        'awayteamimg' => $awayFlag,
         'venue' => $venue,
-        'kotime' => $time,
-        'date' => $date,
-        'group' => $group,
+        'kotime' => $datetime['time'],
+        'date' => $datetime['date'],
+        'datetime_utc' => $datetime['datetime'],
     ];
 }
 
-function parse_fixture_csv(string $payload, string $default_time, string $default_venue): array {
+function parse_fixture_csv(string $payload): array {
     $rows = [];
     $lines = preg_split('/\r\n|\r|\n/', trim($payload));
-    if (count($lines) === 0) {
+    if (!$lines || count($lines) === 0) {
         return $rows;
     }
 
@@ -195,12 +200,14 @@ function parse_fixture_csv(string $payload, string $default_time, string $defaul
         if (trim($line) === '') {
             continue;
         }
-        $data = str_getcsv($line);
+
+        $values = str_getcsv($line);
         $row = [];
         foreach ($header as $index => $column) {
-            $row[trim($column)] = $data[$index] ?? '';
+            $row[trim((string)$column)] = $values[$index] ?? '';
         }
-        $normalized = normalize_fixture_row($row, $default_time, $default_venue);
+
+        $normalized = normalize_fixture_row($row);
         if (!empty($normalized)) {
             $rows[] = $normalized;
         }
@@ -209,23 +216,19 @@ function parse_fixture_csv(string $payload, string $default_time, string $defaul
     return $rows;
 }
 
-function parse_fixture_json(string $payload, string $default_time, string $default_venue): array {
+function parse_fixture_json(string $payload): array {
     $rows = [];
     $data = json_decode($payload, true);
     if (!is_array($data)) {
         return $rows;
     }
 
-    $items = $data;
-    if (isset($data['fixtures']) && is_array($data['fixtures'])) {
-        $items = $data['fixtures'];
-    }
-
+    $items = isset($data['fixtures']) && is_array($data['fixtures']) ? $data['fixtures'] : $data;
     foreach ($items as $item) {
         if (!is_array($item)) {
             continue;
         }
-        $normalized = normalize_fixture_row($item, $default_time, $default_venue);
+        $normalized = normalize_fixture_row($item);
         if (!empty($normalized)) {
             $rows[] = $normalized;
         }
@@ -234,267 +237,671 @@ function parse_fixture_json(string $payload, string $default_time, string $defau
     return $rows;
 }
 
-function resolve_directory_path(string $root, string $relative): string {
-    $relative = ltrim($relative, '/');
-    return rtrim($root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $relative;
+function enrich_fixture_stages(array $fixtures): array {
+    $finalStageIndexes = [];
+
+    foreach ($fixtures as $index => $fixture) {
+        if (($fixture['round_number'] ?? null) === 8) {
+            $finalStageIndexes[] = $index;
+        }
+    }
+
+    if (count($finalStageIndexes) === 2) {
+        usort($finalStageIndexes, function (int $left, int $right) use ($fixtures): int {
+            return strcmp((string)$fixtures[$left]['datetime_utc'], (string)$fixtures[$right]['datetime_utc']);
+        });
+
+        $fixtures[$finalStageIndexes[0]]['stage'] = 'Third Place Play-Off';
+        $fixtures[$finalStageIndexes[1]]['stage'] = 'Final';
+    } elseif (count($finalStageIndexes) === 1) {
+        $fixtures[$finalStageIndexes[0]]['stage'] = 'Final';
+    }
+
+    return $fixtures;
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'installation') {
-    $site_title = trim($_POST['site_title'] ?? ($title ?? 'Hendy\'s Hunches'));
-    $site_url = trim($_POST['site_url'] ?? ($base_url ?? ''));
-    $timezone = trim($_POST['timezone'] ?? (date_default_timezone_get() ?: 'Europe/London'));
-    $admin_email = trim($_POST['admin_email'] ?? '');
-    $db_host = trim($_POST['db_host'] ?? 'localhost');
-    $db_name = trim($_POST['db_name'] ?? '');
-    $db_user = trim($_POST['db_user'] ?? '');
-    $db_pass = trim($_POST['db_pass'] ?? '');
-    $storage_dir = trim($_POST['storage_dir'] ?? ($backup_dir ?? '/bak'));
+function build_tournament_metadata(array $fixtures, string $tournamentName, string $sourceReference, string $sourceType, string $detectedFormat): array {
+    $groupStages = [];
+    $groupFixtures = [];
+    $knockoutFixtures = [];
+    $groupTeams = [];
+    $allRealTeams = [];
+    $allDates = [];
+    $groupDates = [];
+    $knockoutDates = [];
+    $stageCounts = [];
+    $stageDates = [];
 
-    if ($site_title === '') {
-        $wizard_errors[] = 'Site name is required.';
-    }
-    if ($site_url === '' || !filter_var($site_url, FILTER_VALIDATE_URL)) {
-        $wizard_errors[] = 'A valid base URL is required.';
-    }
-    if ($db_name === '') {
-        $wizard_errors[] = 'Database name is required.';
-    }
-    if ($db_user === '') {
-        $wizard_errors[] = 'Database user is required.';
-    }
-    if ($admin_email !== '' && !filter_var($admin_email, FILTER_VALIDATE_EMAIL)) {
-        $wizard_errors[] = 'Admin email must be a valid email address.';
-    }
-
-    if (empty($wizard_errors)) {
-        $root_path = realpath(__DIR__ . '/..');
-        $permission_targets = [
-            'Backups' => $storage_dir,
-            'Text lists' => $datalists_dir ?? '/text',
-            'SQL exports' => $sql_dir ?? '/sql',
-            'Forum uploads' => $forum_dir ?? '/mboard',
-            'JSON data' => '/json',
-            'Images' => '/img',
-        ];
-
-        foreach ($permission_targets as $label => $relative_path) {
-            $resolved = $root_path ? resolve_directory_path($root_path, $relative_path) : $relative_path;
-            $wizard_permission_checks[] = [
-                'label' => $label,
-                'path' => $resolved,
-                'exists' => is_dir($resolved),
-                'writable' => is_writable($resolved),
-            ];
+    foreach ($fixtures as $fixture) {
+        if ($fixture['date'] !== null) {
+            $allDates[] = $fixture['date'];
         }
 
-        $wizard_db_template = "<?php\nreturn [\n";
-        $wizard_db_template .= "  'host' => '" . addslashes($db_host) . "',\n";
-        $wizard_db_template .= "  'db'   => '" . addslashes($db_name) . "',\n";
-        $wizard_db_template .= "  'user' => '" . addslashes($db_user) . "',\n";
-        $wizard_db_template .= "  'pass' => '" . addslashes($db_pass) . "',\n";
-        $wizard_db_template .= "];\n";
+        foreach ([$fixture['hometeam'], $fixture['awayteam']] as $team) {
+            if (!hh_is_placeholder_team($team)) {
+                $allRealTeams[$team] = true;
+            }
+        }
 
-        $wizard_summary = [
-            'Site title' => $site_title,
-            'Base URL' => $site_url,
-            'Timezone' => $timezone,
-            'Admin email' => $admin_email === '' ? 'Not set' : $admin_email,
-            'Database host' => $db_host,
-            'Database name' => $db_name,
-            'Database user' => $db_user,
-        ];
+        if (($fixture['group'] ?? '') !== '') {
+            $groupStages[$fixture['group']] = true;
+            $groupFixtures[] = $fixture;
+            $groupTeams[$fixture['group']][$fixture['hometeam']] = true;
+            $groupTeams[$fixture['group']][$fixture['awayteam']] = true;
+            if ($fixture['date'] !== null) {
+                $groupDates[] = $fixture['date'];
+            }
+        } else {
+            $knockoutFixtures[] = $fixture;
+            if ($fixture['date'] !== null) {
+                $knockoutDates[] = $fixture['date'];
+            }
+        }
 
-        $wizard_messages[] = 'Installation summary generated. Review the checklist and update your configuration files.';
-    }
-}
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action !== 'installation') {
-    $tournament_name = trim($_POST['tournament_name'] ?? '');
-    $num_groups = (int)($_POST['num_groups'] ?? 0);
-    $teams_per_group = (int)($_POST['teams_per_group'] ?? 0);
-    $start_date = trim($_POST['start_date'] ?? '');
-    $default_time = trim($_POST['default_time'] ?? '20:00');
-    $default_venue = trim($_POST['default_venue'] ?? 'TBD');
-    $matches_per_day = (int)($_POST['matches_per_day'] ?? 1);
-    $teams_input = trim($_POST['teams_input'] ?? '');
-    $fixture_source = $_POST['fixture_source'] ?? 'generate';
-    $fixtures_url = trim($_POST['fixtures_url'] ?? '');
-    $apply_changes = isset($_POST['apply_changes']);
-    $truncate_schedule = isset($_POST['truncate_schedule']);
-
-    if ($tournament_name === '') {
-        $errors[] = 'Tournament name is required.';
-    }
-    if ($num_groups <= 0) {
-        $errors[] = 'Number of groups must be greater than zero.';
-    }
-    if ($teams_per_group <= 1) {
-        $errors[] = 'Teams per group must be greater than one.';
-    }
-    if ($matches_per_day <= 0) {
-        $errors[] = 'Matches per day must be at least 1.';
-    }
-    if ($start_date === '') {
-        $errors[] = 'Start date is required.';
-    }
-
-    if (empty($errors) && $fixture_source === 'generate') {
-        $groups = parse_teams($teams_input, $num_groups, $teams_per_group);
-        foreach ($groups as $label => $teams) {
-            if (count($teams) !== $teams_per_group) {
-                $errors[] = "Group {$label} has " . count($teams) . " teams (expected {$teams_per_group}).";
+        $stage = trim((string)($fixture['stage'] ?? ''));
+        if ($stage !== '') {
+            $stageCounts[$stage] = ($stageCounts[$stage] ?? 0) + 1;
+            if ($fixture['date'] !== null) {
+                $stageDates[$stage][] = $fixture['date'];
             }
         }
     }
+
+    sort($allDates);
+    sort($groupDates);
+    sort($knockoutDates);
+
+    $groupSizes = [];
+    foreach ($groupTeams as $group => $teams) {
+        $groupSizes[$group] = count($teams);
+    }
+
+    $teamsPerGroup = '';
+    if (!empty($groupSizes)) {
+        $uniqueSizes = array_values(array_unique(array_values($groupSizes)));
+        $teamsPerGroup = count($uniqueSizes) === 1 ? (string)$uniqueSizes[0] : 'Mixed';
+    }
+
+    $finalDate = '';
+    foreach ($fixtures as $fixture) {
+        if ($fixture['stage'] === 'Final' && $fixture['date'] !== null) {
+            $finalDate = $fixture['date'];
+        }
+    }
+    if ($finalDate === '' && !empty($allDates)) {
+        $finalDate = end($allDates);
+    }
+
+    foreach ($stageDates as $stage => $dates) {
+        sort($dates);
+        $stageDates[$stage] = $dates;
+    }
+
+    return [
+        'tournament_name' => $tournamentName,
+        'source_reference' => $sourceReference,
+        'source_type' => $sourceType,
+        'detected_format' => $detectedFormat,
+        'total_matches' => count($fixtures),
+        'group_count' => count($groupStages),
+        'teams_per_group' => $teamsPerGroup,
+        'confirmed_teams' => count($allRealTeams),
+        'group_fixture_count' => count($groupFixtures),
+        'knockout_fixture_count' => count($knockoutFixtures),
+        'competition_start_date' => $allDates[0] ?? '',
+        'competition_end_date' => $allDates[count($allDates) - 1] ?? '',
+        'group_fixtures_start_date' => $groupDates[0] ?? '',
+        'group_fixtures_end_date' => $groupDates[count($groupDates) - 1] ?? '',
+        'knockout_fixtures_start_date' => $knockoutDates[0] ?? '',
+        'round_of_16_start_date' => $stageDates['Round of 16'][0] ?? '',
+        'round_of_16_end_date' => $stageDates['Round of 16'][count($stageDates['Round of 16'] ?? []) - 1] ?? '',
+        'quarter_final_start_date' => $stageDates['Quarter-Finals'][0] ?? '',
+        'quarter_final_end_date' => $stageDates['Quarter-Finals'][count($stageDates['Quarter-Finals'] ?? []) - 1] ?? '',
+        'semi_final_start_date' => $stageDates['Semi-Finals'][0] ?? '',
+        'semi_final_end_date' => $stageDates['Semi-Finals'][count($stageDates['Semi-Finals'] ?? []) - 1] ?? '',
+        'final_date' => $finalDate,
+        'round_of_16_count' => $stageCounts['Round of 16'] ?? 0,
+        'quarter_final_count' => $stageCounts['Quarter-Finals'] ?? 0,
+        'semi_final_count' => $stageCounts['Semi-Finals'] ?? 0,
+        'final_count' => ($stageCounts['Final'] ?? 0) + ($stageCounts['Final Stage'] ?? 0),
+    ];
+}
+
+function build_group_preview(array $fixtures): array {
+    $groups = [];
+
+    foreach ($fixtures as $fixture) {
+        $group = trim((string)($fixture['group'] ?? ''));
+        if ($group === '') {
+            continue;
+        }
+
+        foreach ([
+            ['name' => $fixture['hometeam'], 'flag' => $fixture['hometeamimg']],
+            ['name' => $fixture['awayteam'], 'flag' => $fixture['awayteamimg']],
+        ] as $team) {
+            if ($team['name'] === '' || hh_is_placeholder_team($team['name'])) {
+                continue;
+            }
+
+            $groups[$group][$team['name']] = $team['flag'];
+        }
+    }
+
+    ksort($groups);
+
+    foreach ($groups as $group => $teams) {
+        ksort($teams);
+        $normalized = [];
+        foreach ($teams as $name => $flag) {
+            $normalized[] = ['name' => $name, 'flag' => $flag];
+        }
+        $groups[$group] = $normalized;
+    }
+
+    return $groups;
+}
+
+function build_config_preview(array $metadata): array {
+    return [
+        '$competition' => $metadata['tournament_name'],
+        '$competition_start_date' => format_config_date($metadata['competition_start_date']),
+        '$competition_end_date' => format_config_date($metadata['competition_end_date']),
+        '$group_fixtures_start_date' => format_config_date($metadata['group_fixtures_start_date']),
+        '$group_fixtures_end_date' => format_config_date($metadata['group_fixtures_end_date']),
+        '$knockout_fixtures_start_date' => format_config_date($metadata['knockout_fixtures_start_date']),
+        '$round_of_16_start_date' => format_config_date($metadata['round_of_16_start_date']),
+        '$round_of_16_end_date' => format_config_date($metadata['round_of_16_end_date']),
+        '$quarter_final_start_date' => format_config_date($metadata['quarter_final_start_date']),
+        '$quarter_final_end_date' => format_config_date($metadata['quarter_final_end_date']),
+        '$semi_final_start_date' => format_config_date($metadata['semi_final_start_date']),
+        '$semi_final_end_date' => format_config_date($metadata['semi_final_end_date']),
+        '$final_date' => format_config_date($metadata['final_date']),
+        '$no_of_competition_groups' => $metadata['group_count'],
+        '$no_of_competition_teams' => $metadata['confirmed_teams'],
+        '$no_of_group_fixtures' => $metadata['group_fixture_count'],
+        '$no_of_knockout_fixtures' => $metadata['knockout_fixture_count'],
+        '$no_of_ro16_fixtures' => $metadata['round_of_16_count'],
+        '$no_of_qf_fixtures' => $metadata['quarter_final_count'],
+        '$no_of_sf_fixtures' => $metadata['semi_final_count'],
+        '$no_of_final_fixtures' => $metadata['final_count'],
+        '$no_of_total_fixtures' => $metadata['total_matches'],
+    ];
+}
+
+function get_recommended_schedule_definition(): array {
+    return [
+        'id SMALLINT(6) NOT NULL AUTO_INCREMENT PRIMARY KEY',
+        'hometeamimg VARCHAR(255) NOT NULL',
+        'hometeam CHAR(50) NOT NULL',
+        'homescore SMALLINT(6) NULL',
+        'awayscore SMALLINT(6) NULL',
+        'awayteam CHAR(50) NOT NULL',
+        'awayteamimg VARCHAR(255) NOT NULL',
+        'venue CHAR(70) NOT NULL',
+        'kotime CHAR(5) NOT NULL',
+        'date DATE NULL',
+        'stage CHAR(50) NOT NULL',
+        'match_number SMALLINT(6) NULL',
+        'round_number SMALLINT(6) NULL',
+    ];
+}
+
+function get_recommended_schedule_columns(): array {
+    return [
+        'hometeamimg',
+        'hometeam',
+        'homescore',
+        'awayscore',
+        'awayteam',
+        'awayteamimg',
+        'venue',
+        'kotime',
+        'date',
+        'stage',
+        'match_number',
+        'round_number',
+    ];
+}
+
+function build_schedule_create_sql(): string {
+    return "CREATE TABLE IF NOT EXISTS live_match_schedule (\n  " . implode(",\n  ", get_recommended_schedule_definition()) . "\n);";
+}
+
+function build_tournament_config_create_sql(): string {
+    return "CREATE TABLE IF NOT EXISTS tournament_config (\n"
+        . "  id INT AUTO_INCREMENT PRIMARY KEY,\n"
+        . "  tournament_name VARCHAR(255) NOT NULL,\n"
+        . "  source_type VARCHAR(50) NOT NULL,\n"
+        . "  source_reference VARCHAR(255) NOT NULL,\n"
+        . "  total_matches INT NOT NULL,\n"
+        . "  group_count INT NOT NULL,\n"
+        . "  teams_per_group VARCHAR(20) NOT NULL,\n"
+        . "  confirmed_teams INT NOT NULL,\n"
+        . "  start_date DATE NOT NULL,\n"
+        . "  end_date DATE NOT NULL,\n"
+        . "  group_start_date DATE NULL,\n"
+        . "  group_end_date DATE NULL,\n"
+        . "  knockout_start_date DATE NULL,\n"
+        . "  final_date DATE NULL,\n"
+        . "  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n"
+        . ");";
+}
+
+function build_tournament_config_insert_sql(array $metadata): string {
+    return sprintf(
+        "INSERT INTO tournament_config (tournament_name, source_type, source_reference, total_matches, group_count, teams_per_group, confirmed_teams, start_date, end_date, group_start_date, group_end_date, knockout_start_date, final_date) VALUES (%s, %s, %s, %d, %d, %s, %d, %s, %s, %s, %s, %s, %s);",
+        mysql_quote_string($metadata['tournament_name']),
+        mysql_quote_string($metadata['source_type']),
+        mysql_quote_string($metadata['source_reference']),
+        $metadata['total_matches'],
+        $metadata['group_count'],
+        mysql_quote_string((string)$metadata['teams_per_group']),
+        $metadata['confirmed_teams'],
+        mysql_quote_string($metadata['competition_start_date']),
+        mysql_quote_string($metadata['competition_end_date']),
+        $metadata['group_fixtures_start_date'] === '' ? 'NULL' : mysql_quote_string($metadata['group_fixtures_start_date']),
+        $metadata['group_fixtures_end_date'] === '' ? 'NULL' : mysql_quote_string($metadata['group_fixtures_end_date']),
+        $metadata['knockout_fixtures_start_date'] === '' ? 'NULL' : mysql_quote_string($metadata['knockout_fixtures_start_date']),
+        $metadata['final_date'] === '' ? 'NULL' : mysql_quote_string($metadata['final_date'])
+    );
+}
+
+function build_schedule_insert_sql(array $fixture): string {
+    $values = [
+        mysql_quote_string((string)$fixture['hometeamimg']),
+        mysql_quote_string((string)$fixture['hometeam']),
+        'NULL',
+        'NULL',
+        mysql_quote_string((string)$fixture['awayteam']),
+        mysql_quote_string((string)$fixture['awayteamimg']),
+        mysql_quote_string((string)$fixture['venue']),
+        mysql_quote_string((string)$fixture['kotime']),
+        $fixture['date'] === null ? 'NULL' : mysql_quote_string((string)$fixture['date']),
+        mysql_quote_string((string)$fixture['stage']),
+        $fixture['match_number'] === null ? 'NULL' : (string)$fixture['match_number'],
+        $fixture['round_number'] === null ? 'NULL' : (string)$fixture['round_number'],
+    ];
+
+    return sprintf(
+        'INSERT INTO live_match_schedule (%s) VALUES (%s);',
+        implode(', ', get_recommended_schedule_columns()),
+        implode(', ', $values)
+    );
+}
+
+function render_flag_preview_cell(string $flagPath, string $teamName): string {
+    if ($flagPath === '') {
+        return '<span class="text-muted small">No flag mapped</span>';
+    }
+
+    $safePath = htmlspecialchars(hh_normalize_flag_src($flagPath, '../'), ENT_QUOTES);
+    $safeLabel = htmlspecialchars($teamName, ENT_QUOTES);
+    $safeCode = htmlspecialchars($flagPath, ENT_QUOTES);
+
+    return '<div class="d-flex align-items-center gap-2">'
+        . '<span class="flag-square"><img src="' . $safePath . '" alt="' . $safeLabel . ' flag" width="24" height="24"></span>'
+        . '<span class="d-flex flex-column"><code class="small mb-0">' . $safeCode . '</code></span>'
+        . '</div>';
+}
+
+function mysql_try_connect(string $server, string $username, string $password, ?string $database = null): array {
+    mysqli_report(MYSQLI_REPORT_OFF);
+
+    $connection = @mysqli_connect($server, $username, $password, $database ?? '');
+    if (!$connection) {
+        return ['ok' => false, 'connection' => null, 'message' => mysqli_connect_error()];
+    }
+
+    return ['ok' => true, 'connection' => $connection, 'message' => 'Connected'];
+}
+
+function inspect_target_database(mysqli $connection, string $databaseName): array {
+    $exists = false;
+    $tables = [];
+
+    $safeDatabase = mysqli_real_escape_string($connection, $databaseName);
+    $databaseResult = mysqli_query($connection, "SHOW DATABASES LIKE '{$safeDatabase}'");
+    if ($databaseResult) {
+        $exists = mysqli_num_rows($databaseResult) > 0;
+        mysqli_free_result($databaseResult);
+    }
+
+    if ($exists) {
+        $tableResult = mysqli_query($connection, 'SHOW TABLES FROM ' . mysql_quote_identifier($databaseName));
+        if ($tableResult) {
+            while ($row = mysqli_fetch_row($tableResult)) {
+                if (!empty($row[0])) {
+                    $tables[] = $row[0];
+                }
+            }
+            mysqli_free_result($tableResult);
+        }
+    }
+
+    return [
+        'exists' => $exists,
+        'tables' => $tables,
+    ];
+}
+
+function build_db_connect_template(string $server, string $database, string $username, string $password): string {
+    return "<?php\n"
+        . "\t// Setup global variables\n"
+        . "\t\$dbusername = " . mysql_quote_string($username) . ";\n"
+        . "\t\$dbpassword = " . mysql_quote_string($password) . ";\n"
+        . "\t\$database = " . mysql_quote_string($database) . ";\n"
+        . "\t\$server = " . mysql_quote_string($server) . ";\n\n"
+        . "\t// Create DB connection\n"
+        . "\t\$con = mysqli_connect(\$server, \$dbusername, \$dbpassword, \$database);\n\n"
+        . "\t// Check connection\n"
+        . "\tif (mysqli_connect_errno()) {\n"
+        . "\t\techo \"Failed to connect to MySQL: \" . mysqli_connect_error();\n"
+        . "\t}\n"
+        . "?>\n";
+}
+
+function ensure_mysql_user_access(mysqli $connection, string $databaseName, string $username, string $host, string $password): ?string {
+    $createUser = 'CREATE USER IF NOT EXISTS ' . mysql_quote_string($username) . '@' . mysql_quote_string($host)
+        . ' IDENTIFIED BY ' . mysql_quote_string($password);
+
+    if (!mysqli_query($connection, $createUser)) {
+        $errorMessage = mysqli_error($connection);
+        if (stripos($errorMessage, 'syntax') !== false) {
+            $legacyCreate = 'CREATE USER ' . mysql_quote_string($username) . '@' . mysql_quote_string($host)
+                . ' IDENTIFIED BY ' . mysql_quote_string($password);
+            if (!mysqli_query($connection, $legacyCreate)) {
+                $legacyError = mysqli_error($connection);
+                if (stripos($legacyError, 'exists') === false) {
+                    return $legacyError;
+                }
+            }
+        } elseif (stripos($errorMessage, 'exists') === false) {
+            return $errorMessage;
+        }
+    }
+
+    $grantSql = 'GRANT ALL PRIVILEGES ON ' . mysql_quote_identifier($databaseName) . '.* TO '
+        . mysql_quote_string($username) . '@' . mysql_quote_string($host);
+
+    if (!mysqli_query($connection, $grantSql)) {
+        return mysqli_error($connection);
+    }
+
+    if (!mysqli_query($connection, 'FLUSH PRIVILEGES')) {
+        return mysqli_error($connection);
+    }
+
+    return null;
+}
+
+function write_generated_db_connect(string $content): array {
+    $path = dirname(__DIR__) . '/php/db-connect.php';
+    $written = @file_put_contents($path, $content);
+
+    if ($written === false) {
+        return ['ok' => false, 'path' => $path, 'message' => 'The generated db-connect.php file could not be written.'];
+    }
+
+    return ['ok' => true, 'path' => $path, 'message' => 'The generated db-connect.php file was written successfully.'];
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'setup_preview') {
+    $siteTitle = trim($_POST['site_title'] ?? ($title ?? 'Hendy\'s Hunches'));
+    $siteUrl = trim($_POST['site_url'] ?? ($base_url ?? ''));
+    $timezone = trim($_POST['timezone'] ?? (date_default_timezone_get() ?: 'Europe/London'));
+    $adminEmail = trim($_POST['admin_email'] ?? '');
+    $storageDir = trim($_POST['storage_dir'] ?? ($backup_dir ?? '/bak'));
+
+    $mysqlAdminServer = trim($_POST['mysql_admin_server'] ?? 'localhost');
+    $mysqlAdminUser = trim($_POST['mysql_admin_user'] ?? 'hh_admin');
+    $mysqlAdminPassword = trim($_POST['mysql_admin_password'] ?? '');
+
+    $targetDbName = trim($_POST['target_db_name'] ?? '');
+    $targetDbUser = trim($_POST['target_db_user'] ?? '');
+    $targetDbPassword = trim($_POST['target_db_password'] ?? '');
+    $targetDbUserHost = trim($_POST['target_db_user_host'] ?? 'localhost');
+    $writeDbConnect = isset($_POST['write_db_connect']);
+
+    $tournamentName = trim($_POST['tournament_name'] ?? '');
+    $fixturesUrl = trim($_POST['fixtures_url'] ?? '');
+    $truncateSchedule = isset($_POST['truncate_schedule']);
+    $applyChanges = isset($_POST['apply_changes']);
+
+    if ($siteTitle === '') {
+        $errors[] = 'Site name is required.';
+    }
+    if ($siteUrl === '' || !filter_var($siteUrl, FILTER_VALIDATE_URL)) {
+        $errors[] = 'A valid base URL is required.';
+    }
+    if ($adminEmail !== '' && !filter_var($adminEmail, FILTER_VALIDATE_EMAIL)) {
+        $errors[] = 'Admin email must be a valid email address.';
+    }
+    if ($mysqlAdminServer === '') {
+        $errors[] = 'MySQL server address is required.';
+    }
+    if ($mysqlAdminUser === '') {
+        $errors[] = 'MySQL admin account is required.';
+    }
+    if ($targetDbName === '') {
+        $errors[] = 'Target database name is required.';
+    }
+    if ($targetDbUser === '') {
+        $errors[] = 'Target database user is required.';
+    }
+    if ($targetDbUserHost === '') {
+        $errors[] = 'Target database user host is required.';
+    }
+
+    [$payload, $sourceReference, $sourceType, $detectedFormat, $sourceErrors] = read_fixture_source_payload($fixturesUrl);
+    $errors = array_merge($errors, $sourceErrors);
+
+    $tournamentName = infer_tournament_name($tournamentName, $sourceReference);
+
+    $rootPath = realpath(__DIR__ . '/..');
+    $permissionTargets = [
+        'Backups' => $storageDir,
+        'Text lists' => $datalists_dir ?? '/text',
+        'SQL exports' => $sql_dir ?? '/sql',
+        'Forum uploads' => $forum_dir ?? '/mboard',
+        'JSON data' => '/json',
+        'Images' => '/img',
+    ];
+    foreach ($permissionTargets as $label => $relativePath) {
+        $resolved = $rootPath ? resolve_directory_path($rootPath, $relativePath) : $relativePath;
+        $permission_checks[] = [
+            'label' => $label,
+            'path' => $resolved,
+            'exists' => is_dir($resolved),
+            'writable' => is_writable($resolved),
+        ];
+    }
+
+    $db_connect_template = build_db_connect_template($mysqlAdminServer, $targetDbName, $targetDbUser, $targetDbPassword);
+
+    $setup_summary = [
+        'Site title' => $siteTitle,
+        'Base URL' => $siteUrl,
+        'Timezone' => $timezone,
+        'Admin email' => $adminEmail === '' ? 'Not set' : $adminEmail,
+        'MySQL server' => $mysqlAdminServer,
+        'MySQL admin account' => $mysqlAdminUser,
+        'Target database' => $targetDbName,
+        'Target app user' => $targetDbUser . '@' . $targetDbUserHost,
+        'Write db-connect.php' => $writeDbConnect ? 'Yes' : 'No',
+    ];
 
     $fixtures = [];
-    if (empty($errors) && $fixture_source === 'import') {
-        $payload = '';
-        if ($fixtures_url !== '') {
-            $payload = @file_get_contents($fixtures_url);
-            if ($payload === false) {
-                $errors[] = 'Unable to fetch fixture data from the provided URL.';
-            }
-        } elseif (!empty($_FILES['fixtures_file']['tmp_name'])) {
-            $payload = file_get_contents($_FILES['fixtures_file']['tmp_name']);
-        } else {
-            $errors[] = 'Please provide a fixtures URL or upload a CSV/JSON file.';
-        }
-
-        if (empty($errors)) {
-            $is_json = str_ends_with(strtolower($fixtures_url), '.json') || str_starts_with(ltrim($payload), '{') || str_starts_with(ltrim($payload), '[');
-            if ($is_json) {
-                $fixtures = parse_fixture_json($payload, $default_time, $default_venue);
-            } else {
-                $fixtures = parse_fixture_csv($payload, $default_time, $default_venue);
-            }
-
-            if (empty($fixtures)) {
-                $errors[] = 'Fixture data could not be parsed. Ensure the CSV/JSON contains at least Home and Away columns.';
-            }
+    if (empty($errors)) {
+        $fixtures = $detectedFormat === 'JSON' ? parse_fixture_json($payload) : parse_fixture_csv($payload);
+        $fixtures = enrich_fixture_stages($fixtures);
+        if (empty($fixtures)) {
+            $errors[] = 'Fixture data could not be parsed. JSON should include keys like HomeTeam, AwayTeam, DateUtc, Location, Group and RoundNumber. CSV should include equivalent headings.';
         }
     }
 
-    if (empty($errors) && $fixture_source === 'generate') {
-        $fixtures = build_fixture_rows($groups, $start_date, $matches_per_day, $default_time, $default_venue);
+    $adminConnection = null;
+    if ($mysqlAdminServer !== '' && $mysqlAdminUser !== '') {
+        $adminConnectionAttempt = mysql_try_connect($mysqlAdminServer, $mysqlAdminUser, $mysqlAdminPassword, null);
+        if ($adminConnectionAttempt['ok']) {
+            $adminConnection = $adminConnectionAttempt['connection'];
+            $mysql_diagnostics['status'] = 'Connected';
+            $mysql_diagnostics['message'] = 'Admin connection successful.';
+            $mysql_diagnostics['server'] = $mysqlAdminServer;
+            $mysql_diagnostics['target_database'] = $targetDbName;
+
+            if ($targetDbName !== '') {
+                $inspection = inspect_target_database($adminConnection, $targetDbName);
+                $mysql_diagnostics['database_exists'] = $inspection['exists'];
+                $mysql_diagnostics['tables'] = $inspection['tables'];
+                $mysql_diagnostics['table_count'] = count($inspection['tables']);
+                $mysql_diagnostics['message'] = $inspection['exists']
+                    ? 'Admin connection successful. Existing tables for the target database are listed below.'
+                    : 'Admin connection successful. The target database does not exist yet.';
+            }
+        } else {
+            $mysql_diagnostics['status'] = 'Failed';
+            $mysql_diagnostics['message'] = $adminConnectionAttempt['message'];
+            $mysql_diagnostics['server'] = $mysqlAdminServer;
+            $mysql_diagnostics['target_database'] = $targetDbName;
+            if ($applyChanges) {
+                $errors[] = 'The MySQL admin connection failed, so setup changes cannot be applied.';
+            }
+        }
     }
 
     if (empty($errors)) {
+        usort($fixtures, function (array $left, array $right): int {
+            return strcmp((string)$left['datetime_utc'], (string)$right['datetime_utc']);
+        });
+
+        $metadata = build_tournament_metadata($fixtures, $tournamentName, $sourceReference, $sourceType, $detectedFormat);
         $fixture_preview = array_slice($fixtures, 0, 10);
+        $group_preview = build_group_preview($fixtures);
+        $config_preview = build_config_preview($metadata);
 
-        $sql_output[] = "CREATE TABLE IF NOT EXISTS tournament_config (";
-        $sql_output[] = "  id INT AUTO_INCREMENT PRIMARY KEY,";
-        $sql_output[] = "  tournament_name VARCHAR(255) NOT NULL,";
-        $sql_output[] = "  num_groups INT NOT NULL,";
-        $sql_output[] = "  teams_per_group INT NOT NULL,";
-        $sql_output[] = "  start_date DATE NOT NULL,";
-        $sql_output[] = "  default_time VARCHAR(10) NOT NULL,";
-        $sql_output[] = "  default_venue VARCHAR(100) NOT NULL,";
-        $sql_output[] = "  matches_per_day INT NOT NULL,";
-        $sql_output[] = "  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP";
-        $sql_output[] = ");";
+        $tournament_summary = [
+            'Tournament name' => $metadata['tournament_name'],
+            'Source type' => $metadata['source_type'],
+            'Detected format' => $metadata['detected_format'],
+            'Source reference' => $metadata['source_reference'],
+            'Competition start date' => $metadata['competition_start_date'],
+            'Competition end date' => $metadata['competition_end_date'],
+            'Total fixtures' => (string)$metadata['total_matches'],
+            'Group fixtures' => (string)$metadata['group_fixture_count'],
+            'Knockout fixtures' => (string)$metadata['knockout_fixture_count'],
+            'Groups detected' => (string)$metadata['group_count'],
+            'Teams per group' => $metadata['teams_per_group'] === '' ? 'Not detected' : $metadata['teams_per_group'],
+            'Confirmed teams' => (string)$metadata['confirmed_teams'],
+        ];
 
-        if ($truncate_schedule) {
-            $sql_output[] = "TRUNCATE TABLE live_match_schedule;";
+        $database_preview = [
+            'database_name' => $targetDbName,
+            'app_user' => $targetDbUser . '@' . $targetDbUserHost,
+            'tables' => [
+                [
+                    'name' => 'tournament_config',
+                    'columns' => 'tournament_name, source_type, source_reference, total_matches, group_count, teams_per_group, confirmed_teams, start_date, end_date, group_start_date, group_end_date, knockout_start_date, final_date',
+                ],
+                [
+                    'name' => 'live_match_schedule',
+                    'columns' => implode(', ', get_recommended_schedule_columns()),
+                ],
+            ],
+            'sample_rows' => array_slice($fixtures, 0, 5),
+        ];
+
+        $sql_output[] = 'CREATE DATABASE IF NOT EXISTS ' . mysql_quote_identifier($targetDbName) . ';';
+        $sql_output[] = 'CREATE USER IF NOT EXISTS ' . mysql_quote_string($targetDbUser) . '@' . mysql_quote_string($targetDbUserHost) . ' IDENTIFIED BY ' . mysql_quote_string($targetDbPassword) . ';';
+        $sql_output[] = 'GRANT ALL PRIVILEGES ON ' . mysql_quote_identifier($targetDbName) . '.* TO ' . mysql_quote_string($targetDbUser) . '@' . mysql_quote_string($targetDbUserHost) . ';';
+        $sql_output[] = 'FLUSH PRIVILEGES;';
+        $sql_output[] = 'USE ' . mysql_quote_identifier($targetDbName) . ';';
+        $sql_output[] = build_tournament_config_create_sql();
+        $sql_output[] = build_schedule_create_sql();
+
+        if ($truncateSchedule) {
+            $sql_output[] = 'TRUNCATE TABLE live_match_schedule;';
         }
 
-        $sql_output[] = sprintf(
-            "INSERT INTO tournament_config (tournament_name, num_groups, teams_per_group, start_date, default_time, default_venue, matches_per_day) VALUES ('%s', %d, %d, '%s', '%s', '%s', %d);",
-            addslashes($tournament_name),
-            $num_groups,
-            $teams_per_group,
-            addslashes($start_date),
-            addslashes($default_time),
-            addslashes($default_venue),
-            $matches_per_day
-        );
+        $sql_output[] = build_tournament_config_insert_sql($metadata);
 
         foreach ($fixtures as $fixture) {
-            $date_value = $fixture['date'] === null ? 'NULL' : "'" . addslashes($fixture['date']) . "'";
-            $sql_output[] = sprintf(
-                "INSERT INTO live_match_schedule (hometeamimg, hometeam, homescore, awayscore, awayteam, awayteamimg, venue, kotime, date) VALUES ('%s', '%s', NULL, NULL, '%s', '%s', '%s', '%s', %s);",
-                addslashes($fixture['hometeamimg']),
-                addslashes($fixture['hometeam']),
-                addslashes($fixture['awayteam']),
-                addslashes($fixture['awayteamimg']),
-                addslashes($fixture['venue']),
-                addslashes($fixture['kotime']),
-                $date_value
-            );
+            $sql_output[] = build_schedule_insert_sql($fixture);
         }
 
-        if ($apply_changes && $con) {
-            $create_table_sql = "CREATE TABLE IF NOT EXISTS tournament_config (" .
-                "id INT AUTO_INCREMENT PRIMARY KEY," .
-                "tournament_name VARCHAR(255) NOT NULL," .
-                "num_groups INT NOT NULL," .
-                "teams_per_group INT NOT NULL," .
-                "start_date DATE NOT NULL," .
-                "default_time VARCHAR(10) NOT NULL," .
-                "default_venue VARCHAR(100) NOT NULL," .
-                "matches_per_day INT NOT NULL," .
-                "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP" .
-                ");";
-
-            if (!mysqli_query($con, $create_table_sql)) {
-                $errors[] = 'Failed to create tournament_config table: ' . mysqli_error($con);
+        if ($applyChanges) {
+            if (!$adminConnection instanceof mysqli) {
+                $errors[] = 'Cannot apply changes because the MySQL admin connection is unavailable.';
             } else {
-                if ($truncate_schedule) {
-                    mysqli_query($con, 'TRUNCATE TABLE live_match_schedule;');
+                if (!mysqli_query($adminConnection, 'CREATE DATABASE IF NOT EXISTS ' . mysql_quote_identifier($targetDbName))) {
+                    $errors[] = 'Failed while creating the target database: ' . mysqli_error($adminConnection);
                 }
 
-                $stmt = mysqli_prepare(
-                    $con,
-                    'INSERT INTO tournament_config (tournament_name, num_groups, teams_per_group, start_date, default_time, default_venue, matches_per_day) VALUES (?, ?, ?, ?, ?, ?, ?)'
-                );
-
-                if ($stmt) {
-                    mysqli_stmt_bind_param(
-                        $stmt,
-                        'siisssi',
-                        $tournament_name,
-                        $num_groups,
-                        $teams_per_group,
-                        $start_date,
-                        $default_time,
-                        $default_venue,
-                        $matches_per_day
-                    );
-                    mysqli_stmt_execute($stmt);
-                    mysqli_stmt_close($stmt);
-                } else {
-                    $errors[] = 'Failed to prepare tournament_config insert: ' . mysqli_error($con);
-                }
-
-                $fixture_stmt = mysqli_prepare(
-                    $con,
-                    'INSERT INTO live_match_schedule (hometeamimg, hometeam, homescore, awayscore, awayteam, awayteamimg, venue, kotime, date) VALUES (?, ?, NULL, NULL, ?, ?, ?, ?, ?)'
-                );
-
-                if ($fixture_stmt) {
-                    foreach ($fixtures as $fixture) {
-                        mysqli_stmt_bind_param(
-                            $fixture_stmt,
-                            'sssssss',
-                            $fixture['hometeamimg'],
-                            $fixture['hometeam'],
-                            $fixture['awayteam'],
-                            $fixture['awayteamimg'],
-                            $fixture['venue'],
-                            $fixture['kotime'],
-                            $fixture['date']
-                        );
-                        mysqli_stmt_execute($fixture_stmt);
+                if (empty($errors)) {
+                    $userAccessError = ensure_mysql_user_access($adminConnection, $targetDbName, $targetDbUser, $targetDbUserHost, $targetDbPassword);
+                    if ($userAccessError !== null) {
+                        $errors[] = 'Failed while preparing the app database user: ' . $userAccessError;
                     }
-                    mysqli_stmt_close($fixture_stmt);
-                    $messages[] = 'Setup applied successfully. Review the SQL output below for auditing.';
-                } else {
-                    $errors[] = 'Failed to prepare fixture inserts: ' . mysqli_error($con);
+                }
+
+                if (empty($errors) && !mysqli_select_db($adminConnection, $targetDbName)) {
+                    $errors[] = 'The target database could not be selected after creation: ' . mysqli_error($adminConnection);
+                }
+
+                if (empty($errors) && !mysqli_query($adminConnection, build_tournament_config_create_sql())) {
+                    $errors[] = 'Failed to create tournament_config: ' . mysqli_error($adminConnection);
+                }
+
+                if (empty($errors) && !mysqli_query($adminConnection, build_schedule_create_sql())) {
+                    $errors[] = 'Failed to create live_match_schedule: ' . mysqli_error($adminConnection);
+                }
+
+                if (empty($errors) && $truncateSchedule && !mysqli_query($adminConnection, 'TRUNCATE TABLE live_match_schedule')) {
+                    $errors[] = 'Failed to clear live_match_schedule: ' . mysqli_error($adminConnection);
+                }
+
+                if (empty($errors)) {
+                    $configInsert = rtrim(build_tournament_config_insert_sql($metadata), ';');
+
+                    if (!mysqli_query($adminConnection, $configInsert)) {
+                        $errors[] = 'Failed to insert tournament_config: ' . mysqli_error($adminConnection);
+                    }
+                }
+
+                if (empty($errors)) {
+                    foreach ($fixtures as $fixture) {
+                        if (!mysqli_query($adminConnection, build_schedule_insert_sql($fixture))) {
+                            $errors[] = 'Failed to insert fixture rows: ' . mysqli_error($adminConnection);
+                            break;
+                        }
+                    }
+                }
+
+                if (empty($errors)) {
+                    if ($writeDbConnect) {
+                        $writeResult = write_generated_db_connect($db_connect_template);
+                        if (!$writeResult['ok']) {
+                            $errors[] = $writeResult['message'];
+                        } else {
+                            $messages[] = $writeResult['message'] . ' (' . $writeResult['path'] . ')';
+                        }
+                    }
+                }
+
+                if (empty($errors)) {
+                    $messages[] = 'Setup SQL executed successfully against the target database.';
+                    $inspection = inspect_target_database($adminConnection, $targetDbName);
+                    $mysql_diagnostics['database_exists'] = $inspection['exists'];
+                    $mysql_diagnostics['tables'] = $inspection['tables'];
+                    $mysql_diagnostics['table_count'] = count($inspection['tables']);
+                    $mysql_diagnostics['message'] = 'Admin connection successful. Setup changes were applied and the updated tables are listed below.';
                 }
             }
-        } elseif ($apply_changes && !$con) {
-            $errors[] = 'Cannot apply changes because the database connection is unavailable.';
         }
+    }
+
+    if ($adminConnection instanceof mysqli) {
+        mysqli_close($adminConnection);
     }
 }
 ?>
@@ -503,152 +910,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action !== 'installation') 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Hendy's Hunches Setup Wizard">
+    <meta name="description" content="Hendy's Hunches Installation Manager">
     <meta name="author" content="James Henderson">
     <title><?= $page_title ?> - Hendy's Hunches</title>
     <link href="../ico/favicon.ico" rel="icon">
     <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="../vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
     <link href="../css/styles.css" rel="stylesheet">
+    <style>
+        .flag-square {
+            width: 28px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 28px;
+            border: 1px solid #ccc;
+            overflow: hidden;
+        }
+
+        .flag-square img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+    </style>
 </head>
 <body>
+<?php hh_render_dev_banner('../php/logout.php'); ?>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
         <img src="../img/hh-icon-2024.png" class="img-fluid bg-light mx-2" style="--bs-bg-opacity: 0.80" width="50px" alt="Hendy's Hunches">
         <a class="navbar-brand" href="#">Hendy's Hunches</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar2" aria-controls="offcanvasNavbar2">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasNavbar2" aria-labelledby="offcanvasNavbar2Label">
-            <div class="offcanvas-header">
-                <h5 class="offcanvas-title" id="offcanvasNavbar2Label">Hendy's Hunches</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-            </div>
-            <div class="offcanvas-body">
-                <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-                    <li class="nav-item">
-                        <a class="nav-link" href="../dashboard.php">Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../predictions.php">Submit Predictions</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../rankings.php">Rankings</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../how-it-works.php">How It Works</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../about.php">About</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
     </div>
 </nav>
 
 <main class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="h3 mb-1">Setup Wizard</h1>
-            <p class="text-muted mb-0">Generate SQL for tournaments and optionally apply it to your database.</p>
-        </div>
+    <div class="mb-4">
+        <h1 class="h3 mb-1">Installation Manager</h1>
+        <p class="text-muted mb-0">Use this first-run installer to test MySQL admin access, provision the app database and user, infer tournament settings from a fixture feed or file, and prepare the site for a new competition.</p>
     </div>
-
-    <?php if (!empty($wizard_errors)) : ?>
-        <div class="alert alert-danger">
-            <ul class="mb-0">
-                <?php foreach ($wizard_errors as $error) : ?>
-                    <li><?= htmlspecialchars($error) ?></li>
-                <?php endforeach; ?>
-            </ul>
-        </div>
-    <?php endif; ?>
-
-    <?php if (!empty($wizard_messages)) : ?>
-        <div class="alert alert-success">
-            <ul class="mb-0">
-                <?php foreach ($wizard_messages as $message) : ?>
-                    <li><?= htmlspecialchars($message) ?></li>
-                <?php endforeach; ?>
-            </ul>
-        </div>
-    <?php endif; ?>
-
-    <div class="card shadow-sm mb-4">
-        <div class="card-body">
-            <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3">
-                <div>
-                    <h2 class="h5 mb-1">Installation Manager</h2>
-                    <p class="text-muted mb-0">Guide the initial site setup with a multi-step checklist for URLs, database credentials, and file permissions.</p>
-                </div>
-                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#installManagerModal">
-                    Launch Installation Manager
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <?php if (!empty($wizard_summary)) : ?>
-        <div class="card shadow-sm mb-4">
-            <div class="card-body">
-                <h2 class="h5">Installation Summary</h2>
-                <p class="text-muted">Use this overview to update your configuration files and verify required folders.</p>
-
-                <div class="row g-3">
-                    <?php foreach ($wizard_summary as $label => $value) : ?>
-                        <div class="col-md-6">
-                            <div class="border rounded p-3 h-100">
-                                <div class="small text-muted"><?= htmlspecialchars($label) ?></div>
-                                <div class="fw-semibold"><?= htmlspecialchars($value) ?></div>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-
-                <h3 class="h6 mt-4">Filesystem & Permissions</h3>
-                <div class="table-responsive">
-                    <table class="table table-sm table-striped align-middle">
-                        <thead>
-                            <tr>
-                                <th>Folder</th>
-                                <th>Path</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($wizard_permission_checks as $check) : ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($check['label']) ?></td>
-                                    <td><code><?= htmlspecialchars($check['path']) ?></code></td>
-                                    <td>
-                                        <?php if (!$check['exists']) : ?>
-                                            <span class="badge bg-danger">Missing</span>
-                                        <?php elseif (!$check['writable']) : ?>
-                                            <span class="badge bg-warning text-dark">Not writable</span>
-                                        <?php else : ?>
-                                            <span class="badge bg-success">Ready</span>
-                                        <?php endif; ?>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
-
-                <h3 class="h6 mt-4">Database Connection Template</h3>
-                <p class="text-muted mb-2">Save this as <code>php/db-connect.php</code> to wire up the database connection.</p>
-                <pre class="bg-light p-3 border rounded" style="max-height: 220px; overflow: auto;"><?= htmlspecialchars($wizard_db_template) ?></pre>
-
-                <h3 class="h6 mt-4">Next Steps</h3>
-                <ul class="mb-0">
-                    <li>Copy <code>php/db-connect.php.example</code> to <code>php/db-connect.php</code> and paste the template above.</li>
-                    <li>Update <code>php/config.php</code> with your competition details and base URL.</li>
-                    <li>Use the Tournament Setup section below to generate or import fixtures.</li>
-                </ul>
-            </div>
-        </div>
-    <?php endif; ?>
 
     <?php if (!empty($errors)) : ?>
         <div class="alert alert-danger">
@@ -670,195 +971,317 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action !== 'installation') 
         </div>
     <?php endif; ?>
 
-    <div class="modal fade" id="installManagerModal" tabindex="-1" aria-labelledby="installManagerModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content">
-                <form method="POST">
-                    <input type="hidden" name="wizard_action" value="installation">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="installManagerModalLabel">Installation Manager</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <div class="d-flex gap-2 flex-wrap">
-                                <span class="badge bg-primary" data-step-indicator="0">1. Site</span>
-                                <span class="badge bg-secondary" data-step-indicator="1">2. Database</span>
-                                <span class="badge bg-secondary" data-step-indicator="2">3. Storage</span>
-                                <span class="badge bg-secondary" data-step-indicator="3">4. Review</span>
-                            </div>
-                        </div>
-
-                        <div class="wizard-step" data-step="0">
-                            <h6>Site & Location</h6>
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label class="form-label" for="site_title">Site name</label>
-                                    <input type="text" class="form-control" id="site_title" name="site_title" value="<?= htmlspecialchars($_POST['site_title'] ?? ($title ?? 'Hendy\'s Hunches')) ?>" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label" for="site_url">Base URL</label>
-                                    <input type="url" class="form-control" id="site_url" name="site_url" value="<?= htmlspecialchars($_POST['site_url'] ?? ($base_url ?? '')) ?>" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label" for="timezone">Timezone</label>
-                                    <input type="text" class="form-control" id="timezone" name="timezone" value="<?= htmlspecialchars($_POST['timezone'] ?? (date_default_timezone_get() ?: 'Europe/London')) ?>">
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label" for="admin_email">Admin email (optional)</label>
-                                    <input type="email" class="form-control" id="admin_email" name="admin_email" value="<?= htmlspecialchars($_POST['admin_email'] ?? '') ?>">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="wizard-step d-none" data-step="1">
-                            <h6>Database Configuration</h6>
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label class="form-label" for="db_host">Database host</label>
-                                    <input type="text" class="form-control" id="db_host" name="db_host" value="<?= htmlspecialchars($_POST['db_host'] ?? 'localhost') ?>" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label" for="db_name">Database name</label>
-                                    <input type="text" class="form-control" id="db_name" name="db_name" value="<?= htmlspecialchars($_POST['db_name'] ?? '') ?>" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label" for="db_user">Database user</label>
-                                    <input type="text" class="form-control" id="db_user" name="db_user" value="<?= htmlspecialchars($_POST['db_user'] ?? '') ?>" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label" for="db_pass">Database password</label>
-                                    <input type="password" class="form-control" id="db_pass" name="db_pass" value="<?= htmlspecialchars($_POST['db_pass'] ?? '') ?>">
-                                </div>
-                            </div>
-                            <div class="form-text mt-2">You can paste these into <code>php/db-connect.php</code>.</div>
-                        </div>
-
-                        <div class="wizard-step d-none" data-step="2">
-                            <h6>Storage & Permissions</h6>
-                            <div class="row g-3">
-                                <div class="col-md-12">
-                                    <label class="form-label" for="storage_dir">Backups folder</label>
-                                    <input type="text" class="form-control" id="storage_dir" name="storage_dir" value="<?= htmlspecialchars($_POST['storage_dir'] ?? ($backup_dir ?? '/bak')) ?>">
-                                    <div class="form-text">Adjust if backups live outside the default <code>/bak</code> folder.</div>
-                                </div>
-                            </div>
-                            <div class="alert alert-info mt-3 mb-0">
-                                The installer will check folder permissions for backups, text lists, SQL exports, forum uploads, JSON, and images.
-                            </div>
-                        </div>
-
-                        <div class="wizard-step d-none" data-step="3">
-                            <h6>Review & Generate</h6>
-                            <p class="text-muted mb-0">Submit to generate the setup checklist and configuration template.</p>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-secondary" data-wizard-prev>Back</button>
-                        <button type="button" class="btn btn-outline-primary" data-wizard-next>Next</button>
-                        <button type="submit" class="btn btn-primary d-none" data-wizard-submit>Generate Checklist</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
     <form method="POST" class="card shadow-sm mb-4" enctype="multipart/form-data">
+        <input type="hidden" name="wizard_action" value="setup_preview">
         <div class="card-body">
-            <h2 class="h5">Competition Details</h2>
-            <div class="row g-3 mb-3">
-                <div class="col-md-6">
-                    <label class="form-label" for="tournament_name">Tournament name</label>
-                    <input type="text" class="form-control" id="tournament_name" name="tournament_name" value="<?= htmlspecialchars($_POST['tournament_name'] ?? '') ?>" required>
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label" for="num_groups">Number of groups</label>
-                    <input type="number" class="form-control" id="num_groups" name="num_groups" min="1" value="<?= htmlspecialchars($_POST['num_groups'] ?? '6') ?>" required>
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label" for="teams_per_group">Teams per group</label>
-                    <input type="number" class="form-control" id="teams_per_group" name="teams_per_group" min="2" value="<?= htmlspecialchars($_POST['teams_per_group'] ?? '4') ?>" required>
-                </div>
-            </div>
-
-            <div class="row g-3 mb-3">
-                <div class="col-md-4">
-                    <label class="form-label" for="start_date">Group start date</label>
-                    <input type="date" class="form-control" id="start_date" name="start_date" value="<?= htmlspecialchars($_POST['start_date'] ?? '') ?>" required>
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label" for="default_time">Default kick-off time</label>
-                    <input type="time" class="form-control" id="default_time" name="default_time" value="<?= htmlspecialchars($_POST['default_time'] ?? '20:00') ?>" required>
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label" for="matches_per_day">Matches per day</label>
-                    <input type="number" class="form-control" id="matches_per_day" name="matches_per_day" min="1" value="<?= htmlspecialchars($_POST['matches_per_day'] ?? '3') ?>" required>
-                </div>
-            </div>
-
-            <div class="row g-3 mb-3">
-                <div class="col-md-6">
-                    <label class="form-label" for="default_venue">Default venue label</label>
-                    <input type="text" class="form-control" id="default_venue" name="default_venue" value="<?= htmlspecialchars($_POST['default_venue'] ?? 'TBD') ?>" required>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label" for="teams_input">Teams input (optional)</label>
-                    <textarea class="form-control" id="teams_input" name="teams_input" rows="4" placeholder="Group A: Germany|flag-icons/24/germany.png, Scotland|flag-icons/24/scotland.png, Hungary|flag-icons/24/hungary.png, Switzerland|flag-icons/24/switzerland.png"><?= htmlspecialchars($_POST['teams_input'] ?? '') ?></textarea>
-                    <div class="form-text">Provide one group per line. Use "Group A:" prefix optionally. Add a flag path after a pipe to store the flag.</div>
-                </div>
-            </div>
-
-            <h2 class="h5 mt-4">Fixture Source</h2>
-            <p class="text-muted">Generate fixtures automatically or import an authoritative fixture list from FIFA/UEFA in CSV or JSON format.</p>
-            <div class="row g-3 mb-3">
-                <div class="col-md-6">
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="fixture_source" id="fixture_source_generate" value="generate" <?= ($_POST['fixture_source'] ?? 'generate') === 'generate' ? 'checked' : '' ?>>
-                        <label class="form-check-label" for="fixture_source_generate">Generate fixtures (round-robin)</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="fixture_source" id="fixture_source_import" value="import" <?= ($_POST['fixture_source'] ?? '') === 'import' ? 'checked' : '' ?>>
-                        <label class="form-check-label" for="fixture_source_import">Import fixtures (CSV/JSON)</label>
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <h2 class="h5">1. Site Settings</h2>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label" for="site_title">Site name</label>
+                            <input type="text" class="form-control" id="site_title" name="site_title" value="<?= htmlspecialchars($_POST['site_title'] ?? ($title ?? 'Hendy\'s Hunches')) ?>" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="site_url">Base URL</label>
+                            <input type="url" class="form-control" id="site_url" name="site_url" value="<?= htmlspecialchars($_POST['site_url'] ?? ($base_url ?? '')) ?>" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="timezone">Timezone</label>
+                            <input type="text" class="form-control" id="timezone" name="timezone" value="<?= htmlspecialchars($_POST['timezone'] ?? (date_default_timezone_get() ?: 'Europe/London')) ?>">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="admin_email">Admin email</label>
+                            <input type="email" class="form-control" id="admin_email" name="admin_email" value="<?= htmlspecialchars($_POST['admin_email'] ?? '') ?>">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="storage_dir">Backups directory</label>
+                            <input type="text" class="form-control" id="storage_dir" name="storage_dir" value="<?= htmlspecialchars($_POST['storage_dir'] ?? ($backup_dir ?? '/bak')) ?>">
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label" for="fixtures_url">Fixtures URL</label>
-                    <input type="url" class="form-control" id="fixtures_url" name="fixtures_url" placeholder="https://example.com/fixtures.csv" value="<?= htmlspecialchars($_POST['fixtures_url'] ?? '') ?>">
-                    <div class="form-text">Paste a direct CSV or JSON file URL. For FIFA/UEFA, export their fixtures to CSV/JSON and paste the hosted link.</div>
+
+                <div class="col-lg-6">
+                    <h2 class="h5">2. MySQL Admin Connection</h2>
+                    <p class="text-muted small">Use your admin account here, for example <code>hh_admin</code> on the target MySQL server, so the wizard can test the server, inspect the target database, and generate the app database/user setup.</p>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label" for="mysql_admin_server">MySQL server address</label>
+                            <input type="text" class="form-control" id="mysql_admin_server" name="mysql_admin_server" value="<?= htmlspecialchars($_POST['mysql_admin_server'] ?? 'localhost') ?>" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="mysql_admin_user">MySQL admin user</label>
+                            <input type="text" class="form-control" id="mysql_admin_user" name="mysql_admin_user" value="<?= htmlspecialchars($_POST['mysql_admin_user'] ?? 'hh_admin') ?>" required>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label" for="mysql_admin_password">MySQL admin password</label>
+                            <input type="password" class="form-control" id="mysql_admin_password" name="mysql_admin_password" value="<?= htmlspecialchars($_POST['mysql_admin_password'] ?? '') ?>">
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="row g-3 mb-3">
-                <div class="col-md-6">
-                    <label class="form-label" for="fixtures_file">Upload fixtures file</label>
-                    <input type="file" class="form-control" id="fixtures_file" name="fixtures_file" accept=".csv,.json">
-                    <div class="form-text">CSV columns: Home, Away, Date, Time, Venue, HomeTeamFlag, AwayTeamFlag, Group (case-insensitive).</div>
+            <hr class="my-4">
+
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <h2 class="h5">3. App Database & User</h2>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label" for="target_db_name">Target database name</label>
+                            <input type="text" class="form-control" id="target_db_name" name="target_db_name" value="<?= htmlspecialchars($_POST['target_db_name'] ?? '') ?>" placeholder="hh_worldcup2026" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="target_db_user">App database user</label>
+                            <input type="text" class="form-control" id="target_db_user" name="target_db_user" value="<?= htmlspecialchars($_POST['target_db_user'] ?? '') ?>" placeholder="hh_user" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="target_db_password">App database password</label>
+                            <input type="password" class="form-control" id="target_db_password" name="target_db_password" value="<?= htmlspecialchars($_POST['target_db_password'] ?? '') ?>">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="target_db_user_host">App user host</label>
+                            <input type="text" class="form-control" id="target_db_user_host" name="target_db_user_host" value="<?= htmlspecialchars($_POST['target_db_user_host'] ?? 'localhost') ?>" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <h2 class="h5">4. Tournament Source</h2>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label" for="tournament_name">Tournament name</label>
+                            <input type="text" class="form-control" id="tournament_name" name="tournament_name" value="<?= htmlspecialchars($_POST['tournament_name'] ?? '') ?>" placeholder="Leave blank to infer from file/feed">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="fixtures_url">Feed URL</label>
+                            <input type="url" class="form-control" id="fixtures_url" name="fixtures_url" value="<?= htmlspecialchars($_POST['fixtures_url'] ?? '') ?>" placeholder="https://fixturedownload.com/feed/json/fifa-world-cup-2026">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label" for="fixtures_file">Import local file</label>
+                            <input type="file" class="form-control" id="fixtures_file" name="fixtures_file" accept=".csv,.json">
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="form-check mb-2">
+            <hr class="my-4">
+
+            <div class="row g-3">
+                <div class="col-lg-6">
+                    <h3 class="h6">Expected JSON Shape</h3>
+                    <pre class="bg-light border rounded p-3 small mb-0" style="max-height: 220px; overflow: auto;">[
+  {
+    "MatchNumber": 1,
+    "RoundNumber": 1,
+    "DateUtc": "2026-06-11 19:00:00Z",
+    "Location": "Mexico City Stadium",
+    "HomeTeam": "Mexico",
+    "AwayTeam": "South Africa",
+    "Group": "Group A"
+  }
+]</pre>
+                </div>
+                <div class="col-lg-6">
+                    <h3 class="h6">Expected CSV Headings</h3>
+                    <pre class="bg-light border rounded p-3 small mb-0" style="max-height: 220px; overflow: auto;">MatchNumber,RoundNumber,DateUtc,Location,HomeTeam,AwayTeam,Group
+1,1,2026-06-11 19:00:00Z,Mexico City Stadium,Mexico,South Africa,Group A</pre>
+                </div>
+            </div>
+
+            <div class="form-check mt-4">
                 <input class="form-check-input" type="checkbox" id="truncate_schedule" name="truncate_schedule" <?= isset($_POST['truncate_schedule']) ? 'checked' : '' ?>>
-                <label class="form-check-label" for="truncate_schedule">Clear existing fixture schedule before insert</label>
+                <label class="form-check-label" for="truncate_schedule">Clear existing schedule rows before import</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="write_db_connect" name="write_db_connect" <?= !isset($_POST['wizard_action']) || isset($_POST['write_db_connect']) ? 'checked' : '' ?>>
+                <label class="form-check-label" for="write_db_connect">Write the generated <code>php/db-connect.php</code> file when setup is applied</label>
             </div>
             <div class="form-check mb-3">
                 <input class="form-check-input" type="checkbox" id="apply_changes" name="apply_changes" <?= isset($_POST['apply_changes']) ? 'checked' : '' ?>>
-                <label class="form-check-label" for="apply_changes">Apply changes to database now</label>
+                <label class="form-check-label" for="apply_changes">Apply generated setup to the target database now</label>
             </div>
 
-            <button type="submit" class="btn btn-primary">Generate SQL</button>
+            <button type="submit" class="btn btn-primary">Build Installation Plan</button>
         </div>
     </form>
 
-    <?php if (!empty($fixture_preview)) : ?>
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                <div>
+                    <h2 class="h5 mb-1">MySQL Diagnostics</h2>
+                    <p class="text-muted mb-0">These diagnostics are based on the admin credentials entered above, not the site’s currently checked-in <code>php/db-connect.php</code>.</p>
+                </div>
+                <div>
+                    <?php if ($mysql_diagnostics['status'] === 'Connected') : ?>
+                        <span class="badge bg-success">Connected</span>
+                    <?php elseif ($mysql_diagnostics['status'] === 'Failed') : ?>
+                        <span class="badge bg-danger">Failed</span>
+                    <?php else : ?>
+                        <span class="badge bg-secondary"><?= htmlspecialchars($mysql_diagnostics['status']) ?></span>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+                <div class="col-md-4">
+                    <div class="border rounded p-3 h-100">
+                        <div class="small text-muted">Server</div>
+                        <div class="fw-semibold"><?= htmlspecialchars($mysql_diagnostics['server'] !== '' ? $mysql_diagnostics['server'] : 'Not tested') ?></div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="border rounded p-3 h-100">
+                        <div class="small text-muted">Target database</div>
+                        <div class="fw-semibold"><?= htmlspecialchars($mysql_diagnostics['target_database'] !== '' ? $mysql_diagnostics['target_database'] : 'Not provided') ?></div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="border rounded p-3 h-100">
+                        <div class="small text-muted">Tables found</div>
+                        <div class="fw-semibold"><?= htmlspecialchars((string)$mysql_diagnostics['table_count']) ?></div>
+                    </div>
+                </div>
+            </div>
+
+            <?php if ($mysql_diagnostics['message'] !== '') : ?>
+                <div class="alert <?= $mysql_diagnostics['status'] === 'Connected' ? 'alert-success' : 'alert-secondary' ?> py-2">
+                    <?= htmlspecialchars($mysql_diagnostics['message']) ?>
+                </div>
+            <?php endif; ?>
+
+            <?php if (!empty($mysql_diagnostics['tables'])) : ?>
+                <h3 class="h6">Existing Tables In Target Database</h3>
+                <div class="row g-2">
+                    <?php foreach ($mysql_diagnostics['tables'] as $tableName) : ?>
+                        <div class="col-sm-6 col-lg-4">
+                            <div class="border rounded px-3 py-2 bg-light"><code><?= htmlspecialchars($tableName) ?></code></div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <?php if (!empty($setup_summary)) : ?>
         <div class="card shadow-sm mb-4">
             <div class="card-body">
-                <h2 class="h5">Fixture Preview (first 10 matches)</h2>
+                <h2 class="h5">Setup Summary</h2>
+                <div class="row g-3">
+                    <?php foreach ($setup_summary as $label => $value) : ?>
+                        <div class="col-md-6 col-xl-4">
+                            <div class="border rounded p-3 h-100">
+                                <div class="small text-muted"><?= htmlspecialchars($label) ?></div>
+                                <div class="fw-semibold"><?= htmlspecialchars($value) ?></div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+
+                <h3 class="h6 mt-4">Filesystem & Permissions</h3>
                 <div class="table-responsive">
-                    <table class="table table-sm table-striped">
+                    <table class="table table-sm table-striped align-middle">
                         <thead>
                             <tr>
-                                <th>Group</th>
+                                <th>Folder</th>
+                                <th>Path</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($permission_checks as $check) : ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($check['label']) ?></td>
+                                    <td><code><?= htmlspecialchars($check['path']) ?></code></td>
+                                    <td>
+                                        <?php if (!$check['exists']) : ?>
+                                            <span class="badge bg-danger">Missing</span>
+                                        <?php elseif (!$check['writable']) : ?>
+                                            <span class="badge bg-warning text-dark">Not writable</span>
+                                        <?php else : ?>
+                                            <span class="badge bg-success">Ready</span>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3 class="h6 mt-4">db-connect.php Preview</h3>
+                <p class="text-muted small">This generated file becomes the app’s live database connection if you choose to write it during apply.</p>
+                <pre class="bg-light p-3 border rounded mb-0" style="max-height: 260px; overflow: auto;"><?= htmlspecialchars($db_connect_template) ?></pre>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <?php if (!empty($tournament_summary)) : ?>
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h2 class="h5">Tournament Summary</h2>
+                <div class="row g-3">
+                    <?php foreach ($tournament_summary as $label => $value) : ?>
+                        <div class="col-md-6 col-xl-4">
+                            <div class="border rounded p-3 h-100">
+                                <div class="small text-muted"><?= htmlspecialchars($label) ?></div>
+                                <div class="fw-semibold"><?= htmlspecialchars($value) ?></div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <?php if (!empty($config_preview)) : ?>
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h2 class="h5">config.php Preview</h2>
+                <pre class="bg-light p-3 border rounded mb-0" style="max-height: 320px; overflow: auto;"><?php foreach ($config_preview as $key => $value) { echo htmlspecialchars($key . ' = "' . $value . '";') . "\n"; } ?></pre>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <?php if (!empty($database_preview)) : ?>
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h2 class="h5">Database Preview</h2>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <div class="border rounded p-3 h-100">
+                            <div class="small text-muted">Target database</div>
+                            <div class="fw-semibold"><?= htmlspecialchars($database_preview['database_name']) ?></div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="border rounded p-3 h-100">
+                            <div class="small text-muted">App user</div>
+                            <div class="fw-semibold"><?= htmlspecialchars($database_preview['app_user']) ?></div>
+                        </div>
+                    </div>
+                    <?php foreach ($database_preview['tables'] as $table) : ?>
+                        <div class="col-md-4">
+                            <div class="border rounded p-3 h-100">
+                                <div class="small text-muted">Table</div>
+                                <div class="fw-semibold"><?= htmlspecialchars($table['name']) ?></div>
+                                <div class="small text-muted mt-2">Columns</div>
+                                <div class="small"><?= htmlspecialchars($table['columns']) ?></div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+
+                <h3 class="h6">Sample Schedule Rows</h3>
+                <div class="table-responsive">
+                    <table class="table table-sm table-striped align-middle">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Stage</th>
+                                <th>Home Flag</th>
                                 <th>Home</th>
+                                <th>Away Flag</th>
                                 <th>Away</th>
                                 <th>Date</th>
                                 <th>Time</th>
@@ -866,12 +1289,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action !== 'installation') 
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($fixture_preview as $fixture) : ?>
+                            <?php foreach ($database_preview['sample_rows'] as $fixture) : ?>
                                 <tr>
-                                    <td><?= htmlspecialchars($fixture['group']) ?></td>
+                                    <td><?= htmlspecialchars((string)$fixture['match_number']) ?></td>
+                                    <td><?= htmlspecialchars($fixture['stage']) ?></td>
+                                    <td><?= render_flag_preview_cell($fixture['hometeamimg'], $fixture['hometeam']) ?></td>
                                     <td><?= htmlspecialchars($fixture['hometeam']) ?></td>
+                                    <td><?= render_flag_preview_cell($fixture['awayteamimg'], $fixture['awayteam']) ?></td>
                                     <td><?= htmlspecialchars($fixture['awayteam']) ?></td>
-                                    <td><?= htmlspecialchars($fixture['date']) ?></td>
+                                    <td><?= htmlspecialchars((string)$fixture['date']) ?></td>
                                     <td><?= htmlspecialchars($fixture['kotime']) ?></td>
                                     <td><?= htmlspecialchars($fixture['venue']) ?></td>
                                 </tr>
@@ -883,50 +1309,87 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action !== 'installation') 
         </div>
     <?php endif; ?>
 
+    <?php if (!empty($fixture_preview)) : ?>
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h2 class="h5">Fixture Preview (first 10 matches)</h2>
+                <div class="table-responsive">
+                    <table class="table table-sm table-striped">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Stage</th>
+                                <th>Home Flag</th>
+                                <th>Home</th>
+                                <th>Away Flag</th>
+                                <th>Away</th>
+                                <th>Date</th>
+                                <th>Time (UTC)</th>
+                                <th>Venue</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($fixture_preview as $fixture) : ?>
+                                <tr>
+                                    <td><?= htmlspecialchars((string)$fixture['match_number']) ?></td>
+                                    <td><?= htmlspecialchars($fixture['stage']) ?></td>
+                                    <td><?= render_flag_preview_cell($fixture['hometeamimg'], $fixture['hometeam']) ?></td>
+                                    <td><?= htmlspecialchars($fixture['hometeam']) ?></td>
+                                    <td><?= render_flag_preview_cell($fixture['awayteamimg'], $fixture['awayteam']) ?></td>
+                                    <td><?= htmlspecialchars($fixture['awayteam']) ?></td>
+                                    <td><?= htmlspecialchars((string)$fixture['date']) ?></td>
+                                    <td><?= htmlspecialchars($fixture['kotime']) ?></td>
+                                    <td><?= htmlspecialchars($fixture['venue']) ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <?php if (!empty($group_preview)) : ?>
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h2 class="h5">Group Preview</h2>
+                <p class="text-muted">Use this to confirm that each group contains the right teams and that the flag mapping looks correct before applying the import.</p>
+                <div class="row g-3">
+                    <?php foreach ($group_preview as $groupName => $teams) : ?>
+                        <div class="col-md-6 col-xl-4">
+                            <div class="border rounded p-3 h-100">
+                                <h3 class="h6 mb-3"><?= htmlspecialchars($groupName) ?></h3>
+                                <div class="d-flex flex-column gap-2">
+                                    <?php foreach ($teams as $team) : ?>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="flag-square">
+                                                <?php if ($team['flag'] !== '') : ?>
+                                                    <img src="<?= htmlspecialchars(hh_normalize_flag_src($team['flag'], '../'), ENT_QUOTES) ?>" alt="<?= htmlspecialchars($team['name'], ENT_QUOTES) ?> flag" width="24" height="24">
+                                                <?php endif; ?>
+                                            </span>
+                                            <span><?= htmlspecialchars($team['name']) ?></span>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+
     <?php if (!empty($sql_output)) : ?>
         <div class="card shadow-sm">
             <div class="card-body">
                 <h2 class="h5">Generated SQL</h2>
-                <p class="text-muted">Review and copy this output for auditing or manual execution.</p>
-                <pre class="bg-light p-3 border rounded" style="max-height: 400px; overflow: auto;"><?php echo htmlspecialchars(implode("\n", $sql_output)); ?></pre>
+                <p class="text-muted">This is the setup SQL that can create the target database, create the app user, build the required tables, and insert the imported fixtures.</p>
+                <pre class="bg-light p-3 border rounded mb-0" style="max-height: 420px; overflow: auto;"><?= htmlspecialchars(implode("\n", $sql_output)) ?></pre>
             </div>
         </div>
     <?php endif; ?>
 </main>
 
 <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script>
-    const wizardSteps = Array.from(document.querySelectorAll('.wizard-step'));
-    const wizardIndicators = Array.from(document.querySelectorAll('[data-step-indicator]'));
-    const wizardPrev = document.querySelector('[data-wizard-prev]');
-    const wizardNext = document.querySelector('[data-wizard-next]');
-    const wizardSubmit = document.querySelector('[data-wizard-submit]');
-    let wizardIndex = 0;
-
-    const updateWizard = () => {
-        wizardSteps.forEach((step, index) => {
-            step.classList.toggle('d-none', index !== wizardIndex);
-        });
-        wizardIndicators.forEach((badge, index) => {
-            badge.classList.toggle('bg-primary', index === wizardIndex);
-            badge.classList.toggle('bg-secondary', index !== wizardIndex);
-        });
-        wizardPrev.disabled = wizardIndex === 0;
-        wizardNext.classList.toggle('d-none', wizardIndex === wizardSteps.length - 1);
-        wizardSubmit.classList.toggle('d-none', wizardIndex !== wizardSteps.length - 1);
-    };
-
-    if (wizardSteps.length) {
-        updateWizard();
-        wizardPrev.addEventListener('click', () => {
-            wizardIndex = Math.max(0, wizardIndex - 1);
-            updateWizard();
-        });
-        wizardNext.addEventListener('click', () => {
-            wizardIndex = Math.min(wizardSteps.length - 1, wizardIndex + 1);
-            updateWizard();
-        });
-    }
-</script>
 </body>
 </html>

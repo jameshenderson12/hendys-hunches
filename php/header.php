@@ -26,10 +26,11 @@
     <!-- Custom CSS Files -->
     <link href="css/styles.css" rel="stylesheet">    
     <!-- Include PHP Config File -->
-    <?php include "php/config.php" ?>
-    <?php include "php/process.php" ?>
+    <?php require_once "php/config.php" ?>
+    <?php require_once "php/process.php" ?>
     <!--jQuery Files -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
 </head>
 <body>
+<?php hh_render_dev_banner('php/logout.php'); ?>

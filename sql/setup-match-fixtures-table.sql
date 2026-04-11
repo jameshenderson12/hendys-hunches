@@ -8,5 +8,8 @@ CREATE TABLE live_match_schedule (
 	awayteamimg CHAR(50) NOT NULL,
 	venue CHAR(70) NOT NULL,
 	kotime CHAR(5) NOT NULL,
-	date DATE NULL
+	date DATE NULL,
+	stage CHAR(50) NOT NULL,
+	match_number SMALLINT(6) NULL,
+	round_number SMALLINT(6) NULL
 );

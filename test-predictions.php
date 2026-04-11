@@ -2,10 +2,9 @@
 session_start();
 $page_title = 'Submit Predictions';
 
-if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
-    header("Location: index.php");
-    exit();
-}
+require_once __DIR__ . '/php/auth.php';
+require_once __DIR__ . '/php/flags.php';
+hh_require_login('index.php');
 
 include "php/header.php";
 include "php/navigation.php";
@@ -79,6 +78,7 @@ input {
 
 <script>
     $(document).ready(function () {
+        const teamFlagMap = <?= json_encode(hh_get_known_team_flag_paths('')) ?>;
         // Fetch data from JSON file
         $.getJSON("json/uefa-euro-2024-fixtures-ro16.json", function (data) {
             const expectedCount = 8;
@@ -101,8 +101,8 @@ input {
             $.each(data, function (key, value) {
                 const homeTeam = value.HomeTeam;
                 const awayTeam = value.AwayTeam;
-                const homeTeamFlag = `flag-icons/24/${homeTeam.toLowerCase().replaceAll(' ', '-')}.png`;
-                const awayTeamFlag = `flag-icons/24/${awayTeam.toLowerCase().replaceAll(' ', '-')}.png`;
+                const homeTeamFlag = teamFlagMap[homeTeam] || "";
+                const awayTeamFlag = teamFlagMap[awayTeam] || "";
                 const dateStr = value.DateUtc;
                 const [dateValues, timeValues] = dateStr.split(' ');
                 const [year, month, day] = dateValues.split('-');

@@ -81,58 +81,58 @@ $final_date = "14/07/2024";
 
 // Variable format groupXteamY
 $A1 = "Germany";
-$A1_img = "flag-icons/24/germany.png";
+$A1_img = "img/flags/de.svg";
 $A2 = "Scotland";
-$A2_img = "flag-icons/24/scotland.png";
+$A2_img = "img/flags/gb-sct.svg";
 $A3 = "Hungary";
-$A3_img = "flag-icons/24/hungary.png";
+$A3_img = "img/flags/hu.svg";
 $A4 = "Switzerland";
-$A4_img = "flag-icons/24/switzerland.png";
+$A4_img = "img/flags/ch.svg";
 
 $B1 = "Spain";
-$B1_img = "flag-icons/24/spain.png";
+$B1_img = "img/flags/es.svg";
 $B2 = "Croatia";
-$B2_img = "flag-icons/24/croatia.png";
+$B2_img = "img/flags/hr.svg";
 $B3 = "Italy";
-$B3_img = "flag-icons/24/italy.png";
+$B3_img = "img/flags/it.svg";
 $B4 = "Albania";
-$B4_img = "flag-icons/24/albania.png";
+$B4_img = "img/flags/al.svg";
 
 $C1 = "Slovenia";
-$C1_img = "flag-icons/24/slovenia.png";
+$C1_img = "img/flags/si.svg";
 $C2 = "Denmark";
-$C2_img = "flag-icons/24/denmark.png";
+$C2_img = "img/flags/dk.svg";
 $C3 = "Serbia";
-$C3_img = "flag-icons/24/serbia.png";
+$C3_img = "img/flags/rs.svg";
 $C4 = "England";
-$C4_img = "flag-icons/24/england.png";
+$C4_img = "img/flags/gb-eng.svg";
 
 $D1 = "Poland";
-$D1_img = "flag-icons/24/poland.png";
+$D1_img = "img/flags/pl.svg";
 $D2 = "Netherlands";
-$D2_img = "flag-icons/24/netherlands.png";
+$D2_img = "img/flags/nl.svg";
 $D3 = "Austria";
-$D3_img = "flag-icons/24/austria.png";
+$D3_img = "img/flags/at.svg";
 $D4 = "France";
-$D4_img = "flag-icons/24/france.png";
+$D4_img = "img/flags/fr.svg";
 
 $E1 = "Belgium";
-$E1_img = "flag-icons/24/belgium.png";
+$E1_img = "img/flags/be.svg";
 $E2 = "Slovakia";
-$E2_img = "flag-icons/24/slovakia.png";
+$E2_img = "img/flags/sk.svg";
 $E3 = "Romania";
-$E3_img = "flag-icons/24/romania.png";
+$E3_img = "img/flags/ro.svg";
 $E4 = "Ukraine";
-$E4_img = "flag-icons/24/ukraine.png";
+$E4_img = "img/flags/ua.svg";
 
 $F1 = "Türkiye";
-$F1_img = "flag-icons/24/türkiye.png";
+$F1_img = "img/flags/tr.svg";
 $F2 = "Georgia";
-$F2_img = "flag-icons/24/georgia.png";
+$F2_img = "img/flags/ge.svg";
 $F3 = "Portugal";
-$F3_img = "flag-icons/24/portugal.png";
+$F3_img = "img/flags/pt.svg";
 $F4 = "Czechia";
-$F4_img = "flag-icons/24/czech-republic.png";
+$F4_img = "img/flags/cz.svg";
 
 // Setup variables for kick-off times
 // CET (UTC+1)
@@ -174,73 +174,73 @@ $venue10 = "Leipzig";
 
 
 $R1 = "";
-$R1_img = "flag-icons/24/.png";
+$R1_img = "";
 $R2 = "";
-$R2_img = "flag-icons/24/.png";
+$R2_img = "";
 $R3 = "";
-$R3_img = "flag-icons/24/.png";
+$R3_img = "";
 $R4 = "";
-$R4_img = "flag-icons/24/.png";
+$R4_img = "";
 $R5 = "";
-$R5_img = "flag-icons/24/frace.png";
+$R5_img = "";
 $R6 = "";
-$R6_img = "flag-icons/24/.png";
+$R6_img = "";
 $R7 = "";
-$R7_img = "flag-icons/24/.png";
+$R7_img = "";
 $R8 = "";
-$R8_img = "flag-icons/24/.png";
+$R8_img = "";
 $R9 = "";
-$R9_img = "flag-icons/24/.png";
+$R9_img = "";
 $R10 = "";
-$R10_img = "flag-icons/24/.png";
+$R10_img = "";
 $R11 = "";
-$R11_img = "flag-icons/24/.png";
+$R11_img = "";
 $R12 = "";
-$R12_img = "flag-icons/24/.png";
+$R12_img = "";
 $R13 = "";
-$R13_img = "flag-icons/24/.png";
+$R13_img = "";
 $R14 = "";
-$R14_img = "flag-icons/24/.png";
+$R14_img = "";
 $R15 = "";
-$R15_img = "flag-icons/24/.png";
+$R15_img = "";
 $R16 = "";
-$R16_img = "flag-icons/24/.png";
+$R16_img = "";
 
 $Q1 = "";
-$Q1_img = "flag-icons/24/.png";
+$Q1_img = "";
 $Q2 = "";
-$Q2_img = "flag-icons/24/.png";
+$Q2_img = "";
 $Q3 = "";
-$Q3_img = "flag-icons/24/.png";
+$Q3_img = "";
 $Q4 = "";
-$Q4_img = "flag-icons/24/.png";
+$Q4_img = "";
 $Q5 = "";
-$Q5_img = "flag-icons/24/.png";
+$Q5_img = "";
 $Q6 = "";
-$Q6_img = "flag-icons/24/.png";
+$Q6_img = "";
 $Q7 = "";
-$Q7_img = "flag-icons/24/.png";
+$Q7_img = "";
 $Q8 = "";
-$Q8_img = "flag-icons/24/.png";
+$Q8_img = "";
 
 $S1 = "";
-$S1_img = "flag-icons/24/.png";
+$S1_img = "";
 $S2 = "";
-$S2_img = "flag-icons/24/.png";
+$S2_img = "";
 $S3 = "";
-$S3_img = "flag-icons/24/.png";
+$S3_img = "";
 $S4 = "";
-$S4_img = "flag-icons/24/.png";
+$S4_img = "";
 
 $P1 = "";
-$P1_img = "flag-icons/24/.png";
+$P1_img = "";
 $P2 = "";
-$P2_img = "flag-icons/24/.png";
+$P2_img = "";
 
 $Fi1 = "";
-$Fi1_img = "flag-icons/24/.png";
+$Fi1_img = "";
 $Fi2 = "";
-$Fi2_img = "flag-icons/24/.png";
+$Fi2_img = "";
 
 // Setup variables for football kits
 $fk1 = "football-kits/green-white.png";
@@ -266,37 +266,63 @@ $fk18 = "football-kits/pink-white.png";
 // Global 'helper' functions
 //===============================
 
-function returnAvatar() {
-	// Create DB connection
-	include 'db-connect.php';
+if (!function_exists('returnAvatar')) {
+	function returnAvatar() {
+		if (!empty($_SESSION['is_dev_bypass'])) {
+			print("<img src='img/hh-icon-2024.png' id='avatar' class='img-fluid rounded-circle mx-1' alt='Developer Preview' name='Developer Preview' width='25'> Local Developer");
+			return;
+		}
 
-	// Get team information from the DB	counting occurrences too
-	$sql_getavatar = "SELECT firstname, surname, avatar FROM live_user_information WHERE username = '".$_SESSION["username"]."'";
-	$getavatar = mysqli_query($con, $sql_getavatar);
-	$userid = mysqli_fetch_assoc($getavatar);
-	$firstname = $userid["firstname"];
-	$surname = $userid["surname"];
-	$avatar = $userid["avatar"];
-	print("<img src='$avatar' id='avatar' class='img-fluid rounded-circle mx-1' alt='User Avatar' name='User Avatar' width='25'> $firstname " . "$surname");
+		$dbPath = __DIR__ . '/db-connect.php';
+		if (!file_exists($dbPath)) {
+			print("<img src='img/hh-icon-2024.png' id='avatar' class='img-fluid rounded-circle mx-1' alt='User Avatar' name='User Avatar' width='25'> Preview User");
+			return;
+		}
+
+		// Create DB connection
+		include $dbPath;
+
+		// Get team information from the DB	counting occurrences too
+		$sql_getavatar = "SELECT firstname, surname, avatar FROM live_user_information WHERE username = '".$_SESSION["username"]."'";
+		$getavatar = mysqli_query($con, $sql_getavatar);
+		$userid = mysqli_fetch_assoc($getavatar);
+
+		if (!$userid) {
+			print("<img src='img/hh-icon-2024.png' id='avatar' class='img-fluid rounded-circle mx-1' alt='User Avatar' name='User Avatar' width='25'> Preview User");
+			return;
+		}
+
+		$firstname = $userid["firstname"];
+		$surname = $userid["surname"];
+		$avatar = $userid["avatar"];
+		print("<img src='$avatar' id='avatar' class='img-fluid rounded-circle mx-1' alt='User Avatar' name='User Avatar' width='25'> $firstname " . "$surname");
+	}
 }
 
-function formatDateAsSystem($date) {
-	echo date_format($date, $date_format);
+if (!function_exists('formatDateAsSystem')) {
+	function formatDateAsSystem($date) {
+		echo date_format($date, $date_format);
+	}
 }
 
-function formatDateAsUK($date) {
-	echo date_format($date, "dd/mm/YY");
+if (!function_exists('formatDateAsUK')) {
+	function formatDateAsUK($date) {
+		echo date_format($date, "dd/mm/YY");
+	}
 }
 
-// Display an alert style message
-function alertMsg($msg) {
-	echo "<script type='text/javascript'>alert('Alert message: " . $msg . "');</script>";
+if (!function_exists('alertMsg')) {
+	function alertMsg($msg) {
+		echo "<script type='text/javascript'>alert('Alert message: " . $msg . "');</script>";
+	}
 }
-// Write a console debug message
-function consoleMsg($data) {
-    $output = $data;
-    if (is_array($output))
-        $output = implode(',', $output);
-    echo "<script>console.log('Debug message: " . $output . "');</script>";
+
+if (!function_exists('consoleMsg')) {
+	function consoleMsg($data) {
+	    $output = $data;
+	    if (is_array($output))
+	        $output = implode(',', $output);
+	    echo "<script>console.log('Debug message: " . $output . "');</script>";
+	}
 }
 ?>

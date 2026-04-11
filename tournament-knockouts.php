@@ -2,10 +2,8 @@
 session_start();
 $page_title = 'Tournament Knockouts';
 
-if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
-    header("Location: index.php");
-    exit();
-}
+require_once __DIR__ . '/php/auth.php';
+hh_require_login('index.php');
 
 include "php/header.php";
 include "php/navigation.php";
@@ -36,7 +34,7 @@ include "php/navigation.php";
     // SQL query to get the Round of 16 fixtures and results
     $sql_fixtures = "SELECT hometeamimg, hometeam, homescore, awayscore, awayteam, awayteamimg, venue, kotime, DATE_FORMAT(date, '%a, %D %b') as formatted_date
                     FROM live_match_schedule
-                    WHERE stage = 'RO16'
+                    WHERE stage = 'Round of 16'
                     ORDER BY date, kotime";
 
     $result = mysqli_query($con, $sql_fixtures) or die(mysqli_error($con));

@@ -1,11 +1,9 @@
 <?php
 session_start();
 $page_title = 'PAGE_NAME';
+require_once dirname(__DIR__) . '/php/auth.php';
 
-if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
-    header("Location: index.php");
-    exit();
-}
+hh_require_login('../index.php');
 
 include "php/header.php";
 include "php/navigation.php";

@@ -1,11 +1,10 @@
 <?php
 session_start();
 $page_title = 'Results';
+require_once dirname(__DIR__) . '/php/auth.php';
+require_once dirname(__DIR__) . '/php/flags.php';
 
-if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
-    header("Location: index.php");
-    exit();
-}
+hh_require_login('../index.php');
 
 ?>
 <!DOCTYPE html>
@@ -25,7 +24,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
     <!-- Custom CSS Files -->
     <link href="../css/styles.css" rel="stylesheet">    
     <!-- Include PHP Config File -->
-    <?php include "../php/config.php" ?>
+    <?php require_once "../php/config.php" ?>
     <!--jQuery Files -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
@@ -52,6 +51,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
   </head>
 
 	<body>
+    <?php hh_render_dev_banner('../php/logout.php'); ?>
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark" aria-label="Offcanvas navbar large">
 	<div class="container">
 			<img src="../img/hh-icon-2024.png" class="img-fluid bg-light mx-2" style="--bs-bg-opacity: 0.80" width="50px">
@@ -149,6 +149,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	        <table id="table" class="table table-sm table-striped">
 	            <script>
 	                $(document).ready(function () {
+                        const teamFlagMap = <?= json_encode(hh_get_known_team_flag_paths('../')) ?>;
 	                    // Fetch data from JSON file
 	                    $.getJSON("../json/uefa-euro-2024-fixtures-final.json",
 	                    	function (data) {
@@ -159,8 +160,8 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != "")) {
 	                        $.each(data, function (key, value) {
 								var homeTeam = value.HomeTeam;
 								var awayTeam = value.AwayTeam;
-								var homeTeamFlag = "../flag-icons/24/" + homeTeam.toLowerCase().replaceAll(' ', '-') + ".png";
-								var awayTeamFlag = "../flag-icons/24/" + awayTeam.toLowerCase().replaceAll(' ', '-') + ".png";
+								var homeTeamFlag = teamFlagMap[homeTeam] || "";
+								var awayTeamFlag = teamFlagMap[awayTeam] || "";
 								const str = value.DateUtc;
 								const [dateValues, timeValues] = str.split(' ');
 								const [year, month, day] = dateValues.split('-');
