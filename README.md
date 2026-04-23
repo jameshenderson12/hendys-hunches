@@ -2,7 +2,7 @@
 
 A repository for my "Hendy's Hunches" football competition application.
 
-<img src="https://github.com/jameshenderson12/hendys-hunches/blob/main/img/logo2018.jpg" alt="Hendy's Hunches logo" width="40%">
+<img src="https://github.com/jameshenderson12/hendys-hunches/blob/main/img/hh-logo-2024.jpg" alt="Hendy's Hunches logo" width="40%">
 
 ## About
 
