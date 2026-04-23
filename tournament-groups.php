@@ -13,19 +13,19 @@ include "php/navigation.php";
 <!-- Main Content Section -->
 <main id="main" class="main">
 
-    <div class="pagetitle d-flex justify-content-between">
-    <nav>
-      <h1>Tournament Groups</h1>
-        <!-- <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="home.php">Home</a></li>
-          <li class="breadcrumb-item"><a href="#">Care Episodes</a></li>          
-          <li class="breadcrumb-item active">Part #3 - 11.30</li>
-        </ol> -->
-      </nav> 
+    <div class="page-hero page-hero--competition">
+        <div>
+            <p class="eyebrow">Competition</p>
+            <h1>Tournament Groups</h1>
+            <p class="lead mb-0">Group standings for <?= $GLOBALS['competition'] ?>, updated after each fixture.</p>
+        </div>
+        <div class="page-hero__actions">
+            <a class="btn btn-primary" href="tournament-knockouts.php"><i class="bi bi-diagram-3"></i> Knockouts</a>
+            <a class="btn btn-outline-dark" href="rankings.php"><i class="bi bi-list-ol"></i> Rankings</a>
+        </div>
     </div><!-- End Page Title -->
 
-    <section class="section">
-		<p class="lead">Current display of <?= $GLOBALS['competition'] ?> groups. This is not live but updated after each fixture.</p>
+    <section class="section competition-page">
 
         <?php
             // Connect to the database
@@ -128,7 +128,8 @@ include "php/navigation.php";
 
             // Display the standings
             foreach ($groups as $stage => $teams) {
-                echo "<h4 class='mt-2' style='color: #012970'>$stage</h4>";
+                echo "<div class='competition-panel'>";
+                echo "<h4 class='competition-panel__title'>$stage</h4>";
                 echo "<table class='table table-bordered table-striped'>
                         <thead class='table-dark'>
                             <tr>
@@ -194,7 +195,8 @@ include "php/navigation.php";
                             <td>{$team['points']}</td>
                         </tr>";
                 }
-                echo "</tbody></table><br>";
+                echo "</tbody></table>";
+                echo "</div>";
             }
             ?>	
     </section>

@@ -670,7 +670,7 @@ function displayFinalMatchPlayed() {
 		$no_of_matches_played = $row["matches_played"];
 		$no_of_fi_matches_played = $no_of_matches_played - ($GLOBALS["no_of_group_fixtures"] + $GLOBALS["no_of_ro16_fixtures"] + $GLOBALS["no_of_qf_fixtures"] + $GLOBALS["no_of_sf_fixtures"]);
 		//console.log($no_of_matches_played);
-		$percent_fi_played = round($no_of_sf_matches_played * 100 / $GLOBALS["no_of_final_fixtures"]);
+		$percent_fi_played = round($no_of_fi_matches_played * 100 / $GLOBALS["no_of_final_fixtures"]);
 	}
 	echo "<div class='row'>
 			<div class='col-sm-3'>
@@ -720,6 +720,31 @@ function displayPersonalInfo() {
 	$userdata2 = mysqli_fetch_assoc($result2);
 	$result3 = mysqli_query($con, $sql_getpointstotal);
 	$userdata3 = mysqli_fetch_assoc($result3);
+
+	if (!$userdata1) {
+		echo '<div class="row">';
+		echo '    <div class="col-4">';
+		echo '        <img class="img-fluid" alt="Football kit avatar" src="img/hh-icon-2024.png">';
+		echo '    </div>';
+		echo '    <div class="col-8">';
+		echo '        <h3>Developer Preview</h3>';
+		echo '        <p class="fs-4 text-dark text-center" style="border: 1px solid #000; padding: 0.5rem;"><strong>N/A <span class="text-muted">|</span> 0 pts</strong></p>';
+		echo '        <ul style="list-style-type: none; margin: 0; padding: 0;"><li><i class="bi bi-heart-fill"></i> Preview Football Club</li>';
+		echo '        <li><i class="bi bi-wrench-adjustable-circle-fill"></i> Local development</li>';
+		echo '        <li><i class="bi bi-trophy-fill"></i> Thinks anyone can win ' . $GLOBALS['competition'] . '</li>';
+		echo '        <li><i class="bi bi-calendar2-week-fill"></i> Preview session</li></ul>';
+		echo '    </div>';
+		echo '</div>';
+		echo '<hr>';
+		echo '<div class="d-flex justify-content-center align-items-center flex-wrap gap-2 mt-2">';
+		echo '    <a class="btn btn-secondary btn-sm" href="rankings.php"><i class="bi bi-list-ol"></i> Check rankings</a>';
+		echo '</div>';
+		mysqli_free_result($result1);
+		mysqli_free_result($result2);
+		mysqli_free_result($result3);
+		mysqli_close($con);
+		return;
+	}
 
 	// Assign returned data to variables
 	$uppCaseFN = ucfirst($userdata1["firstname"]);
@@ -789,6 +814,11 @@ function displayPayStatus() {
 	// Obtain the SQL query result and set corresponding result variables
 	$result = mysqli_query($con, $sql_getpaystatus);
 	$userdata = mysqli_fetch_assoc($result);
+	if (!$userdata) {
+		mysqli_free_result($result);
+		mysqli_close($con);
+		return;
+	}
 	// Assign returned data to variables
 	$haspaid = $userdata["haspaid"];	
 

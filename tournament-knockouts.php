@@ -13,19 +13,19 @@ include "php/navigation.php";
 <!-- Main Content Section -->
 <main id="main" class="main">
 
-    <div class="pagetitle d-flex justify-content-between">
-    <nav>
+    <div class="page-hero page-hero--competition">
+    <div>
+      <p class="eyebrow">Competition</p>
       <h1>Tournament Knockouts</h1>
-        <!-- <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="home.php">Home</a></li>
-          <li class="breadcrumb-item"><a href="#">Care Episodes</a></li>          
-          <li class="breadcrumb-item active">Part #3 - 11.30</li>
-        </ol> -->
-      </nav> 
+      <p class="lead mb-0">The knockout path for <?= $GLOBALS['competition'] ?>, updated after each fixture.</p>
+    </div>
+    <div class="page-hero__actions">
+      <a class="btn btn-primary" href="tournament-groups.php"><i class="bi bi-grid-3x3-gap"></i> Groups</a>
+      <a class="btn btn-outline-dark" href="rankings.php"><i class="bi bi-list-ol"></i> Rankings</a>
+    </div>
     </div><!-- End Page Title -->
 
-    <section class="section">
-		<p class="lead">Current display of <?= $GLOBALS['competition'] ?> knockouts. This is not live but updated after each fixture.</p>
+    <section class="section competition-page">
 
     <?php
     // Connect to the database
@@ -43,9 +43,10 @@ include "php/navigation.php";
     $highlightTeamsRO16 = ['Switzerland', 'Germany', 'England', 'Spain', 'France', 'Portugal', 'Netherlands', 'Türkiye'];
 
     echo "<!-- Round of 16 -->";
+    echo "<div class='competition-panel'>";
     echo "<div class='row mb-4'>";
     echo "<div class='col-12'>";
-    echo "<h4 class='mt-2' style='color: #012970'>Round of 16</h4>";
+    echo "<h4 class='competition-panel__title'>Round of 16</h4>";
     echo "</div>";
     echo "<div class='col-12'>";
     echo "<div class='table-responsive'>";
@@ -89,6 +90,7 @@ include "php/navigation.php";
     echo "</div>";
     echo "</div>";
     echo "</div>";
+    echo "</div>";
 
         // Close the database connection
         mysqli_close($con);
@@ -110,9 +112,10 @@ include "php/navigation.php";
     $highlightTeamsQF = ['Spain', 'France', 'England', 'Netherlands'];
 
     echo "<!-- Quarter-Finals -->";
+    echo "<div class='competition-panel'>";
     echo "<div class='row mb-4'>";
     echo "<div class='col-12'>";
-    echo "<h4 class='mt-2' style='color: #012970'>Quarter-Finals</h4>";
+    echo "<h4 class='competition-panel__title'>Quarter-Finals</h4>";
     echo "</div>";
     echo "<div class='col-12'>";
     echo "<div class='table-responsive'>";
@@ -156,6 +159,7 @@ include "php/navigation.php";
     echo "</div>";
     echo "</div>";
     echo "</div>";
+    echo "</div>";
 
         // Close the database connection
         mysqli_close($con);
@@ -178,9 +182,10 @@ include "php/navigation.php";
     $highlightTeamsSF = ['Spain', 'England'];
 
     echo "<!-- Semi-Finals -->";
+    echo "<div class='competition-panel'>";
     echo "<div class='row mb-4'>";
     echo "<div class='col-12'>";
-    echo "<h4 class='mt-2' style='color: #012970'>Semi-Finals</h4>";
+    echo "<h4 class='competition-panel__title'>Semi-Finals</h4>";
     echo "</div>";
     echo "<div class='col-12'>";
     echo "<div class='table-responsive'>";
@@ -224,6 +229,7 @@ include "php/navigation.php";
     echo "</div>";
     echo "</div>";
     echo "</div>";
+    echo "</div>";
 
         // Close the database connection
         mysqli_close($con);
@@ -245,9 +251,10 @@ include "php/navigation.php";
     $highlightTeamsFi = [];
 
     echo "<!-- Final -->";
+    echo "<div class='competition-panel'>";
     echo "<div class='row mb-4'>";
     echo "<div class='col-12'>";
-    echo "<h4 class='mt-2' style='color: #012970'>Final</h4>";
+    echo "<h4 class='competition-panel__title'>Final</h4>";
     echo "</div>";
     echo "<div class='col-12'>";
     echo "<div class='table-responsive'>";
@@ -288,6 +295,7 @@ include "php/navigation.php";
 
     echo "</tbody>";
     echo "</table>";
+    echo "</div>";
     echo "</div>";
     echo "</div>";
     echo "</div>";

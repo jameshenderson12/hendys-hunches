@@ -10,37 +10,29 @@ include "php/navigation.php";
 
 ?>
 
-<style>
-  #rankingsTable th, #rankingsTable td {
-    text-align: left !important;
-  }
-  
-  div.dt-container .row {
-	--bs-gutter-y: 0rem !important;
-  }
-</style>
-
 <!-- Main Content Section -->
 <main id="main" class="main">
 
-    <div class="pagetitle d-flex justify-content-between">
-    <nav>
-      <h1>Rankings</h1>
-        <!-- <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="home.php">Home</a></li>
-          <li class="breadcrumb-item"><a href="#">Care Episodes</a></li>          
-          <li class="breadcrumb-item active">Part #3 - 11.30</li>
-        </ol> -->
-      </nav> 
+    <div class="page-hero page-hero--rankings">
+      <div>
+        <p class="eyebrow">Leaderboard</p>
+        <h1>Rankings</h1>
+        <p class="lead mb-0">Check the table, chase the pack and see who made the final prize spots.</p>
+      </div>
+      <div class="page-hero__actions">
+        <a class="btn btn-primary" href="dashboard.php"><i class="bi bi-speedometer2"></i> Dashboard</a>
+        <a class="btn btn-outline-dark" href="user.php?id=<?php echo $_SESSION['id']; ?>"><i class="bi bi-person-lines-fill"></i> My predictions</a>
+      </div>
     </div><!-- End Page Title -->
 
-    <section class="section">
-		<p class="lead">Check your progress against others.</p>
+    <section class="section rankings-page">
     <!-- <p><strong>Note:</strong> The ability to view others' predictions has been purposefully removed temporarily.</p> -->
-		<p class="alert alert-success">Congratulations to our winners Jonathan (1st), Paul (2nd), David (3rd), Ketan (4th) and Romina (5th).</p>
+		<p class="alert alert-success rankings-page__notice"><i class="bi bi-trophy-fill"></i> Congratulations to our winners Jonathan (1st), Paul (2nd), David (3rd), Ketan (4th) and Romina (5th).</p>
 		<!-- Display table of rankings from process.php -->		
 		
-		<?php displayRankingsEq5(); ?>
+		<div class="rankings-panel">
+			<?php displayRankingsEq5(); ?>
+		</div>
     </section>
 
 </main>
@@ -67,12 +59,18 @@ $(document).ready(function() {
     });
 });
 
- $(document).ready(function () {	 
-   $("td:eq(0)").css("background","#FFD700");
-   $("td:eq(4)").css("background","#C0C0C0");
-   $("td:eq(8)").css("background","#CD7F32");
-   $("td:eq(12)").css("background","#b1d8b7");
-   $("td:eq(16)").css("background","#b1d8b7");
+ $(document).ready(function () {
+   const prizeRows = [
+     'rankings-row--gold',
+     'rankings-row--silver',
+     'rankings-row--bronze',
+     'rankings-row--prize',
+     'rankings-row--prize'
+   ];
+
+   prizeRows.forEach(function(className, index) {
+     $('#rankingsTable tbody tr').eq(index).addClass(className);
+   });
  });
 </script>
 

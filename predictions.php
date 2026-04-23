@@ -12,15 +12,15 @@ include "php/navigation.php";
 ?>
 
 <style>
-td img {
+.predictions-page td img {
 	width: 36px;
 	border-radius: 50%;
 	vertical-align: middle;
 }
-td:nth-child(2), td:nth-child(7) {
+.predictions-page td:nth-child(2), .predictions-page td:nth-child(7) {
 	text-align: right;
 }
-input {
+.predictions-page input {
 	font-size: larger !important;
 	text-align: center !important;
 	border: 1px solid #AAA !important;
@@ -31,19 +31,19 @@ input {
 <!-- Main Content Section -->
 <main id="main" class="main">
 
-    <div class="pagetitle d-flex justify-content-between">
-    <nav>
+    <div class="page-hero page-hero--predictions">
+    <div>
+      <p class="eyebrow">Predictions</p>
       <h1>Submit your predictions</h1>
-        <!-- <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="home.php">Home</a></li>
-          <li class="breadcrumb-item"><a href="#">Care Episodes</a></li>          
-          <li class="breadcrumb-item active">Part #3 - 11.30</li>
-        </ol> -->
-      </nav> 
+      <p class="lead mb-0">Turn your scorelines into points and prizes before the fixture locks.</p>
+    </div>
+    <div class="page-hero__actions">
+      <a class="btn btn-primary" href="#matches"><i class="bi bi-pencil-square"></i> Match list</a>
+      <a class="btn btn-outline-dark" href="how-it-works.php"><i class="bi bi-question-circle"></i> Scoring guide</a>
+    </div>
     </div><!-- End Page Title -->
 
-    <section class="section">
-		<p class="lead">Turn your predictions into points and prizes!</p>
+    <section class="section predictions-page">
 		<p>Predict the Final fixture and then 'submit' to lock in your prediction. Once submitted, your prediction cannot be changed.</p>
 		<p class="alert alert-warning"><i class="bi bi-exclamation-triangle-fill"></i> Predictions can include draws as they <strong>do not include extra time</strong>.</p>
 		<!-- <p class="alert alert-warning" id="submitMsg"><strong>Note:</strong> You can predict a draw as predictions are for 90 mins only (do not include extra time and penalties).</p> -->
@@ -51,7 +51,7 @@ input {
 		<form id="predictionForm" name="predictionForm" class="form-horizontal" action="submit.php" method="POST">
 		<!-- <button type="button" class="btn btn-secondary mb-3 populate-scores"><i class="bi bi-magic"></i> Populate for me</button>
 		<button type="submit" class="btn btn-primary mb-3" name="predictionsSubmitted"><i class="bi bi-send-check-fill"></i> Submit predictions</button>		 -->
-		<div class="row">		
+		<div class="content-panel table-responsive">
 		<!-- Placeholder for JSON table construction -->
 		<table id="table" class="table table-sm table-striped">
 			<thead>
@@ -69,7 +69,7 @@ input {
 			</thead>
 			<tbody></tbody>
 		</table>
-		</div><!--row-->
+		</div>
 		<button type="button" class="btn btn-secondary mt-3 mb-2 populate-scores"><i class="bi bi-magic"></i> Populate for me</button>
 		<button type="submit" class="btn btn-primary mt-3 mb-2" name="predictionsSubmitted"><i class="bi bi-send-check-fill"></i> Submit my predictions</button>
 		</form>

@@ -19,175 +19,155 @@ include "php/dashboard-items.php";
 <!-- Main Content Section -->
 <main id="main" class="main">
 
-    <div class="pagetitle d-flex justify-content-between">
-    <nav>
-      <h1>Dashboard</h1>
-        <!-- <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="home.php">Home</a></li>
-          <li class="breadcrumb-item"><a href="#">Care Episodes</a></li>          
-          <li class="breadcrumb-item active">Part #3 - 11.30</li>
-        </ol> -->
-      </nav> 
+    <div class="page-hero page-hero--dashboard">
+        <div>
+            <p class="eyebrow">Matchday control room</p>
+            <h1>Dashboard</h1>
+            <p class="lead mb-0">Track your progress, scan the latest updates and keep an eye on the table.</p>
+        </div>
+        <div class="page-hero__actions">
+            <a class="btn btn-primary" href="rankings.php"><i class="bi bi-list-ol"></i> Rankings</a>
+            <a class="btn btn-outline-dark" href="user.php?id=<?php echo $_SESSION['id']; ?>"><i class="bi bi-person-lines-fill"></i> My predictions</a>
+        </div>
     </div><!-- End Page Title -->
 
-	<section class="section dashboard">
-        <p class="lead">Use the dashboard to track your progress.</p>
+	<section class="section dashboard dashboard-refresh">
+        <div class="dashboard-command-strip">
+            <a class="dashboard-command" href="rankings.php">
+                <span class="dashboard-command__icon"><i class="bi bi-list-ol"></i></span>
+                <span>
+                    <strong>Leaderboard</strong>
+                    <small>See the table and prize places.</small>
+                </span>
+            </a>
+            <a class="dashboard-command" href="tournament-groups.php">
+                <span class="dashboard-command__icon"><i class="bi bi-grid-3x3-gap"></i></span>
+                <span>
+                    <strong>Competition</strong>
+                    <small>Review groups and knockouts.</small>
+                </span>
+            </a>
+            <a class="dashboard-command" href="how-it-works.php">
+                <span class="dashboard-command__icon"><i class="bi bi-question-circle"></i></span>
+                <span>
+                    <strong>Scoring</strong>
+                    <small>Check the points rules.</small>
+                </span>
+            </a>
+        </div>
 
-        <div class="row">
-            <!-- Left Column -->
-            <div class="col-lg-6">
-                <div class="row">
-                    <div class="col-xxl-12 col-md-12">
-                        <div class="card">
-                            <!-- <div class="filter">
-                                <a class="mx-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" data-bs-title="This measures this amount of time you've spent on...">
-                                    <i class="bi bi-question-circle"></i>
-                                </a>
-                            </div> -->
-                            <div class="card-body">
-                                <h5 class="card-title">Profile Details</h5>
-                                <?php displayPersonalInfo() ?>
-                            </div>
-                        </div>
+        <div class="dashboard-grid">
+            <section class="dashboard-panel dashboard-panel--profile">
+                <h2 class="card-title">Your Tournament Card</h2>
+                <?php displayPersonalInfo() ?>
+            </section>
+
+            <section class="dashboard-panel dashboard-panel--status">
+                <div class="dashboard-panel__header">
+                    <div>
+                        <p class="eyebrow">Live board</p>
+                        <h2>Game Status</h2>
                     </div>
+                    <a class="btn btn-sm btn-primary" href="predictions.php"><i class="bi bi-pencil-square"></i> Predict</a>
+                </div>
+                <div class="dashboard-status__fixture">
+                    <?php displayTodaysFixtures() ?>
+                </div>
+                <?php displayMatchesRecorded() ?>
+                <div class="dashboard-progress" role="region" aria-label="Competition progress">
+                    <?php displayGroupMatchesPlayed() ?>
+                    <?php displayRO16MatchesPlayed() ?>
+                    <?php displayQFMatchesPlayed() ?>
+                    <?php displaySFMatchesPlayed() ?>
+                    <?php displayFinalMatchPlayed() ?>
+                </div>
+                <?php displayPayStatus() ?>
+            </section>
 
-                    <div class="col-xxl-12 col-md-12 mt-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Announcements</h5>
-                                <p><strong>14/07/2024 22:37 Update:</strong></p><p class="alert alert-success">Congratulations to our winners Jonathan (1st), Paul (2nd), David (3rd), Ketan (4th) and Romina (5th).</span></p><p>I hope everyone enjoyed playing the game and thank you all for taking part and raising money for charity.</p>
-                                <hr>
-                                <p><strong>14/07/2024 19:33 Update:</strong><br>Tonight's final average score prediction is:<br>Spain <span class="badge bg-danger">1.79</span> vs <span class="badge bg-primary">1.43</span> England</p>
-                                <!-- <p><strong>10/07/2024 22:16 Update:</strong><br>You can now <a href="predictions.php" title="Submit predictions">submit your prediction</a> for the Final! Please do so before 7pm on <?= $GLOBALS['final_start_date'] ?> so you don't miss out!</p> -->
-                                <!-- <p><strong>02/07/2024 22:59 Update:</strong><br>You can now <a href="predictions.php" title="Submit predictions">submit your predictions</a> for the Semi-Finals. Please do so before 7pm on <?= $GLOBALS['semi_final_start_date'] ?> so you don't miss out!</p> -->
-                                <hr>
-                                <!-- <p><strong>02/07/2024 22:59 Update:</strong><br>You can now <a href="predictions.php" title="Submit predictions">submit your predictions</a> for the Quarter-Finals. Please do so before 16.00 on <?= $GLOBALS['quarter_final_start_date'] ?> so you don't miss out!</p> -->
-                                <!-- <hr> -->
-                                <!-- <p><strong>30/06/2024 12:10 Update:</strong><br>As you may have noticed, I've had a slight hiccup in processing the first knockout results. Rest assured all your predictions are retained in the database and hopefully things will be resolved shortly.</p>                                                                
-                                <hr> -->
-                                <p><strong>18/06/2024 22:03 Update:</strong><br>Prizes will be awarded as:</p>
-                                <table class="table table-striped table-sm">
-                                    <tbody>
-                                        <tr>
-                                            <td>1st</td>
-                                            <td>£60 (40% of the prize fund)</td>
-                                        </tr>
-                                        <tr>
-                                            <td>2nd</td>
-                                            <td>£40 (27% of the prize fund)</td>
-                                        </tr>
-                                        <tr>
-                                            <td>3rd</td>
-                                            <td>£25 (17% of the prize fund)</td>
-                                        </tr>
-                                        <tr>
-                                            <td>4th</td>
-                                            <td>£15 (10% of the prize fund)</td>
-                                        </tr>
-                                        <tr>
-                                            <td>5th</td>
-                                            <td>£10 (6% of the prize fund)</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <p>Any positions shared will have prizes split equally.</p>
-                                <hr>
-                                <!-- <p><strong>15/06/2024 14:11 Update:</strong><br>Many apologies for the delay in updating the first result for the current rankings. This is done now. I must admit I was slightly scarred from a late night of drowning my sorrows! Good luck everyone.</p> -->
-                                <!-- <hr> -->
-                                <?php displayCharityInformation() ?>
-                            </div>
-                        </div>
+            <section class="dashboard-panel dashboard-panel--announcements">
+                <div class="dashboard-panel__header">
+                    <div>
+                        <p class="eyebrow">Noticeboard</p>
+                        <h2>Announcements</h2>
                     </div>
                 </div>
-            </div><!-- End Left Column -->
+                <div class="dashboard-updates">
+                    <article class="dashboard-update dashboard-update--winner">
+                        <span class="dashboard-update__date">14/07/2024 22:37</span>
+                        <h3>Winners confirmed</h3>
+                        <p class="alert alert-success">Congratulations to our winners Jonathan (1st), Paul (2nd), David (3rd), Ketan (4th) and Romina (5th).</p>
+                        <p>I hope everyone enjoyed playing the game and thank you all for taking part and raising money for charity.</p>
+                    </article>
 
-            <!-- Right Column -->
-            <div class="col-lg-6">
-                <div class="card">
-                    <!-- <div class="filter">
-                        <a class="mx-3" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" data-bs-title="This measures this amount of time you've spent on...">
-                            <i class="bi bi-question-circle"></i>
-                        </a>
-                    </div> -->
-                    <div class="card-body">
-                        <h5 class="card-title">Game Status</h5>
-                        <?php displayTodaysFixtures() ?>                                                                                                                         
-                        <!-- <?php checkSubmitted() ?> -->
-                        <?php displayMatchesRecorded() ?>
-                        <div class="alert alert-light" role="alert">
-                            <?php displayGroupMatchesPlayed() ?>
-                            <?php displayRO16MatchesPlayed() ?>
-                            <?php displayQFMatchesPlayed() ?>
-                            <?php displaySFMatchesPlayed() ?>
-                            <?php displayFinalMatchPlayed() ?>
-                        </div>
-                        <?php displayPayStatus() ?>
-                        <!-- <p><i class="bi bi-envelope"></i> If you experience any issues, simply reply to your welcome email.</p> -->
+                    <article class="dashboard-update">
+                        <span class="dashboard-update__date">14/07/2024 19:33</span>
+                        <h3>Final average score prediction</h3>
+                        <p>Spain <span class="badge bg-danger">1.79</span> vs <span class="badge bg-primary">1.43</span> England</p>
+                    </article>
+
+                    <article class="dashboard-update">
+                        <span class="dashboard-update__date">18/06/2024 22:03</span>
+                        <h3>Prize split</h3>
+                        <table class="table table-striped table-sm">
+                            <tbody>
+                                <tr>
+                                    <td>1st</td>
+                                    <td>£60 (40% of the prize fund)</td>
+                                </tr>
+                                <tr>
+                                    <td>2nd</td>
+                                    <td>£40 (27% of the prize fund)</td>
+                                </tr>
+                                <tr>
+                                    <td>3rd</td>
+                                    <td>£25 (17% of the prize fund)</td>
+                                </tr>
+                                <tr>
+                                    <td>4th</td>
+                                    <td>£15 (10% of the prize fund)</td>
+                                </tr>
+                                <tr>
+                                    <td>5th</td>
+                                    <td>£10 (6% of the prize fund)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p>Any positions shared will have prizes split equally.</p>
+                    </article>
+                </div>
+                <div class="dashboard-charity">
+                    <?php displayCharityInformation() ?>
+                </div>
+            </section>
+
+            <aside class="dashboard-panel dashboard-panel--leaderboard">
+                <div class="dashboard-panel__header">
+                    <div>
+                        <p class="eyebrow">Form guide</p>
+                        <h2>Leaderboard Pulse</h2>
+                    </div>
+                    <a class="btn btn-sm btn-outline-success" href="rankings.php">Full table</a>
+                </div>
+                <div class="dashboard-leaderboard-grid">
+                    <div>
+                        <h3>Winners</h3>
+                        <?php displayTopRankings() ?>
+                    </div>
+                    <div>
+                        <h3>Bottom 5</h3>
+                        <?php displayBottomRankings() ?>
+                    </div>
+                    <div>
+                        <h3>Biggest Climbers</h3>
+                        <?php displayBestMovers() ?>
+                    </div>
+                    <div>
+                        <h3>Biggest Droppers</h3>
+                        <?php displayWorstMovers() ?>
                     </div>
                 </div>
-
-                <div class="row mt-4">
-                    <div class="col-xxl-6 col-md-6">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Winners</h5>
-                                <?php displayTopRankings() ?>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-xxl-6 col-md-6">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Bottom 5</h5>
-                                <?php displayBottomRankings() ?>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row mt-4">
-                    <div class="col-xxl-6 col-md-6">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Biggest Climbers</h5>
-                                <?php displayBestMovers() ?>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-xxl-6 col-md-6">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Biggest Droppers</h5>
-                                <?php displayWorstMovers() ?>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row mt-4">
-                    <div class="col-xxl-12 col-md-6">
-                        <div class="card">
-                            <div class="card-body">
-                                <!-- <h5 class="card-title">Anonymous Poll #04</h5>
-                                <div id="poll">
-                                     <h6 id="question"></h6> class="p-3 mb-2 border border-danger border-2"
-                                     <div id="answers">
-                                          Answers will be dynamically added here
-                                    </div>
-                                    <div id="results">
-                                          Results will be dynamically updated here
-                                    </div>
-                                </div> -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div><!-- End Right Column -->
-        </div><!-- End Row -->
-
+            </aside>
+        </div>
     </section>
 
       <!-- Modal for Badge Earning Congratulations -->

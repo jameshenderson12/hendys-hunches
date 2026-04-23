@@ -13,21 +13,21 @@ include "php/navigation.php";
 <!-- Main Content Section -->
 <main id="main" class="main">
 
-    <div class="pagetitle d-flex justify-content-between">
-    <nav>
-      <h1>How it all works</h1>
-        <!-- <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="home.php">Home</a></li>
-          <li class="breadcrumb-item"><a href="#">Care Episodes</a></li>          
-          <li class="breadcrumb-item active">Part #3 - 11.30</li>
-        </ol> -->
-      </nav> 
+    <div class="page-hero page-hero--guide">
+        <div>
+            <p class="eyebrow">Game guide</p>
+            <h1>How it all works</h1>
+            <p class="lead mb-0">A friendly walkthrough for new players and a quick refresher for veterans.</p>
+        </div>
+        <div class="page-hero__actions">
+            <a class="btn btn-primary" href="predictions.php"><i class="bi bi-pencil-square"></i> Predictions</a>
+            <a class="btn btn-outline-dark" href="rankings.php"><i class="bi bi-list-ol"></i> Rankings</a>
+        </div>
     </div><!-- End Page Title -->
 
-    <section class="section">
+    <section class="section info-page">
         <div class="row align-items-center mb-4">
             <div class="col-lg-7">
-                <p class="lead mb-2">A friendly walkthrough for new players and a quick refresher for veterans.</p>
                 <p class="text-muted mb-0">Follow the steps below to get set up, understand the flow, and learn how the scoring works.</p>
             </div>
             <div class="col-lg-5 mt-3 mt-lg-0">
@@ -126,7 +126,7 @@ include "php/navigation.php";
             </div>
         </div>
 
-        <div class="table-responsive">
+        <div class="content-panel table-responsive">
             <table class="table table-bordered table-hover align-middle">
                 <thead class="table-light">
                     <tr><th>You Predict</th><th>Match Result</th><th>Description</th><th>Points Awarded</th></tr>
@@ -151,9 +151,6 @@ include "php/navigation.php";
             </table>
         </div>
     </section>
-        
-    </div>
-  </div>
 </main>
 
 <!-- Footer -->

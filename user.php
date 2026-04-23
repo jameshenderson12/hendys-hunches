@@ -87,11 +87,11 @@ include "php/navigation.php";
 						$tournwinnerflag = hh_get_team_flag_path($tournwinner);
 					$currentpos = ordinal($userdata["currpos"]);
 
-					$pointstotal = $userdata["points_total"];
-					$pointstotal2 = $userdata2["points_total"];
-					$pointstotal3 = $userdata3["points_total"];
-					$pointstotal4 = $userdata4["points_total"];
-					$pointstotal5 = $userdata5["points_total"];
+					$pointstotal1 = $userdata["points_total"] ?? 0;
+					$pointstotal2 = $userdata2["points_total"] ?? 0;
+					$pointstotal3 = $userdata3["points_total"] ?? 0;
+					$pointstotal4 = $userdata4["points_total"] ?? 0;
+					$pointstotal5 = $userdata5["points_total"] ?? 0;
 					$pointstotal = $pointstotal1 + $pointstotal2 + $pointstotal3 + $pointstotal4 + $pointstotal5;					
 					$matchresult = mysqli_fetch_assoc(mysqli_query($con, $sql_getresults));
 
@@ -223,52 +223,28 @@ include "php/navigation.php";
 					// 		}
 					// }
 
-					$sql_getspecidfi = "SELECT id, firstname, surname, score101_p, score102_p FROM live_user_predictions_final WHERE id='".$userid."'";
-					$pval = mysqli_fetch_assoc(mysqli_query($con, $sql_getspecidfi));
-
-					for ($i=51; $i<=51; $i++) {
-							$matchpoints[$i] = 0;
-
-							if( is_numeric($pval["score".$oddgameno[$i]."_p"]) && is_numeric($pval["score".$evengameno[$i]."_p"]) ) {
-
-								if($pval["score".$oddgameno[$i]."_p"] === $rvalue["score".$oddgameno[$i]."_r"]) {
-									$matchpoints[$i] += 1;
-								}
-								if($pval["score".$evengameno[$i]."_p"] === $rvalue["score".$evengameno[$i]."_r"]) {
-									$matchpoints[$i] += 1;
-								}
-								if (($pval["score".$oddgameno[$i]."_p"] === $rvalue["score".$oddgameno[$i]."_r"]) && ($pval["score".$evengameno[$i]."_p"] === $rvalue["score".$evengameno[$i]."_r"])) {
-									$matchpoints[$i] += 3;
-								}
-								if ((($pval["score".$oddgameno[$i]."_p"] > $pval["score".$evengameno[$i]."_p"]) && ($rvalue["score".$oddgameno[$i]."_r"] > $rvalue["score".$evengameno[$i]."_r"]))
-								|| (($pval["score".$oddgameno[$i]."_p"] < $pval["score".$evengameno[$i]."_p"]) && ($rvalue["score".$oddgameno[$i]."_r"] < $rvalue["score".$evengameno[$i]."_r"]))
-								|| (($pval["score".$oddgameno[$i]."_p"] === $pval["score".$evengameno[$i]."_p"]) && ($rvalue["score".$oddgameno[$i]."_r"] === $rvalue["score".$evengameno[$i]."_r"])) ) {
-									$matchpoints[$i] += 2;
-								}
-							}
-					}
-
-	// Convert PHP array to JSON
+		// Convert PHP array to JSON
 	$userdata_json = json_encode($userdata5);	
 
 ?>
 
-<div class="pagetitle d-flex justify-content-between">
-    <nav>
+<div class="page-hero page-hero--user">
+    <div>
+	<p class="eyebrow">Player predictions</p>
 	<h1 class="page-header">Predictions by <?php print "$uppCaseFN $uppCaseSN" ?></h1>
-        <!-- <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="home.php">Home</a></li>
-          <li class="breadcrumb-item"><a href="#">Care Episodes</a></li>          
-          <li class="breadcrumb-item active">Part #3 - 11.30</li>
-        </ol> -->
-      </nav> 
+	<p class="lead mb-0">A match-by-match look at this player's scorelines and points.</p>
+    </div>
+    <div class="page-hero__actions">
+        <a class="btn btn-primary" href="rankings.php"><i class="bi bi-list-ol"></i> Rankings</a>
+        <a class="btn btn-outline-dark" href="dashboard.php"><i class="bi bi-speedometer2"></i> Dashboard</a>
+    </div>
     </div><!-- End Page Title -->
 
-<section class="section">
+<section class="section user-page">
     <p>Currently viewing predictions by <?php print "$uppCaseFN $uppCaseSN" ?>. Return to the <a href="rankings.php">rankings</a> table.</p>
 	      <div class="row">
 					<div class="col-md-3 col-sm-12">
-					<div class="card">
+					<div class="card user-profile-card">
 					  <img src="<?php echo $avatar ?>" id="avatar" class="img-fluid mx-auto p-2" alt="User Avatar" name="User Avatar" width="100">
 					  <div class="card-body">
 						<!-- <h5 class="card-title"></h5> -->
@@ -283,8 +259,7 @@ include "php/navigation.php";
 					</div>
 				</div>
 				<div class="col-md-9 col-sm-12">
-					<div class="card">
-						<div class="card-body">
+					<div class="content-panel">
 							<!-- Placeholder for JSON table construction -->
 							<table id="table" class="table table-sm table-striped">
 								<thead>
@@ -304,7 +279,6 @@ include "php/navigation.php";
 									<!-- Rows will be appended here by JavaScript -->
 								</tbody>
 							</table>
-						</div>
 					</div>
 				</div>
       	</div><!--row-->

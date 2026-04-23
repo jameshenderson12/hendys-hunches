@@ -13,21 +13,17 @@ include "php/navigation.php";
 <!-- Main Content Section -->
 <main id="main" class="main">
 
-    <div class="pagetitle d-flex justify-content-between">
-		<nav>
-		<h1>About this game</h1>
-			<!-- <ol class="breadcrumb">
-			<li class="breadcrumb-item"><a href="home.php">Home</a></li>
-			<li class="breadcrumb-item"><a href="#">Care Episodes</a></li>          
-			<li class="breadcrumb-item active">Part #3 - 11.30</li>
-			</ol> -->
-		</nav> 
+    <div class="page-hero page-hero--about">
+		<div>
+			<p class="eyebrow">Since 2006</p>
+			<h1>About this game</h1>
+			<p class="lead mb-0">The story of Hendy's Hunches, from spreadsheet slog to tournament tradition.</p>
+		</div>
     </div><!-- End Page Title -->
 
     <section class="section about-page">
 		<div class="about-hero card border-0 mb-4">
 			<div class="card-body">
-				<span class="about-kicker">Since 2006</span>
 				<h2 class="about-headline">"Fun and friendly-natured competiveness - bringing people together."</h2>
 				<p class="lead">Let's start with a little bit of history...</p>
 				<p>Hendy's Hunches has grown over the years from an idea that I had, back in 2005, for a little game to add some fun to World Cup 2006. Today, it has become something of a hobby project that I continue to develop in my spare time around the clock. The online version began in 2013 and, despite coding challenges, many colleagues, family and friends all continue to enjoy it and look forward to taking part. Don't get me wrong, it may not match the achievements of a team of developers, but if it helps adds some fun to the big-stage competitions then that I am delighted with that!</p>
@@ -354,8 +350,6 @@ include "php/navigation.php";
 			</div>
 		</div>
     </section>        
-    </div>
-  </div>
 </main>
 
 <script>

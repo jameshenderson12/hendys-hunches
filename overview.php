@@ -13,19 +13,15 @@ include "php/navigation.php";
 <!-- Main Content Section -->
 <main id="main" class="main">
 
-    <div class="pagetitle d-flex justify-content-between">
-    <nav>
-      <h1>Game Overview</h1>
-        <!-- <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="home.php">Home</a></li>
-          <li class="breadcrumb-item"><a href="#">Care Episodes</a></li>          
-          <li class="breadcrumb-item active">Part #3 - 11.30</li>
-        </ol> -->
-      </nav> 
+    <div class="page-hero page-hero--overview">
+		<div>
+			<p class="eyebrow">Application overview</p>
+			<h1>Game Overview</h1>
+			<p class="lead mb-0">A quick reference for the tournament setup, platform details and player totals.</p>
+		</div>
     </div><!-- End Page Title -->
 
     <section class="section">	
-		<p class="lead">A simple overview of the application data for reference.</p>
 		<div class="row">
 		<?php
 			include 'php/db-connect.php';
@@ -66,7 +62,7 @@ include "php/navigation.php";
 				return $ipaddress;
 			}
 		?>
-		<div class="table-responsive">
+		<div class="overview-panel table-responsive">
 			<table class="table table-striped">
 			<tr>
 				<th scope="row">Title</th>
@@ -91,7 +87,7 @@ include "php/navigation.php";
 			<!--
 			<tr>
 				<th scope="row">Server &amp; Client IP</th>
-				<td><?php echo $_SERVER['SERVER_ADDR']; ?> / <?php print_r(get_client_ip()); ?></td>
+				<td><?php echo $_SERVER['SERVER_ADDR'] ?? 'UNKNOWN'; ?> / <?php print_r(get_client_ip()); ?></td>
 			</tr>
 			<tr>
 				<th scope="row">OS &amp; Host Name</th>

@@ -1,6 +1,6 @@
 <?php
 session_start();
-$page_title = 'Rankings';
+$page_title = 'Change Password';
 
 require_once __DIR__ . '/php/auth.php';
 hh_require_login('index.php');
@@ -115,18 +115,19 @@ include "php/navigation.php";
 <!-- Main Content Section -->
 <main id="main" class="main">
 
-    <div class="pagetitle d-flex justify-content-between">
-    <nav>
+    <div class="page-hero page-hero--account">
+    <div>
+      <p class="eyebrow">Account</p>
       <h1>Change Password</h1>
-        <!-- <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="home.php">Home</a></li>
-          <li class="breadcrumb-item"><a href="#">Care Episodes</a></li>          
-          <li class="breadcrumb-item active">Part #3 - 11.30</li>
-        </ol> -->
-      </nav> 
+      <p class="lead mb-0">Update your password and get straight back to the dashboard.</p>
+    </div>
+    <div class="page-hero__actions">
+      <a class="btn btn-primary" href="dashboard.php"><i class="bi bi-speedometer2"></i> Dashboard</a>
+    </div>
     </div><!-- End Page Title -->
 
-    <section class="section">
+    <section class="section account-page">
+		<div class="content-panel content-panel--narrow">
 	<p>Please enter a new password or return to the <a href="dashboard.php">dashboard page</a>.</p>
         <form id="changePassForm" name="changePassForm" class="form-horizontal" onSubmit="return false;">
 			<!-- New Password -->
@@ -156,10 +157,9 @@ include "php/navigation.php";
 			</div>                        
 		
 		</form>
+		</div>
 	</section>
         
-    </div>
-  </div>
 </main>
 
 <!-- Footer -->
