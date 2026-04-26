@@ -18,8 +18,10 @@ $use_concept_logo = isset($nav_logo_variant) && $nav_logo_variant === 'concept';
 						<span class="hh-wordmark__tag">Hunches</span>
 					</span>
 				<?php else: ?>
-					<img src="img/hh-icon-2024.png" class="site-navbar__logo" alt="Hendy's Hunches logo" width="46" height="46">
-					<span>Hendy's Hunches</span>
+					<span class="site-wordmark" aria-label="Hendy's Hunches">
+						<span class="site-wordmark__name">Hendy's Hunches</span>
+						<span class="site-wordmark__tag">Football prediction game</span>
+					</span>
 				<?php endif; ?>
 			</a>
 		      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar2" aria-controls="offcanvasNavbar2">
@@ -34,6 +36,9 @@ $use_concept_logo = isset($nav_logo_variant) && $nav_logo_variant === 'concept';
 		          <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
 		            <li class="nav-item">
 		              <a class="nav-link<?= $nav_active('dashboard.php') ?>" href="dashboard.php">Dashboard</a>
+		            </li>
+		            <li class="nav-item">
+		              <a class="nav-link<?= $nav_active('fanzone.php') ?>" href="fanzone.php">Fan Zone</a>
 		            </li>
 					<!-- <li class="nav-item position-relative">
 					<a class="nav-link" href="tournament-groups.php">

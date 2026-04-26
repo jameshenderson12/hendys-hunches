@@ -243,24 +243,24 @@ $Fi2 = "";
 $Fi2_img = "";
 
 // Setup variables for football kits
-$fk1 = "football-kits/green-white.png";
-$fk2 = "football-kits/blue-white.png";
-$fk3 = "football-kits/red-white-blue.png";
-$fk4 = "football-kits/maroon-white.png";
-$fk5 = "football-kits/skyblue-blue-hoops.png";
-$fk6 = "football-kits/yellow-black.png";
-$fk7 = "football-kits/pink-black.png";
-$fk8 = "football-kits/purple-black.png";
-$fk9 = "football-kits/orange-purple.png";
-$fk10 = "football-kits/grey-mint.png";
-$fk11 = "football-kits/charcoal-gold.png";
-$fk12 = "football-kits/green-lightgreen.png";
-$fk13 = "football-kits/claret-lightblue.png";
-$fk14 = "football-kits/lightred-lightyellow.png";
-$fk15 = "football-kits/navy-blue-red.png";
-$fk16 = "football-kits/white-green.png";
-$fk17 = "football-kits/red-black.png";
-$fk18 = "football-kits/pink-white.png";
+$fk1 = "img/football-kits/green-white.png";
+$fk2 = "img/football-kits/blue-white.png";
+$fk3 = "img/football-kits/red-white-blue.png";
+$fk4 = "img/football-kits/maroon-white.png";
+$fk5 = "img/football-kits/skyblue-blue-hoops.png";
+$fk6 = "img/football-kits/yellow-black.png";
+$fk7 = "img/football-kits/pink-black.png";
+$fk8 = "img/football-kits/purple-black.png";
+$fk9 = "img/football-kits/orange-purple.png";
+$fk10 = "img/football-kits/grey-mint.png";
+$fk11 = "img/football-kits/charcoal-gold.png";
+$fk12 = "img/football-kits/green-lightgreen.png";
+$fk13 = "img/football-kits/claret-lightblue.png";
+$fk14 = "img/football-kits/lightred-lightyellow.png";
+$fk15 = "img/football-kits/navy-blue-red.png";
+$fk16 = "img/football-kits/white-green.png";
+$fk17 = "img/football-kits/red-black.png";
+$fk18 = "img/football-kits/pink-white.png";
 
 //===============================
 // Global 'helper' functions
