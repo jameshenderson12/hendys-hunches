@@ -1,8 +1,4 @@
 <?php
-// ini_set('display_errors', 1);
-// ini_set('display_startup_errors', 1);
-// error_reporting(E_ALL);
-
 session_start();
 $page_title = 'Dashboard';
 
@@ -11,286 +7,345 @@ hh_require_login('index.php');
 
 include "php/header.php";
 include "php/navigation.php";
-include "php/dashboard-items.php";
+
+$stagePoints = [
+    ['label' => 'Groups', 'points' => 42, 'max' => 42],
+    ['label' => 'Round of 16', 'points' => 14, 'max' => 42],
+    ['label' => 'Quarter-finals', 'points' => 7, 'max' => 42],
+    ['label' => 'Semi-finals', 'points' => 1, 'max' => 42],
+    ['label' => 'Final', 'points' => 7, 'max' => 42],
+];
+
+$winnerPicks = [
+    ['team' => 'England', 'count' => 18, 'percent' => 100],
+    ['team' => 'France', 'count' => 13, 'percent' => 72],
+    ['team' => 'Spain', 'count' => 8, 'percent' => 44],
+    ['team' => 'Germany', 'count' => 6, 'percent' => 33],
+    ['team' => 'Portugal', 'count' => 4, 'percent' => 22],
+];
+
+$accuracy = [
+    ['label' => 'Exact scores', 'value' => 6],
+    ['label' => 'Right outcome', 'value' => 18],
+    ['label' => 'One-score hits', 'value' => 9],
+    ['label' => 'Misses', 'value' => 18],
+];
+
+$todayFixtures = [
+    [
+        'time' => '13:00',
+        'home' => 'Mexico',
+        'home_flag' => 'img/flags/mx.svg',
+        'home_avg' => '1.21 avg',
+        'away' => 'Japan',
+        'away_flag' => 'img/flags/jp.svg',
+        'away_avg' => '1.08 avg',
+        'pick' => 'Most common pick: Mexico 1 - 0 Japan',
+    ],
+    [
+        'time' => '17:00',
+        'home' => 'Spain',
+        'home_flag' => 'img/flags/es.svg',
+        'home_avg' => '1.79 avg',
+        'away' => 'England',
+        'away_flag' => 'img/flags/gb-eng.svg',
+        'away_avg' => '1.43 avg',
+        'pick' => 'Most common pick: Spain 2 - 1 England',
+    ],
+    [
+        'time' => '20:00',
+        'home' => 'USA',
+        'home_flag' => 'img/flags/us.svg',
+        'home_avg' => '1.36 avg',
+        'away' => 'Brazil',
+        'away_flag' => 'img/flags/br.svg',
+        'away_avg' => '1.92 avg',
+        'pick' => 'Most common pick: USA 1 - 2 Brazil',
+    ],
+    [
+        'time' => '23:00',
+        'home' => 'Canada',
+        'home_flag' => 'img/flags/ca.svg',
+        'home_avg' => '0.88 avg',
+        'away' => 'France',
+        'away_flag' => 'img/flags/fr.svg',
+        'away_avg' => '1.67 avg',
+        'pick' => 'Most common pick: Canada 0 - 2 France',
+    ],
+];
+
+$miniLeague = [
+    ['rank' => 1, 'name' => 'Sarah', 'relationship' => 'Family', 'points' => 78, 'movement' => '+2', 'class' => 'concept-up', 'avatar' => 'img/football-kits/green-white-hoops.png'],
+    ['rank' => 2, 'name' => 'Ketan', 'relationship' => 'Work', 'points' => 75, 'movement' => '+7', 'class' => 'concept-up', 'avatar' => 'img/football-kits/red-white-blue.png'],
+    ['rank' => 3, 'name' => 'You', 'relationship' => 'Me', 'points' => 71, 'movement' => '+3', 'class' => 'concept-up', 'avatar' => 'img/football-kits/charcoal-gold.png'],
+    ['rank' => 4, 'name' => 'Paul', 'relationship' => 'Friend', 'points' => 68, 'movement' => '-4', 'class' => 'concept-down', 'avatar' => 'img/football-kits/blue-yellow.png'],
+    ['rank' => 5, 'name' => 'EJ', 'relationship' => 'Family', 'points' => 66, 'movement' => '0', 'class' => 'concept-neutral', 'avatar' => 'img/football-kits/claret-lightblue.png'],
+];
 
 ?>
 
-
-<!-- Main Content Section -->
 <main id="main" class="main">
-
     <div class="page-hero page-hero--dashboard">
         <div>
             <p class="eyebrow">Matchday control room</p>
             <h1>Dashboard</h1>
-            <p class="lead mb-0">Track your progress, scan the latest updates and keep an eye on the table.</p>
+            <p class="lead mb-0">Track your position, scan today's fixtures and keep an eye on the crowd around you.</p>
         </div>
         <div class="page-hero__actions">
-            <a class="btn btn-primary" href="rankings.php"><i class="bi bi-list-ol"></i> Rankings</a>
-            <a class="btn btn-outline-dark" href="user.php?id=<?php echo $_SESSION['id']; ?>"><i class="bi bi-person-lines-fill"></i> My predictions</a>
-        </div>
-    </div><!-- End Page Title -->
-
-	<section class="section dashboard dashboard-refresh">
-        <div class="dashboard-command-strip">
-            <a class="dashboard-command" href="rankings.php">
-                <span class="dashboard-command__icon"><i class="bi bi-list-ol"></i></span>
-                <span>
-                    <strong>Leaderboard</strong>
-                    <small>See the table and prize places.</small>
-                </span>
-            </a>
-            <a class="dashboard-command" href="tournament-groups.php">
-                <span class="dashboard-command__icon"><i class="bi bi-grid-3x3-gap"></i></span>
-                <span>
-                    <strong>Competition</strong>
-                    <small>Review groups and knockouts.</small>
-                </span>
-            </a>
-            <a class="dashboard-command" href="how-it-works.php">
-                <span class="dashboard-command__icon"><i class="bi bi-question-circle"></i></span>
-                <span>
-                    <strong>Scoring</strong>
-                    <small>Check the points rules.</small>
-                </span>
-            </a>
-        </div>
-
-        <div class="dashboard-grid">
-            <section class="dashboard-panel dashboard-panel--profile">
-                <h2 class="card-title">Your Tournament Card</h2>
-                <?php displayPersonalInfo() ?>
-            </section>
-
-            <section class="dashboard-panel dashboard-panel--status">
-                <div class="dashboard-panel__header">
-                    <div>
-                        <p class="eyebrow">Live board</p>
-                        <h2>Game Status</h2>
-                    </div>
-                    <a class="btn btn-sm btn-primary" href="predictions.php"><i class="bi bi-pencil-square"></i> Predict</a>
-                </div>
-                <div class="dashboard-status__fixture">
-                    <?php displayTodaysFixtures() ?>
-                </div>
-                <?php displayMatchesRecorded() ?>
-                <div class="dashboard-progress" role="region" aria-label="Competition progress">
-                    <?php displayGroupMatchesPlayed() ?>
-                    <?php displayRO16MatchesPlayed() ?>
-                    <?php displayQFMatchesPlayed() ?>
-                    <?php displaySFMatchesPlayed() ?>
-                    <?php displayFinalMatchPlayed() ?>
-                </div>
-                <?php displayPayStatus() ?>
-            </section>
-
-            <section class="dashboard-panel dashboard-panel--announcements">
-                <div class="dashboard-panel__header">
-                    <div>
-                        <p class="eyebrow">Noticeboard</p>
-                        <h2>Announcements</h2>
-                    </div>
-                </div>
-                <div class="dashboard-updates">
-                    <article class="dashboard-update dashboard-update--winner">
-                        <span class="dashboard-update__date">14/07/2024 22:37</span>
-                        <h3>Winners confirmed</h3>
-                        <p class="alert alert-success">Congratulations to our winners Jonathan (1st), Paul (2nd), David (3rd), Ketan (4th) and Romina (5th).</p>
-                        <p>I hope everyone enjoyed playing the game and thank you all for taking part and raising money for charity.</p>
-                    </article>
-
-                    <article class="dashboard-update">
-                        <span class="dashboard-update__date">14/07/2024 19:33</span>
-                        <h3>Final average score prediction</h3>
-                        <p>Spain <span class="badge bg-danger">1.79</span> vs <span class="badge bg-primary">1.43</span> England</p>
-                    </article>
-
-                    <article class="dashboard-update">
-                        <span class="dashboard-update__date">18/06/2024 22:03</span>
-                        <h3>Prize split</h3>
-                        <table class="table table-striped table-sm">
-                            <tbody>
-                                <tr>
-                                    <td>1st</td>
-                                    <td>£60 (40% of the prize fund)</td>
-                                </tr>
-                                <tr>
-                                    <td>2nd</td>
-                                    <td>£40 (27% of the prize fund)</td>
-                                </tr>
-                                <tr>
-                                    <td>3rd</td>
-                                    <td>£25 (17% of the prize fund)</td>
-                                </tr>
-                                <tr>
-                                    <td>4th</td>
-                                    <td>£15 (10% of the prize fund)</td>
-                                </tr>
-                                <tr>
-                                    <td>5th</td>
-                                    <td>£10 (6% of the prize fund)</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <p>Any positions shared will have prizes split equally.</p>
-                    </article>
-                </div>
-                <div class="dashboard-charity">
-                    <?php displayCharityInformation() ?>
-                </div>
-            </section>
-
-            <aside class="dashboard-panel dashboard-panel--leaderboard">
-                <div class="dashboard-panel__header">
-                    <div>
-                        <p class="eyebrow">Form guide</p>
-                        <h2>Leaderboard Pulse</h2>
-                    </div>
-                    <a class="btn btn-sm btn-outline-success" href="rankings.php">Full table</a>
-                </div>
-                <div class="dashboard-leaderboard-grid">
-                    <div>
-                        <h3>Winners</h3>
-                        <?php displayTopRankings() ?>
-                    </div>
-                    <div>
-                        <h3>Bottom 5</h3>
-                        <?php displayBottomRankings() ?>
-                    </div>
-                    <div>
-                        <h3>Biggest Climbers</h3>
-                        <?php displayBestMovers() ?>
-                    </div>
-                    <div>
-                        <h3>Biggest Droppers</h3>
-                        <?php displayWorstMovers() ?>
-                    </div>
-                </div>
-            </aside>
-        </div>
-    </section>
-
-      <!-- Modal for Badge Earning Congratulations -->
-  <div class="modal fade" id="congratsModal" tabindex="-1" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="congratsModalLabel" aria-hidden="true">
-        <div class="confetti-container">
-            <div class="modal-dialog modal-xl" role="document">
-                <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="congratsModalLabel">Hendy's Hunches 2024 Winners!</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body text-center mt-3">
-                    <i class="bi bi-check-circle-fill" style="font-size: 60px; color: green;"></i>
-                    <h1>Congratulations!</h1>
-                    <p class="fs-5"></p>
-                    <p>Well played to our winners, the top 5, of Hendy's Hunches 2024.</p>
-                    <img src="" class="w-25 img-fluid" alt="...">
-                    <!--
-                    <div class="row g-0 bg-body-secondary position-relative">
-                        <div class="col-md-4 mb-md-0 p-md-4">
-                            <img src="images/logos/vp-logo-sq.png" class="w-100" alt="...">
-                        </div>
-                        <div class="col-md-8 p-4 ps-md-0">
-                            <i class="bi bi-check-circle-fill" style="font-size: 60px; color: green;"></i>
-                            <h1>Congratulations!</h1>
-                            <p class="fs-5">You've just earned yourself a badge for completing this episode!</p>
-                        </div>
-                    </div>-->
-                    <p class="mt-3">I hope you all enjoyed this game and thank you once again for taking part and raising money for charity.</p>
-                </div>
-                <div class="modal-footer">
-                    <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button> -->
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close" id=""><i class="bi bi-arrow-right"></i> Continue</button>
-                </div>
-                </div>
-            </div>
+            <a class="btn btn-primary" href="user.php?id=<?= $_SESSION['id'] ?>"><i class="bi bi-person-lines-fill"></i> My predictions</a>
+            <a class="btn btn-outline-dark" href="rankings.php"><i class="bi bi-list-ol"></i> Rankings</a>
         </div>
     </div>
-        
+
+    <section class="section dashboard-board" id="dashboardBoard">
+        <div class="concept-grid concept-grid--top">
+            <article class="concept-profile-card">
+                <div class="concept-profile-card__kit">
+                    <img src="img/football-kits/charcoal-gold.png" alt="Mock football strip avatar">
+                </div>
+                <div class="concept-profile-card__body">
+                    <p class="eyebrow">Player card</p>
+                    <h2>James Henderson</h2>
+                    <p class="concept-subtle">Charcoal & gold kit · signed up 14 June 2024</p>
+                    <div class="concept-profile-stats">
+                        <span><strong>12th</strong>Rank</span>
+                        <span><strong>71</strong>Points</span>
+                        <span><strong>+3</strong>Move</span>
+                    </div>
+                    <dl class="concept-profile-details">
+                        <div>
+                            <dt>Favourite club</dt>
+                            <dd>Notts County</dd>
+                        </div>
+                        <div>
+                            <dt>Tournament winner</dt>
+                            <dd>Scotland</dd>
+                        </div>
+                        <div>
+                            <dt>Location</dt>
+                            <dd>Nottingham</dd>
+                        </div>
+                        <div>
+                            <dt>Field</dt>
+                            <dd>eLearning Developer</dd>
+                        </div>
+                    </dl>
+                </div>
+            </article>
+
+            <article class="concept-panel concept-panel--wide">
+                <div class="concept-panel__header">
+                    <div>
+                        <p class="eyebrow">Matchday card</p>
+                        <h2>Today's Fixtures</h2>
+                    </div>
+                    <span class="concept-pill">4 games</span>
+                </div>
+                <div class="fixture-stack">
+                    <?php foreach ($todayFixtures as $fixture) : ?>
+                        <article class="fixture-card-row">
+                            <div class="fixture-card-row__meta">
+                                <span class="fixture-card-row__time"><?= $fixture['time'] ?></span>
+                            </div>
+                            <div class="fixture-card-row__match">
+                                <div class="fixture-card-row__team">
+                                    <img src="<?= $fixture['home_flag'] ?>" alt="<?= $fixture['home'] ?> flag">
+                                    <div>
+                                        <strong><?= $fixture['home'] ?></strong>
+                                        <span><?= $fixture['home_avg'] ?></span>
+                                    </div>
+                                </div>
+                                <div class="fixture-card-row__divider">vs</div>
+                                <div class="fixture-card-row__team fixture-card-row__team--away">
+                                    <img src="<?= $fixture['away_flag'] ?>" alt="<?= $fixture['away'] ?> flag">
+                                    <div>
+                                        <strong><?= $fixture['away'] ?></strong>
+                                        <span><?= $fixture['away_avg'] ?></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="fixture-card-row__pick"><?= $fixture['pick'] ?></p>
+                        </article>
+                    <?php endforeach; ?>
+                </div>
+                <p class="concept-subtle mb-0">A fuller version could add your own locked-in prediction beside the crowd pick for each fixture.</p>
+            </article>
+        </div>
+
+        <div class="concept-grid concept-grid--insights">
+            <article class="concept-panel">
+                <div class="concept-panel__header">
+                    <div>
+                        <p class="eyebrow">Prize race</p>
+                        <h2>Chasing 5th</h2>
+                    </div>
+                    <span class="concept-pill concept-pill--gold">4 pts</span>
+                </div>
+                <div class="race-card">
+                    <div>
+                        <span>5th place</span>
+                        <strong>Romina</strong>
+                        <small>75 pts</small>
+                    </div>
+                    <i class="bi bi-arrow-down"></i>
+                    <div>
+                        <span>You</span>
+                        <strong>12th</strong>
+                        <small>71 pts</small>
+                    </div>
+                </div>
+            </article>
+
+            <article class="concept-panel concept-panel--wide">
+                <div class="concept-panel__header">
+                    <div>
+                        <p class="eyebrow">Personal form</p>
+                        <h2>Points by Stage</h2>
+                    </div>
+                    <span class="concept-pill">71 pts</span>
+                </div>
+                <div class="stage-bars">
+                    <?php foreach ($stagePoints as $stage) : ?>
+                        <?php $width = round(($stage['points'] / $stage['max']) * 100); ?>
+                        <div class="stage-bar">
+                            <div class="stage-bar__meta">
+                                <span><?= $stage['label'] ?></span>
+                                <strong><?= $stage['points'] ?> pts</strong>
+                            </div>
+                            <div class="stage-bar__track">
+                                <span style="width: <?= $width ?>%"></span>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </article>
+
+            <article class="concept-panel">
+                <div class="concept-panel__header">
+                    <div>
+                        <p class="eyebrow">Prediction quality</p>
+                        <h2>Accuracy Breakdown</h2>
+                    </div>
+                </div>
+                <div class="accuracy-donut" aria-label="Accuracy chart mockup">
+                    <div class="accuracy-donut__ring">
+                        <div>
+                            <strong>33</strong>
+                            <span>scoring picks</span>
+                        </div>
+                    </div>
+                    <ul class="accuracy-list">
+                        <?php foreach ($accuracy as $item) : ?>
+                            <li><span><?= $item['label'] ?></span><strong><?= $item['value'] ?></strong></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            </article>
+
+            <article class="concept-panel">
+                <div class="concept-panel__header">
+                    <div>
+                        <p class="eyebrow">Crowd read</p>
+                        <h2>Who Everyone Backed</h2>
+                    </div>
+                </div>
+                <div class="crowd-bars">
+                    <?php foreach ($winnerPicks as $pick) : ?>
+                        <div class="crowd-bar">
+                            <div class="crowd-bar__meta">
+                                <span><?= $pick['team'] ?></span>
+                                <strong><?= $pick['count'] ?></strong>
+                            </div>
+                            <div class="crowd-bar__track"><span style="width: <?= $pick['percent'] ?>%"></span></div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </article>
+
+            <article class="concept-panel">
+                <div class="concept-panel__header">
+                    <div>
+                        <p class="eyebrow">Momentum</p>
+                        <h2>Biggest Movers</h2>
+                    </div>
+                </div>
+                <ol class="movement-list">
+                    <li><span class="concept-up"><i class="bi bi-caret-up-fill"></i> Ketan</span><strong>+7</strong></li>
+                    <li><span class="concept-up"><i class="bi bi-caret-up-fill"></i> Sarah</span><strong>+5</strong></li>
+                    <li><span class="concept-down"><i class="bi bi-caret-down-fill"></i> James</span><strong>-6</strong></li>
+                    <li><span class="concept-down"><i class="bi bi-caret-down-fill"></i> Paul</span><strong>-4</strong></li>
+                </ol>
+            </article>
+        </div>
+
+        <div class="concept-grid concept-grid--mini-league">
+            <article class="concept-panel concept-panel--wide">
+                <div class="concept-panel__header">
+                    <div>
+                        <p class="eyebrow">Selected opponents</p>
+                        <h2>My Mini-League</h2>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-success"><i class="bi bi-sliders"></i> Manage list</button>
+                </div>
+                <div class="mini-league-table">
+                    <?php foreach ($miniLeague as $player) : ?>
+                        <div class="mini-league-row<?= $player['name'] === 'You' ? ' mini-league-row--me' : '' ?>">
+                            <span class="mini-league-rank"><?= $player['rank'] ?></span>
+                            <img class="mini-league-avatar" src="<?= $player['avatar'] ?>" alt="<?= $player['name'] ?> kit avatar">
+                            <span class="mini-league-player">
+                                <strong><?= $player['name'] ?></strong>
+                                <small><?= $player['relationship'] ?></small>
+                            </span>
+                            <span class="mini-league-points"><?= $player['points'] ?> pts</span>
+                            <span class="mini-league-move <?= $player['class'] ?>"><?= $player['movement'] ?></span>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </article>
+
+            <article class="concept-panel mini-league-summary">
+                <div class="concept-panel__header">
+                    <div>
+                        <p class="eyebrow">Rival watch</p>
+                        <h2>Close Calls</h2>
+                    </div>
+                </div>
+                <div class="rival-watch-card">
+                    <p><strong>4 pts</strong><span>behind Ketan</span></p>
+                    <p><strong>3 pts</strong><span>ahead of Paul</span></p>
+                    <p><strong>5</strong><span>chosen opponents</span></p>
+                </div>
+                <p class="concept-subtle mb-0">A future version could let each player pin friends, family or colleagues here without affecting the main leaderboard.</p>
+            </article>
+        </div>
+
+        <div class="concept-grid concept-grid--single">
+            <article class="concept-panel">
+                <div class="concept-panel__header">
+                    <div>
+                        <p class="eyebrow">Community</p>
+                        <h2>Game Pulse</h2>
+                    </div>
+                </div>
+                <div class="pulse-list">
+                    <p><strong>52</strong><span>players registered</span></p>
+                    <p><strong>47</strong><span>paid entries</span></p>
+                    <p><strong>18</strong><span>backed England</span></p>
+                    <p><strong>£150</strong><span>prize fund</span></p>
+                </div>
+                <div class="dashboard-charity-card">
+                    <div class="dashboard-charity-card__logo">
+                        <img src="img/charity-logos/notts-county-foundation-logo.png" alt="Placeholder charity logo">
+                    </div>
+                    <div class="dashboard-charity-card__content">
+                        <p class="eyebrow">Charity support</p>
+                        <h3>Supporting [Charity Name]</h3>
+                        <p class="concept-subtle mb-0">Add a short description here about the cause, what the fundraising supports, and why this matters to this year’s game.</p>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
 </main>
 
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    fetchPollData();
-
-    document.addEventListener("change", function(event) {
-        if (event.target.matches('input[type="radio"][name="answer"]')) {
-            const answerId = parseInt(event.target.value);
-            vote(answerId);
-        }
-    });
-});
-
-function fetchPollData() {
-    fetch('php/poll.php')
-        .then(response => response.json())
-        .then(data => {
-            renderPoll(data);
-            updateResults(data);
-        });
-}
-
-function vote(answerId) {
-    fetch('php/poll.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: 'answerId=' + answerId
-    }).then(() => {
-        localStorage.setItem("hasVotedPoll04", true);
-        disableVoting();
-        fetchPollData(); // Refresh poll data after voting
-    });
-}
-
-function renderPoll(data) {
-    const question = data[0].question;
-    document.getElementById("question").textContent = question;
-    const answersDiv = document.getElementById("answers");
-    const hasVoted = localStorage.getItem("hasVotedPoll04");
-    answersDiv.innerHTML = ""; // Clear previous answers
-    if (hasVoted) {
-        answersDiv.innerHTML = "<p><i class='bi bi-check-circle-fill text-success'></i> You have voted on this poll.</p>";
-    } else {
-        data.forEach(answer => {
-            const answerElem = document.createElement("div");
-            answerElem.classList.add("form-check");
-            answerElem.innerHTML = `
-                <div class="my-3">
-                <input class="form-check-input" type="radio" name="answer" id="answer${answer.id}" value="${answer.id}">
-                <label class="form-check-label" for="answer${answer.id}">
-                    ${answer.answer}
-                </label>
-                </div>
-            `;
-            answersDiv.appendChild(answerElem);
-        });
-    }
-}
-
-function updateResults(data) {
-    const resultsDiv = document.getElementById("results");
-    resultsDiv.innerHTML = ""; // Clear previous results
-    //const totalVotes = data.reduce((total, answer) => total + answer.count, 0);
-    const totalVotes = data.reduce((total, answer) => total + Number(answer.count), 0);
-    data.forEach(answer => {
-        const resultElem = document.createElement("div");
-        resultElem.innerHTML = `            
-            <div class="progress" style="height: 30px">
-                <div class="progress-bar bg-info" role="progressbar" style="width: ${(answer.count / totalVotes) * 100}%" aria-valuenow="${answer.count}" aria-valuemin="0" aria-valuemax="${totalVotes}"></div>
-            </div>
-            <p style="text-align: right;">${answer.answer}: <strong>${answer.count}</strong></p>
-        `;
-        resultsDiv.appendChild(resultElem);
-    });
-}
-
-function disableVoting() {
-    const answersDiv = document.getElementById("answers");
-    answersDiv.innerHTML = "<p><i class='bi bi-check-circle-fill text-success'></i> You have voted on this poll.</p>";
-}    
-</script>
-
-<!-- Footer -->
 <?php include "php/footer.php" ?>

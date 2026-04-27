@@ -72,6 +72,40 @@ function hh_require_login(string $redirect = 'index.php'): void {
     }
 }
 
+function hh_normalize_identity(string $value): string {
+    return strtolower(trim(preg_replace('/\s+/', ' ', $value)));
+}
+
+function hh_is_admin_user(): bool {
+    global $developer, $admin_usernames;
+
+    $username = (string) ($_SESSION['username'] ?? '');
+    $displayName = trim((string) ($_SESSION['firstname'] ?? '') . ' ' . (string) ($_SESSION['surname'] ?? ''));
+
+    if (!empty($_SESSION['is_dev_bypass']) || $username === 'developer-preview') {
+        return true;
+    }
+
+    if (is_array($admin_usernames) && in_array($username, $admin_usernames, true)) {
+        return true;
+    }
+
+    if ($displayName !== '' && hh_normalize_identity($displayName) === hh_normalize_identity((string) $developer)) {
+        return true;
+    }
+
+    return false;
+}
+
+function hh_require_admin(string $redirect = 'dashboard.php'): void {
+    hh_require_login($redirect);
+
+    if (!hh_is_admin_user()) {
+        header('Location: ' . $redirect);
+        exit();
+    }
+}
+
 function hh_render_dev_banner(string $logoutPath = 'php/logout.php'): void {
     if (empty($_SESSION['is_dev_bypass'])) {
         return;

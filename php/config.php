@@ -35,6 +35,7 @@ $datalists_dir = "/text";
 $sql_dir = "/sql";
 $forum_dir = "/mboard";
 $developer = "James Henderson";
+$admin_usernames = [];
 $date_created = "09/06/2006";
 $date_format = "d/m/Y (H:i)";
 $competition = "UEFA EURO 2024™";

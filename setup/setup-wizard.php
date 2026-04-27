@@ -917,42 +917,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'setup_preview')
     <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="../vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
     <link href="../css/styles.css" rel="stylesheet">
-    <style>
-        .flag-square {
-            width: 28px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            flex: 0 0 28px;
-            border: 1px solid #ccc;
-            overflow: hidden;
-        }
-
-        .flag-square img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            display: block;
-        }
-    </style>
 </head>
 <body>
 <?php hh_render_dev_banner('../php/logout.php'); ?>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg site-navbar setup-navbar" aria-label="Setup navigation">
     <div class="container">
-        <img src="../img/hh-icon-2024.png" class="img-fluid bg-light mx-2" style="--bs-bg-opacity: 0.80" width="50px" alt="Hendy's Hunches">
-        <a class="navbar-brand" href="#">Hendy's Hunches</a>
+        <a class="navbar-brand" href="../dashboard.php">
+            <span class="site-wordmark" aria-label="Hendy's Hunches">
+                <span class="site-wordmark__name">Hendy's Hunches</span>
+                <span class="site-wordmark__tag">Setup wizard</span>
+            </span>
+        </a>
+        <div class="setup-navbar__actions">
+            <a class="btn btn-outline-light btn-sm" href="../dashboard.php">Dashboard</a>
+            <a class="btn btn-primary btn-sm" href="../admin/functions.php">Admin Hub</a>
+        </div>
     </div>
 </nav>
 
-<main class="container py-4">
-    <div class="mb-4">
-        <h1 class="h3 mb-1">Installation Manager</h1>
-        <p class="text-muted mb-0">Use this first-run installer to test MySQL admin access, provision the app database and user, infer tournament settings from a fixture feed or file, and prepare the site for a new competition.</p>
-    </div>
+<main class="container py-4 setup-page">
+    <section class="page-hero page-hero--setup">
+        <div>
+            <p class="eyebrow">System setup</p>
+            <h1>Installation Manager</h1>
+            <p class="lead mb-0">Test MySQL access, provision the app database, import fixtures, and prepare the next tournament from one calmer control room.</p>
+        </div>
+        <div class="page-hero__actions">
+            <a class="btn btn-light" href="../admin/results.php">Record Results</a>
+            <a class="btn btn-outline-dark" href="../admin/functions.php">Open Admin Functions</a>
+        </div>
+    </section>
 
     <?php if (!empty($errors)) : ?>
-        <div class="alert alert-danger">
+        <div class="alert alert-danger setup-alert">
             <ul class="mb-0">
                 <?php foreach ($errors as $error) : ?>
                     <li><?= htmlspecialchars($error) ?></li>
@@ -962,7 +959,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'setup_preview')
     <?php endif; ?>
 
     <?php if (!empty($messages)) : ?>
-        <div class="alert alert-success">
+        <div class="alert alert-success setup-alert">
             <ul class="mb-0">
                 <?php foreach ($messages as $message) : ?>
                     <li><?= htmlspecialchars($message) ?></li>
@@ -971,11 +968,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'setup_preview')
         </div>
     <?php endif; ?>
 
-    <form method="POST" class="card shadow-sm mb-4" enctype="multipart/form-data">
+    <form method="POST" class="card setup-form-card" enctype="multipart/form-data">
         <input type="hidden" name="wizard_action" value="setup_preview">
         <div class="card-body">
+            <div class="setup-section">
+                <div class="setup-section__header">
+                    <div>
+                        <p class="eyebrow mb-2">Foundations</p>
+                        <h2 class="h4 mb-2">Site and database setup</h2>
+                        <p class="text-muted mb-0">Define the site details and use a MySQL admin account so the wizard can inspect the target environment before anything is applied.</p>
+                    </div>
+                </div>
+            </div>
+
             <div class="row g-4">
                 <div class="col-lg-6">
+                    <div class="setup-panel">
                     <h2 class="h5">1. Site Settings</h2>
                     <div class="row g-3">
                         <div class="col-md-6">
@@ -999,9 +1007,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'setup_preview')
                             <input type="text" class="form-control" id="storage_dir" name="storage_dir" value="<?= htmlspecialchars($_POST['storage_dir'] ?? ($backup_dir ?? '/bak')) ?>">
                         </div>
                     </div>
+                    </div>
                 </div>
 
                 <div class="col-lg-6">
+                    <div class="setup-panel">
                     <h2 class="h5">2. MySQL Admin Connection</h2>
                     <p class="text-muted small">Use your admin account here, for example <code>hh_admin</code> on the target MySQL server, so the wizard can test the server, inspect the target database, and generate the app database/user setup.</p>
                     <div class="row g-3">
@@ -1018,13 +1028,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'setup_preview')
                             <input type="password" class="form-control" id="mysql_admin_password" name="mysql_admin_password" value="<?= htmlspecialchars($_POST['mysql_admin_password'] ?? '') ?>">
                         </div>
                     </div>
+                    </div>
                 </div>
             </div>
 
-            <hr class="my-4">
+            <div class="setup-divider"></div>
 
             <div class="row g-4">
                 <div class="col-lg-6">
+                    <div class="setup-panel">
                     <h2 class="h5">3. App Database & User</h2>
                     <div class="row g-3">
                         <div class="col-md-6">
@@ -1044,9 +1056,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'setup_preview')
                             <input type="text" class="form-control" id="target_db_user_host" name="target_db_user_host" value="<?= htmlspecialchars($_POST['target_db_user_host'] ?? 'localhost') ?>" required>
                         </div>
                     </div>
+                    </div>
                 </div>
 
                 <div class="col-lg-6">
+                    <div class="setup-panel">
                     <h2 class="h5">4. Tournament Source</h2>
                     <div class="row g-3">
                         <div class="col-md-6">
@@ -1062,15 +1076,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'setup_preview')
                             <input type="file" class="form-control" id="fixtures_file" name="fixtures_file" accept=".csv,.json">
                         </div>
                     </div>
+                    </div>
                 </div>
             </div>
 
-            <hr class="my-4">
+            <div class="setup-divider"></div>
 
             <div class="row g-3">
                 <div class="col-lg-6">
                     <h3 class="h6">Expected JSON Shape</h3>
-                    <pre class="bg-light border rounded p-3 small mb-0" style="max-height: 220px; overflow: auto;">[
+                    <pre class="setup-code-block small mb-0">[
   {
     "MatchNumber": 1,
     "RoundNumber": 1,
@@ -1084,7 +1099,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'setup_preview')
                 </div>
                 <div class="col-lg-6">
                     <h3 class="h6">Expected CSV Headings</h3>
-                    <pre class="bg-light border rounded p-3 small mb-0" style="max-height: 220px; overflow: auto;">MatchNumber,RoundNumber,DateUtc,Location,HomeTeam,AwayTeam,Group
+                    <pre class="setup-code-block small mb-0">MatchNumber,RoundNumber,DateUtc,Location,HomeTeam,AwayTeam,Group
 1,1,2026-06-11 19:00:00Z,Mexico City Stadium,Mexico,South Africa,Group A</pre>
                 </div>
             </div>
@@ -1102,11 +1117,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'setup_preview')
                 <label class="form-check-label" for="apply_changes">Apply generated setup to the target database now</label>
             </div>
 
-            <button type="submit" class="btn btn-primary">Build Installation Plan</button>
+            <div class="setup-form__actions">
+                <button type="submit" class="btn btn-primary">Build Installation Plan</button>
+            </div>
         </div>
     </form>
 
-    <div class="card shadow-sm mb-4">
+    <div class="card">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
                 <div>
@@ -1126,19 +1143,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'setup_preview')
 
             <div class="row g-3 mb-3">
                 <div class="col-md-4">
-                    <div class="border rounded p-3 h-100">
+                    <div class="setup-stat">
                         <div class="small text-muted">Server</div>
                         <div class="fw-semibold"><?= htmlspecialchars($mysql_diagnostics['server'] !== '' ? $mysql_diagnostics['server'] : 'Not tested') ?></div>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="border rounded p-3 h-100">
+                    <div class="setup-stat">
                         <div class="small text-muted">Target database</div>
                         <div class="fw-semibold"><?= htmlspecialchars($mysql_diagnostics['target_database'] !== '' ? $mysql_diagnostics['target_database'] : 'Not provided') ?></div>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="border rounded p-3 h-100">
+                    <div class="setup-stat">
                         <div class="small text-muted">Tables found</div>
                         <div class="fw-semibold"><?= htmlspecialchars((string)$mysql_diagnostics['table_count']) ?></div>
                     </div>
@@ -1146,7 +1163,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'setup_preview')
             </div>
 
             <?php if ($mysql_diagnostics['message'] !== '') : ?>
-                <div class="alert <?= $mysql_diagnostics['status'] === 'Connected' ? 'alert-success' : 'alert-secondary' ?> py-2">
+                <div class="alert <?= $mysql_diagnostics['status'] === 'Connected' ? 'alert-success' : 'alert-secondary' ?> py-2 setup-alert setup-alert--inline">
                     <?= htmlspecialchars($mysql_diagnostics['message']) ?>
                 </div>
             <?php endif; ?>
@@ -1156,7 +1173,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'setup_preview')
                 <div class="row g-2">
                     <?php foreach ($mysql_diagnostics['tables'] as $tableName) : ?>
                         <div class="col-sm-6 col-lg-4">
-                            <div class="border rounded px-3 py-2 bg-light"><code><?= htmlspecialchars($tableName) ?></code></div>
+                            <div class="setup-table-pill"><code><?= htmlspecialchars($tableName) ?></code></div>
                         </div>
                     <?php endforeach; ?>
                 </div>
@@ -1171,7 +1188,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'setup_preview')
                 <div class="row g-3">
                     <?php foreach ($setup_summary as $label => $value) : ?>
                         <div class="col-md-6 col-xl-4">
-                            <div class="border rounded p-3 h-100">
+                            <div class="setup-stat">
                                 <div class="small text-muted"><?= htmlspecialchars($label) ?></div>
                                 <div class="fw-semibold"><?= htmlspecialchars($value) ?></div>
                             </div>
@@ -1211,7 +1228,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'setup_preview')
 
                 <h3 class="h6 mt-4">db-connect.php Preview</h3>
                 <p class="text-muted small">This generated file becomes the app’s live database connection if you choose to write it during apply.</p>
-                <pre class="bg-light p-3 border rounded mb-0" style="max-height: 260px; overflow: auto;"><?= htmlspecialchars($db_connect_template) ?></pre>
+                <pre class="setup-code-block mb-0"><?= htmlspecialchars($db_connect_template) ?></pre>
             </div>
         </div>
     <?php endif; ?>
@@ -1223,7 +1240,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'setup_preview')
                 <div class="row g-3">
                     <?php foreach ($tournament_summary as $label => $value) : ?>
                         <div class="col-md-6 col-xl-4">
-                            <div class="border rounded p-3 h-100">
+                            <div class="setup-stat">
                                 <div class="small text-muted"><?= htmlspecialchars($label) ?></div>
                                 <div class="fw-semibold"><?= htmlspecialchars($value) ?></div>
                             </div>
@@ -1238,7 +1255,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'setup_preview')
         <div class="card shadow-sm mb-4">
             <div class="card-body">
                 <h2 class="h5">config.php Preview</h2>
-                <pre class="bg-light p-3 border rounded mb-0" style="max-height: 320px; overflow: auto;"><?php foreach ($config_preview as $key => $value) { echo htmlspecialchars($key . ' = "' . $value . '";') . "\n"; } ?></pre>
+                <pre class="setup-code-block mb-0"><?php foreach ($config_preview as $key => $value) { echo htmlspecialchars($key . ' = "' . $value . '";') . "\n"; } ?></pre>
             </div>
         </div>
     <?php endif; ?>
@@ -1249,20 +1266,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'setup_preview')
                 <h2 class="h5">Database Preview</h2>
                 <div class="row g-3 mb-4">
                     <div class="col-md-4">
-                        <div class="border rounded p-3 h-100">
+                        <div class="setup-stat">
                             <div class="small text-muted">Target database</div>
                             <div class="fw-semibold"><?= htmlspecialchars($database_preview['database_name']) ?></div>
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="border rounded p-3 h-100">
+                        <div class="setup-stat">
                             <div class="small text-muted">App user</div>
                             <div class="fw-semibold"><?= htmlspecialchars($database_preview['app_user']) ?></div>
                         </div>
                     </div>
                     <?php foreach ($database_preview['tables'] as $table) : ?>
                         <div class="col-md-4">
-                            <div class="border rounded p-3 h-100">
+                            <div class="setup-stat">
                                 <div class="small text-muted">Table</div>
                                 <div class="fw-semibold"><?= htmlspecialchars($table['name']) ?></div>
                                 <div class="small text-muted mt-2">Columns</div>
@@ -1357,7 +1374,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'setup_preview')
                 <div class="row g-3">
                     <?php foreach ($group_preview as $groupName => $teams) : ?>
                         <div class="col-md-6 col-xl-4">
-                            <div class="border rounded p-3 h-100">
+                            <div class="setup-stat h-100">
                                 <h3 class="h6 mb-3"><?= htmlspecialchars($groupName) ?></h3>
                                 <div class="d-flex flex-column gap-2">
                                     <?php foreach ($teams as $team) : ?>
@@ -1384,7 +1401,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'setup_preview')
             <div class="card-body">
                 <h2 class="h5">Generated SQL</h2>
                 <p class="text-muted">This is the setup SQL that can create the target database, create the app user, build the required tables, and insert the imported fixtures.</p>
-                <pre class="bg-light p-3 border rounded mb-0" style="max-height: 420px; overflow: auto;"><?= htmlspecialchars(implode("\n", $sql_output)) ?></pre>
+                <pre class="setup-code-block mb-0"><?= htmlspecialchars(implode("\n", $sql_output)) ?></pre>
             </div>
         </div>
     <?php endif; ?>

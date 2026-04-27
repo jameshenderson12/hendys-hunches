@@ -88,6 +88,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="keywords" content="football, predictions, game">
 	  <title>Registration - Hendy's Hunches</title>
     <link href="ico/favicon.ico" rel="icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
     <!-- Vendor CSS Files -->
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
@@ -99,25 +102,412 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!--jQuery Files -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+    <style>
+      :root {
+        --hh-ink: #16231d;
+        --hh-green: #04331e;
+        --hh-green-mid: #2f8f63;
+        --hh-purple: #8f66d8;
+        --hh-purple-dark: #402064;
+        --hh-purple-deep: #28133f;
+        --hh-gold: #f0c556;
+        --hh-shadow: 0 24px 68px rgba(0, 0, 0, 0.32);
+      }
+
+      html {
+        height: auto;
+        min-height: 100%;
+      }
+
+      body.registration-concept {
+        min-height: 100vh;
+        margin: 0;
+        background:
+          linear-gradient(120deg, rgba(0, 31, 17, 0.94), rgba(0, 52, 28, 0.7) 46%, rgba(64, 32, 100, 0.92)),
+          url("img/football-stadium.jpg") center / cover fixed no-repeat;
+        color: #ffffff;
+        font-family: 'Lato', sans-serif;
+      }
+
+      .registration-page {
+        display: grid;
+        min-height: 100vh;
+        padding: 24px;
+        position: relative;
+      }
+
+      .registration-page::before {
+        background:
+          radial-gradient(circle at 20% 20%, rgba(240, 197, 86, 0.22), transparent 26%),
+          radial-gradient(circle at 78% 26%, rgba(143, 102, 216, 0.3), transparent 30%),
+          linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 44%);
+        content: "";
+        inset: 0;
+        pointer-events: none;
+        position: fixed;
+      }
+
+      .registration-page .cover-container {
+        max-width: 1220px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .registration-topbar {
+        align-items: flex-start;
+        display: flex;
+        gap: 16px;
+        justify-content: space-between;
+        margin-bottom: 22px;
+        width: 100%;
+      }
+
+      .registration-brand {
+        display: grid;
+        gap: 2px;
+        text-align: left;
+      }
+
+      .registration-brand strong,
+      .registration-brand span {
+        display: block;
+        letter-spacing: 0;
+      }
+
+      .registration-brand strong {
+        color: #ffffff;
+        font-size: 1.08rem;
+        font-weight: 900;
+        line-height: 1;
+      }
+
+      .registration-brand span {
+        color: rgba(255, 255, 255, 0.72);
+        font-size: 0.78rem;
+        font-weight: 900;
+        text-transform: uppercase;
+      }
+
+      .registration-page .nav-masthead {
+        gap: 12px;
+      }
+
+      .registration-page .nav-masthead .nav-link {
+        border-bottom: 2px solid transparent;
+        color: rgba(255, 255, 255, 0.82);
+        margin-left: 0;
+        padding: 6px 0;
+      }
+
+      .registration-page .nav-masthead .nav-link:hover,
+      .registration-page .nav-masthead .nav-link:focus {
+        border-bottom-color: var(--hh-gold);
+        color: #ffffff;
+      }
+
+      .registration-shell {
+        align-items: center;
+        display: grid;
+        gap: 28px;
+        grid-template-columns: minmax(280px, 0.78fr) minmax(0, 1.22fr);
+        margin: 0 auto;
+        width: 100%;
+      }
+
+      .registration-stage {
+        display: grid;
+        gap: 16px;
+        justify-items: center;
+        text-align: center;
+      }
+
+      .registration-stage__logo {
+        filter: drop-shadow(0 24px 42px rgba(0, 0, 0, 0.42));
+        height: auto;
+        max-width: min(34vw, 360px);
+        width: auto;
+      }
+
+      .registration-stage p {
+        color: rgba(255, 255, 255, 0.84);
+        font-weight: 700;
+        margin: 0;
+        max-width: 380px;
+      }
+
+      .registration-hosts {
+        align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: center;
+      }
+
+      .registration-hosts span {
+        align-items: center;
+        color: rgba(255, 255, 255, 0.88);
+        display: inline-flex;
+        gap: 8px;
+        font-weight: 900;
+      }
+
+      .registration-hosts img {
+        border: 1px solid rgba(255, 255, 255, 0.42);
+        border-radius: 4px;
+        box-shadow: 0 5px 12px rgba(0, 0, 0, 0.22);
+        height: 24px;
+        object-fit: cover;
+        width: 36px;
+      }
+
+      .registration-panel {
+        background: rgba(251, 252, 248, 0.96);
+        border: 1px solid rgba(255, 255, 255, 0.55);
+        border-radius: 8px;
+        box-shadow: var(--hh-shadow);
+        color: var(--hh-ink);
+        padding: 26px;
+        text-align: left;
+      }
+
+      .registration-panel h1 {
+        color: var(--hh-ink);
+        font-size: clamp(2rem, 4vw, 3.4rem);
+        font-weight: 900;
+        letter-spacing: 0;
+        line-height: 1;
+        margin: 0 0 8px;
+        text-align: left;
+      }
+
+      .registration-panel .registration-kicker {
+        color: var(--hh-purple-dark);
+        font-size: 0.78rem;
+        font-weight: 900;
+        letter-spacing: 0;
+        margin: 0 0 8px;
+        text-transform: uppercase;
+      }
+
+      .registration-panel .small,
+      .registration-panel .text-white-50 {
+        color: #59635f !important;
+      }
+
+      .registration-panel form {
+        background: transparent;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+        min-height: 0;
+        padding: 0;
+      }
+
+      .registration-panel label {
+        color: var(--hh-ink);
+        font-size: 1rem;
+        letter-spacing: 0;
+      }
+
+      .registration-panel .form-control,
+      .registration-panel .form-select,
+      .registration-panel .input-group {
+        margin-bottom: 1rem;
+        width: 100% !important;
+      }
+
+      .registration-panel .form-control,
+      .registration-panel .form-select {
+        border: 1px solid rgba(22, 35, 29, 0.22);
+        border-radius: 8px;
+        min-height: 46px;
+      }
+
+      .registration-panel .form-control:focus,
+      .registration-panel .form-select:focus {
+        border-color: var(--hh-purple);
+        box-shadow: 0 0 0 0.2rem rgba(143, 102, 216, 0.22);
+      }
+
+      .registration-panel .btn-primary {
+        background: var(--hh-purple);
+        border-color: var(--hh-purple);
+        border-radius: 8px;
+        color: #ffffff;
+        font-weight: 900;
+      }
+
+      .registration-panel .btn-primary:hover,
+      .registration-panel .btn-primary:focus {
+        background: #7650bd;
+        border-color: #7650bd;
+      }
+
+      .registration-panel .btn-success {
+        background: #2f8f63;
+        border-color: #2f8f63;
+        border-radius: 8px;
+        font-weight: 900;
+      }
+
+      .registration-panel .btn-success:hover,
+      .registration-panel .btn-success:focus {
+        background: #257a54;
+        border-color: #257a54;
+      }
+
+      .registration-panel .progressbar {
+        margin: 1.4rem 0 3.3rem;
+      }
+
+      .registration-panel .progressbar::before,
+      .registration-panel .progress {
+        background-color: rgba(22, 35, 29, 0.16);
+      }
+
+      .registration-panel .progress {
+        background-color: var(--hh-purple);
+      }
+
+      .registration-panel .progress-step {
+        background-color: #e4dedf;
+        color: var(--hh-ink);
+      }
+
+      .registration-panel .progress-step-active {
+        background-color: var(--hh-purple);
+        color: #ffffff;
+      }
+
+      .registration-panel .progress-step::after {
+        color: #59635f;
+        font-weight: 900;
+      }
+
+      .registration-panel .btn-outline-light {
+        border: 1px solid rgba(22, 35, 29, 0.16);
+        border-radius: 8px;
+        padding: 4px;
+      }
+
+      .registration-panel .btn-check:checked + .btn-outline-light {
+        border-color: var(--hh-purple);
+        box-shadow: 0 0 0 0.2rem rgba(143, 102, 216, 0.26);
+      }
+
+      .registration-panel .terms-panel {
+        background: rgba(64, 32, 100, 0.06);
+        border: 1px solid rgba(64, 32, 100, 0.16);
+        color: var(--hh-ink);
+      }
+
+      .registration-panel .terms-panel h5 {
+        color: var(--hh-purple-dark);
+        font-weight: 900;
+      }
+
+      .registration-panel hr {
+        border-color: rgba(22, 35, 29, 0.18);
+        opacity: 1;
+      }
+
+      body.registration-concept #footer {
+        color: rgba(255, 255, 255, 0.72);
+        position: relative;
+        z-index: 1;
+      }
+
+      @media (max-width: 991px) {
+        .registration-shell {
+          grid-template-columns: 1fr;
+        }
+
+        .registration-stage__logo {
+          max-width: min(62vw, 300px);
+        }
+
+        .registration-panel {
+          padding: 22px;
+        }
+      }
+
+      @media (max-width: 576px) {
+        .registration-page {
+          padding: 12px;
+        }
+
+        .registration-topbar {
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .registration-stage {
+          gap: 10px;
+        }
+
+        .registration-stage__logo {
+          max-width: 150px;
+        }
+
+        .registration-stage p {
+          font-size: 0.9rem;
+        }
+
+        .registration-hosts span {
+          font-size: 0;
+          gap: 0;
+        }
+
+        .registration-hosts img {
+          height: 18px;
+          width: 28px;
+        }
+
+        .registration-panel {
+          padding: 18px;
+        }
+
+        .registration-panel .progress-step::after {
+          font-size: 0.68rem;
+        }
+
+        .registration-panel .row-cols-6 {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+    </style>
 </head>
 
-  <body class="d-flex h-100 text-center text-bg-dark">
+  <body class="registration-concept text-bg-dark">
 
-		<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-  		<header class="mb-auto">
-  			<div>
-  				<h3 class="float-md-start mb-0">Hendy's Hunches</h3>
-  				<nav class="nav nav-masthead justify-content-center float-md-end">
-  					<a class="nav-link fw-bold py-1 px-0" href="index.php">Login</a>
+		<div class="registration-page">
+		<div class="cover-container d-flex w-100 mx-auto flex-column">
+  		<header class="registration-topbar">
+  			<div class="registration-brand">
+  				<strong>Hendy's Hunches</strong>
+          <span>Football prediction game</span>
+  			</div>
+  				<nav class="nav nav-masthead justify-content-center">
+  					<a class="nav-link fw-bold py-1 px-0" href="index-new.html">Login</a>
   					<a class="nav-link fw-bold py-1 px-0" href="forgot-password.php">Reset Password</a>
             <a class="nav-link fw-bold py-1 px-0" href="#terms-panel">Terms</a>
   				</nav>
-  			</div>
   		</header>
 
-		<main class="px-3 my-auto">
+		<main class="registration-shell">
+      <section class="registration-stage" aria-label="Hendy's Hunches registration">
+        <img class="registration-stage__logo" src="img/hh-logo-2026-purple.png" alt="Hendy's Hunches football predictions logo">
+        <p>Join the World Cup 2026 predictions game and get your squad ready before kick-off.</p>
+        <div class="registration-hosts" aria-label="World Cup 2026 host nations">
+          <span><img src="img/flags/ca.svg" alt=""> Canada</span>
+          <span><img src="img/flags/mx.svg" alt=""> Mexico</span>
+          <span><img src="img/flags/us.svg" alt=""> United States</span>
+        </div>
+      </section>
+      <section class="registration-panel" aria-label="Registration form">
       <?php if ($registrationSuccess): ?>
-          <h1>Registration</h1>
+          <p class="registration-kicker"><i class="bi bi-check-circle-fill"></i> Registration complete</p>
+          <h1>You're in</h1>
           <h3 class="my-5"><i class="bi bi-check-circle-fill text-success"></i><br>You have successfully registered!</h3>
           <p class="mb-3">Thank you for signing up to play Hendy's Hunches.</p>
           <p>You will now be automatically redirected back to the login page.</p> 
@@ -129,7 +519,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           </script>
         <?php else: ?>
 
-  			<h1>Registration</h1>
+        <p class="registration-kicker"><i class="bi bi-person-plus-fill"></i> New player signup</p>
+  			<h1>Register</h1>
         <div class="text-start small text-white-50 mt-2" id="stepLabel">Step 1 of 5: Contact</div>
 
         <!-- Progress bar -->
@@ -379,6 +770,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div> -->
       </form>
       <?php endif; ?>
+      </section>
 
 		</main>
 
@@ -608,6 +1000,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       });
       */
 	</script>
+    </div>
+    </div>
 
   <!-- Footer -->
   <?php include "php/footer.php" ?>

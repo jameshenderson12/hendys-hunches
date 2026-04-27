@@ -4,7 +4,7 @@ $page_title = 'Results';
 require_once dirname(__DIR__) . '/php/auth.php';
 require_once dirname(__DIR__) . '/php/flags.php';
 
-hh_require_login('../index.php');
+hh_require_admin('../dashboard.php');
 
 ?>
 <!DOCTYPE html>
@@ -142,6 +142,7 @@ hh_require_login('../index.php');
 
 		<section class="section">
 			<p class="lead">Admin page to record match results and update the game.</p>
+            <p><a class="btn btn-sm btn-outline-secondary" href="functions.php"><i class="bi bi-sliders"></i> Back to admin functions</a></p>
 
         <form id="resultForm" action="../php/insert-result.php" method="POST">
 

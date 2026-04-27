@@ -1,4 +1,21 @@
 {
     "search.useParentIgnoreFiles": false,
-    "search.useIgnoreFiles": false
+    "search.useIgnoreFiles": false,
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "3.11.194.70",
+            "port": 3306,
+            "driver": "MariaDB",
+            "username": "hh_admin",
+            "database": "hh_eu2024",
+            "name": "DB-Connect",
+            "askForPassword": true
+        }
+    ]
 }
