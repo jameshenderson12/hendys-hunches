@@ -20,6 +20,7 @@ $setup_summary = [];
 $permission_checks = [];
 $db_connect_template = '';
 $wizard_action = $_POST['wizard_action'] ?? '';
+$inline_mysql_feedback = null;
 
 $mysql_diagnostics = [
     'status' => 'Not tested',
@@ -646,6 +647,70 @@ function write_generated_db_connect(string $content): array {
     return ['ok' => true, 'path' => $path, 'message' => 'The generated db-connect.php file was written successfully.'];
 }
 
+function populate_mysql_diagnostics(array &$mysql_diagnostics, string $mysqlAdminServer, string $mysqlAdminUser, string $mysqlAdminPassword, string $targetDbName): ?mysqli {
+    if ($mysqlAdminServer === '' || $mysqlAdminUser === '') {
+        return null;
+    }
+
+    $adminConnectionAttempt = mysql_try_connect($mysqlAdminServer, $mysqlAdminUser, $mysqlAdminPassword, null);
+    if (!$adminConnectionAttempt['ok']) {
+        $mysql_diagnostics['status'] = 'Failed';
+        $mysql_diagnostics['message'] = $adminConnectionAttempt['message'];
+        $mysql_diagnostics['server'] = $mysqlAdminServer;
+        $mysql_diagnostics['target_database'] = $targetDbName;
+        return null;
+    }
+
+    /** @var mysqli $connection */
+    $connection = $adminConnectionAttempt['connection'];
+    $mysql_diagnostics['status'] = 'Connected';
+    $mysql_diagnostics['message'] = 'Admin connection successful.';
+    $mysql_diagnostics['server'] = $mysqlAdminServer;
+    $mysql_diagnostics['target_database'] = $targetDbName;
+
+    if ($targetDbName !== '') {
+        $inspection = inspect_target_database($connection, $targetDbName);
+        $mysql_diagnostics['database_exists'] = $inspection['exists'];
+        $mysql_diagnostics['tables'] = $inspection['tables'];
+        $mysql_diagnostics['table_count'] = count($inspection['tables']);
+        $mysql_diagnostics['message'] = $inspection['exists']
+            ? 'Admin connection successful. Existing tables for the target database are listed below.'
+            : 'Admin connection successful. The target database does not exist yet.';
+    }
+
+    return $connection;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'test_db_connection') {
+    $mysqlAdminServer = trim($_POST['mysql_admin_server'] ?? 'localhost');
+    $mysqlAdminUser = trim($_POST['mysql_admin_user'] ?? 'hh_admin');
+    $mysqlAdminPassword = trim($_POST['mysql_admin_password'] ?? '');
+    $targetDbName = trim($_POST['target_db_name'] ?? '');
+
+    if ($mysqlAdminServer === '') {
+        $errors[] = 'MySQL server address is required.';
+    }
+    if ($mysqlAdminUser === '') {
+        $errors[] = 'MySQL admin account is required.';
+    }
+
+    if (empty($errors)) {
+        $adminConnection = populate_mysql_diagnostics($mysql_diagnostics, $mysqlAdminServer, $mysqlAdminUser, $mysqlAdminPassword, $targetDbName);
+        if ($adminConnection instanceof mysqli) {
+            $inline_mysql_feedback = [
+                'type' => 'success',
+                'message' => 'MySQL admin connection test passed. Step 2 is ready.',
+            ];
+            mysqli_close($adminConnection);
+        } else {
+            $inline_mysql_feedback = [
+                'type' => 'danger',
+                'message' => 'MySQL admin connection test failed. Please check the credentials and try again.',
+            ];
+        }
+    }
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'setup_preview') {
     $siteTitle = trim($_POST['site_title'] ?? ($title ?? 'Hendy\'s Hunches'));
     $siteUrl = trim($_POST['site_url'] ?? ($base_url ?? ''));
@@ -742,31 +807,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'setup_preview')
 
     $adminConnection = null;
     if ($mysqlAdminServer !== '' && $mysqlAdminUser !== '') {
-        $adminConnectionAttempt = mysql_try_connect($mysqlAdminServer, $mysqlAdminUser, $mysqlAdminPassword, null);
-        if ($adminConnectionAttempt['ok']) {
-            $adminConnection = $adminConnectionAttempt['connection'];
-            $mysql_diagnostics['status'] = 'Connected';
-            $mysql_diagnostics['message'] = 'Admin connection successful.';
-            $mysql_diagnostics['server'] = $mysqlAdminServer;
-            $mysql_diagnostics['target_database'] = $targetDbName;
-
-            if ($targetDbName !== '') {
-                $inspection = inspect_target_database($adminConnection, $targetDbName);
-                $mysql_diagnostics['database_exists'] = $inspection['exists'];
-                $mysql_diagnostics['tables'] = $inspection['tables'];
-                $mysql_diagnostics['table_count'] = count($inspection['tables']);
-                $mysql_diagnostics['message'] = $inspection['exists']
-                    ? 'Admin connection successful. Existing tables for the target database are listed below.'
-                    : 'Admin connection successful. The target database does not exist yet.';
-            }
-        } else {
-            $mysql_diagnostics['status'] = 'Failed';
-            $mysql_diagnostics['message'] = $adminConnectionAttempt['message'];
-            $mysql_diagnostics['server'] = $mysqlAdminServer;
-            $mysql_diagnostics['target_database'] = $targetDbName;
-            if ($applyChanges) {
-                $errors[] = 'The MySQL admin connection failed, so setup changes cannot be applied.';
-            }
+        $adminConnection = populate_mysql_diagnostics($mysql_diagnostics, $mysqlAdminServer, $mysqlAdminUser, $mysqlAdminPassword, $targetDbName);
+        if (!$adminConnection instanceof mysqli && $applyChanges) {
+            $errors[] = 'The MySQL admin connection failed, so setup changes cannot be applied.';
         }
     }
 
@@ -904,6 +947,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'setup_preview')
         mysqli_close($adminConnection);
     }
 }
+
+$site_settings_ready = trim((string)($_POST['site_title'] ?? ($title ?? ''))) !== ''
+    && trim((string)($_POST['site_url'] ?? ($base_url ?? ''))) !== '';
+$mysql_ready = trim((string)($_POST['mysql_admin_server'] ?? '')) !== ''
+    && trim((string)($_POST['mysql_admin_user'] ?? '')) !== '';
+$database_ready = trim((string)($_POST['target_db_name'] ?? '')) !== ''
+    && trim((string)($_POST['target_db_user'] ?? '')) !== ''
+    && trim((string)($_POST['target_db_user_host'] ?? '')) !== '';
+$source_ready = trim((string)($_POST['fixtures_url'] ?? '')) !== '' || !empty($_FILES['fixtures_file']['tmp_name']);
+$review_ready = !empty($setup_summary) || !empty($tournament_summary) || !empty($sql_output);
+$show_site_step = !$review_ready && $wizard_action !== 'test_db_connection';
+$show_mysql_step = $wizard_action === 'test_db_connection';
+$show_database_step = false;
+$show_review_step = $review_ready;
+$mysql_test_success = $wizard_action === 'test_db_connection' && $inline_mysql_feedback !== null && $inline_mysql_feedback['type'] === 'success';
 ?>
 <!DOCTYPE html>
 <html lang="en-GB">
@@ -948,7 +1006,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'setup_preview')
         </div>
     </section>
 
-    <?php if (!empty($errors)) : ?>
+    <?php if (!empty($errors) && $wizard_action !== 'test_db_connection') : ?>
         <div class="alert alert-danger setup-alert">
             <ul class="mb-0">
                 <?php foreach ($errors as $error) : ?>
@@ -958,7 +1016,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'setup_preview')
         </div>
     <?php endif; ?>
 
-    <?php if (!empty($messages)) : ?>
+    <?php if (!empty($messages) && $wizard_action !== 'test_db_connection') : ?>
         <div class="alert alert-success setup-alert">
             <ul class="mb-0">
                 <?php foreach ($messages as $message) : ?>
@@ -969,7 +1027,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'setup_preview')
     <?php endif; ?>
 
     <form method="POST" class="card setup-form-card" enctype="multipart/form-data">
-        <input type="hidden" name="wizard_action" value="setup_preview">
         <div class="card-body">
             <div class="setup-section">
                 <div class="setup-section__header">
@@ -981,111 +1038,200 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'setup_preview')
                 </div>
             </div>
 
-            <div class="row g-4">
-                <div class="col-lg-6">
-                    <div class="setup-panel">
-                    <h2 class="h5">1. Site Settings</h2>
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label" for="site_title">Site name</label>
-                            <input type="text" class="form-control" id="site_title" name="site_title" value="<?= htmlspecialchars($_POST['site_title'] ?? ($title ?? 'Hendy\'s Hunches')) ?>" required>
+            <div class="row g-4 align-items-start">
+                <div class="col-xl-8">
+                    <div class="accordion setup-accordion" id="setupWizardAccordion">
+                        <div class="accordion-item setup-accordion__item">
+                            <h2 class="accordion-header" id="setup-heading-site">
+                                <button class="accordion-button<?= $review_ready ? ' collapsed' : '' ?>" type="button" data-bs-toggle="collapse" data-bs-target="#setup-collapse-site" aria-expanded="<?= $review_ready ? 'false' : 'true' ?>" aria-controls="setup-collapse-site">
+                                    <span class="setup-step">
+                                        <span class="setup-step__number">1</span>
+                                        <span class="setup-step__body">
+                                            <span class="setup-step__title">Site settings</span>
+                                            <span class="setup-step__meta"><?= $site_settings_ready ? 'Ready to use' : 'Add the core site details' ?></span>
+                                        </span>
+                                        <span class="setup-step__state <?= $site_settings_ready ? 'is-complete' : 'is-pending' ?>"><?= $site_settings_ready ? 'Ready' : 'Pending' ?></span>
+                                    </span>
+                                </button>
+                            </h2>
+                            <div id="setup-collapse-site" class="accordion-collapse collapse<?= $show_site_step ? ' show' : '' ?>" aria-labelledby="setup-heading-site" data-bs-parent="#setupWizardAccordion">
+                                <div class="accordion-body">
+                                    <div class="setup-panel">
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label" for="site_title">Site name</label>
+                                                <input type="text" class="form-control" id="site_title" name="site_title" value="<?= htmlspecialchars($_POST['site_title'] ?? ($title ?? 'Hendy\'s Hunches')) ?>" required>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label" for="site_url">Base URL</label>
+                                                <input type="url" class="form-control" id="site_url" name="site_url" value="<?= htmlspecialchars($_POST['site_url'] ?? ($base_url ?? '')) ?>" required>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label" for="timezone">Timezone</label>
+                                                <input type="text" class="form-control" id="timezone" name="timezone" value="<?= htmlspecialchars($_POST['timezone'] ?? (date_default_timezone_get() ?: 'Europe/London')) ?>">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label" for="admin_email">Admin email</label>
+                                                <input type="email" class="form-control" id="admin_email" name="admin_email" value="<?= htmlspecialchars($_POST['admin_email'] ?? '') ?>">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label" for="storage_dir">Backups directory</label>
+                                                <input type="text" class="form-control" id="storage_dir" name="storage_dir" value="<?= htmlspecialchars($_POST['storage_dir'] ?? ($backup_dir ?? '/bak')) ?>">
+                                            </div>
+                                        </div>
+                                        <div class="setup-panel__actions">
+                                            <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#setup-collapse-mysql" aria-controls="setup-collapse-mysql">Continue to MySQL</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label" for="site_url">Base URL</label>
-                            <input type="url" class="form-control" id="site_url" name="site_url" value="<?= htmlspecialchars($_POST['site_url'] ?? ($base_url ?? '')) ?>" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label" for="timezone">Timezone</label>
-                            <input type="text" class="form-control" id="timezone" name="timezone" value="<?= htmlspecialchars($_POST['timezone'] ?? (date_default_timezone_get() ?: 'Europe/London')) ?>">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label" for="admin_email">Admin email</label>
-                            <input type="email" class="form-control" id="admin_email" name="admin_email" value="<?= htmlspecialchars($_POST['admin_email'] ?? '') ?>">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label" for="storage_dir">Backups directory</label>
-                            <input type="text" class="form-control" id="storage_dir" name="storage_dir" value="<?= htmlspecialchars($_POST['storage_dir'] ?? ($backup_dir ?? '/bak')) ?>">
-                        </div>
-                    </div>
-                    </div>
-                </div>
 
-                <div class="col-lg-6">
-                    <div class="setup-panel">
-                    <h2 class="h5">2. MySQL Admin Connection</h2>
-                    <p class="text-muted small">Use your admin account here, for example <code>hh_admin</code> on the target MySQL server, so the wizard can test the server, inspect the target database, and generate the app database/user setup.</p>
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label" for="mysql_admin_server">MySQL server address</label>
-                            <input type="text" class="form-control" id="mysql_admin_server" name="mysql_admin_server" value="<?= htmlspecialchars($_POST['mysql_admin_server'] ?? 'localhost') ?>" required>
+                        <div class="accordion-item setup-accordion__item">
+                            <h2 class="accordion-header" id="setup-heading-mysql">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#setup-collapse-mysql" aria-expanded="false" aria-controls="setup-collapse-mysql">
+                                    <span class="setup-step">
+                                        <span class="setup-step__number">2</span>
+                                        <span class="setup-step__body">
+                                            <span class="setup-step__title">MySQL admin connection</span>
+                                            <span class="setup-step__meta"><?= $mysql_diagnostics['status'] === 'Connected' ? 'Connection test passed' : 'Connect and inspect the target server' ?></span>
+                                        </span>
+                                        <span class="setup-step__state <?= $mysql_diagnostics['status'] === 'Connected' ? 'is-complete' : 'is-pending' ?>"><?= $mysql_diagnostics['status'] === 'Connected' ? 'Ready' : 'Pending' ?></span>
+                                    </span>
+                                </button>
+                            </h2>
+                            <div id="setup-collapse-mysql" class="accordion-collapse collapse<?= $show_mysql_step ? ' show' : '' ?>" aria-labelledby="setup-heading-mysql" data-bs-parent="#setupWizardAccordion">
+                                <div class="accordion-body">
+                                    <div class="setup-panel">
+                                        <p class="text-muted small">Use your admin account here, for example <code>hh_admin</code> on the target MySQL server, so the wizard can test the server, inspect the target database, and generate the app database and user setup.</p>
+                                        <?php if ($inline_mysql_feedback !== null) : ?>
+                                            <div class="alert alert-<?= htmlspecialchars($inline_mysql_feedback['type']) ?> setup-inline-feedback mb-3" id="setup-inline-mysql-feedback" role="status" aria-live="polite">
+                                                <?= htmlspecialchars($inline_mysql_feedback['message']) ?>
+                                            </div>
+                                        <?php endif; ?>
+                                        <div class="row g-3">
+                                            <div class="col-md-12">
+                                                <label class="form-label" for="mysql_admin_server">MySQL server address</label>
+                                                <input type="text" class="form-control" id="mysql_admin_server" name="mysql_admin_server" value="<?= htmlspecialchars($_POST['mysql_admin_server'] ?? 'localhost') ?>" required>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label" for="mysql_admin_user">MySQL admin user</label>
+                                                <input type="text" class="form-control" id="mysql_admin_user" name="mysql_admin_user" value="<?= htmlspecialchars($_POST['mysql_admin_user'] ?? 'hh_admin') ?>" required>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label" for="mysql_admin_password">MySQL admin password</label>
+                                                <input type="password" class="form-control" id="mysql_admin_password" name="mysql_admin_password" value="<?= htmlspecialchars($_POST['mysql_admin_password'] ?? '') ?>">
+                                            </div>
+                                        </div>
+                                        <div class="setup-panel__actions">
+                                            <button class="btn btn-outline-secondary btn-sm" type="submit" name="wizard_action" value="test_db_connection" formnovalidate>Test DB connection</button>
+                                            <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#setup-collapse-database" aria-controls="setup-collapse-database">Continue to app database</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label" for="mysql_admin_user">MySQL admin user</label>
-                            <input type="text" class="form-control" id="mysql_admin_user" name="mysql_admin_user" value="<?= htmlspecialchars($_POST['mysql_admin_user'] ?? 'hh_admin') ?>" required>
-                        </div>
-                        <div class="col-md-12">
-                            <label class="form-label" for="mysql_admin_password">MySQL admin password</label>
-                            <input type="password" class="form-control" id="mysql_admin_password" name="mysql_admin_password" value="<?= htmlspecialchars($_POST['mysql_admin_password'] ?? '') ?>">
-                        </div>
-                    </div>
-                    </div>
-                </div>
-            </div>
 
-            <div class="setup-divider"></div>
+                        <div class="accordion-item setup-accordion__item">
+                            <h2 class="accordion-header" id="setup-heading-database">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#setup-collapse-database" aria-expanded="false" aria-controls="setup-collapse-database">
+                                    <span class="setup-step">
+                                        <span class="setup-step__number">3</span>
+                                        <span class="setup-step__body">
+                                            <span class="setup-step__title">App database and user</span>
+                                            <span class="setup-step__meta"><?= $database_ready ? 'Target database details captured' : 'Set the database name and app credentials' ?></span>
+                                        </span>
+                                        <span class="setup-step__state <?= $database_ready ? 'is-complete' : 'is-pending' ?>"><?= $database_ready ? 'Ready' : 'Pending' ?></span>
+                                    </span>
+                                </button>
+                            </h2>
+                            <div id="setup-collapse-database" class="accordion-collapse collapse<?= $show_database_step ? ' show' : '' ?>" aria-labelledby="setup-heading-database" data-bs-parent="#setupWizardAccordion">
+                                <div class="accordion-body">
+                                    <div class="setup-panel">
+                                        <div class="row g-3">
+                                            <div class="col-md-12">
+                                                <label class="form-label" for="target_db_name">Target database name</label>
+                                                <input type="text" class="form-control" id="target_db_name" name="target_db_name" value="<?= htmlspecialchars($_POST['target_db_name'] ?? '') ?>" placeholder="hh_worldcup2026" required>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label" for="target_db_user">App database user</label>
+                                                <input type="text" class="form-control" id="target_db_user" name="target_db_user" value="<?= htmlspecialchars($_POST['target_db_user'] ?? '') ?>" placeholder="hh_user" required>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label" for="target_db_password">App database password</label>
+                                                <input type="password" class="form-control" id="target_db_password" name="target_db_password" value="<?= htmlspecialchars($_POST['target_db_password'] ?? '') ?>">
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label class="form-label" for="target_db_user_host">App user host</label>
+                                                <input type="text" class="form-control" id="target_db_user_host" name="target_db_user_host" value="<?= htmlspecialchars($_POST['target_db_user_host'] ?? 'localhost') ?>" required>
+                                            </div>
+                                        </div>
+                                        <div class="setup-panel__actions">
+                                            <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#setup-collapse-source" aria-controls="setup-collapse-source">Continue to tournament source</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-            <div class="row g-4">
-                <div class="col-lg-6">
-                    <div class="setup-panel">
-                    <h2 class="h5">3. App Database & User</h2>
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label" for="target_db_name">Target database name</label>
-                            <input type="text" class="form-control" id="target_db_name" name="target_db_name" value="<?= htmlspecialchars($_POST['target_db_name'] ?? '') ?>" placeholder="hh_worldcup2026" required>
+                        <div class="accordion-item setup-accordion__item">
+                            <h2 class="accordion-header" id="setup-heading-source">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#setup-collapse-source" aria-expanded="false" aria-controls="setup-collapse-source">
+                                    <span class="setup-step">
+                                        <span class="setup-step__number">4</span>
+                                        <span class="setup-step__body">
+                                            <span class="setup-step__title">Tournament source</span>
+                                            <span class="setup-step__meta"><?= $source_ready ? 'Fixture source supplied' : 'Choose a feed or upload a local file' ?></span>
+                                        </span>
+                                        <span class="setup-step__state <?= $source_ready ? 'is-complete' : 'is-pending' ?>"><?= $source_ready ? 'Ready' : 'Pending' ?></span>
+                                    </span>
+                                </button>
+                            </h2>
+                            <div id="setup-collapse-source" class="accordion-collapse collapse" aria-labelledby="setup-heading-source" data-bs-parent="#setupWizardAccordion">
+                                <div class="accordion-body">
+                                    <div class="setup-panel">
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label" for="tournament_name">Tournament name</label>
+                                                <input type="text" class="form-control" id="tournament_name" name="tournament_name" value="<?= htmlspecialchars($_POST['tournament_name'] ?? '') ?>" placeholder="Leave blank to infer from file/feed">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label" for="fixtures_url">Feed URL</label>
+                                                <input type="url" class="form-control" id="fixtures_url" name="fixtures_url" value="<?= htmlspecialchars($_POST['fixtures_url'] ?? '') ?>" placeholder="https://fixturedownload.com/feed/json/fifa-world-cup-2026">
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label class="form-label" for="fixtures_file">Import local file</label>
+                                                <input type="file" class="form-control" id="fixtures_file" name="fixtures_file" accept=".csv,.json">
+                                            </div>
+                                        </div>
+                                        <div class="setup-panel__actions">
+                                            <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#setup-collapse-review" aria-controls="setup-collapse-review">Continue to review</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label" for="target_db_user">App database user</label>
-                            <input type="text" class="form-control" id="target_db_user" name="target_db_user" value="<?= htmlspecialchars($_POST['target_db_user'] ?? '') ?>" placeholder="hh_user" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label" for="target_db_password">App database password</label>
-                            <input type="password" class="form-control" id="target_db_password" name="target_db_password" value="<?= htmlspecialchars($_POST['target_db_password'] ?? '') ?>">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label" for="target_db_user_host">App user host</label>
-                            <input type="text" class="form-control" id="target_db_user_host" name="target_db_user_host" value="<?= htmlspecialchars($_POST['target_db_user_host'] ?? 'localhost') ?>" required>
-                        </div>
-                    </div>
-                    </div>
-                </div>
 
-                <div class="col-lg-6">
-                    <div class="setup-panel">
-                    <h2 class="h5">4. Tournament Source</h2>
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label" for="tournament_name">Tournament name</label>
-                            <input type="text" class="form-control" id="tournament_name" name="tournament_name" value="<?= htmlspecialchars($_POST['tournament_name'] ?? '') ?>" placeholder="Leave blank to infer from file/feed">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label" for="fixtures_url">Feed URL</label>
-                            <input type="url" class="form-control" id="fixtures_url" name="fixtures_url" value="<?= htmlspecialchars($_POST['fixtures_url'] ?? '') ?>" placeholder="https://fixturedownload.com/feed/json/fifa-world-cup-2026">
-                        </div>
-                        <div class="col-md-12">
-                            <label class="form-label" for="fixtures_file">Import local file</label>
-                            <input type="file" class="form-control" id="fixtures_file" name="fixtures_file" accept=".csv,.json">
-                        </div>
-                    </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="setup-divider"></div>
-
-            <div class="row g-3">
-                <div class="col-lg-6">
-                    <h3 class="h6">Expected JSON Shape</h3>
-                    <pre class="setup-code-block small mb-0">[
+                        <div class="accordion-item setup-accordion__item">
+                            <h2 class="accordion-header" id="setup-heading-review">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#setup-collapse-review" aria-expanded="false" aria-controls="setup-collapse-review">
+                                    <span class="setup-step">
+                                        <span class="setup-step__number">5</span>
+                                        <span class="setup-step__body">
+                                            <span class="setup-step__title">Review and build</span>
+                                            <span class="setup-step__meta"><?= $review_ready ? 'Preview generated successfully' : 'Build the plan, then review outputs below' ?></span>
+                                        </span>
+                                        <span class="setup-step__state <?= $review_ready ? 'is-complete' : 'is-pending' ?>"><?= $review_ready ? 'Built' : 'Review' ?></span>
+                                    </span>
+                                </button>
+                            </h2>
+                            <div id="setup-collapse-review" class="accordion-collapse collapse<?= $show_review_step ? ' show' : '' ?>" aria-labelledby="setup-heading-review" data-bs-parent="#setupWizardAccordion">
+                                <div class="accordion-body">
+                                    <div class="setup-panel">
+                                        <div class="row g-3">
+                                            <div class="col-lg-6">
+                                                <h3 class="h6">Expected JSON Shape</h3>
+                                                <pre class="setup-code-block setup-code-block--compact small mb-0">[
   {
     "MatchNumber": 1,
     "RoundNumber": 1,
@@ -1096,29 +1242,73 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'setup_preview')
     "Group": "Group A"
   }
 ]</pre>
-                </div>
-                <div class="col-lg-6">
-                    <h3 class="h6">Expected CSV Headings</h3>
-                    <pre class="setup-code-block small mb-0">MatchNumber,RoundNumber,DateUtc,Location,HomeTeam,AwayTeam,Group
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <h3 class="h6">Expected CSV Headings</h3>
+                                                <pre class="setup-code-block setup-code-block--compact small mb-0">MatchNumber,RoundNumber,DateUtc,Location,HomeTeam,AwayTeam,Group
 1,1,2026-06-11 19:00:00Z,Mexico City Stadium,Mexico,South Africa,Group A</pre>
+                                            </div>
+                                        </div>
+                                        <p class="text-muted small mb-0 mt-3">When you build the installation plan, the diagnostics, previews and generated SQL will appear below for a full pre-flight check.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
+                <div class="col-xl-4">
+                    <aside class="setup-sidebar">
+                        <div class="setup-sidebar__panel">
+                            <p class="eyebrow mb-2">At a glance</p>
+                            <h2 class="h5 mb-3">Review panel</h2>
+                            <div class="setup-review-list">
+                                <div class="setup-review-item">
+                                    <span>Site</span>
+                                    <strong><?= htmlspecialchars($_POST['site_title'] ?? ($title ?? 'Hendy\'s Hunches')) ?></strong>
+                                </div>
+                                <div class="setup-review-item">
+                                    <span>MySQL server</span>
+                                    <strong><?= htmlspecialchars($_POST['mysql_admin_server'] ?? 'localhost') ?></strong>
+                                </div>
+                                <div class="setup-review-item">
+                                    <span>Target database</span>
+                                    <strong><?= htmlspecialchars($_POST['target_db_name'] ?? 'Not set') ?></strong>
+                                </div>
+                                <div class="setup-review-item">
+                                    <span>App user</span>
+                                    <strong><?= htmlspecialchars($_POST['target_db_user'] ?? 'Not set') ?></strong>
+                                </div>
+                                <div class="setup-review-item">
+                                    <span>Tournament</span>
+                                    <strong><?= htmlspecialchars($_POST['tournament_name'] ?? 'Will infer from source') ?></strong>
+                                </div>
+                                <div class="setup-review-item">
+                                    <span>Fixture source</span>
+                                    <strong><?= htmlspecialchars($_POST['fixtures_url'] ?? (!empty($_FILES['fixtures_file']['name']) ? $_FILES['fixtures_file']['name'] : 'Not supplied')) ?></strong>
+                                </div>
+                            </div>
 
-            <div class="form-check mt-4">
-                <input class="form-check-input" type="checkbox" id="truncate_schedule" name="truncate_schedule" <?= isset($_POST['truncate_schedule']) ? 'checked' : '' ?>>
-                <label class="form-check-label" for="truncate_schedule">Clear existing schedule rows before import</label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="write_db_connect" name="write_db_connect" <?= !isset($_POST['wizard_action']) || isset($_POST['write_db_connect']) ? 'checked' : '' ?>>
-                <label class="form-check-label" for="write_db_connect">Write the generated <code>php/db-connect.php</code> file when setup is applied</label>
-            </div>
-            <div class="form-check mb-3">
-                <input class="form-check-input" type="checkbox" id="apply_changes" name="apply_changes" <?= isset($_POST['apply_changes']) ? 'checked' : '' ?>>
-                <label class="form-check-label" for="apply_changes">Apply generated setup to the target database now</label>
-            </div>
+                            <div class="setup-sidebar__checks">
+                                <label class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="truncate_schedule" name="truncate_schedule" <?= isset($_POST['truncate_schedule']) ? 'checked' : '' ?>>
+                                    <span class="form-check-label">Clear existing schedule rows before import</span>
+                                </label>
+                                <label class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="write_db_connect" name="write_db_connect" <?= !isset($_POST['wizard_action']) || isset($_POST['write_db_connect']) ? 'checked' : '' ?>>
+                                    <span class="form-check-label">Write the generated <code>php/db-connect.php</code> file when setup is applied</span>
+                                </label>
+                                <label class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="apply_changes" name="apply_changes" <?= isset($_POST['apply_changes']) ? 'checked' : '' ?>>
+                                    <span class="form-check-label">Apply generated setup to the target database now</span>
+                                </label>
+                            </div>
 
-            <div class="setup-form__actions">
-                <button type="submit" class="btn btn-primary">Build Installation Plan</button>
+                            <div class="setup-form__actions">
+                                <button type="submit" name="wizard_action" value="setup_preview" class="btn btn-primary w-100">Build Installation Plan</button>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
             </div>
         </div>
     </form>
@@ -1408,5 +1598,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'setup_preview')
 </main>
 
 <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<?php if ($wizard_action === 'test_db_connection') : ?>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var mysqlPanel = document.getElementById('setup-collapse-mysql');
+  var databasePanel = document.getElementById('setup-collapse-database');
+  var mysqlHeading = document.getElementById('setup-heading-mysql');
+
+  if (mysqlHeading) {
+    mysqlHeading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  <?php if ($mysql_test_success) : ?>
+  window.setTimeout(function () {
+    if (!mysqlPanel || !databasePanel || typeof bootstrap === 'undefined' || !bootstrap.Collapse) {
+      return;
+    }
+
+    var mysqlCollapse = bootstrap.Collapse.getOrCreateInstance(mysqlPanel, { toggle: false });
+    var databaseCollapse = bootstrap.Collapse.getOrCreateInstance(databasePanel, { toggle: false });
+
+    mysqlCollapse.hide();
+    databaseCollapse.show();
+
+    window.setTimeout(function () {
+      databasePanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 250);
+  }, 2200);
+  <?php endif; ?>
+});
+</script>
+<?php endif; ?>
 </body>
 </html>
