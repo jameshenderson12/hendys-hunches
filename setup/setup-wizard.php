@@ -21,6 +21,9 @@ $permission_checks = [];
 $db_connect_template = '';
 $wizard_action = $_POST['wizard_action'] ?? '';
 $inline_mysql_feedback = null;
+$table_install_context = [];
+$runtime_audit = [];
+$table_audit = [];
 
 $mysql_diagnostics = [
     'status' => 'Not tested',
@@ -531,6 +534,144 @@ function build_schedule_insert_sql(array $fixture): string {
     );
 }
 
+function build_match_results_create_sql(int $totalScoreColumns): string {
+    $columns = [
+        'match_id SMALLINT(6) PRIMARY KEY NOT NULL AUTO_INCREMENT',
+    ];
+
+    for ($match = 1; $match <= $totalScoreColumns; $match++) {
+        $columns[] = 'score' . $match . '_r TINYINT(4) DEFAULT NULL';
+    }
+
+    return "CREATE TABLE IF NOT EXISTS live_match_results (\n    " . implode(",\n    ", $columns) . "\n);";
+}
+
+function build_prediction_table_create_sql(string $tableName, int $startScoreIndex, int $scoreColumnCount): string {
+    $columns = [
+        'id SMALLINT(6) NOT NULL',
+        'username CHAR(50) UNIQUE NOT NULL',
+        'firstname CHAR(50) NOT NULL',
+        'surname CHAR(50) NOT NULL',
+    ];
+
+    for ($match = $startScoreIndex; $match < $startScoreIndex + $scoreColumnCount; $match++) {
+        $columns[] = 'score' . $match . '_p TINYINT(4) NOT NULL';
+    }
+
+    $columns[] = 'lastupdate TIMESTAMP NULL';
+    $columns[] = "points_total SMALLINT(6) DEFAULT '0'";
+
+    return "CREATE TABLE IF NOT EXISTS {$tableName} (\n    " . implode(",\n    ", $columns) . "\n);";
+}
+
+function read_table_install_context_from_request(): array {
+    $keys = [
+        'group_fixture_count',
+        'round_of_16_count',
+        'quarter_final_count',
+        'semi_final_count',
+        'final_count',
+        'total_matches',
+    ];
+
+    $context = [];
+    foreach ($keys as $key) {
+        if (!isset($_POST[$key]) || $_POST[$key] === '') {
+            return [];
+        }
+        $context[$key] = max(0, (int) $_POST[$key]);
+    }
+
+    return $context;
+}
+
+function build_installable_table_definitions(array $context): array {
+    $groupCount = $context['group_fixture_count'] ?? 0;
+    $ro16Count = $context['round_of_16_count'] ?? 0;
+    $qfCount = $context['quarter_final_count'] ?? 0;
+    $sfCount = $context['semi_final_count'] ?? 0;
+    $finalCount = $context['final_count'] ?? 0;
+    $totalMatches = $context['total_matches'] ?? 0;
+
+    $groupScoreCount = $groupCount * 2;
+    $ro16ScoreCount = $ro16Count * 2;
+    $qfScoreCount = $qfCount * 2;
+    $sfScoreCount = $sfCount * 2;
+    $finalScoreCount = $finalCount * 2;
+    $totalScoreColumns = $totalMatches * 2;
+
+    $ro16Start = $groupScoreCount + 1;
+    $qfStart = $ro16Start + $ro16ScoreCount;
+    $sfStart = $qfStart + $qfScoreCount;
+    $finalStart = $sfStart + $sfScoreCount;
+
+    return [
+        'user_info' => [
+            'label' => 'User Information',
+            'file' => 'sql/setup-user-info-table.sql',
+            'table' => 'live_user_information',
+            'sql' => file_get_contents(__DIR__ . '/../sql/setup-user-info-table.sql') ?: '',
+            'description' => 'Player accounts, profile fields, payment status and ranking positions.',
+        ],
+        'temp_information' => [
+            'label' => 'Temporary Passwords',
+            'file' => 'sql/setup-temp-information.sql',
+            'table' => 'live_temp_information',
+            'sql' => file_get_contents(__DIR__ . '/../sql/setup-temp-information.sql') ?: '',
+            'description' => 'Temporary password reset records for account recovery.',
+        ],
+        'group_standings' => [
+            'label' => 'Group Standings',
+            'file' => 'sql/setup-group-standings-table.sql',
+            'table' => 'live_group_standings',
+            'sql' => file_get_contents(__DIR__ . '/../sql/setup-group-standings-table.sql') ?: '',
+            'description' => 'Cached standings table for the group stage.',
+        ],
+        'match_results' => [
+            'label' => 'Match Results',
+            'file' => 'sql/setup-match-results-table.sql',
+            'table' => 'live_match_results',
+            'sql' => build_match_results_create_sql($totalScoreColumns),
+            'description' => 'Stores home and away result values across all ' . $totalMatches . ' fixtures (' . $totalScoreColumns . ' score columns).',
+        ],
+        'predictions_groups' => [
+            'label' => 'Group Predictions',
+            'file' => 'sql/setup-user-predicitions-table-groups.sql',
+            'table' => 'live_user_predictions_groups',
+            'sql' => build_prediction_table_create_sql('live_user_predictions_groups', 1, $groupScoreCount),
+            'description' => 'Prediction score slots for group fixtures 1-' . $groupCount . ' (' . $groupScoreCount . ' values).',
+        ],
+        'predictions_ro16' => [
+            'label' => 'Round of 16 Predictions',
+            'file' => 'sql/setup-user-predicitions-table-ro16.sql',
+            'table' => 'live_user_predictions_ro16',
+            'sql' => build_prediction_table_create_sql('live_user_predictions_ro16', $ro16Start, $ro16ScoreCount),
+            'description' => 'Prediction score slots for Round of 16 match scores ' . $ro16Start . '-' . ($ro16Start + $ro16ScoreCount - 1) . '.',
+        ],
+        'predictions_qf' => [
+            'label' => 'Quarter-Final Predictions',
+            'file' => 'sql/setup-user-predicitions-table-qf.sql',
+            'table' => 'live_user_predictions_qf',
+            'sql' => build_prediction_table_create_sql('live_user_predictions_qf', $qfStart, $qfScoreCount),
+            'description' => 'Prediction score slots for quarter-final match scores ' . $qfStart . '-' . ($qfStart + $qfScoreCount - 1) . '.',
+        ],
+        'predictions_sf' => [
+            'label' => 'Semi-Final Predictions',
+            'file' => 'sql/setup-user-predicitions-table-sf.sql',
+            'table' => 'live_user_predictions_sf',
+            'sql' => build_prediction_table_create_sql('live_user_predictions_sf', $sfStart, $sfScoreCount),
+            'description' => 'Prediction score slots for semi-final match scores ' . $sfStart . '-' . ($sfStart + $sfScoreCount - 1) . '.',
+        ],
+        'predictions_final' => [
+            'label' => 'Final Stage Predictions',
+            'file' => 'sql/setup-user-predicitions-table-final.sql',
+            'table' => 'live_user_predictions_final',
+            'sql' => build_prediction_table_create_sql('live_user_predictions_final', $finalStart, $finalScoreCount),
+            'description' => 'Prediction score slots for final-stage match scores ' . $finalStart . '-' . ($finalStart + $finalScoreCount - 1) . '.',
+        ],
+    ];
+}
+
 function render_flag_preview_cell(string $flagPath, string $teamName): string {
     if ($flagPath === '') {
         return '<span class="text-muted small">No flag mapped</span>';
@@ -584,6 +725,105 @@ function inspect_target_database(mysqli $connection, string $databaseName): arra
         'exists' => $exists,
         'tables' => $tables,
     ];
+}
+
+function fetch_table_columns(mysqli $connection, string $tableName): array {
+    $columns = [];
+    $result = mysqli_query($connection, 'SHOW COLUMNS FROM ' . mysql_quote_identifier($tableName));
+    if (!$result) {
+        return $columns;
+    }
+
+    while ($row = mysqli_fetch_assoc($result)) {
+        if (!empty($row['Field'])) {
+            $columns[] = $row['Field'];
+        }
+    }
+
+    mysqli_free_result($result);
+    return $columns;
+}
+
+function build_runtime_audit(array $tableInstallContext): array {
+    global $title, $version, $base_url, $competition, $competition_location, $developer;
+    global $no_of_group_fixtures, $no_of_ro16_fixtures, $no_of_qf_fixtures, $no_of_sf_fixtures, $no_of_final_fixtures, $no_of_total_fixtures;
+
+    $rows = [
+        ['label' => '$title', 'actual' => (string) $title, 'expected' => 'Hendy\'s Hunches branding', 'status' => 'info'],
+        ['label' => '$version', 'actual' => (string) $version, 'expected' => 'Current release identifier', 'status' => 'info'],
+        ['label' => '$base_url', 'actual' => (string) $base_url, 'expected' => 'Live site URL', 'status' => 'info'],
+        ['label' => '$competition', 'actual' => (string) $competition, 'expected' => 'Tournament title for the current run', 'status' => 'info'],
+        ['label' => '$competition_location', 'actual' => (string) $competition_location, 'expected' => 'Tournament hosts / location', 'status' => 'info'],
+        ['label' => '$developer', 'actual' => (string) $developer, 'expected' => 'Admin / owner display name', 'status' => 'info'],
+    ];
+
+    $checks = [
+        '$no_of_group_fixtures' => [$no_of_group_fixtures ?? null, $tableInstallContext['group_fixture_count'] ?? null],
+        '$no_of_ro16_fixtures' => [$no_of_ro16_fixtures ?? null, $tableInstallContext['round_of_16_count'] ?? null],
+        '$no_of_qf_fixtures' => [$no_of_qf_fixtures ?? null, $tableInstallContext['quarter_final_count'] ?? null],
+        '$no_of_sf_fixtures' => [$no_of_sf_fixtures ?? null, $tableInstallContext['semi_final_count'] ?? null],
+        '$no_of_final_fixtures' => [$no_of_final_fixtures ?? null, $tableInstallContext['final_count'] ?? null],
+        '$no_of_total_fixtures' => [$no_of_total_fixtures ?? null, $tableInstallContext['total_matches'] ?? null],
+    ];
+
+    foreach ($checks as $label => [$actual, $expected]) {
+        $rows[] = [
+            'label' => $label,
+            'actual' => $actual === null ? 'Not set' : (string) $actual,
+            'expected' => $expected === null ? 'Not inferred yet' : (string) $expected,
+            'status' => ($expected !== null && (int) $actual === (int) $expected) ? 'match' : (($expected === null) ? 'info' : 'mismatch'),
+        ];
+    }
+
+    return $rows;
+}
+
+function build_table_audit(mysqli $connection, array $installableTables): array {
+    $rows = [];
+
+    $expectedTables = [
+        'tournament_config' => [
+            'label' => 'Tournament Config',
+            'expected_columns' => 15,
+            'score_columns' => 0,
+        ],
+        'live_match_schedule' => [
+            'label' => 'Match Schedule',
+            'expected_columns' => count(get_recommended_schedule_columns()) + 1,
+            'score_columns' => 0,
+        ],
+    ];
+
+    foreach ($installableTables as $definition) {
+        $expectedSql = $definition['sql'];
+        preg_match_all('/\n\s+[a-zA-Z0-9_]+\s+/m', $expectedSql, $matches);
+        preg_match_all('/score\d+_[pr]/', $expectedSql, $scoreMatches);
+        $expectedTables[$definition['table']] = [
+            'label' => $definition['label'],
+            'expected_columns' => count($matches[0]),
+            'score_columns' => count($scoreMatches[0]),
+        ];
+    }
+
+    foreach ($expectedTables as $tableName => $definition) {
+        $actualColumns = fetch_table_columns($connection, $tableName);
+        $actualScoreColumns = array_values(array_filter($actualColumns, static fn(string $column): bool => preg_match('/^score\d+_[pr]$/', $column) === 1));
+        $exists = !empty($actualColumns);
+        $status = !$exists ? 'missing' : ((count($actualColumns) === $definition['expected_columns'] && count($actualScoreColumns) === $definition['score_columns']) ? 'ready' : 'mismatch');
+
+        $rows[] = [
+            'table' => $tableName,
+            'label' => $definition['label'],
+            'exists' => $exists,
+            'expected_columns' => $definition['expected_columns'],
+            'actual_columns' => count($actualColumns),
+            'expected_score_columns' => $definition['score_columns'],
+            'actual_score_columns' => count($actualScoreColumns),
+            'status' => $status,
+        ];
+    }
+
+    return $rows;
 }
 
 function build_db_connect_template(string $server, string $database, string $username, string $password): string {
@@ -645,6 +885,89 @@ function write_generated_db_connect(string $content): array {
     }
 
     return ['ok' => true, 'path' => $path, 'message' => 'The generated db-connect.php file was written successfully.'];
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'install_setup_table') {
+    $mysqlAdminServer = trim($_POST['mysql_admin_server'] ?? 'localhost');
+    $mysqlAdminUser = trim($_POST['mysql_admin_user'] ?? 'hh_admin');
+    $mysqlAdminPassword = trim($_POST['mysql_admin_password'] ?? '');
+    $targetDbName = trim($_POST['target_db_name'] ?? '');
+    $tableKey = trim($_POST['install_table_key'] ?? '');
+
+    $table_install_context = read_table_install_context_from_request();
+    $installableTables = build_installable_table_definitions($table_install_context);
+
+    if ($mysqlAdminServer === '' || $mysqlAdminUser === '' || $targetDbName === '') {
+        $errors[] = 'MySQL server, admin user and target database are required before installing tables.';
+    } elseif (!isset($installableTables[$tableKey])) {
+        $errors[] = 'The selected setup table definition is not available.';
+    } else {
+        $adminConnection = populate_mysql_diagnostics($mysql_diagnostics, $mysqlAdminServer, $mysqlAdminUser, $mysqlAdminPassword, $targetDbName);
+
+        if (!$adminConnection instanceof mysqli) {
+            $errors[] = 'The MySQL admin connection failed, so the table could not be created.';
+        } elseif (!mysqli_select_db($adminConnection, $targetDbName)) {
+            $errors[] = 'The target database could not be selected: ' . mysqli_error($adminConnection);
+        } else {
+            $tableDefinition = $installableTables[$tableKey];
+            if (!mysqli_query($adminConnection, $tableDefinition['sql'])) {
+                $errors[] = 'Failed to create ' . $tableDefinition['table'] . ': ' . mysqli_error($adminConnection);
+            } else {
+                $messages[] = $tableDefinition['table'] . ' is ready in ' . $targetDbName . '.';
+                $inspection = inspect_target_database($adminConnection, $targetDbName);
+                $mysql_diagnostics['database_exists'] = $inspection['exists'];
+                $mysql_diagnostics['tables'] = $inspection['tables'];
+                $mysql_diagnostics['table_count'] = count($inspection['tables']);
+            }
+        }
+
+        if ($adminConnection instanceof mysqli) {
+            mysqli_close($adminConnection);
+        }
+    }
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'install_all_setup_tables') {
+    $mysqlAdminServer = trim($_POST['mysql_admin_server'] ?? 'localhost');
+    $mysqlAdminUser = trim($_POST['mysql_admin_user'] ?? 'hh_admin');
+    $mysqlAdminPassword = trim($_POST['mysql_admin_password'] ?? '');
+    $targetDbName = trim($_POST['target_db_name'] ?? '');
+
+    $table_install_context = read_table_install_context_from_request();
+    $installableTables = build_installable_table_definitions($table_install_context);
+
+    if ($mysqlAdminServer === '' || $mysqlAdminUser === '' || $targetDbName === '') {
+        $errors[] = 'MySQL server, admin user and target database are required before installing tables.';
+    } elseif (empty($installableTables)) {
+        $errors[] = 'Build the installation plan first so the wizard knows which table structures to create.';
+    } else {
+        $adminConnection = populate_mysql_diagnostics($mysql_diagnostics, $mysqlAdminServer, $mysqlAdminUser, $mysqlAdminPassword, $targetDbName);
+
+        if (!$adminConnection instanceof mysqli) {
+            $errors[] = 'The MySQL admin connection failed, so the remaining tables could not be created.';
+        } elseif (!mysqli_select_db($adminConnection, $targetDbName)) {
+            $errors[] = 'The target database could not be selected: ' . mysqli_error($adminConnection);
+        } else {
+            foreach ($installableTables as $tableDefinition) {
+                if (!mysqli_query($adminConnection, $tableDefinition['sql'])) {
+                    $errors[] = 'Failed to create ' . $tableDefinition['table'] . ': ' . mysqli_error($adminConnection);
+                    break;
+                }
+            }
+
+            if (empty($errors)) {
+                $messages[] = 'All remaining setup tables are now ready in ' . $targetDbName . '.';
+                $inspection = inspect_target_database($adminConnection, $targetDbName);
+                $mysql_diagnostics['database_exists'] = $inspection['exists'];
+                $mysql_diagnostics['tables'] = $inspection['tables'];
+                $mysql_diagnostics['table_count'] = count($inspection['tables']);
+            }
+        }
+
+        if ($adminConnection instanceof mysqli) {
+            mysqli_close($adminConnection);
+        }
+    }
 }
 
 function populate_mysql_diagnostics(array &$mysql_diagnostics, string $mysqlAdminServer, string $mysqlAdminUser, string $mysqlAdminPassword, string $targetDbName): ?mysqli {
@@ -714,8 +1037,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'test_db_connect
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'setup_preview') {
     $siteTitle = trim($_POST['site_title'] ?? ($title ?? 'Hendy\'s Hunches'));
     $siteUrl = trim($_POST['site_url'] ?? ($base_url ?? ''));
-    $timezone = trim($_POST['timezone'] ?? (date_default_timezone_get() ?: 'Europe/London'));
-    $adminEmail = trim($_POST['admin_email'] ?? '');
     $storageDir = trim($_POST['storage_dir'] ?? ($backup_dir ?? '/bak'));
 
     $mysqlAdminServer = trim($_POST['mysql_admin_server'] ?? 'localhost');
@@ -738,9 +1059,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'setup_preview')
     }
     if ($siteUrl === '' || !filter_var($siteUrl, FILTER_VALIDATE_URL)) {
         $errors[] = 'A valid base URL is required.';
-    }
-    if ($adminEmail !== '' && !filter_var($adminEmail, FILTER_VALIDATE_EMAIL)) {
-        $errors[] = 'Admin email must be a valid email address.';
     }
     if ($mysqlAdminServer === '') {
         $errors[] = 'MySQL server address is required.';
@@ -768,7 +1086,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'setup_preview')
         'Backups' => $storageDir,
         'Text lists' => $datalists_dir ?? '/text',
         'SQL exports' => $sql_dir ?? '/sql',
-        'Forum uploads' => $forum_dir ?? '/mboard',
         'JSON data' => '/json',
         'Images' => '/img',
     ];
@@ -787,8 +1104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'setup_preview')
     $setup_summary = [
         'Site title' => $siteTitle,
         'Base URL' => $siteUrl,
-        'Timezone' => $timezone,
-        'Admin email' => $adminEmail === '' ? 'Not set' : $adminEmail,
+        'Backups directory' => $storageDir,
         'MySQL server' => $mysqlAdminServer,
         'MySQL admin account' => $mysqlAdminUser,
         'Target database' => $targetDbName,
@@ -852,6 +1168,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'setup_preview')
                 ],
             ],
             'sample_rows' => array_slice($fixtures, 0, 5),
+        ];
+
+        $table_install_context = [
+            'group_fixture_count' => (int) $metadata['group_fixture_count'],
+            'round_of_16_count' => (int) $metadata['round_of_16_count'],
+            'quarter_final_count' => (int) $metadata['quarter_final_count'],
+            'semi_final_count' => (int) $metadata['semi_final_count'],
+            'final_count' => (int) $metadata['final_count'],
+            'total_matches' => (int) $metadata['total_matches'],
         ];
 
         $sql_output[] = 'CREATE DATABASE IF NOT EXISTS ' . mysql_quote_identifier($targetDbName) . ';';
@@ -950,17 +1275,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'setup_preview')
 
 $site_settings_ready = trim((string)($_POST['site_title'] ?? ($title ?? ''))) !== ''
     && trim((string)($_POST['site_url'] ?? ($base_url ?? ''))) !== '';
-$mysql_ready = trim((string)($_POST['mysql_admin_server'] ?? '')) !== ''
-    && trim((string)($_POST['mysql_admin_user'] ?? '')) !== '';
 $database_ready = trim((string)($_POST['target_db_name'] ?? '')) !== ''
     && trim((string)($_POST['target_db_user'] ?? '')) !== ''
     && trim((string)($_POST['target_db_user_host'] ?? '')) !== '';
 $source_ready = trim((string)($_POST['fixtures_url'] ?? '')) !== '' || !empty($_FILES['fixtures_file']['tmp_name']);
 $review_ready = !empty($setup_summary) || !empty($tournament_summary) || !empty($sql_output);
-$show_site_step = !$review_ready && $wizard_action !== 'test_db_connection';
+$installable_tables = !empty($table_install_context) ? build_installable_table_definitions($table_install_context) : [];
+
+if (!empty($table_install_context)) {
+    $runtime_audit = build_runtime_audit($table_install_context);
+}
+
+if (
+    !empty($installable_tables)
+    && $mysql_diagnostics['status'] === 'Connected'
+    && ($mysql_diagnostics['target_database'] ?? '') !== ''
+) {
+    $auditConnection = mysql_try_connect(
+        trim($_POST['mysql_admin_server'] ?? 'localhost'),
+        trim($_POST['mysql_admin_user'] ?? 'hh_admin'),
+        trim($_POST['mysql_admin_password'] ?? ''),
+        $mysql_diagnostics['target_database']
+    );
+
+    if (!empty($auditConnection['ok']) && $auditConnection['connection'] instanceof mysqli) {
+        $table_audit = build_table_audit($auditConnection['connection'], $installable_tables);
+        mysqli_close($auditConnection['connection']);
+    }
+}
+
+$show_site_step = $wizard_action === '' || (!$site_settings_ready && !$review_ready);
 $show_mysql_step = $wizard_action === 'test_db_connection';
-$show_database_step = false;
-$show_review_step = $review_ready;
+$show_database_step = $wizard_action === 'install_setup_table' || $wizard_action === 'install_all_setup_tables' || $review_ready;
+$show_source_step = $review_ready || $source_ready || in_array($wizard_action, ['setup_preview', 'install_setup_table', 'install_all_setup_tables'], true);
 $mysql_test_success = $wizard_action === 'test_db_connection' && $inline_mysql_feedback !== null && $inline_mysql_feedback['type'] === 'success';
 ?>
 <!DOCTYPE html>
@@ -1001,7 +1348,7 @@ $mysql_test_success = $wizard_action === 'test_db_connection' && $inline_mysql_f
             <p class="lead mb-0">Test MySQL access, provision the app database, import fixtures, and prepare the next tournament from one calmer control room.</p>
         </div>
         <div class="page-hero__actions">
-            <a class="btn btn-light" href="../admin/results.php">Record Results</a>
+            <!-- <a class="btn btn-light" href="../admin/results.php">Record Results</a> -->
             <a class="btn btn-outline-dark" href="../admin/functions.php">Open Admin Functions</a>
         </div>
     </section>
@@ -1048,9 +1395,9 @@ $mysql_test_success = $wizard_action === 'test_db_connection' && $inline_mysql_f
                                         <span class="setup-step__number">1</span>
                                         <span class="setup-step__body">
                                             <span class="setup-step__title">Site settings</span>
-                                            <span class="setup-step__meta"><?= $site_settings_ready ? 'Ready to use' : 'Add the core site details' ?></span>
+                                            <span id="setup-meta-site" class="setup-step__meta"><?= $site_settings_ready ? 'Ready to use' : 'Add the core site details' ?></span>
                                         </span>
-                                        <span class="setup-step__state <?= $site_settings_ready ? 'is-complete' : 'is-pending' ?>"><?= $site_settings_ready ? 'Ready' : 'Pending' ?></span>
+                                        <span id="setup-state-site" class="setup-step__state <?= $site_settings_ready ? 'is-complete' : 'is-pending' ?>"><?= $site_settings_ready ? 'Ready' : 'Pending' ?></span>
                                     </span>
                                 </button>
                             </h2>
@@ -1067,16 +1414,9 @@ $mysql_test_success = $wizard_action === 'test_db_connection' && $inline_mysql_f
                                                 <input type="url" class="form-control" id="site_url" name="site_url" value="<?= htmlspecialchars($_POST['site_url'] ?? ($base_url ?? '')) ?>" required>
                                             </div>
                                             <div class="col-md-6">
-                                                <label class="form-label" for="timezone">Timezone</label>
-                                                <input type="text" class="form-control" id="timezone" name="timezone" value="<?= htmlspecialchars($_POST['timezone'] ?? (date_default_timezone_get() ?: 'Europe/London')) ?>">
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label class="form-label" for="admin_email">Admin email</label>
-                                                <input type="email" class="form-control" id="admin_email" name="admin_email" value="<?= htmlspecialchars($_POST['admin_email'] ?? '') ?>">
-                                            </div>
-                                            <div class="col-md-6">
                                                 <label class="form-label" for="storage_dir">Backups directory</label>
                                                 <input type="text" class="form-control" id="storage_dir" name="storage_dir" value="<?= htmlspecialchars($_POST['storage_dir'] ?? ($backup_dir ?? '/bak')) ?>">
+                                                <p class="setup-help mb-0">e.g. <code>/bak</code></p>
                                             </div>
                                         </div>
                                         <div class="setup-panel__actions">
@@ -1094,16 +1434,16 @@ $mysql_test_success = $wizard_action === 'test_db_connection' && $inline_mysql_f
                                         <span class="setup-step__number">2</span>
                                         <span class="setup-step__body">
                                             <span class="setup-step__title">MySQL admin connection</span>
-                                            <span class="setup-step__meta"><?= $mysql_diagnostics['status'] === 'Connected' ? 'Connection test passed' : 'Connect and inspect the target server' ?></span>
+                                            <span id="setup-meta-mysql" class="setup-step__meta"><?= $mysql_diagnostics['status'] === 'Connected' ? 'Connection test passed' : 'Connect and inspect the target server' ?></span>
                                         </span>
-                                        <span class="setup-step__state <?= $mysql_diagnostics['status'] === 'Connected' ? 'is-complete' : 'is-pending' ?>"><?= $mysql_diagnostics['status'] === 'Connected' ? 'Ready' : 'Pending' ?></span>
+                                        <span id="setup-state-mysql" class="setup-step__state <?= $mysql_diagnostics['status'] === 'Connected' ? 'is-complete' : 'is-pending' ?>"><?= $mysql_diagnostics['status'] === 'Connected' ? 'Ready' : 'Pending' ?></span>
                                     </span>
                                 </button>
                             </h2>
                             <div id="setup-collapse-mysql" class="accordion-collapse collapse<?= $show_mysql_step ? ' show' : '' ?>" aria-labelledby="setup-heading-mysql" data-bs-parent="#setupWizardAccordion">
                                 <div class="accordion-body">
                                     <div class="setup-panel">
-                                        <p class="text-muted small">Use your admin account here, for example <code>hh_admin</code> on the target MySQL server, so the wizard can test the server, inspect the target database, and generate the app database and user setup.</p>
+                                        <p class="text-muted small">Use your MySQL admin account here so the wizard can test the server, inspect the target database, create the app user, and confirm what already exists.</p>
                                         <?php if ($inline_mysql_feedback !== null) : ?>
                                             <div class="alert alert-<?= htmlspecialchars($inline_mysql_feedback['type']) ?> setup-inline-feedback mb-3" id="setup-inline-mysql-feedback" role="status" aria-live="polite">
                                                 <?= htmlspecialchars($inline_mysql_feedback['message']) ?>
@@ -1113,10 +1453,12 @@ $mysql_test_success = $wizard_action === 'test_db_connection' && $inline_mysql_f
                                             <div class="col-md-12">
                                                 <label class="form-label" for="mysql_admin_server">MySQL server address</label>
                                                 <input type="text" class="form-control" id="mysql_admin_server" name="mysql_admin_server" value="<?= htmlspecialchars($_POST['mysql_admin_server'] ?? 'localhost') ?>" required>
+                                                <p class="setup-help mb-0">e.g. <code>localhost</code> or your hosting provider’s MySQL server name</p>
                                             </div>
                                             <div class="col-md-6">
                                                 <label class="form-label" for="mysql_admin_user">MySQL admin user</label>
                                                 <input type="text" class="form-control" id="mysql_admin_user" name="mysql_admin_user" value="<?= htmlspecialchars($_POST['mysql_admin_user'] ?? 'hh_admin') ?>" required>
+                                                <p class="setup-help mb-0">e.g. <code>root</code> or the admin user from your hosting panel</p>
                                             </div>
                                             <div class="col-md-6">
                                                 <label class="form-label" for="mysql_admin_password">MySQL admin password</label>
@@ -1139,9 +1481,9 @@ $mysql_test_success = $wizard_action === 'test_db_connection' && $inline_mysql_f
                                         <span class="setup-step__number">3</span>
                                         <span class="setup-step__body">
                                             <span class="setup-step__title">App database and user</span>
-                                            <span class="setup-step__meta"><?= $database_ready ? 'Target database details captured' : 'Set the database name and app credentials' ?></span>
+                                            <span id="setup-meta-database" class="setup-step__meta"><?= $database_ready ? 'Target database details captured' : 'Set the database name and app credentials' ?></span>
                                         </span>
-                                        <span class="setup-step__state <?= $database_ready ? 'is-complete' : 'is-pending' ?>"><?= $database_ready ? 'Ready' : 'Pending' ?></span>
+                                        <span id="setup-state-database" class="setup-step__state <?= $database_ready ? 'is-complete' : 'is-pending' ?>"><?= $database_ready ? 'Ready' : 'Pending' ?></span>
                                     </span>
                                 </button>
                             </h2>
@@ -1151,11 +1493,13 @@ $mysql_test_success = $wizard_action === 'test_db_connection' && $inline_mysql_f
                                         <div class="row g-3">
                                             <div class="col-md-12">
                                                 <label class="form-label" for="target_db_name">Target database name</label>
-                                                <input type="text" class="form-control" id="target_db_name" name="target_db_name" value="<?= htmlspecialchars($_POST['target_db_name'] ?? '') ?>" placeholder="hh_worldcup2026" required>
+                                                <input type="text" class="form-control" id="target_db_name" name="target_db_name" value="<?= htmlspecialchars($_POST['target_db_name'] ?? '') ?>" required>
+                                                <p class="setup-help mb-0">e.g. <code>hh_wc2026</code></p>
                                             </div>
                                             <div class="col-md-6">
                                                 <label class="form-label" for="target_db_user">App database user</label>
-                                                <input type="text" class="form-control" id="target_db_user" name="target_db_user" value="<?= htmlspecialchars($_POST['target_db_user'] ?? '') ?>" placeholder="hh_user" required>
+                                                <input type="text" class="form-control" id="target_db_user" name="target_db_user" value="<?= htmlspecialchars($_POST['target_db_user'] ?? '') ?>" required>
+                                                <p class="setup-help mb-0">e.g. <code>hh_user</code></p>
                                             </div>
                                             <div class="col-md-6">
                                                 <label class="form-label" for="target_db_password">App database password</label>
@@ -1164,10 +1508,11 @@ $mysql_test_success = $wizard_action === 'test_db_connection' && $inline_mysql_f
                                             <div class="col-md-12">
                                                 <label class="form-label" for="target_db_user_host">App user host</label>
                                                 <input type="text" class="form-control" id="target_db_user_host" name="target_db_user_host" value="<?= htmlspecialchars($_POST['target_db_user_host'] ?? 'localhost') ?>" required>
+                                                <p class="setup-help mb-0">Usually <code>localhost</code> unless your host tells you otherwise</p>
                                             </div>
                                         </div>
                                         <div class="setup-panel__actions">
-                                            <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#setup-collapse-source" aria-controls="setup-collapse-source">Continue to tournament source</button>
+                                            <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#setup-collapse-source" aria-controls="setup-collapse-source">Continue to source and build</button>
                                         </div>
                                     </div>
                                 </div>
@@ -1180,57 +1525,34 @@ $mysql_test_success = $wizard_action === 'test_db_connection' && $inline_mysql_f
                                     <span class="setup-step">
                                         <span class="setup-step__number">4</span>
                                         <span class="setup-step__body">
-                                            <span class="setup-step__title">Tournament source</span>
-                                            <span class="setup-step__meta"><?= $source_ready ? 'Fixture source supplied' : 'Choose a feed or upload a local file' ?></span>
+                                            <span class="setup-step__title">Tournament source and build</span>
+                                            <span id="setup-meta-source" class="setup-step__meta"><?= $source_ready ? 'Fixture source supplied' : 'Choose a feed or upload a local file, then build the plan' ?></span>
                                         </span>
-                                        <span class="setup-step__state <?= $source_ready ? 'is-complete' : 'is-pending' ?>"><?= $source_ready ? 'Ready' : 'Pending' ?></span>
+                                        <span id="setup-state-source" class="setup-step__state <?= $source_ready ? 'is-complete' : 'is-pending' ?>"><?= $source_ready ? 'Ready' : 'Pending' ?></span>
                                     </span>
                                 </button>
                             </h2>
-                            <div id="setup-collapse-source" class="accordion-collapse collapse" aria-labelledby="setup-heading-source" data-bs-parent="#setupWizardAccordion">
+                            <div id="setup-collapse-source" class="accordion-collapse collapse<?= $show_source_step ? ' show' : '' ?>" aria-labelledby="setup-heading-source" data-bs-parent="#setupWizardAccordion">
                                 <div class="accordion-body">
                                     <div class="setup-panel">
                                         <div class="row g-3">
                                             <div class="col-md-6">
                                                 <label class="form-label" for="tournament_name">Tournament name</label>
-                                                <input type="text" class="form-control" id="tournament_name" name="tournament_name" value="<?= htmlspecialchars($_POST['tournament_name'] ?? '') ?>" placeholder="Leave blank to infer from file/feed">
+                                                <input type="text" class="form-control" id="tournament_name" name="tournament_name" value="<?= htmlspecialchars($_POST['tournament_name'] ?? '') ?>">
+                                                <p class="setup-help mb-0">Optional. Leave blank to infer it from the feed or uploaded file name.</p>
                                             </div>
                                             <div class="col-md-6">
                                                 <label class="form-label" for="fixtures_url">Feed URL</label>
-                                                <input type="url" class="form-control" id="fixtures_url" name="fixtures_url" value="<?= htmlspecialchars($_POST['fixtures_url'] ?? '') ?>" placeholder="https://fixturedownload.com/feed/json/fifa-world-cup-2026">
+                                                <input type="url" class="form-control" id="fixtures_url" name="fixtures_url" value="<?= htmlspecialchars($_POST['fixtures_url'] ?? '') ?>">
+                                                <p class="setup-help mb-0">e.g. <code>https://fixturedownload.com/feed/json/fifa-world-cup-2026</code></p>
                                             </div>
                                             <div class="col-md-12">
                                                 <label class="form-label" for="fixtures_file">Import local file</label>
                                                 <input type="file" class="form-control" id="fixtures_file" name="fixtures_file" accept=".csv,.json">
+                                                <p class="setup-help mb-0">Use either a feed URL or a local CSV/JSON file. You do not need both.</p>
                                             </div>
-                                        </div>
-                                        <div class="setup-panel__actions">
-                                            <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#setup-collapse-review" aria-controls="setup-collapse-review">Continue to review</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="accordion-item setup-accordion__item">
-                            <h2 class="accordion-header" id="setup-heading-review">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#setup-collapse-review" aria-expanded="false" aria-controls="setup-collapse-review">
-                                    <span class="setup-step">
-                                        <span class="setup-step__number">5</span>
-                                        <span class="setup-step__body">
-                                            <span class="setup-step__title">Review and build</span>
-                                            <span class="setup-step__meta"><?= $review_ready ? 'Preview generated successfully' : 'Build the plan, then review outputs below' ?></span>
-                                        </span>
-                                        <span class="setup-step__state <?= $review_ready ? 'is-complete' : 'is-pending' ?>"><?= $review_ready ? 'Built' : 'Review' ?></span>
-                                    </span>
-                                </button>
-                            </h2>
-                            <div id="setup-collapse-review" class="accordion-collapse collapse<?= $show_review_step ? ' show' : '' ?>" aria-labelledby="setup-heading-review" data-bs-parent="#setupWizardAccordion">
-                                <div class="accordion-body">
-                                    <div class="setup-panel">
-                                        <div class="row g-3">
                                             <div class="col-lg-6">
-                                                <h3 class="h6">Expected JSON Shape</h3>
+                                                <h3 class="h6 mb-2">Expected JSON Shape</h3>
                                                 <pre class="setup-code-block setup-code-block--compact small mb-0">[
   {
     "MatchNumber": 1,
@@ -1244,12 +1566,30 @@ $mysql_test_success = $wizard_action === 'test_db_connection' && $inline_mysql_f
 ]</pre>
                                             </div>
                                             <div class="col-lg-6">
-                                                <h3 class="h6">Expected CSV Headings</h3>
+                                                <h3 class="h6 mb-2">Expected CSV Headings</h3>
                                                 <pre class="setup-code-block setup-code-block--compact small mb-0">MatchNumber,RoundNumber,DateUtc,Location,HomeTeam,AwayTeam,Group
 1,1,2026-06-11 19:00:00Z,Mexico City Stadium,Mexico,South Africa,Group A</pre>
                                             </div>
                                         </div>
-                                        <p class="text-muted small mb-0 mt-3">When you build the installation plan, the diagnostics, previews and generated SQL will appear below for a full pre-flight check.</p>
+
+                                        <div class="setup-sidebar__checks mt-4">
+                                            <label class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="truncate_schedule" name="truncate_schedule" <?= isset($_POST['truncate_schedule']) ? 'checked' : '' ?>>
+                                                <span class="form-check-label">Clear existing schedule rows before import</span>
+                                            </label>
+                                            <label class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="write_db_connect" name="write_db_connect" <?= !isset($_POST['wizard_action']) || isset($_POST['write_db_connect']) ? 'checked' : '' ?>>
+                                                <span class="form-check-label">Write the generated <code>php/db-connect.php</code> file when setup is applied</span>
+                                            </label>
+                                            <label class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="apply_changes" name="apply_changes" <?= isset($_POST['apply_changes']) ? 'checked' : '' ?>>
+                                                <span class="form-check-label">Apply generated setup to the target database now</span>
+                                            </label>
+                                        </div>
+
+                                        <div class="setup-panel__actions">
+                                            <button type="submit" name="wizard_action" value="setup_preview" class="btn btn-primary">Build installation plan</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1260,52 +1600,56 @@ $mysql_test_success = $wizard_action === 'test_db_connection' && $inline_mysql_f
                     <aside class="setup-sidebar">
                         <div class="setup-sidebar__panel">
                             <p class="eyebrow mb-2">At a glance</p>
-                            <h2 class="h5 mb-3">Review panel</h2>
+                            <h2 class="h5 mb-3">Live setup state</h2>
                             <div class="setup-review-list">
                                 <div class="setup-review-item">
                                     <span>Site</span>
-                                    <strong><?= htmlspecialchars($_POST['site_title'] ?? ($title ?? 'Hendy\'s Hunches')) ?></strong>
+                                    <strong data-review="site"><?= htmlspecialchars($_POST['site_title'] ?? ($title ?? 'Hendy\'s Hunches')) ?></strong>
                                 </div>
                                 <div class="setup-review-item">
                                     <span>MySQL server</span>
-                                    <strong><?= htmlspecialchars($_POST['mysql_admin_server'] ?? 'localhost') ?></strong>
+                                    <strong data-review="mysql-server"><?= htmlspecialchars($_POST['mysql_admin_server'] ?? 'localhost') ?></strong>
                                 </div>
                                 <div class="setup-review-item">
                                     <span>Target database</span>
-                                    <strong><?= htmlspecialchars($_POST['target_db_name'] ?? 'Not set') ?></strong>
+                                    <strong data-review="target-db"><?= htmlspecialchars($_POST['target_db_name'] ?? 'Not set') ?></strong>
                                 </div>
                                 <div class="setup-review-item">
                                     <span>App user</span>
-                                    <strong><?= htmlspecialchars($_POST['target_db_user'] ?? 'Not set') ?></strong>
+                                    <strong data-review="app-user"><?= htmlspecialchars($_POST['target_db_user'] ?? 'Not set') ?></strong>
                                 </div>
                                 <div class="setup-review-item">
                                     <span>Tournament</span>
-                                    <strong><?= htmlspecialchars($_POST['tournament_name'] ?? 'Will infer from source') ?></strong>
+                                    <strong data-review="tournament"><?= htmlspecialchars($_POST['tournament_name'] ?? 'Will infer from source') ?></strong>
                                 </div>
                                 <div class="setup-review-item">
                                     <span>Fixture source</span>
-                                    <strong><?= htmlspecialchars($_POST['fixtures_url'] ?? (!empty($_FILES['fixtures_file']['name']) ? $_FILES['fixtures_file']['name'] : 'Not supplied')) ?></strong>
+                                    <strong data-review="fixture-source"><?= htmlspecialchars($_POST['fixtures_url'] ?? (!empty($_FILES['fixtures_file']['name']) ? $_FILES['fixtures_file']['name'] : 'Not supplied')) ?></strong>
                                 </div>
                             </div>
 
-                            <div class="setup-sidebar__checks">
-                                <label class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="truncate_schedule" name="truncate_schedule" <?= isset($_POST['truncate_schedule']) ? 'checked' : '' ?>>
-                                    <span class="form-check-label">Clear existing schedule rows before import</span>
-                                </label>
-                                <label class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="write_db_connect" name="write_db_connect" <?= !isset($_POST['wizard_action']) || isset($_POST['write_db_connect']) ? 'checked' : '' ?>>
-                                    <span class="form-check-label">Write the generated <code>php/db-connect.php</code> file when setup is applied</span>
-                                </label>
-                                <label class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="apply_changes" name="apply_changes" <?= isset($_POST['apply_changes']) ? 'checked' : '' ?>>
-                                    <span class="form-check-label">Apply generated setup to the target database now</span>
-                                </label>
+                            <div class="setup-review-list">
+                                <div class="setup-review-item">
+                                    <span>Database status from last check</span>
+                                    <strong><?= $mysql_diagnostics['database_exists'] ? 'Database found' : 'Not checked yet' ?></strong>
+                                </div>
+                                <div class="setup-review-item">
+                                    <span>Tables already present</span>
+                                    <strong><?= htmlspecialchars((string) ($mysql_diagnostics['table_count'] ?? 0)) ?></strong>
+                                </div>
+                                <div class="setup-review-item">
+                                    <span>Connection state</span>
+                                    <strong><?= htmlspecialchars($mysql_diagnostics['status']) ?></strong>
+                                </div>
+                                <?php if (!empty($mysql_diagnostics['tables'])) : ?>
+                                    <div class="setup-review-item">
+                                        <span>Existing tables</span>
+                                        <strong class="setup-review-item__stack"><?= htmlspecialchars(implode(', ', $mysql_diagnostics['tables'])) ?></strong>
+                                    </div>
+                                <?php endif; ?>
                             </div>
 
-                            <div class="setup-form__actions">
-                                <button type="submit" name="wizard_action" value="setup_preview" class="btn btn-primary w-100">Build Installation Plan</button>
-                            </div>
+                            <p class="setup-help mb-0">These values update as you type. The database findings update when you test the MySQL connection or build the installation plan.</p>
                         </div>
                     </aside>
                 </div>
@@ -1516,6 +1860,159 @@ $mysql_test_success = $wizard_action === 'test_db_connection' && $inline_mysql_f
         </div>
     <?php endif; ?>
 
+    <?php if (!empty($runtime_audit) || !empty($table_audit)) : ?>
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h2 class="h5">Runtime And Table Audit</h2>
+                <p class="text-muted">Use this audit to compare the loaded runtime configuration against the inferred tournament values, and to confirm the live table schemas match what the application expects.</p>
+
+                <?php if (!empty($runtime_audit)) : ?>
+                    <h3 class="h6 mt-3">Runtime Variables</h3>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-striped align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Variable</th>
+                                    <th>Actual runtime value</th>
+                                    <th>Expected / inferred</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($runtime_audit as $row) : ?>
+                                    <tr>
+                                        <td><code><?= htmlspecialchars($row['label']) ?></code></td>
+                                        <td><?= htmlspecialchars($row['actual']) ?></td>
+                                        <td><?= htmlspecialchars($row['expected']) ?></td>
+                                        <td>
+                                            <?php if ($row['status'] === 'match') : ?>
+                                                <span class="badge bg-success">Match</span>
+                                            <?php elseif ($row['status'] === 'mismatch') : ?>
+                                                <span class="badge bg-danger">Mismatch</span>
+                                            <?php else : ?>
+                                                <span class="badge bg-secondary">Review</span>
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (!empty($table_audit)) : ?>
+                    <h3 class="h6 mt-4">Table Review</h3>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-striped align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Table</th>
+                                    <th>Exists</th>
+                                    <th>Columns</th>
+                                    <th>Score columns</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($table_audit as $row) : ?>
+                                    <tr>
+                                        <td>
+                                            <div class="fw-semibold"><?= htmlspecialchars($row['label']) ?></div>
+                                            <code class="small"><?= htmlspecialchars($row['table']) ?></code>
+                                        </td>
+                                        <td><?= $row['exists'] ? 'Yes' : 'No' ?></td>
+                                        <td><?= htmlspecialchars((string) $row['actual_columns']) ?> / <?= htmlspecialchars((string) $row['expected_columns']) ?></td>
+                                        <td><?= htmlspecialchars((string) $row['actual_score_columns']) ?> / <?= htmlspecialchars((string) $row['expected_score_columns']) ?></td>
+                                        <td>
+                                            <?php if ($row['status'] === 'ready') : ?>
+                                                <span class="badge bg-success">Ready</span>
+                                            <?php elseif ($row['status'] === 'missing') : ?>
+                                                <span class="badge bg-danger">Missing</span>
+                                            <?php else : ?>
+                                                <span class="badge bg-warning text-dark">Mismatch</span>
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <?php if (!empty($installable_tables)) : ?>
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                    <div>
+                        <h2 class="h5 mb-1">Install Remaining Tables</h2>
+                        <p class="text-muted mb-0">Create the remaining game tables one at a time in <code><?= htmlspecialchars($_POST['target_db_name'] ?? 'hh_wc2026') ?></code>. Prediction and results tables use the fixture counts inferred from this tournament setup.</p>
+                    </div>
+                    <form method="POST" class="d-flex">
+                        <input type="hidden" name="wizard_action" value="install_all_setup_tables">
+                        <input type="hidden" name="site_title" value="<?= htmlspecialchars($_POST['site_title'] ?? ($title ?? 'Hendy\'s Hunches')) ?>">
+                        <input type="hidden" name="site_url" value="<?= htmlspecialchars($_POST['site_url'] ?? ($base_url ?? '')) ?>">
+                        <input type="hidden" name="storage_dir" value="<?= htmlspecialchars($_POST['storage_dir'] ?? ($backup_dir ?? '/bak')) ?>">
+                        <input type="hidden" name="mysql_admin_server" value="<?= htmlspecialchars($_POST['mysql_admin_server'] ?? 'localhost') ?>">
+                        <input type="hidden" name="mysql_admin_user" value="<?= htmlspecialchars($_POST['mysql_admin_user'] ?? 'hh_admin') ?>">
+                        <input type="hidden" name="mysql_admin_password" value="<?= htmlspecialchars($_POST['mysql_admin_password'] ?? '') ?>">
+                        <input type="hidden" name="target_db_name" value="<?= htmlspecialchars($_POST['target_db_name'] ?? 'hh_wc2026') ?>">
+                        <input type="hidden" name="target_db_user" value="<?= htmlspecialchars($_POST['target_db_user'] ?? '') ?>">
+                        <input type="hidden" name="target_db_password" value="<?= htmlspecialchars($_POST['target_db_password'] ?? '') ?>">
+                        <input type="hidden" name="target_db_user_host" value="<?= htmlspecialchars($_POST['target_db_user_host'] ?? 'localhost') ?>">
+                        <input type="hidden" name="tournament_name" value="<?= htmlspecialchars($_POST['tournament_name'] ?? '') ?>">
+                        <input type="hidden" name="fixtures_url" value="<?= htmlspecialchars($_POST['fixtures_url'] ?? '') ?>">
+                        <?php if (isset($_POST['truncate_schedule'])) : ?><input type="hidden" name="truncate_schedule" value="1"><?php endif; ?>
+                        <?php if (isset($_POST['write_db_connect'])) : ?><input type="hidden" name="write_db_connect" value="1"><?php endif; ?>
+                        <?php if (isset($_POST['apply_changes'])) : ?><input type="hidden" name="apply_changes" value="1"><?php endif; ?>
+                        <?php foreach ($table_install_context as $contextKey => $contextValue) : ?>
+                            <input type="hidden" name="<?= htmlspecialchars($contextKey) ?>" value="<?= htmlspecialchars((string) $contextValue) ?>">
+                        <?php endforeach; ?>
+                        <button type="submit" class="btn btn-primary btn-sm">Create all remaining tables</button>
+                    </form>
+                </div>
+                <div class="row g-3">
+                    <?php foreach ($installable_tables as $tableKey => $definition) : ?>
+                        <div class="col-md-6 col-xl-4">
+                            <div class="setup-stat h-100 d-flex flex-column gap-3">
+                                <div>
+                                    <h3 class="h6 mb-1"><?= htmlspecialchars($definition['label']) ?></h3>
+                                    <p class="small text-muted mb-2"><?= htmlspecialchars($definition['description']) ?></p>
+                                    <code class="small"><?= htmlspecialchars($definition['file']) ?></code>
+                                </div>
+                                <form method="POST" class="mt-auto">
+                                    <input type="hidden" name="wizard_action" value="install_setup_table">
+                                    <input type="hidden" name="install_table_key" value="<?= htmlspecialchars($tableKey) ?>">
+                                    <input type="hidden" name="site_title" value="<?= htmlspecialchars($_POST['site_title'] ?? ($title ?? 'Hendy\'s Hunches')) ?>">
+                                    <input type="hidden" name="site_url" value="<?= htmlspecialchars($_POST['site_url'] ?? ($base_url ?? '')) ?>">
+                                    <input type="hidden" name="storage_dir" value="<?= htmlspecialchars($_POST['storage_dir'] ?? ($backup_dir ?? '/bak')) ?>">
+                                    <input type="hidden" name="mysql_admin_server" value="<?= htmlspecialchars($_POST['mysql_admin_server'] ?? 'localhost') ?>">
+                                    <input type="hidden" name="mysql_admin_user" value="<?= htmlspecialchars($_POST['mysql_admin_user'] ?? 'hh_admin') ?>">
+                                    <input type="hidden" name="mysql_admin_password" value="<?= htmlspecialchars($_POST['mysql_admin_password'] ?? '') ?>">
+                                    <input type="hidden" name="target_db_name" value="<?= htmlspecialchars($_POST['target_db_name'] ?? 'hh_wc2026') ?>">
+                                    <input type="hidden" name="target_db_user" value="<?= htmlspecialchars($_POST['target_db_user'] ?? '') ?>">
+                                    <input type="hidden" name="target_db_password" value="<?= htmlspecialchars($_POST['target_db_password'] ?? '') ?>">
+                                    <input type="hidden" name="target_db_user_host" value="<?= htmlspecialchars($_POST['target_db_user_host'] ?? 'localhost') ?>">
+                                    <input type="hidden" name="tournament_name" value="<?= htmlspecialchars($_POST['tournament_name'] ?? '') ?>">
+                                    <input type="hidden" name="fixtures_url" value="<?= htmlspecialchars($_POST['fixtures_url'] ?? '') ?>">
+                                    <?php if (isset($_POST['truncate_schedule'])) : ?><input type="hidden" name="truncate_schedule" value="1"><?php endif; ?>
+                                    <?php if (isset($_POST['write_db_connect'])) : ?><input type="hidden" name="write_db_connect" value="1"><?php endif; ?>
+                                    <?php if (isset($_POST['apply_changes'])) : ?><input type="hidden" name="apply_changes" value="1"><?php endif; ?>
+                                    <?php foreach ($table_install_context as $contextKey => $contextValue) : ?>
+                                        <input type="hidden" name="<?= htmlspecialchars($contextKey) ?>" value="<?= htmlspecialchars((string) $contextValue) ?>">
+                                    <?php endforeach; ?>
+                                    <button type="submit" class="btn btn-outline-secondary btn-sm">Create <?= htmlspecialchars($definition['table']) ?></button>
+                                </form>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+
     <?php if (!empty($fixture_preview)) : ?>
         <div class="card shadow-sm mb-4">
             <div class="card-body">
@@ -1598,12 +2095,112 @@ $mysql_test_success = $wizard_action === 'test_db_connection' && $inline_mysql_f
 </main>
 
 <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-<?php if ($wizard_action === 'test_db_connection') : ?>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+  var siteTitle = document.getElementById('site_title');
+  var siteUrl = document.getElementById('site_url');
+  var mysqlServer = document.getElementById('mysql_admin_server');
+  var mysqlUser = document.getElementById('mysql_admin_user');
+  var targetDb = document.getElementById('target_db_name');
+  var targetDbUser = document.getElementById('target_db_user');
+  var targetDbHost = document.getElementById('target_db_user_host');
+  var tournamentName = document.getElementById('tournament_name');
+  var fixturesUrl = document.getElementById('fixtures_url');
+  var fixturesFile = document.getElementById('fixtures_file');
   var mysqlPanel = document.getElementById('setup-collapse-mysql');
   var databasePanel = document.getElementById('setup-collapse-database');
   var mysqlHeading = document.getElementById('setup-heading-mysql');
+  var siteState = document.getElementById('setup-state-site');
+  var siteMeta = document.getElementById('setup-meta-site');
+  var mysqlState = document.getElementById('setup-state-mysql');
+  var mysqlMeta = document.getElementById('setup-meta-mysql');
+  var databaseState = document.getElementById('setup-state-database');
+  var databaseMeta = document.getElementById('setup-meta-database');
+  var sourceState = document.getElementById('setup-state-source');
+  var sourceMeta = document.getElementById('setup-meta-source');
+  var reviewSite = document.querySelector('[data-review="site"]');
+  var reviewMysqlServer = document.querySelector('[data-review="mysql-server"]');
+  var reviewTargetDb = document.querySelector('[data-review="target-db"]');
+  var reviewAppUser = document.querySelector('[data-review="app-user"]');
+  var reviewTournament = document.querySelector('[data-review="tournament"]');
+  var reviewFixtureSource = document.querySelector('[data-review="fixture-source"]');
+  var mysqlTestPassed = <?= json_encode($mysql_diagnostics['status'] === 'Connected') ?>;
+  var initialMysqlServer = <?= json_encode((string) ($_POST['mysql_admin_server'] ?? 'localhost')) ?>;
+  var initialMysqlUser = <?= json_encode((string) ($_POST['mysql_admin_user'] ?? 'hh_admin')) ?>;
+
+  function readValue(input) {
+    return input ? input.value.trim() : '';
+  }
+
+  function setReviewText(target, value) {
+    if (target) {
+      target.textContent = value;
+    }
+  }
+
+  function setStepState(stateNode, metaNode, ready, readyLabel, pendingLabel, readyMeta, pendingMeta) {
+    if (!stateNode) {
+      return;
+    }
+
+    stateNode.textContent = ready ? readyLabel : pendingLabel;
+    stateNode.classList.toggle('is-complete', ready);
+    stateNode.classList.toggle('is-pending', !ready);
+
+    if (metaNode) {
+      metaNode.textContent = ready ? readyMeta : pendingMeta;
+    }
+  }
+
+  function getFixtureSourceText() {
+    var urlValue = readValue(fixturesUrl);
+    if (urlValue !== '') {
+      return urlValue;
+    }
+
+    if (fixturesFile && fixturesFile.files && fixturesFile.files[0]) {
+      return fixturesFile.files[0].name;
+    }
+
+    return 'Not supplied';
+  }
+
+  function refreshLiveState() {
+    var siteReady = readValue(siteTitle) !== '' && readValue(siteUrl) !== '';
+    var mysqlReady = readValue(mysqlServer) !== '' && readValue(mysqlUser) !== '';
+    var databaseReady = readValue(targetDb) !== '' && readValue(targetDbUser) !== '' && readValue(targetDbHost) !== '';
+    var sourceReady = readValue(fixturesUrl) !== '' || (fixturesFile && fixturesFile.files && fixturesFile.files.length > 0);
+    var mysqlStillMatchesTestedValues = readValue(mysqlServer) === initialMysqlServer && readValue(mysqlUser) === initialMysqlUser;
+
+    setReviewText(reviewSite, readValue(siteTitle) || 'Not set');
+    setReviewText(reviewMysqlServer, readValue(mysqlServer) || 'Not set');
+    setReviewText(reviewTargetDb, readValue(targetDb) || 'Not set');
+    setReviewText(reviewAppUser, readValue(targetDbUser) !== '' ? readValue(targetDbUser) + '@' + (readValue(targetDbHost) || 'localhost') : 'Not set');
+    setReviewText(reviewTournament, readValue(tournamentName) || 'Will infer from source');
+    setReviewText(reviewFixtureSource, getFixtureSourceText());
+
+    setStepState(siteState, siteMeta, siteReady, 'Ready', 'Pending', 'Ready to use', 'Add the core site details');
+    if (mysqlTestPassed && mysqlStillMatchesTestedValues) {
+      setStepState(mysqlState, mysqlMeta, true, 'Ready', 'Pending', 'Connection test passed', 'Connect and inspect the target server');
+    } else {
+      setStepState(mysqlState, mysqlMeta, mysqlReady, 'Check', 'Pending', 'Ready to test the server', 'Connect and inspect the target server');
+    }
+    setStepState(databaseState, databaseMeta, databaseReady, 'Ready', 'Pending', 'Target database details captured', 'Set the database name and app credentials');
+    setStepState(sourceState, sourceMeta, sourceReady, 'Ready', 'Pending', 'Fixture source supplied', 'Choose a feed or upload a local file, then build the plan');
+  }
+
+  [siteTitle, siteUrl, mysqlServer, mysqlUser, targetDb, targetDbUser, targetDbHost, tournamentName, fixturesUrl, fixturesFile].forEach(function (input) {
+    if (!input) {
+      return;
+    }
+
+    input.addEventListener('input', refreshLiveState);
+    input.addEventListener('change', refreshLiveState);
+  });
+
+  refreshLiveState();
+
+  <?php if ($wizard_action === 'test_db_connection') : ?>
 
   if (mysqlHeading) {
     mysqlHeading.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1626,8 +2223,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }, 250);
   }, 2200);
   <?php endif; ?>
+  <?php endif; ?>
 });
 </script>
-<?php endif; ?>
 </body>
 </html>

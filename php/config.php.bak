@@ -8,71 +8,69 @@
 
 define('IS_PREVIEW', true);
 
-$hh_site_config = array (
-  'title' => 'Hendy\'s Hunches',
-  'version' => 'v2.10.2',
-  'year' => '2026',
-  'base_url' => 'https://www.hendyshunches.co.uk',
-  'developer' => 'James Henderson',
-  'admin_usernames' =>
-  array (
-  ),
-);
+$hh_site_config = [
+    'title' => "Hendy's Hunches",
+    'version' => 'v2.10.2',
+    'year' => '2024',
+    'base_url' => 'https://www.hendyshunches.co.uk',
+    'developer' => 'James Henderson',
+    'admin_usernames' => [],
+];
 
-$hh_competition_config = array (
-  'competition' => 'FIFA World Cup 2026',
-  'competition_url' => 'https://www.fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026',
-  'competition_location' => 'Canada, Mexico and the United States',
-  'signup_close_date' => '13/06/2024',
-  'signup_url' => 'https://monzo.me/jamescolinhenderson/10.00?d=Hendy%27s%20Hunches%20-%20%5BInsert%20Your%20Name%5D',
-  'charity' => 'Notts County Foundation',
-  'charity_url' => 'https://www.nottscountyfoundation.org.uk/programme/on-the-ball/',
-);
+$hh_competition_config = [
+    'competition' => 'FIFA World Cup 2026',
+    'competition_url' => 'https://www.fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026',
+    'competition_location' => 'Canada, Mexico and the United States',
+    'signup_close_date' => '13/06/2024',
+    'signup_url' => 'https://monzo.me/jamescolinhenderson/10.00?d=Hendy%27s%20Hunches%20-%20%5BInsert%20Your%20Name%5D',
+    'charity' => 'Notts County Foundation',
+    'charity_url' => 'https://www.nottscountyfoundation.org.uk/programme/on-the-ball/',
+];
 
-$hh_finance_config = array (
-  'signup_fee' => 5.0,
-  'charity_fee' => 2.0,
-  'prize_fee' => 2.0,
-);
+$hh_finance_config = [
+    'signup_fee' => 5.0,
+    'charity_fee' => 2.0,
+    'prize_fee' => 2.0,
+];
 
-$hh_runtime_config = array (
-  'no_of_group_fixtures' => 72,
-  'no_of_ro16_fixtures' => 16,
-  'no_of_qf_fixtures' => 8,
-  'no_of_sf_fixtures' => 4,
-  'no_of_final_fixtures' => 2,
-  'no_of_total_fixtures' => 102,
-);
+$hh_runtime_config = [
+    'no_of_group_fixtures' => 72,
+    'no_of_ro16_fixtures' => 16,
+    'no_of_qf_fixtures' => 8,
+    'no_of_sf_fixtures' => 4,
+    'no_of_final_fixtures' => 2,
+    'no_of_total_fixtures' => 102,
+];
 
-$hh_path_config = array (
-  'backup_dir' => '/bak',
-  'datalists_dir' => '/text',
-  'sql_dir' => '/sql',
-);
+$hh_path_config = [
+    'backup_dir' => '/bak',
+    'datalists_dir' => '/text',
+    'sql_dir' => '/sql',
+    'forum_dir' => '/mboard',
+];
 
-$hh_asset_config = array (
-  'football_kits' =>
-  array (
-    0 => 'img/football-kits/green-white.png',
-    1 => 'img/football-kits/blue-white.png',
-    2 => 'img/football-kits/red-white-blue.png',
-    3 => 'img/football-kits/maroon-white.png',
-    4 => 'img/football-kits/skyblue-blue-hoops.png',
-    5 => 'img/football-kits/yellow-black.png',
-    6 => 'img/football-kits/pink-black.png',
-    7 => 'img/football-kits/purple-black.png',
-    8 => 'img/football-kits/orange-purple.png',
-    9 => 'img/football-kits/grey-mint.png',
-    10 => 'img/football-kits/charcoal-gold.png',
-    11 => 'img/football-kits/green-lightgreen.png',
-    12 => 'img/football-kits/claret-lightblue.png',
-    13 => 'img/football-kits/lightred-lightyellow.png',
-    14 => 'img/football-kits/navy-blue-red.png',
-    15 => 'img/football-kits/white-green.png',
-    16 => 'img/football-kits/red-black.png',
-    17 => 'img/football-kits/pink-white.png',
-  ),
-);
+$hh_asset_config = [
+    'football_kits' => [
+        'img/football-kits/green-white.png',
+        'img/football-kits/blue-white.png',
+        'img/football-kits/red-white-blue.png',
+        'img/football-kits/maroon-white.png',
+        'img/football-kits/skyblue-blue-hoops.png',
+        'img/football-kits/yellow-black.png',
+        'img/football-kits/pink-black.png',
+        'img/football-kits/purple-black.png',
+        'img/football-kits/orange-purple.png',
+        'img/football-kits/grey-mint.png',
+        'img/football-kits/charcoal-gold.png',
+        'img/football-kits/green-lightgreen.png',
+        'img/football-kits/claret-lightblue.png',
+        'img/football-kits/lightred-lightyellow.png',
+        'img/football-kits/navy-blue-red.png',
+        'img/football-kits/white-green.png',
+        'img/football-kits/red-black.png',
+        'img/football-kits/pink-white.png',
+    ],
+];
 
 $title = (string) $hh_site_config['title'];
 $version = (string) $hh_site_config['version'];
@@ -113,6 +111,7 @@ $no_of_knockout_fixtures = $no_of_ro16_fixtures + $no_of_qf_fixtures + $no_of_sf
 $backup_dir = (string) $hh_path_config['backup_dir'];
 $datalists_dir = (string) $hh_path_config['datalists_dir'];
 $sql_dir = (string) $hh_path_config['sql_dir'];
+$forum_dir = (string) $hh_path_config['forum_dir'];
 
 $football_kits = array_values((array) $hh_asset_config['football_kits']);
 for ($kitIndex = 0; $kitIndex < 18; $kitIndex++) {

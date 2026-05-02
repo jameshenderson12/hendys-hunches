@@ -344,6 +344,7 @@ mysqli_close($con);
         </div>
         <div class="page-hero__actions">
             <a class="btn btn-primary" href="results.php"><i class="bi bi-trophy"></i> Record results</a>
+            <a class="btn btn-outline-success" href="configuration.php"><i class="bi bi-sliders2"></i> Site configuration</a>
             <a class="btn btn-outline-dark" href="../dashboard.php"><i class="bi bi-grid"></i> Back to dashboard</a>
         </div>
     </div>

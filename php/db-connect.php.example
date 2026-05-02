@@ -1,7 +1,0 @@
-<?php
-return [
-  'host' => 'localhost',
-  'db'   => 'database_name',
-  'user' => 'username',
-  'pass' => 'password',
-];

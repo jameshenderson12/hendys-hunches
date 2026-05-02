@@ -1,9 +1,12 @@
 <?php
+require_once __DIR__ . '/auth.php';
+
 $current_page = basename($_SERVER['PHP_SELF']);
 $nav_active = function ($page) use ($current_page) {
 	return $current_page === $page ? ' active' : '';
 };
 $use_concept_logo = isset($nav_logo_variant) && $nav_logo_variant === 'concept';
+$is_admin_user = hh_is_admin_user();
 ?>
 
 <nav class="navbar navbar-expand-lg site-navbar" aria-label="Main navigation">
@@ -89,6 +92,11 @@ $use_concept_logo = isset($nav_logo_variant) && $nav_logo_variant === 'concept';
 										<li><a class="dropdown-item" href="overview.php">Application overview</a></li>
 										<li><a class="dropdown-item" href="change-password.php">Change my password</a></li>
 										<li><a class="dropdown-item card-link" href="user.php?id=<?php echo $_SESSION['id']; ?>">View my predictions</a></li>
+										<?php if ($is_admin_user): ?>
+										<li><a class="dropdown-item<?= $nav_active('functions.php') ?>" href="admin/functions.php" style="color: var(--hh-purple)">+ Admin functions</a></li>
+										<li><a class="dropdown-item<?= $nav_active('configuration.php') ?>" href="admin/configuration.php" style="color: var(--hh-purple)">+ Site configuration</a></li>
+										<li><a class="dropdown-item<?= $nav_active('setup-wizard.php') ?>" href="setup/setup-wizard.php" style="color: var(--hh-purple)">+ Installation manager</a></li>
+										<?php endif; ?>
 		                <li>
 		                  <hr class="dropdown-divider">
 		                </li>

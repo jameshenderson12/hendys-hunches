@@ -1855,7 +1855,7 @@ h6 {
 .page-hero--setup {
   background:
     linear-gradient(90deg, rgba(7, 54, 41, 0.93), rgba(7, 54, 41, 0.68) 52%, rgba(143, 102, 216, 0.56)),
-    url("../img/hero-backgrounds/admin-panel.jpg") center 42% / cover no-repeat;
+    url("../img/hero-backgrounds/installation.jpg") center 42% / cover no-repeat;
 }
 
 .page-hero h1,
@@ -2062,6 +2062,12 @@ h6 {
   margin-bottom: 14px;
 }
 
+.setup-help {
+  color: var(--hh-muted);
+  font-size: 0.82rem;
+  margin-top: 6px;
+}
+
 .setup-panel__actions {
   display: flex;
   justify-content: flex-end;
@@ -2143,6 +2149,11 @@ h6 {
   font-size: 0.98rem;
 }
 
+.setup-review-item__stack {
+  line-height: 1.45;
+  word-break: break-word;
+}
+
 .setup-sidebar__checks {
   display: grid;
   gap: 12px;
@@ -2222,12 +2233,6 @@ h6 {
 .alert {
   border-radius: 8px;
   border: 1px solid var(--hh-line);
-}
-
-.alert-success {
-  --bs-alert-color: #073629;
-  --bs-alert-bg: rgba(12, 90, 67, 0.12);
-  --bs-alert-border-color: rgba(12, 90, 67, 0.2);
 }
 
 .table {
