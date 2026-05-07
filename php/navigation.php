@@ -2,16 +2,19 @@
 require_once __DIR__ . '/auth.php';
 
 $current_page = basename($_SERVER['PHP_SELF']);
+$app_path_prefix = $app_path_prefix ?? '';
+$nav_href = static fn(string $path): string => $app_path_prefix . $path;
 $nav_active = function ($page) use ($current_page) {
 	return $current_page === $page ? ' active' : '';
 };
 $use_concept_logo = isset($nav_logo_variant) && $nav_logo_variant === 'concept';
 $is_admin_user = hh_is_admin_user();
+$current_user_id = (int) ($_SESSION['id'] ?? 0);
 ?>
 
 <nav class="navbar navbar-expand-lg site-navbar" aria-label="Main navigation">
 	<div class="container">
-			<a class="navbar-brand<?= $use_concept_logo ? ' navbar-brand--concept' : '' ?>" href="dashboard.php">
+			<a class="navbar-brand<?= $use_concept_logo ? ' navbar-brand--concept' : '' ?>" href="<?= htmlspecialchars($nav_href('dashboard.php'), ENT_QUOTES) ?>">
 				<?php if ($use_concept_logo): ?>
 					<span class="hh-brand-mark" aria-hidden="true">
 						<span class="hh-brand-mark__initials">HH</span>
@@ -38,10 +41,10 @@ $is_admin_user = hh_is_admin_user();
 		        <div class="offcanvas-body">
 		          <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
 		            <li class="nav-item">
-		              <a class="nav-link<?= $nav_active('dashboard.php') ?>" href="dashboard.php">Dashboard</a>
+		              <a id="tour-nav-dashboard" class="nav-link<?= $nav_active('dashboard.php') ?>" href="<?= htmlspecialchars($nav_href('dashboard.php'), ENT_QUOTES) ?>">Dashboard</a>
 		            </li>
 		            <li class="nav-item">
-		              <a class="nav-link<?= $nav_active('fanzone.php') ?>" href="fanzone.php">Fan Zone</a>
+		              <a id="tour-nav-fanzone" class="nav-link<?= $nav_active('fanzone.php') ?>" href="<?= htmlspecialchars($nav_href('fanzone.php'), ENT_QUOTES) ?>">Fan Zone</a>
 		            </li>
 					<!-- <li class="nav-item position-relative">
 					<a class="nav-link" href="tournament-groups.php">
@@ -61,46 +64,47 @@ $is_admin_user = hh_is_admin_user();
 					</li> -->
 
 		            <li class="nav-item position-relative">
-		              <a class="nav-link disabled<?= $nav_active('predictions.php') ?>" href="predictions.php">
-						Submit Prediction
+		              <a id="tour-nav-predictions" class="nav-link<?= $nav_active('predictions.php') ?>" href="<?= htmlspecialchars($nav_href('predictions.php'), ENT_QUOTES) ?>">
+						Predictions
 						<!-- <span class="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-success">
 						Final
 						</span> -->
 					  </a>
 		            </li>
 					<li class="nav-item">
-		              <a class="nav-link<?= $nav_active('rankings.php') ?>" href="rankings.php">Rankings</a>
+		              <a id="tour-nav-rankings" class="nav-link<?= $nav_active('rankings.php') ?>" href="<?= htmlspecialchars($nav_href('rankings.php'), ENT_QUOTES) ?>">Rankings</a>
 		            </li>
 					<li class="nav-item dropdown">
-									<a class="nav-link dropdown-toggle<?= in_array($current_page, ['tournament-groups.php', 'tournament-knockouts.php']) ? ' active' : '' ?>" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Competition</a>
+									<a id="tour-nav-competition" class="nav-link dropdown-toggle<?= in_array($current_page, ['tournament-groups.php', 'tournament-knockouts.php']) ? ' active' : '' ?>" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Competition</a>
 		              	<ul class="dropdown-menu">
-							<li><a class="dropdown-item" href="tournament-groups.php">Group stage</a></li>
-							<li><a class="dropdown-item" href="tournament-knockouts.php">Knockout stages</a></li>
+							<li><a id="tour-nav-groups" class="dropdown-item" href="<?= htmlspecialchars($nav_href('tournament-groups.php'), ENT_QUOTES) ?>">Group stage</a></li>
+							<li><a id="tour-nav-knockouts" class="dropdown-item" href="<?= htmlspecialchars($nav_href('tournament-knockouts.php'), ENT_QUOTES) ?>">Knockout stages</a></li>
 						</ul>
 		            </li>										
 					<li class="nav-item">
-		              <a class="nav-link<?= $nav_active('how-it-works.php') ?>" href="how-it-works.php">How It Works</a>
+		              <a id="tour-nav-guide" class="nav-link<?= $nav_active('how-it-works.php') ?>" href="<?= htmlspecialchars($nav_href('how-it-works.php'), ENT_QUOTES) ?>">How It Works</a>
 		            </li>
 					<li class="nav-item">
-						<a class="nav-link<?= $nav_active('about.php') ?>" href="about.php">About</a>
+						<a id="tour-nav-about" class="nav-link<?= $nav_active('about.php') ?>" href="<?= htmlspecialchars($nav_href('about.php'), ENT_QUOTES) ?>">About</a>
 					</li>
 		            <li class="nav-item dropdown">
-									<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+									<a id="tour-nav-account" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     <?php returnAvatar(); ?>
                   </a>
 		              <ul class="dropdown-menu">
-										<li><a class="dropdown-item" href="overview.php">Application overview</a></li>
-										<li><a class="dropdown-item" href="change-password.php">Change my password</a></li>
-										<li><a class="dropdown-item card-link" href="user.php?id=<?php echo $_SESSION['id']; ?>">View my predictions</a></li>
+										<li><a class="dropdown-item" href="<?= htmlspecialchars($nav_href('overview.php'), ENT_QUOTES) ?>">Application overview</a></li>
+										<li><a class="dropdown-item" href="<?= htmlspecialchars($nav_href('change-password.php'), ENT_QUOTES) ?>">Change my password</a></li>
+										<li><a class="dropdown-item" href="<?= htmlspecialchars($nav_href('predictions.php'), ENT_QUOTES) ?>">Submit my predictions</a></li>
+										<li><a class="dropdown-item card-link" href="<?= htmlspecialchars($nav_href('user.php?id=' . $current_user_id), ENT_QUOTES) ?>">View my predictions</a></li>
 										<?php if ($is_admin_user): ?>
-										<li><a class="dropdown-item<?= $nav_active('functions.php') ?>" href="admin/functions.php" style="color: var(--hh-purple)">+ Admin functions</a></li>
-										<li><a class="dropdown-item<?= $nav_active('configuration.php') ?>" href="admin/configuration.php" style="color: var(--hh-purple)">+ Site configuration</a></li>
-										<li><a class="dropdown-item<?= $nav_active('setup-wizard.php') ?>" href="setup/setup-wizard.php" style="color: var(--hh-purple)">+ Installation manager</a></li>
+										<li><a class="dropdown-item dropdown-item--admin" href="<?= htmlspecialchars($nav_href('admin/functions.php'), ENT_QUOTES) ?>">+ Admin functions</a></li>
+										<li><a class="dropdown-item dropdown-item--admin" href="<?= htmlspecialchars($nav_href('admin/configuration.php'), ENT_QUOTES) ?>">+ Site configuration</a></li>
+										<li><a class="dropdown-item dropdown-item--admin" href="<?= htmlspecialchars($nav_href('setup/setup-wizard.php'), ENT_QUOTES) ?>">+ Installation manager</a></li>
 										<?php endif; ?>
 		                <li>
 		                  <hr class="dropdown-divider">
 		                </li>
-		                <li><a class="dropdown-item" href="php/logout.php">Logout</a></li>
+		                <li><a class="dropdown-item" href="<?= htmlspecialchars($nav_href('php/logout.php'), ENT_QUOTES) ?>">Logout</a></li>
 		              </ul>
 		            </li>
 		          </ul>

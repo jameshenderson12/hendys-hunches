@@ -295,9 +295,10 @@ function displayTopRankings() {
 
 	// Get team information from the DB	counting occurrences too
 	//$sql_gettop5 = "SELECT firstname, surname, points_total FROM live_user_predictions_groups ORDER BY points_total DESC, surname ASC LIMIT 0, 5";
-	$sql_gettop5 = "SELECT lui.firstname, lui.surname, (lup_groups.points_total + IFNULL(lup_ro16.points_total, 0) + IFNULL(lup_qf.points_total, 0) + IFNULL(lup_sf.points_total, 0) + IFNULL(lup_fi.points_total, 0)) AS points_total
+	$sql_gettop5 = "SELECT lui.firstname, lui.surname, (lup_groups.points_total + IFNULL(lup_ro32.points_total, 0) + IFNULL(lup_ro16.points_total, 0) + IFNULL(lup_qf.points_total, 0) + IFNULL(lup_sf.points_total, 0) + IFNULL(lup_fi.points_total, 0)) AS points_total
 					FROM live_user_information lui
 					INNER JOIN live_user_predictions_groups lup_groups ON lui.id = lup_groups.id
+					LEFT JOIN live_user_predictions_ro32 lup_ro32 ON lui.id = lup_ro32.id
 					LEFT JOIN live_user_predictions_ro16 lup_ro16 ON lui.id = lup_ro16.id
 					LEFT JOIN live_user_predictions_qf lup_qf ON lui.id = lup_qf.id
 					LEFT JOIN live_user_predictions_sf lup_sf ON lui.id = lup_sf.id
@@ -340,9 +341,10 @@ function displayBottomRankings() {
 
 	// Get team information from the DB	counting occurrences too
 	//$sql_getbottom5 = "SELECT * FROM (SELECT firstname, surname, points_total FROM live_user_predictions_groups ORDER BY points_total ASC, surname DESC LIMIT 0, 5) TmpTable ORDER BY points_total DESC, surname ASC";
-	$sql_getbottom5 = "SELECT * FROM (SELECT lui.firstname, lui.surname, (lup_groups.points_total + IFNULL(lup_ro16.points_total, 0) + IFNULL(lup_qf.points_total, 0) + IFNULL(lup_sf.points_total, 0) + IFNULL(lup_fi.points_total, 0)) AS points_total
+	$sql_getbottom5 = "SELECT * FROM (SELECT lui.firstname, lui.surname, (lup_groups.points_total + IFNULL(lup_ro32.points_total, 0) + IFNULL(lup_ro16.points_total, 0) + IFNULL(lup_qf.points_total, 0) + IFNULL(lup_sf.points_total, 0) + IFNULL(lup_fi.points_total, 0)) AS points_total
 						FROM live_user_information lui
 						INNER JOIN live_user_predictions_groups lup_groups ON lui.id = lup_groups.id
+						LEFT JOIN live_user_predictions_ro32 lup_ro32 ON lui.id = lup_ro32.id
 						LEFT JOIN live_user_predictions_ro16 lup_ro16 ON lui.id = lup_ro16.id
 						LEFT JOIN live_user_predictions_qf lup_qf ON lui.id = lup_qf.id
 						LEFT JOIN live_user_predictions_sf lup_sf ON lui.id = lup_sf.id
@@ -444,12 +446,14 @@ function displayTodaysFixtures() {
 	include 'php/db-connect.php';
 
 	// Get team information from the DB	counting occurrences too
-	$sql_gettodaysgames = "SELECT * FROM live_match_schedule WHERE date = CURDATE()";
+	$effectiveToday = hh_effective_today_sql();
+	$safeDate = mysqli_real_escape_string($con, $effectiveToday);
+	$sql_gettodaysgames = "SELECT * FROM live_match_schedule WHERE date = '{$safeDate}'";
 
 	// Obtain the SQL query result and set corresponding result variables
 	$gamedata = mysqli_query($con, $sql_gettodaysgames);
 
-	$today = date("jS F, Y");
+	$today = hh_effective_today_label("jS F, Y");
 	printf ("<p class='text-center fw-bold'>Today, %s</p>", $today);
 
 	while($row = mysqli_fetch_assoc($gamedata)) {
@@ -592,7 +596,7 @@ function displayRO16MatchesPlayed() {
 
 	while ($row = mysqli_fetch_assoc($matches_played)) {
 		$no_of_matches_played = $row["matches_played"];
-		$no_of_ro16_matches_played = $no_of_matches_played - $GLOBALS["no_of_group_fixtures"];
+		$no_of_ro16_matches_played = $no_of_matches_played - ($GLOBALS["no_of_group_fixtures"] + ($GLOBALS["no_of_ro32_fixtures"] ?? 0));
 		//console.log($no_of_matches_played);
 		$percent_ro16_played = round($no_of_ro16_matches_played * 100 / $GLOBALS["no_of_ro16_fixtures"]);
 	}
@@ -617,7 +621,7 @@ function displayQFMatchesPlayed() {
 
 	while ($row = mysqli_fetch_assoc($matches_played)) {
 		$no_of_matches_played = $row["matches_played"];
-		$no_of_qf_matches_played = $no_of_matches_played - ($GLOBALS["no_of_group_fixtures"] + $GLOBALS["no_of_ro16_fixtures"]);
+		$no_of_qf_matches_played = $no_of_matches_played - ($GLOBALS["no_of_group_fixtures"] + ($GLOBALS["no_of_ro32_fixtures"] ?? 0) + $GLOBALS["no_of_ro16_fixtures"]);
 		//console.log($no_of_matches_played);
 		$percent_qf_played = round($no_of_qf_matches_played * 100 / $GLOBALS["no_of_qf_fixtures"]);
 	}
@@ -643,7 +647,7 @@ function displaySFMatchesPlayed() {
 
 	while ($row = mysqli_fetch_assoc($matches_played)) {
 		$no_of_matches_played = $row["matches_played"];
-		$no_of_sf_matches_played = $no_of_matches_played - ($GLOBALS["no_of_group_fixtures"] + $GLOBALS["no_of_ro16_fixtures"] + $GLOBALS["no_of_qf_fixtures"]);
+		$no_of_sf_matches_played = $no_of_matches_played - ($GLOBALS["no_of_group_fixtures"] + ($GLOBALS["no_of_ro32_fixtures"] ?? 0) + $GLOBALS["no_of_ro16_fixtures"] + $GLOBALS["no_of_qf_fixtures"]);
 		//console.log($no_of_matches_played);
 		$percent_sf_played = round($no_of_sf_matches_played * 100 / $GLOBALS["no_of_sf_fixtures"]);
 	}
@@ -668,7 +672,7 @@ function displayFinalMatchPlayed() {
 
 	while ($row = mysqli_fetch_assoc($matches_played)) {
 		$no_of_matches_played = $row["matches_played"];
-		$no_of_fi_matches_played = $no_of_matches_played - ($GLOBALS["no_of_group_fixtures"] + $GLOBALS["no_of_ro16_fixtures"] + $GLOBALS["no_of_qf_fixtures"] + $GLOBALS["no_of_sf_fixtures"]);
+		$no_of_fi_matches_played = $no_of_matches_played - ($GLOBALS["no_of_group_fixtures"] + ($GLOBALS["no_of_ro32_fixtures"] ?? 0) + $GLOBALS["no_of_ro16_fixtures"] + $GLOBALS["no_of_qf_fixtures"] + $GLOBALS["no_of_sf_fixtures"]);
 		//console.log($no_of_matches_played);
 		$percent_fi_played = round($no_of_fi_matches_played * 100 / $GLOBALS["no_of_final_fixtures"]);
 	}
@@ -700,6 +704,7 @@ function displayPersonalInfo() {
             			WHERE live_user_information.id = '".$_SESSION["id"]."'";*/
 	$sql_getpointstotal = "SELECT lui.id, 
 							(COALESCE(lup_groups.points_total, 0) + 
+								COALESCE(lup_ro32.points_total, 0) +
 								COALESCE(lup_ro16.points_total, 0) + 
 								COALESCE(lup_qf.points_total, 0) + 
 								COALESCE(lup_sf.points_total, 0) +
@@ -707,6 +712,7 @@ function displayPersonalInfo() {
 							) AS points_total
 							FROM live_user_information lui
 							INNER JOIN live_user_predictions_groups lup_groups ON lui.id = lup_groups.id
+							LEFT JOIN live_user_predictions_ro32 lup_ro32 ON lui.id = lup_ro32.id
 							LEFT JOIN live_user_predictions_ro16 lup_ro16 ON lui.id = lup_ro16.id
 							LEFT JOIN live_user_predictions_qf lup_qf ON lui.id = lup_qf.id
 							LEFT JOIN live_user_predictions_sf lup_sf ON lui.id = lup_sf.id

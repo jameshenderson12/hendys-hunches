@@ -8,14 +8,23 @@ hh_require_login('index.php');
 
 <?php
 	include 'php/process.php';
-	submitPredictions();
+	$submitResult = submitPredictions();
+
+	$submittedStage = isset($submitResult['stage']) ? trim((string) $submitResult['stage']) : trim((string) ($_POST['stage'] ?? ''));
+	$redirectTarget = 'predictions.php?saved=1';
+	if (!($submitResult['ok'] ?? false)) {
+		$redirectTarget = 'predictions.php?error=' . rawurlencode((string) ($submitResult['message'] ?? 'Unable to save predictions.'));
+	}
+	if ($submittedStage !== '') {
+		$redirectTarget .= (str_contains($redirectTarget, '?') ? '&' : '?') . 'stage=' . rawurlencode($submittedStage);
+	}
 ?>
 
 <!DOCTYPE html>
 <html lang="en-GB">
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="refresh" content="3;url=dashboard.php">
+    <meta http-equiv="refresh" content="2;url=<?= htmlspecialchars($redirectTarget, ENT_QUOTES) ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">    
     <meta http-equiv="Content-Type" content="text/html">    
     <meta name="description" content="Hendy's Hunches: Predictions Game">
@@ -125,8 +134,13 @@ hh_require_login('index.php');
 
     <section class="section">
     
-    <p><span class="badge bg-success">SUCCESS</span> <strong>Predictions recorded.</strong></p>
-		<p>Thank you for updating your predictions. You will now be returned to your predictions page.</p>
+		<?php if ($submitResult['ok'] ?? false) : ?>
+		<p><span class="badge bg-success">SUCCESS</span> <strong><?= htmlspecialchars((string) ($submitResult['message'] ?? 'Predictions recorded.')) ?></strong></p>
+		<p>Thank you for updating your predictions. You will now be returned to the stage you were editing.</p>
+		<?php else : ?>
+		<p><span class="badge bg-danger">NOTICE</span> <strong><?= htmlspecialchars((string) ($submitResult['message'] ?? 'Unable to save predictions.')) ?></strong></p>
+		<p>You will now be returned to the predictions page.</p>
+		<?php endif; ?>
 
 		<div class="spinner"></div>
     </section>

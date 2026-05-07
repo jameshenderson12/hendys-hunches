@@ -4,212 +4,370 @@ $page_title = 'Submit Predictions';
 
 require_once __DIR__ . '/php/auth.php';
 require_once __DIR__ . '/php/flags.php';
+require_once __DIR__ . '/php/config.php';
+require_once __DIR__ . '/php/process.php';
+
 hh_require_login('index.php');
 
-include "php/header.php";
-include "php/navigation.php";
+include 'php/db-connect.php';
 
+function hh_prediction_value(array $row, int $scoreIndex): string
+{
+    $column = 'score' . $scoreIndex . '_p';
+    if (!array_key_exists($column, $row) || $row[$column] === null || $row[$column] === '') {
+        return '';
+    }
+
+    return (string) $row[$column];
+}
+
+$stageContexts = hh_prediction_stage_contexts();
+$stageWindows = hh_prediction_stage_windows($con);
+$selectedStageKey = isset($_GET['stage']) ? trim((string) $_GET['stage']) : '';
+if ($selectedStageKey === '' || !isset($stageContexts[$selectedStageKey])) {
+    $selectedStageKey = array_key_first($stageContexts) ?: 'groups';
+}
+
+$selectedStage = $stageContexts[$selectedStageKey] ?? null;
+$selectedWindow = $stageWindows[$selectedStageKey] ?? null;
+$fixtures = [];
+$predictionRow = [];
+$stageLastUpdate = '';
+
+if ($selectedStage) {
+    $fixtureStatement = mysqli_prepare(
+        $con,
+        "SELECT match_number, stage, round_number, date, kotime, venue, hometeam, awayteam, hometeamimg, awayteamimg
+         FROM live_match_schedule
+         WHERE match_number BETWEEN ? AND ?
+         ORDER BY match_number ASC"
+    );
+
+    if ($fixtureStatement) {
+        mysqli_stmt_bind_param($fixtureStatement, 'ii', $selectedStage['fixture_start'], $selectedStage['fixture_end']);
+        mysqli_stmt_execute($fixtureStatement);
+        $fixtureResult = mysqli_stmt_get_result($fixtureStatement);
+
+        if ($fixtureResult instanceof mysqli_result) {
+            while ($row = mysqli_fetch_assoc($fixtureResult)) {
+                $fixtures[] = $row;
+            }
+            mysqli_free_result($fixtureResult);
+        }
+
+        mysqli_stmt_close($fixtureStatement);
+    }
+
+    $predictionStatement = mysqli_prepare(
+        $con,
+        "SELECT * FROM {$selectedStage['table']} WHERE id = ? LIMIT 1"
+    );
+
+    if ($predictionStatement) {
+        $sessionId = (int) ($_SESSION['id'] ?? 0);
+        mysqli_stmt_bind_param($predictionStatement, 'i', $sessionId);
+        mysqli_stmt_execute($predictionStatement);
+        $predictionResult = mysqli_stmt_get_result($predictionStatement);
+
+        if ($predictionResult instanceof mysqli_result) {
+            $predictionRow = mysqli_fetch_assoc($predictionResult) ?: [];
+            mysqli_free_result($predictionResult);
+        }
+
+        mysqli_stmt_close($predictionStatement);
+    }
+
+    $stageLastUpdate = !empty($predictionRow['lastupdate'])
+        ? date('D j M Y, H:i', strtotime((string) $predictionRow['lastupdate']))
+        : '';
+}
+
+mysqli_close($con);
+
+include 'php/header.php';
+include 'php/navigation.php';
 ?>
 
 <style>
-.predictions-page td img {
-	width: 36px;
-	border-radius: 50%;
-	vertical-align: middle;
+.predictions-stage-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 18px;
 }
-.predictions-page td:nth-child(2), .predictions-page td:nth-child(7) {
-	text-align: right;
+
+.predictions-stage-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border: 1px solid var(--hh-line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.84);
+  color: var(--hh-ink);
+  font-weight: 800;
+  text-decoration: none;
 }
-.predictions-page input {
-	font-size: larger !important;
-	text-align: center !important;
-	border: 1px solid #AAA !important;
-	width: 55px !important;
+
+.predictions-stage-link small {
+  color: var(--hh-muted);
+  font-weight: 700;
+}
+
+.predictions-stage-link.is-active {
+  border-color: rgba(143, 102, 216, 0.32);
+  background: rgba(143, 102, 216, 0.14);
+  color: var(--hh-purple-dark);
+}
+
+.predictions-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.predictions-summary__item {
+  padding: 12px 14px;
+  border: 1px solid var(--hh-line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.predictions-summary__item strong {
+  display: block;
+  color: var(--hh-ink);
+}
+
+.predictions-summary__item span {
+  color: var(--hh-muted);
+  font-size: 0.9rem;
+}
+
+.predictions-page .fixture-meta {
+  color: var(--hh-muted);
+  font-size: 0.84rem;
+  line-height: 1.35;
+}
+
+.predictions-page .team-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+}
+
+.predictions-page .team-cell--away {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.predictions-page .team-cell img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.predictions-page .score-field {
+  max-width: 68px;
+  margin: 0 auto;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.predictions-page .versus-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 36px;
+  border-radius: 8px;
+  background: rgba(12, 90, 67, 0.08);
+  color: var(--hh-muted);
+  font-weight: 900;
+}
+
+.predictions-page .table td,
+.predictions-page .table th {
+  vertical-align: middle;
 }
 </style>
 
-<!-- Main Content Section -->
 <main id="main" class="main">
-
     <div class="page-hero page-hero--predictions">
-    <div>
-      <p class="eyebrow">Predictions</p>
-      <h1>Submit your predictions</h1>
-      <p class="lead mb-0">Turn your scorelines into points and prizes before the fixture locks.</p>
+        <div>
+            <p class="eyebrow">Predictions</p>
+            <h1>Submit your predictions</h1>
+            <p class="lead mb-0">Work through each tournament stage and lock in your scorelines before kick-off.</p>
+        </div>
+        <div class="page-hero__actions">
+            <a class="btn btn-primary" href="#matches"><i class="bi bi-pencil-square"></i> Match list</a>
+            <a class="btn btn-outline-dark" href="how-it-works.php"><i class="bi bi-question-circle"></i> Scoring guide</a>
+        </div>
     </div>
-    <div class="page-hero__actions">
-      <a class="btn btn-primary" href="#matches"><i class="bi bi-pencil-square"></i> Match list</a>
-      <a class="btn btn-outline-dark" href="how-it-works.php"><i class="bi bi-question-circle"></i> Scoring guide</a>
-    </div>
-    </div><!-- End Page Title -->
 
     <section class="section predictions-page">
-		<p>Predict the Final fixture and then 'submit' to lock in your prediction. Once submitted, your prediction cannot be changed.</p>
-		<p class="alert alert-warning"><i class="bi bi-exclamation-triangle-fill"></i> Predictions can include draws as they <strong>do not include extra time</strong>.</p>
-		<!-- <p class="alert alert-warning" id="submitMsg"><strong>Note:</strong> You can predict a draw as predictions are for 90 mins only (do not include extra time and penalties).</p> -->
-		<a name="matches"></a><!--anchor point for filters-->				
-		<form id="predictionForm" name="predictionForm" class="form-horizontal" action="submit.php" method="POST">
-		<!-- <button type="button" class="btn btn-secondary mb-3 populate-scores"><i class="bi bi-magic"></i> Populate for me</button>
-		<button type="submit" class="btn btn-primary mb-3" name="predictionsSubmitted"><i class="bi bi-send-check-fill"></i> Submit predictions</button>		 -->
-		<div class="content-panel table-responsive">
-		<!-- Placeholder for JSON table construction -->
-		<table id="table" class="table table-sm table-striped">
-			<thead>
-				<tr>
-					<th class="d-none d-md-table-cell">Stage</th>
-					<th></th>
-					<th></th>
-					<th></th>
-					<th></th>
-					<th></th>
-					<th></th>
-					<th></th>
-					<th class="d-none d-md-table-cell">Details</th>
-				</tr>
-			</thead>
-			<tbody></tbody>
-		</table>
-		</div>
-		<button type="button" class="btn btn-secondary mt-3 mb-2 populate-scores"><i class="bi bi-magic"></i> Populate for me</button>
-		<button type="submit" class="btn btn-primary mt-3 mb-2" name="predictionsSubmitted"><i class="bi bi-send-check-fill"></i> Submit my predictions</button>
-		</form>
+        <p class="alert alert-warning"><i class="bi bi-exclamation-triangle-fill"></i> Predictions can include draws because they are based on the 90-minute score only, not extra time or penalties.</p>
+
+        <?php if (isset($_GET['saved'])) : ?>
+            <p class="alert alert-success"><i class="bi bi-check-circle-fill"></i> Your <?= htmlspecialchars((string) ($selectedStage['label'] ?? 'stage')) ?> predictions were saved.</p>
+        <?php endif; ?>
+        <?php if (isset($_GET['error']) && $_GET['error'] !== '') : ?>
+            <p class="alert alert-danger"><i class="bi bi-exclamation-octagon-fill"></i> <?= htmlspecialchars((string) $_GET['error']) ?></p>
+        <?php endif; ?>
+
+        <div class="predictions-stage-nav">
+            <?php foreach ($stageContexts as $stageContext) : ?>
+                <?php $window = $stageWindows[$stageContext['key']] ?? null; ?>
+                <a class="predictions-stage-link <?= $stageContext['key'] === $selectedStageKey ? 'is-active' : '' ?>" href="predictions.php?stage=<?= urlencode($stageContext['key']) ?>">
+                    <span><?= htmlspecialchars($stageContext['label']) ?></span>
+                    <small>
+                        <?= htmlspecialchars((string) (($stageContext['fixture_end'] - $stageContext['fixture_start']) + 1)) ?> fixtures
+                        <?php if ($window) : ?> · <?= htmlspecialchars(ucfirst((string) $window['status'])) ?><?php endif; ?>
+                    </small>
+                </a>
+            <?php endforeach; ?>
+        </div>
+
+        <?php if ($selectedStage) : ?>
+            <div class="predictions-summary">
+                <div class="predictions-summary__item">
+                    <strong><?= htmlspecialchars($selectedStage['label']) ?></strong>
+                    <span>Matches <?= htmlspecialchars((string) $selectedStage['fixture_start']) ?>-<?= htmlspecialchars((string) $selectedStage['fixture_end']) ?></span>
+                </div>
+                <div class="predictions-summary__item">
+                    <strong><?= htmlspecialchars((string) count($fixtures)) ?> fixtures loaded</strong>
+                    <span>Built from the live schedule in your database</span>
+                </div>
+                <div class="predictions-summary__item">
+                    <strong><?= $stageLastUpdate !== '' ? htmlspecialchars($stageLastUpdate) : 'Not submitted yet' ?></strong>
+                    <span>Latest save for this stage</span>
+                </div>
+                <?php if ($selectedWindow) : ?>
+                    <div class="predictions-summary__item">
+                        <strong><?= htmlspecialchars(ucfirst((string) $selectedWindow['status'])) ?></strong>
+                        <span>
+                            <?php if ($selectedWindow['status'] === 'open' && $selectedWindow['closes_at'] instanceof DateTimeImmutable) : ?>
+                                Closes <?= htmlspecialchars($selectedWindow['closes_at']->setTimezone(new DateTimeZone(date_default_timezone_get()))->format('D j M H:i')) ?>
+                            <?php elseif ($selectedWindow['status'] === 'upcoming' && $selectedWindow['opens_at'] instanceof DateTimeImmutable) : ?>
+                                Opens <?= htmlspecialchars($selectedWindow['opens_at']->setTimezone(new DateTimeZone(date_default_timezone_get()))->format('D j M H:i')) ?>
+                            <?php elseif ($selectedWindow['status'] === 'closed') : ?>
+                                This stage is locked
+                            <?php else : ?>
+                                Waiting for fixture timings
+                            <?php endif; ?>
+                        </span>
+                    </div>
+                <?php endif; ?>
+            </div>
+        <?php endif; ?>
+
+        <?php if ($selectedWindow && $selectedWindow['status'] === 'open') : ?>
+            <p class="alert alert-info"><i class="bi bi-clock-history"></i> <?= htmlspecialchars($selectedStage['label']) ?> predictions are open. They will lock 2 hours before the first kick-off of this stage.</p>
+        <?php elseif ($selectedWindow && $selectedWindow['status'] === 'upcoming') : ?>
+            <p class="alert alert-secondary"><i class="bi bi-hourglass-split"></i> <?= htmlspecialchars($selectedStage['label']) ?> predictions are not open yet. They unlock 5 hours after the previous stage’s last kick-off.</p>
+        <?php elseif ($selectedWindow && $selectedWindow['status'] === 'closed') : ?>
+            <p class="alert alert-warning"><i class="bi bi-lock-fill"></i> <?= htmlspecialchars($selectedStage['label']) ?> predictions are now closed.</p>
+        <?php endif; ?>
+
+        <a id="matches"></a>
+
+        <?php if (!$selectedStage || empty($fixtures)) : ?>
+            <div class="content-panel">
+                <p class="mb-0 text-muted">No fixtures were found for this stage yet.</p>
+            </div>
+        <?php else : ?>
+            <form id="predictionForm" name="predictionForm" class="form-horizontal" action="submit.php" method="POST">
+                <input type="hidden" name="stage" value="<?= htmlspecialchars($selectedStageKey) ?>">
+
+                <div class="content-panel table-responsive">
+                    <table id="table" class="table table-sm table-striped">
+                        <thead>
+                            <tr>
+                                <th class="d-none d-lg-table-cell">Fixture</th>
+                                <th>Home</th>
+                                <th></th>
+                                <th class="text-center">Pred.</th>
+                                <th class="text-center"></th>
+                                <th class="text-center">Pred.</th>
+                                <th></th>
+                                <th>Away</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($fixtures as $fixture) : ?>
+                                <?php
+                                $matchNumber = (int) ($fixture['match_number'] ?? 0);
+                                $homeScoreIndex = ($matchNumber * 2) - 1;
+                                $awayScoreIndex = $matchNumber * 2;
+                                $homeValue = hh_prediction_value($predictionRow, $homeScoreIndex);
+                                $awayValue = hh_prediction_value($predictionRow, $awayScoreIndex);
+                                $stageLabel = trim((string) ($fixture['stage'] ?? '')) ?: ($selectedStage['label'] ?? '');
+                                $kickoffDate = !empty($fixture['date']) ? date('D j M', strtotime((string) $fixture['date'])) : '';
+                                $kickoffTime = trim((string) ($fixture['kotime'] ?? ''));
+                                $metaBits = array_filter([$stageLabel, trim($kickoffDate . ($kickoffTime !== '' ? ' · ' . $kickoffTime : '')), (string) ($fixture['venue'] ?? '')]);
+                                ?>
+                                <tr>
+                                    <td class="d-none d-lg-table-cell">
+                                        <div class="fixture-meta">
+                                            <strong>Match <?= htmlspecialchars((string) $matchNumber) ?></strong><br>
+                                            <?= htmlspecialchars(implode(' · ', $metaBits)) ?>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="team-cell">
+                                            <img src="<?= htmlspecialchars((string) $fixture['hometeamimg']) ?>" alt="<?= htmlspecialchars((string) $fixture['hometeam']) ?> flag">
+                                            <span><?= htmlspecialchars((string) $fixture['hometeam']) ?></span>
+                                        </div>
+                                    </td>
+                                    <td class="d-none d-md-table-cell"></td>
+                                    <td class="text-center">
+                                        <input type="number" min="0" max="20" inputmode="numeric" id="score<?= $homeScoreIndex ?>_p" name="score<?= $homeScoreIndex ?>_p" class="form-control score-field" value="<?= htmlspecialchars($homeValue) ?>" required <?= ($selectedWindow && !$selectedWindow['is_open']) ? 'disabled' : '' ?>>
+                                    </td>
+                                    <td class="text-center"><span class="versus-pill">v</span></td>
+                                    <td class="text-center">
+                                        <input type="number" min="0" max="20" inputmode="numeric" id="score<?= $awayScoreIndex ?>_p" name="score<?= $awayScoreIndex ?>_p" class="form-control score-field" value="<?= htmlspecialchars($awayValue) ?>" required <?= ($selectedWindow && !$selectedWindow['is_open']) ? 'disabled' : '' ?>>
+                                    </td>
+                                    <td class="d-none d-md-table-cell"></td>
+                                    <td>
+                                        <div class="team-cell team-cell--away">
+                                            <span><?= htmlspecialchars((string) $fixture['awayteam']) ?></span>
+                                            <img src="<?= htmlspecialchars((string) $fixture['awayteamimg']) ?>" alt="<?= htmlspecialchars((string) $fixture['awayteam']) ?> flag">
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+
+                <button type="button" class="btn btn-secondary mt-3 mb-2 populate-scores" <?= ($selectedWindow && !$selectedWindow['is_open']) ? 'disabled' : '' ?>><i class="bi bi-magic"></i> Populate for me</button>
+                <button type="submit" class="btn btn-primary mt-3 mb-2" name="predictionsSubmitted" <?= ($selectedWindow && !$selectedWindow['is_open']) ? 'disabled' : '' ?>><i class="bi bi-send-check-fill"></i> Save <?= htmlspecialchars($selectedStage['label']) ?> predictions</button>
+            </form>
+        <?php endif; ?>
     </section>
-        
 </main>
 
 <script>
-    $(document).ready(function () {
-        const teamFlagMap = <?= json_encode(hh_get_known_team_flag_paths('')) ?>;
-        // Fetch data from JSON file
-        $.getJSON("json/uefa-euro-2024-fixtures-final.json", function (data) {
-            let fixture = '';
-            let x = 101, y = 102;
+$(document).ready(function () {
+    $('.populate-scores').on('click', function() {
+        function getRandomScore() {
+            const rand = Math.random();
+            if (rand < 0.37) return 0;
+            if (rand < 0.67) return 1;
+            if (rand < 0.88) return 2;
+            if (rand < 0.95) return 3;
+            if (rand < 0.99) return 4;
+            return 5;
+        }
 
-            // Iterate through objects
-            $.each(data, function (key, value) {
-                const homeTeam = value.HomeTeam;
-                const awayTeam = value.AwayTeam;
-                const homeTeamFlag = teamFlagMap[homeTeam] || "";
-                const awayTeamFlag = teamFlagMap[awayTeam] || "";
-                const dateStr = value.DateUtc;
-                const [dateValues, timeValues] = dateStr.split(' ');
-                const [year, month, day] = dateValues.split('-');
-                const [hours, minutes] = timeValues.split(':');
-                const date = new Date(+year, +month - 1, +day, +hours, +minutes).toLocaleString().slice(0, -3);
-
-                fixture += `
-                    <tr>
-                        <td class="small text-muted d-none d-md-table-cell">${value.RoundNumber}</td>
-                        <td><img src="${homeTeamFlag}" alt="Flag of ${homeTeam}" title="Flag of ${homeTeam}" class="img-fluid"></td>
-						<td>${homeTeam}</td>                        
-                        <td><input type="text" id="score${x}_p" name="score${x}_p" class="form-control" required /></td>
-                        <td align="center"><strong>V</strong></td><!--<br><span class="badge bg-light text-primary">${value.MatchNumber}</span>-->
-                        <td><input type="text" id="score${y}_p" name="score${y}_p" class="form-control" style="float:right" required /></td>                        
-                        <td>${awayTeam}</td>
-						<td><img src="${awayTeamFlag}" alt="Flag of ${awayTeam}" title="Flag of ${awayTeam}" class="img-fluid"></td>
-                        <td class="small text-muted d-none d-md-table-cell">
-                            <span data-bs-toggle="tooltip" title="Match Number: ${value.MatchNumber}, Round: ${value.RoundNumber}, Date: ${date}, Location: ${value.Location}">${date}<br>${value.Location}</span>
-                        </td>
-                    </tr>
-                `;
-                x += 2;
-                y += 2;
-            });
-
-            // Insert rows into table
-            $('#table tbody').append(fixture);
-
-			// Add click event to populate scores
-			$('.populate-scores').click(function() {
-				populateScores();
-			});
-		});
-	});
-
-	// function populateScores() {
-	// 	const weightedScores = [0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 4]; // 0, 1, and 2 appear more frequently
-	// 	for (let i = 1; i <= 72; i++) {
-	// 		const randomIndex = Math.floor(Math.random() * weightedScores.length);
-	// 		const randomScore = weightedScores[randomIndex];
-	// 		$('#score' + i + '_p').val(randomScore);
-	// 	}
-	// }
-
-	function populateScores() {
-		function getRandomScore() {
-			const rand = Math.random();
-			// if (rand < 0.4) return 0;  // 40% chance of 0
-			// else if (rand < 0.7) return 1;  // 30% chance of 1
-			// else if (rand < 0.9) return 2;  // 20% chance of 2
-			// else if (rand < 0.97) return 3;  // 7% chance of 3
-			// else return 4;  // 3% chance of 4
-			if (rand < 0.37) return 0;  // 37% chance of 0
-			else if (rand < 0.67) return 1;  // 30% chance of 1
-			else if (rand < 0.88) return 2;  // 21% chance of 2
-			else if (rand < 0.95) return 3;  // 7% chance of 3
-			else if (rand < 0.99) return 4;  // 4% chance of 3
-			else return 5;  // 1% chance of 5			
-		}
-
-		for (let i = 101; i <= 102; i += 2) {
-			const homeScore = getRandomScore();
-			let awayScore = getRandomScore();
-
-			// Avoid high-scoring draws
-			if (homeScore >= 3 && awayScore >= 3) {
-				// Reduce the likelihood of both scores being high
-				if (Math.random() < 0.5) {
-					// homeScore = getRandomScore();  // Regenerate home score
-					awayScore = getRandomScore();  // Regenerate away score
-				}
-			}
-
-			$('#score' + i + '_p').val(homeScore);  // Home score
-			$('#score' + (i + 1) + '_p').val(awayScore);  // Away score
-		}
-	}	
-
-	function parseDate(str) {
-		var s = str.split(" "),
-			d = s[0].split("-"),
-			t = s[1].replace(/:/g, "");
-		return d[2] + d[1] + d[0] + t;
-	}
-
-	function validateFullForm() {
-		// Validate the match score inputs
-		var x = document.getElementsByTagName("input");
-		for (var i = 0; i < x.length; i++) {
-			if(x[i].name.indexOf('score') == 0) {
-				if ((x[i].value == null) || (x[i].value == "")) {
-				alert("Please check your match predictions again as it looks like there are imcomplete scores.");
-				x[i].style.border="1px solid red";
-				x[i].focus();
-				return false;
-				}
-			}
-		}
-	}
-	// Turn the score fields red if not input (onBlur - focus leaving the field)
-	function validateScore(inputID) {
-		var x = document.getElementById(inputID);
-		if (x.value == null || x.value == "") {
-			x.style.border="1px solid red";
-			return false;
-		}
-		else if ((x.value >= 0) && (x.value <= 10)) {
-			x.style.border="1px solid green";
-		}
-		else x.style.border="1px solid red";
-	}
-	// Reset all guidance borders to original colour
-	function resetBorders() {
-		var x = document.getElementById("predictionForm");
-		for (var i = 0; i < x.length; i++) {
-			x.elements[i].style.border="1px solid #CCC";
-		}
-	}
+        $('#predictionForm input[name^="score"]').each(function() {
+            $(this).val(getRandomScore());
+        });
+    });
+});
 </script>
 
-<!-- Footer -->
-<?php include "php/footer.php" ?>
+<?php include 'php/footer.php'; ?>

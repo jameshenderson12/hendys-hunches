@@ -3,6 +3,7 @@ session_start();
 require_once dirname(__DIR__) . '/php/auth.php';
 require_once dirname(__DIR__) . '/php/flags.php';
 require_once __DIR__ . '/../php/config.php';
+require_once __DIR__ . '/../php/process.php';
 
 hh_require_login('../index.php');
 
@@ -24,6 +25,7 @@ $inline_mysql_feedback = null;
 $table_install_context = [];
 $runtime_audit = [];
 $table_audit = [];
+$database_contents = [];
 
 $mysql_diagnostics = [
     'status' => 'Not tested',
@@ -357,6 +359,8 @@ function build_tournament_metadata(array $fixtures, string $tournamentName, stri
         'group_fixtures_start_date' => $groupDates[0] ?? '',
         'group_fixtures_end_date' => $groupDates[count($groupDates) - 1] ?? '',
         'knockout_fixtures_start_date' => $knockoutDates[0] ?? '',
+        'round_of_32_start_date' => $stageDates['Round of 32'][0] ?? '',
+        'round_of_32_end_date' => $stageDates['Round of 32'][count($stageDates['Round of 32'] ?? []) - 1] ?? '',
         'round_of_16_start_date' => $stageDates['Round of 16'][0] ?? '',
         'round_of_16_end_date' => $stageDates['Round of 16'][count($stageDates['Round of 16'] ?? []) - 1] ?? '',
         'quarter_final_start_date' => $stageDates['Quarter-Finals'][0] ?? '',
@@ -364,10 +368,11 @@ function build_tournament_metadata(array $fixtures, string $tournamentName, stri
         'semi_final_start_date' => $stageDates['Semi-Finals'][0] ?? '',
         'semi_final_end_date' => $stageDates['Semi-Finals'][count($stageDates['Semi-Finals'] ?? []) - 1] ?? '',
         'final_date' => $finalDate,
+        'round_of_32_count' => $stageCounts['Round of 32'] ?? 0,
         'round_of_16_count' => $stageCounts['Round of 16'] ?? 0,
         'quarter_final_count' => $stageCounts['Quarter-Finals'] ?? 0,
         'semi_final_count' => $stageCounts['Semi-Finals'] ?? 0,
-        'final_count' => ($stageCounts['Final'] ?? 0) + ($stageCounts['Final Stage'] ?? 0),
+        'final_count' => ($stageCounts['Final'] ?? 0) + ($stageCounts['Final Stage'] ?? 0) + ($stageCounts['Third Place Play-Off'] ?? 0),
     ];
 }
 
@@ -414,6 +419,8 @@ function build_config_preview(array $metadata): array {
         '$group_fixtures_start_date' => format_config_date($metadata['group_fixtures_start_date']),
         '$group_fixtures_end_date' => format_config_date($metadata['group_fixtures_end_date']),
         '$knockout_fixtures_start_date' => format_config_date($metadata['knockout_fixtures_start_date']),
+        '$round_of_32_start_date' => format_config_date($metadata['round_of_32_start_date']),
+        '$round_of_32_end_date' => format_config_date($metadata['round_of_32_end_date']),
         '$round_of_16_start_date' => format_config_date($metadata['round_of_16_start_date']),
         '$round_of_16_end_date' => format_config_date($metadata['round_of_16_end_date']),
         '$quarter_final_start_date' => format_config_date($metadata['quarter_final_start_date']),
@@ -425,6 +432,7 @@ function build_config_preview(array $metadata): array {
         '$no_of_competition_teams' => $metadata['confirmed_teams'],
         '$no_of_group_fixtures' => $metadata['group_fixture_count'],
         '$no_of_knockout_fixtures' => $metadata['knockout_fixture_count'],
+        '$no_of_ro32_fixtures' => $metadata['round_of_32_count'],
         '$no_of_ro16_fixtures' => $metadata['round_of_16_count'],
         '$no_of_qf_fixtures' => $metadata['quarter_final_count'],
         '$no_of_sf_fixtures' => $metadata['semi_final_count'],
@@ -567,6 +575,7 @@ function build_prediction_table_create_sql(string $tableName, int $startScoreInd
 function read_table_install_context_from_request(): array {
     $keys = [
         'group_fixture_count',
+        'round_of_32_count',
         'round_of_16_count',
         'quarter_final_count',
         'semi_final_count',
@@ -587,6 +596,7 @@ function read_table_install_context_from_request(): array {
 
 function build_installable_table_definitions(array $context): array {
     $groupCount = $context['group_fixture_count'] ?? 0;
+    $ro32Count = $context['round_of_32_count'] ?? 0;
     $ro16Count = $context['round_of_16_count'] ?? 0;
     $qfCount = $context['quarter_final_count'] ?? 0;
     $sfCount = $context['semi_final_count'] ?? 0;
@@ -594,13 +604,15 @@ function build_installable_table_definitions(array $context): array {
     $totalMatches = $context['total_matches'] ?? 0;
 
     $groupScoreCount = $groupCount * 2;
+    $ro32ScoreCount = $ro32Count * 2;
     $ro16ScoreCount = $ro16Count * 2;
     $qfScoreCount = $qfCount * 2;
     $sfScoreCount = $sfCount * 2;
     $finalScoreCount = $finalCount * 2;
     $totalScoreColumns = $totalMatches * 2;
 
-    $ro16Start = $groupScoreCount + 1;
+    $ro32Start = $groupScoreCount + 1;
+    $ro16Start = $ro32Start + $ro32ScoreCount;
     $qfStart = $ro16Start + $ro16ScoreCount;
     $sfStart = $qfStart + $qfScoreCount;
     $finalStart = $sfStart + $sfScoreCount;
@@ -627,6 +639,13 @@ function build_installable_table_definitions(array $context): array {
             'sql' => file_get_contents(__DIR__ . '/../sql/setup-group-standings-table.sql') ?: '',
             'description' => 'Cached standings table for the group stage.',
         ],
+        'fanzone_posts' => [
+            'label' => 'Fan Zone Message Board',
+            'file' => 'sql/setup-fanzone-board-table.sql',
+            'table' => 'live_fanzone_posts',
+            'sql' => file_get_contents(__DIR__ . '/../sql/setup-fanzone-board-table.sql') ?: '',
+            'description' => 'Threaded community posts, replies, pinned updates and announcements.',
+        ],
         'match_results' => [
             'label' => 'Match Results',
             'file' => 'sql/setup-match-results-table.sql',
@@ -640,6 +659,13 @@ function build_installable_table_definitions(array $context): array {
             'table' => 'live_user_predictions_groups',
             'sql' => build_prediction_table_create_sql('live_user_predictions_groups', 1, $groupScoreCount),
             'description' => 'Prediction score slots for group fixtures 1-' . $groupCount . ' (' . $groupScoreCount . ' values).',
+        ],
+        'predictions_ro32' => [
+            'label' => 'Round of 32 Predictions',
+            'file' => 'sql/setup-user-predicitions-table-ro32.sql',
+            'table' => 'live_user_predictions_ro32',
+            'sql' => build_prediction_table_create_sql('live_user_predictions_ro32', $ro32Start, $ro32ScoreCount),
+            'description' => 'Prediction score slots for Round of 32 match scores ' . $ro32Start . '-' . ($ro32Start + $ro32ScoreCount - 1) . '.',
         ],
         'predictions_ro16' => [
             'label' => 'Round of 16 Predictions',
@@ -670,6 +696,381 @@ function build_installable_table_definitions(array $context): array {
             'description' => 'Prediction score slots for final-stage match scores ' . $finalStart . '-' . ($finalStart + $finalScoreCount - 1) . '.',
         ],
     ];
+}
+
+function build_prediction_stage_contexts(array $context): array {
+    $groupCount = max(0, (int) ($context['group_fixture_count'] ?? 0));
+    $ro32Count = max(0, (int) ($context['round_of_32_count'] ?? 0));
+    $ro16Count = max(0, (int) ($context['round_of_16_count'] ?? 0));
+    $qfCount = max(0, (int) ($context['quarter_final_count'] ?? 0));
+    $sfCount = max(0, (int) ($context['semi_final_count'] ?? 0));
+    $finalCount = max(0, (int) ($context['final_count'] ?? 0));
+
+    $groupScores = $groupCount * 2;
+    $ro32Scores = $ro32Count * 2;
+    $ro16Scores = $ro16Count * 2;
+    $qfScores = $qfCount * 2;
+    $sfScores = $sfCount * 2;
+    $finalScores = $finalCount * 2;
+
+    $ro32Start = $groupScores + 1;
+    $ro16Start = $ro32Start + $ro32Scores;
+    $qfStart = $ro16Start + $ro16Scores;
+    $sfStart = $qfStart + $qfScores;
+    $finalStart = $sfStart + $sfScores;
+
+    return [
+        ['table' => 'live_user_predictions_groups', 'start' => 1, 'count' => $groupScores],
+        ['table' => 'live_user_predictions_ro32', 'start' => $ro32Start, 'count' => $ro32Scores],
+        ['table' => 'live_user_predictions_ro16', 'start' => $ro16Start, 'count' => $ro16Scores],
+        ['table' => 'live_user_predictions_qf', 'start' => $qfStart, 'count' => $qfScores],
+        ['table' => 'live_user_predictions_sf', 'start' => $sfStart, 'count' => $sfScores],
+        ['table' => 'live_user_predictions_final', 'start' => $finalStart, 'count' => $finalScores],
+    ];
+}
+
+function build_dummy_users(array $footballKits): array {
+    $users = [
+        ['username' => 'james', 'firstname' => 'James', 'surname' => 'Henderson', 'email' => 'james@example.com', 'faveteam' => 'England', 'winner' => 'Brazil', 'paid' => 'Yes', 'work' => 'Admin', 'location' => 'Nottingham'],
+        ['username' => 'amy', 'firstname' => 'Amy', 'surname' => 'Carter', 'email' => 'amy@example.com', 'faveteam' => 'United States', 'winner' => 'Spain', 'paid' => 'Yes', 'work' => 'Teacher', 'location' => 'Leeds'],
+        ['username' => 'matt', 'firstname' => 'Matt', 'surname' => 'Shaw', 'email' => 'matt@example.com', 'faveteam' => 'Mexico', 'winner' => 'Argentina', 'paid' => 'No', 'work' => 'Engineer', 'location' => 'Derby'],
+        ['username' => 'sarah', 'firstname' => 'Sarah', 'surname' => 'Bell', 'email' => 'sarah@example.com', 'faveteam' => 'Canada', 'winner' => 'France', 'paid' => 'Yes', 'work' => 'Designer', 'location' => 'Sheffield'],
+        ['username' => 'lee', 'firstname' => 'Lee', 'surname' => 'Mitchell', 'email' => 'lee@example.com', 'faveteam' => 'Germany', 'winner' => 'England', 'paid' => 'Yes', 'work' => 'Analyst', 'location' => 'York'],
+        ['username' => 'nina', 'firstname' => 'Nina', 'surname' => 'Patel', 'email' => 'nina@example.com', 'faveteam' => 'Portugal', 'winner' => 'Portugal', 'paid' => 'No', 'work' => 'Doctor', 'location' => 'London'],
+        ['username' => 'tom', 'firstname' => 'Tom', 'surname' => 'Evans', 'email' => 'tom@example.com', 'faveteam' => 'Mexico', 'winner' => 'Germany', 'paid' => 'Yes', 'work' => 'Consultant', 'location' => 'Bristol'],
+        ['username' => 'zoe', 'firstname' => 'Zoe', 'surname' => 'Morgan', 'email' => 'zoe@example.com', 'faveteam' => 'Brazil', 'winner' => 'Brazil', 'paid' => 'Yes', 'work' => 'Nurse', 'location' => 'Manchester'],
+    ];
+
+    foreach ($users as $index => $user) {
+        $users[$index]['avatar'] = $footballKits[$index % max(1, count($footballKits))] ?? 'img/hh-icon-2024.png';
+    }
+
+    return $users;
+}
+
+function execute_multi_sql_statements(mysqli $connection, string $sql): void {
+    $statements = array_filter(array_map('trim', preg_split('/;\s*(?:\R|$)/', $sql) ?: []));
+    foreach ($statements as $statement) {
+        if ($statement === '') {
+            continue;
+        }
+        if (!mysqli_query($connection, $statement)) {
+            throw new RuntimeException(mysqli_error($connection));
+        }
+    }
+}
+
+function create_installable_tables(mysqli $connection, array $installableTables): void {
+    foreach ($installableTables as $definition) {
+        execute_multi_sql_statements($connection, $definition['sql']);
+    }
+}
+
+function rebuild_installable_tables(mysqli $connection, array $installableTables): void {
+    if (empty($installableTables)) {
+        return;
+    }
+
+    mysqli_query($connection, 'SET FOREIGN_KEY_CHECKS = 0');
+
+    try {
+        $dropOrder = array_reverse(array_values($installableTables));
+        foreach ($dropOrder as $definition) {
+            $tableName = $definition['table'] ?? '';
+            if ($tableName === '') {
+                continue;
+            }
+
+            if (!mysqli_query($connection, 'DROP TABLE IF EXISTS ' . mysql_quote_identifier($tableName))) {
+                throw new RuntimeException('Failed to rebuild ' . $tableName . ': ' . mysqli_error($connection));
+            }
+        }
+    } finally {
+        mysqli_query($connection, 'SET FOREIGN_KEY_CHECKS = 1');
+    }
+
+    create_installable_tables($connection, $installableTables);
+}
+
+function hh_setup_bind_stmt_values(mysqli_stmt $statement, string $types, array $values): void {
+    $refs = [];
+    foreach ($values as $index => $value) {
+        $refs[$index] = &$values[$index];
+    }
+
+    array_unshift($refs, $types);
+    call_user_func_array([$statement, 'bind_param'], $refs);
+}
+
+function seed_dummy_user_information(mysqli $connection, array $users): void {
+    mysqli_query($connection, "DELETE FROM live_temp_information");
+    mysqli_query($connection, "DELETE FROM live_user_information");
+
+    $statement = mysqli_prepare(
+        $connection,
+        "INSERT INTO live_user_information (id, username, password, firstname, surname, email, avatar, fieldofwork, location, faveteam, tournwinner, startpos, lastpos, currpos, haspaid)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+    );
+
+    if (!$statement) {
+        throw new RuntimeException(mysqli_error($connection));
+    }
+
+    foreach ($users as $index => $user) {
+        $id = $index + 1;
+        $password = md5('demo123');
+        $startPos = $id;
+        $lastPos = $id;
+        $currPos = $id;
+        mysqli_stmt_bind_param(
+            $statement,
+            'issssssssssiiis',
+            $id,
+            $user['username'],
+            $password,
+            $user['firstname'],
+            $user['surname'],
+            $user['email'],
+            $user['avatar'],
+            $user['work'],
+            $user['location'],
+            $user['faveteam'],
+            $user['winner'],
+            $startPos,
+            $lastPos,
+            $currPos,
+            $user['paid']
+        );
+        mysqli_stmt_execute($statement);
+    }
+
+    mysqli_stmt_close($statement);
+}
+
+function seed_dummy_prediction_table(mysqli $connection, string $tableName, int $startScoreIndex, int $scoreColumnCount, array $users, array $resultsByMatch): void {
+    mysqli_query($connection, "DELETE FROM {$tableName}");
+
+    if ($scoreColumnCount <= 0) {
+        return;
+    }
+
+    $columns = ['id', 'username', 'firstname', 'surname'];
+    $placeholders = ['?', '?', '?', '?'];
+    $types = 'isss';
+
+    for ($scoreIndex = $startScoreIndex; $scoreIndex < $startScoreIndex + $scoreColumnCount; $scoreIndex++) {
+        $columns[] = "score{$scoreIndex}_p";
+        $placeholders[] = '?';
+        $types .= 'i';
+    }
+
+    $columns[] = 'lastupdate';
+    $placeholders[] = 'NOW()';
+
+    $sql = "INSERT INTO {$tableName} (" . implode(', ', $columns) . ") VALUES (" . implode(', ', $placeholders) . ")";
+    $statement = mysqli_prepare($connection, $sql);
+    if (!$statement) {
+        throw new RuntimeException(mysqli_error($connection));
+    }
+
+    foreach ($users as $index => $user) {
+        $rowValues = [$index + 1, $user['username'], $user['firstname'], $user['surname']];
+        for ($scoreIndex = $startScoreIndex; $scoreIndex < $startScoreIndex + $scoreColumnCount; $scoreIndex++) {
+            $matchNumber = (int) ceil($scoreIndex / 2);
+            $baseScore = ($scoreIndex % 2 === 1)
+                ? ($resultsByMatch[$matchNumber]['home'] ?? 0)
+                : ($resultsByMatch[$matchNumber]['away'] ?? 0);
+
+            $adjustment = (($index + $scoreIndex) % 3) - 1;
+            $rowValues[] = max(0, min(6, $baseScore + $adjustment));
+        }
+
+        hh_setup_bind_stmt_values($statement, $types, $rowValues);
+        mysqli_stmt_execute($statement);
+    }
+
+    mysqli_stmt_close($statement);
+}
+
+function seed_dummy_match_results(mysqli $connection, int $totalMatches): array {
+    mysqli_query($connection, "DELETE FROM live_match_results");
+
+    $resultsByMatch = [];
+    $columns = [];
+    $placeholders = [];
+    $types = '';
+    $values = [];
+
+    for ($matchNumber = 1; $matchNumber <= $totalMatches; $matchNumber++) {
+        $home = ($matchNumber + 1) % 4;
+        $away = ($matchNumber * 2) % 3;
+        $resultsByMatch[$matchNumber] = ['home' => $home, 'away' => $away];
+
+        $homeIndex = ($matchNumber * 2) - 1;
+        $awayIndex = $matchNumber * 2;
+        $columns[] = "score{$homeIndex}_r";
+        $columns[] = "score{$awayIndex}_r";
+        $placeholders[] = '?';
+        $placeholders[] = '?';
+        $types .= 'ii';
+        $values[] = $home;
+        $values[] = $away;
+    }
+
+    $statement = mysqli_prepare(
+        $connection,
+        "INSERT INTO live_match_results (" . implode(', ', $columns) . ") VALUES (" . implode(', ', $placeholders) . ")"
+    );
+    if (!$statement) {
+        throw new RuntimeException(mysqli_error($connection));
+    }
+
+    hh_setup_bind_stmt_values($statement, $types, $values);
+    mysqli_stmt_execute($statement);
+    mysqli_stmt_close($statement);
+
+    return $resultsByMatch;
+}
+
+function seed_dummy_schedule_scores(mysqli $connection, array $resultsByMatch): void {
+    $statement = mysqli_prepare($connection, "UPDATE live_match_schedule SET homescore = ?, awayscore = ? WHERE match_number = ?");
+    if (!$statement) {
+        throw new RuntimeException(mysqli_error($connection));
+    }
+
+    foreach ($resultsByMatch as $matchNumber => $scores) {
+        $home = (int) $scores['home'];
+        $away = (int) $scores['away'];
+        $match = (int) $matchNumber;
+        mysqli_stmt_bind_param($statement, 'iii', $home, $away, $match);
+        mysqli_stmt_execute($statement);
+    }
+
+    mysqli_stmt_close($statement);
+}
+
+function seed_dummy_group_standings(mysqli $connection, array $groupPreview): void {
+    mysqli_query($connection, "DELETE FROM live_group_standings");
+
+    $statement = mysqli_prepare(
+        $connection,
+        "INSERT INTO live_group_standings (group_name, team_name, team_img, played, won, drawn, lost, goals_for, goals_against, points, goal_difference)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+    );
+
+    if (!$statement) {
+        throw new RuntimeException(mysqli_error($connection));
+    }
+
+    foreach ($groupPreview as $groupName => $teams) {
+        foreach (array_values($teams) as $index => $team) {
+            $played = 3;
+            $won = max(0, 3 - $index);
+            $drawn = $index % 2;
+            $lost = max(0, $played - $won - $drawn);
+            $goalsFor = max(0, 7 - $index);
+            $goalsAgainst = max(0, 2 + $index);
+            $points = ($won * 3) + $drawn;
+            $goalDifference = $goalsFor - $goalsAgainst;
+
+            mysqli_stmt_bind_param(
+                $statement,
+                'sssiiiiiiii',
+                $groupName,
+                $team['name'],
+                $team['flag'],
+                $played,
+                $won,
+                $drawn,
+                $lost,
+                $goalsFor,
+                $goalsAgainst,
+                $points,
+                $goalDifference
+            );
+            mysqli_stmt_execute($statement);
+        }
+    }
+
+    mysqli_stmt_close($statement);
+}
+
+function seed_dummy_fanzone_posts(mysqli $connection, array $users): void {
+    mysqli_query($connection, "DELETE FROM live_fanzone_posts");
+
+    $announcement = mysqli_prepare(
+        $connection,
+        "INSERT INTO live_fanzone_posts (parent_id, username, display_name, message_body, is_deleted, is_pinned, is_announcement)
+         VALUES (NULL, ?, ?, ?, 0, 1, 1)"
+    );
+    $thread = mysqli_prepare(
+        $connection,
+        "INSERT INTO live_fanzone_posts (parent_id, username, display_name, message_body, is_deleted, is_pinned, is_announcement)
+         VALUES (NULL, ?, ?, ?, 0, 0, 0)"
+    );
+    $reply = mysqli_prepare(
+        $connection,
+        "INSERT INTO live_fanzone_posts (parent_id, username, display_name, message_body, is_deleted, is_pinned, is_announcement)
+         VALUES (?, ?, ?, ?, 0, 0, 0)"
+    );
+
+    if (!$announcement || !$thread || !$reply) {
+        throw new RuntimeException(mysqli_error($connection));
+    }
+
+    $adminUser = $users[0];
+    $adminName = $adminUser['firstname'] . ' ' . $adminUser['surname'];
+    $adminMessage = 'Welcome to the Fan Zone. This is a demo announcement so you can see pinned admin updates and how replies sit underneath them.';
+    mysqli_stmt_bind_param($announcement, 'sss', $adminUser['username'], $adminName, $adminMessage);
+    mysqli_stmt_execute($announcement);
+
+    $threadBodies = [
+        ['body' => 'Opening night prediction: chaos, drama, and at least one wild 3-2 somewhere.', 'reply' => 'I am backing two draws and one absolute shock result.'],
+        ['body' => 'Which host nation is everyone secretly adopting for the summer?', 'reply' => 'Mexico at home for the opener feels hard to ignore.'],
+        ['body' => 'This is the sort of message board thread that makes the site feel alive before a ball is kicked.', 'reply' => 'Exactly. Even a small bit of chat changes the mood of the whole game.'],
+    ];
+
+    foreach ($threadBodies as $index => $threadBody) {
+        $author = $users[($index + 1) % count($users)];
+        $authorName = $author['firstname'] . ' ' . $author['surname'];
+        mysqli_stmt_bind_param($thread, 'sss', $author['username'], $authorName, $threadBody['body']);
+        mysqli_stmt_execute($thread);
+        $threadId = (int) mysqli_insert_id($connection);
+
+        $replyAuthor = $users[($index + 2) % count($users)];
+        $replyName = $replyAuthor['firstname'] . ' ' . $replyAuthor['surname'];
+        $replyParent = $threadId;
+        mysqli_stmt_bind_param($reply, 'isss', $replyParent, $replyAuthor['username'], $replyName, $threadBody['reply']);
+        mysqli_stmt_execute($reply);
+    }
+
+    mysqli_stmt_close($announcement);
+    mysqli_stmt_close($thread);
+    mysqli_stmt_close($reply);
+}
+
+function seed_dummy_game(mysqli $connection, array $tableInstallContext, array $groupPreview, array $footballKits): void {
+    $users = build_dummy_users($footballKits);
+    $totalMatches = max(0, (int) ($tableInstallContext['total_matches'] ?? 0));
+
+    seed_dummy_user_information($connection, $users);
+    $resultsByMatch = seed_dummy_match_results($connection, $totalMatches);
+    seed_dummy_schedule_scores($connection, $resultsByMatch);
+    seed_dummy_group_standings($connection, $groupPreview);
+    seed_dummy_fanzone_posts($connection, $users);
+
+    foreach (build_prediction_stage_contexts($tableInstallContext) as $stageDefinition) {
+        seed_dummy_prediction_table(
+            $connection,
+            $stageDefinition['table'],
+            $stageDefinition['start'],
+            $stageDefinition['count'],
+            $users,
+            $resultsByMatch
+        );
+    }
+
+    hh_recalculate_all_prediction_points($connection);
 }
 
 function render_flag_preview_cell(string $flagPath, string $teamName): string {
@@ -727,6 +1128,101 @@ function inspect_target_database(mysqli $connection, string $databaseName): arra
     ];
 }
 
+function fetch_table_row_count(mysqli $connection, string $tableName): ?int {
+    $result = mysqli_query($connection, 'SELECT COUNT(*) AS total FROM ' . mysql_quote_identifier($tableName));
+    if (!($result instanceof mysqli_result)) {
+        return null;
+    }
+
+    $row = mysqli_fetch_assoc($result) ?: [];
+    mysqli_free_result($result);
+
+    return isset($row['total']) ? (int) $row['total'] : null;
+}
+
+function build_database_contents_snapshot(mysqli $connection, array $installableTables = []): array {
+    $snapshot = [];
+    $knownTables = [
+        'tournament_config' => 'Tournament Config',
+        'live_match_schedule' => 'Match Schedule',
+        'live_user_information' => 'User Information',
+        'live_temp_information' => 'Temporary Passwords',
+        'live_group_standings' => 'Group Standings',
+        'live_fanzone_posts' => 'Fan Zone Message Board',
+        'live_match_results' => 'Match Results',
+        'live_user_predictions_groups' => 'Group Predictions',
+        'live_user_predictions_ro32' => 'Round of 32 Predictions',
+        'live_user_predictions_ro16' => 'Round of 16 Predictions',
+        'live_user_predictions_qf' => 'Quarter-Final Predictions',
+        'live_user_predictions_sf' => 'Semi-Final Predictions',
+        'live_user_predictions_final' => 'Final Stage Predictions',
+    ];
+
+    foreach ($installableTables as $definition) {
+        if (!empty($definition['table']) && !empty($definition['label'])) {
+            $knownTables[$definition['table']] = $definition['label'];
+        }
+    }
+
+    foreach ($knownTables as $tableName => $label) {
+        $columns = fetch_table_columns($connection, $tableName);
+        if (empty($columns)) {
+            $snapshot[] = [
+                'table' => $tableName,
+                'label' => $label,
+                'exists' => false,
+                'rows' => null,
+            ];
+            continue;
+        }
+
+        $snapshot[] = [
+            'table' => $tableName,
+            'label' => $label,
+            'exists' => true,
+            'rows' => fetch_table_row_count($connection, $tableName),
+        ];
+    }
+
+    return $snapshot;
+}
+
+function clear_current_tournament_setup(mysqli $connection, array $installableTables): void {
+    $tablesToDrop = [
+        'tournament_config',
+        'live_match_schedule',
+        'live_user_information',
+        'live_temp_information',
+        'live_group_standings',
+        'live_fanzone_posts',
+        'live_match_results',
+        'live_user_predictions_groups',
+        'live_user_predictions_ro32',
+        'live_user_predictions_ro16',
+        'live_user_predictions_qf',
+        'live_user_predictions_sf',
+        'live_user_predictions_final',
+    ];
+    foreach ($installableTables as $definition) {
+        if (!empty($definition['table'])) {
+            $tablesToDrop[] = $definition['table'];
+        }
+    }
+
+    $tablesToDrop = array_values(array_unique($tablesToDrop));
+
+    mysqli_query($connection, 'SET FOREIGN_KEY_CHECKS = 0');
+    try {
+        foreach ($tablesToDrop as $tableName) {
+            if (!mysqli_query($connection, 'DROP TABLE IF EXISTS ' . mysql_quote_identifier($tableName))) {
+                throw new RuntimeException('Failed to drop ' . $tableName . ': ' . mysqli_error($connection));
+            }
+        }
+    } finally {
+        mysqli_query($connection, 'SET FOREIGN_KEY_CHECKS = 1');
+    }
+}
+
 function fetch_table_columns(mysqli $connection, string $tableName): array {
     $columns = [];
     $result = mysqli_query($connection, 'SHOW COLUMNS FROM ' . mysql_quote_identifier($tableName));
@@ -746,7 +1242,7 @@ function fetch_table_columns(mysqli $connection, string $tableName): array {
 
 function build_runtime_audit(array $tableInstallContext): array {
     global $title, $version, $base_url, $competition, $competition_location, $developer;
-    global $no_of_group_fixtures, $no_of_ro16_fixtures, $no_of_qf_fixtures, $no_of_sf_fixtures, $no_of_final_fixtures, $no_of_total_fixtures;
+    global $no_of_group_fixtures, $no_of_ro32_fixtures, $no_of_ro16_fixtures, $no_of_qf_fixtures, $no_of_sf_fixtures, $no_of_final_fixtures, $no_of_total_fixtures;
 
     $rows = [
         ['label' => '$title', 'actual' => (string) $title, 'expected' => 'Hendy\'s Hunches branding', 'status' => 'info'],
@@ -759,6 +1255,7 @@ function build_runtime_audit(array $tableInstallContext): array {
 
     $checks = [
         '$no_of_group_fixtures' => [$no_of_group_fixtures ?? null, $tableInstallContext['group_fixture_count'] ?? null],
+        '$no_of_ro32_fixtures' => [$no_of_ro32_fixtures ?? null, $tableInstallContext['round_of_32_count'] ?? null],
         '$no_of_ro16_fixtures' => [$no_of_ro16_fixtures ?? null, $tableInstallContext['round_of_16_count'] ?? null],
         '$no_of_qf_fixtures' => [$no_of_qf_fixtures ?? null, $tableInstallContext['quarter_final_count'] ?? null],
         '$no_of_sf_fixtures' => [$no_of_sf_fixtures ?? null, $tableInstallContext['semi_final_count'] ?? null],
@@ -1034,7 +1531,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'test_db_connect
     }
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'setup_preview') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($wizard_action, ['inspect_current_setup', 'reset_current_setup'], true)) {
+    $mysqlAdminServer = trim($_POST['mysql_admin_server'] ?? 'localhost');
+    $mysqlAdminUser = trim($_POST['mysql_admin_user'] ?? 'hh_admin');
+    $mysqlAdminPassword = trim($_POST['mysql_admin_password'] ?? '');
+    $targetDbName = trim($_POST['target_db_name'] ?? '');
+
+    $table_install_context = read_table_install_context_from_request();
+    $installableTables = !empty($table_install_context) ? build_installable_table_definitions($table_install_context) : [];
+
+    if ($mysqlAdminServer === '') {
+        $errors[] = 'MySQL server address is required.';
+    }
+    if ($mysqlAdminUser === '') {
+        $errors[] = 'MySQL admin account is required.';
+    }
+    if ($targetDbName === '') {
+        $errors[] = 'Target database name is required.';
+    }
+
+    if (empty($errors)) {
+        $adminConnection = populate_mysql_diagnostics($mysql_diagnostics, $mysqlAdminServer, $mysqlAdminUser, $mysqlAdminPassword, $targetDbName);
+
+        if (!$adminConnection instanceof mysqli) {
+            $errors[] = 'The MySQL admin connection failed, so the current database could not be inspected.';
+        } elseif (!$mysql_diagnostics['database_exists']) {
+            $errors[] = 'The target database does not exist yet.';
+        } elseif (!mysqli_select_db($adminConnection, $targetDbName)) {
+            $errors[] = 'The target database could not be selected: ' . mysqli_error($adminConnection);
+        } else {
+            if ($wizard_action === 'reset_current_setup') {
+                try {
+                    clear_current_tournament_setup($adminConnection, $installableTables);
+                    $messages[] = 'The current tournament setup tables were removed. The database itself and its user were left in place.';
+                    $mysql_diagnostics['message'] = 'Admin connection successful. The current tournament setup was cleared.';
+                } catch (Throwable $exception) {
+                    $errors[] = 'The current setup could not be cleared: ' . $exception->getMessage();
+                }
+            }
+
+            $inspection = inspect_target_database($adminConnection, $targetDbName);
+            $mysql_diagnostics['database_exists'] = $inspection['exists'];
+            $mysql_diagnostics['tables'] = $inspection['tables'];
+            $mysql_diagnostics['table_count'] = count($inspection['tables']);
+            $database_contents = build_database_contents_snapshot($adminConnection, $installableTables);
+        }
+
+        if ($adminConnection instanceof mysqli) {
+            mysqli_close($adminConnection);
+        }
+    }
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && in_array($wizard_action, ['setup_preview', 'setup_apply', 'setup_apply_and_connect', 'setup_dummy_game', 'setup_dummy_game_and_connect'], true)) {
     $siteTitle = trim($_POST['site_title'] ?? ($title ?? 'Hendy\'s Hunches'));
     $siteUrl = trim($_POST['site_url'] ?? ($base_url ?? ''));
     $storageDir = trim($_POST['storage_dir'] ?? ($backup_dir ?? '/bak'));
@@ -1047,12 +1596,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'setup_preview')
     $targetDbUser = trim($_POST['target_db_user'] ?? '');
     $targetDbPassword = trim($_POST['target_db_password'] ?? '');
     $targetDbUserHost = trim($_POST['target_db_user_host'] ?? 'localhost');
-    $writeDbConnect = isset($_POST['write_db_connect']);
+    $writeDbConnect = in_array($wizard_action, ['setup_apply_and_connect', 'setup_dummy_game_and_connect'], true);
+    $seedDummyGame = in_array($wizard_action, ['setup_dummy_game', 'setup_dummy_game_and_connect'], true);
 
     $tournamentName = trim($_POST['tournament_name'] ?? '');
     $fixturesUrl = trim($_POST['fixtures_url'] ?? '');
     $truncateSchedule = isset($_POST['truncate_schedule']);
-    $applyChanges = isset($_POST['apply_changes']);
+    $applyChanges = $wizard_action !== 'setup_preview';
 
     if ($siteTitle === '') {
         $errors[] = 'Site name is required.';
@@ -1109,7 +1659,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'setup_preview')
         'MySQL admin account' => $mysqlAdminUser,
         'Target database' => $targetDbName,
         'Target app user' => $targetDbUser . '@' . $targetDbUserHost,
-        'Write db-connect.php' => $writeDbConnect ? 'Yes' : 'No',
+        'Requested action' => $seedDummyGame
+            ? ($writeDbConnect ? 'Set up dummy game and connect the site' : 'Set up dummy game')
+            : ($writeDbConnect ? 'Apply setup and connect the site' : ($applyChanges ? 'Apply setup to the database' : 'Preview only')),
     ];
 
     $fixtures = [];
@@ -1149,6 +1701,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'setup_preview')
             'Total fixtures' => (string)$metadata['total_matches'],
             'Group fixtures' => (string)$metadata['group_fixture_count'],
             'Knockout fixtures' => (string)$metadata['knockout_fixture_count'],
+            'Round of 32 fixtures' => (string)$metadata['round_of_32_count'],
+            'Round of 16 fixtures' => (string)$metadata['round_of_16_count'],
+            'Quarter-final fixtures' => (string)$metadata['quarter_final_count'],
+            'Semi-final fixtures' => (string)$metadata['semi_final_count'],
+            'Final stage fixtures' => (string)$metadata['final_count'],
             'Groups detected' => (string)$metadata['group_count'],
             'Teams per group' => $metadata['teams_per_group'] === '' ? 'Not detected' : $metadata['teams_per_group'],
             'Confirmed teams' => (string)$metadata['confirmed_teams'],
@@ -1172,6 +1729,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'setup_preview')
 
         $table_install_context = [
             'group_fixture_count' => (int) $metadata['group_fixture_count'],
+            'round_of_32_count' => (int) $metadata['round_of_32_count'],
             'round_of_16_count' => (int) $metadata['round_of_16_count'],
             'quarter_final_count' => (int) $metadata['quarter_final_count'],
             'semi_final_count' => (int) $metadata['semi_final_count'],
@@ -1245,6 +1803,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'setup_preview')
                     }
                 }
 
+                if (empty($errors) && $seedDummyGame) {
+                    try {
+                        rebuild_installable_tables($adminConnection, build_installable_table_definitions($table_install_context));
+                        seed_dummy_game($adminConnection, $table_install_context, $group_preview, $football_kits ?? []);
+                        $messages[] = 'Dummy game data was created, including player accounts, predictions, results, group standings and Fan Zone posts.';
+                    } catch (Throwable $exception) {
+                        $errors[] = 'Dummy game setup failed: ' . $exception->getMessage();
+                    }
+                }
+
                 if (empty($errors)) {
                     if ($writeDbConnect) {
                         $writeResult = write_generated_db_connect($db_connect_template);
@@ -1287,8 +1855,7 @@ if (!empty($table_install_context)) {
 }
 
 if (
-    !empty($installable_tables)
-    && $mysql_diagnostics['status'] === 'Connected'
+    $mysql_diagnostics['status'] === 'Connected'
     && ($mysql_diagnostics['target_database'] ?? '') !== ''
 ) {
     $auditConnection = mysql_try_connect(
@@ -1299,7 +1866,10 @@ if (
     );
 
     if (!empty($auditConnection['ok']) && $auditConnection['connection'] instanceof mysqli) {
-        $table_audit = build_table_audit($auditConnection['connection'], $installable_tables);
+        if (!empty($installable_tables)) {
+            $table_audit = build_table_audit($auditConnection['connection'], $installable_tables);
+        }
+        $database_contents = build_database_contents_snapshot($auditConnection['connection'], $installable_tables);
         mysqli_close($auditConnection['connection']);
     }
 }
@@ -1307,49 +1877,25 @@ if (
 $show_site_step = $wizard_action === '' || (!$site_settings_ready && !$review_ready);
 $show_mysql_step = $wizard_action === 'test_db_connection';
 $show_database_step = $wizard_action === 'install_setup_table' || $wizard_action === 'install_all_setup_tables' || $review_ready;
-$show_source_step = $review_ready || $source_ready || in_array($wizard_action, ['setup_preview', 'install_setup_table', 'install_all_setup_tables'], true);
+$show_source_step = $review_ready || $source_ready || in_array($wizard_action, ['setup_preview', 'setup_apply', 'setup_apply_and_connect', 'setup_dummy_game', 'setup_dummy_game_and_connect', 'install_setup_table', 'install_all_setup_tables'], true);
 $mysql_test_success = $wizard_action === 'test_db_connection' && $inline_mysql_feedback !== null && $inline_mysql_feedback['type'] === 'success';
+
+$app_path_prefix = '../';
+$app_logout_path = '../php/logout.php';
+include '../php/header.php';
+include '../php/navigation.php';
 ?>
-<!DOCTYPE html>
-<html lang="en-GB">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Hendy's Hunches Installation Manager">
-    <meta name="author" content="James Henderson">
-    <title><?= $page_title ?> - Hendy's Hunches</title>
-    <link href="../ico/favicon.ico" rel="icon">
-    <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-    <link href="../css/styles.css" rel="stylesheet">
-</head>
-<body>
-<?php hh_render_dev_banner('../php/logout.php'); ?>
-<nav class="navbar navbar-expand-lg site-navbar setup-navbar" aria-label="Setup navigation">
-    <div class="container">
-        <a class="navbar-brand" href="../dashboard.php">
-            <span class="site-wordmark" aria-label="Hendy's Hunches">
-                <span class="site-wordmark__name">Hendy's Hunches</span>
-                <span class="site-wordmark__tag">Setup wizard</span>
-            </span>
-        </a>
-        <div class="setup-navbar__actions">
-            <a class="btn btn-outline-light btn-sm" href="../dashboard.php">Dashboard</a>
-            <a class="btn btn-primary btn-sm" href="../admin/functions.php">Admin Hub</a>
-        </div>
-    </div>
-</nav>
 
 <main class="container py-4 setup-page">
     <section class="page-hero page-hero--setup">
         <div>
-            <p class="eyebrow">System setup</p>
+            <p class="eyebrow" style="color: #FF0000 !important">System setup</p>
             <h1>Installation Manager</h1>
-            <p class="lead mb-0">Test MySQL access, provision the app database, import fixtures, and prepare the next tournament from one calmer control room.</p>
+            <p class="lead mb-0">Test MySQL access and app database, import fixtures, and prepare the tournament.</p>
         </div>
         <div class="page-hero__actions">
             <!-- <a class="btn btn-light" href="../admin/results.php">Record Results</a> -->
-            <a class="btn btn-outline-dark" href="../admin/functions.php">Open Admin Functions</a>
+            <!-- <a class="btn btn-outline-dark" href="../admin/functions.php">Open Admin Functions</a> -->
         </div>
     </section>
 
@@ -1381,6 +1927,61 @@ $mysql_test_success = $wizard_action === 'test_db_connection' && $inline_mysql_f
                         <p class="eyebrow mb-2">Foundations</p>
                         <h2 class="h4 mb-2">Site and database setup</h2>
                         <p class="text-muted mb-0">Define the site details and use a MySQL admin account so the wizard can inspect the target environment before anything is applied.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="setup-mode-bar mb-4">
+                <div>
+                    <p class="eyebrow mb-2">Run mode</p>
+                    <h2 class="h5 mb-1">Choose what to do with this setup</h2>
+                    <p class="text-muted mb-0">These actions use the values from the steps below. “Connect site” means the wizard also writes <code>php/db-connect.php</code> so the live site starts using this database straight away. Preview stays read-only.</p>
+                </div>
+                <div class="setup-mode-list" role="list" aria-label="Installer run modes">
+                    <div class="setup-mode-item" role="listitem">
+                        <div class="setup-mode-item__body">
+                            <h3>Preview plan only</h3>
+                            <p>Read-only check of the fixture source, inferred stage counts, SQL output, and audit panels. Nothing is written to the database or the site connection file.</p>
+                        </div>
+                        <div class="setup-mode-item__action">
+                            <button type="submit" name="wizard_action" value="setup_preview" class="btn btn-outline-secondary">Preview only</button>
+                        </div>
+                    </div>
+                    <div class="setup-mode-item" role="listitem">
+                        <div class="setup-mode-item__body">
+                            <h3>Apply setup and connect site</h3>
+                            <p>Runs the setup and also writes <code>php/db-connect.php</code>, so the live site immediately starts using this target database.</p>
+                        </div>
+                        <div class="setup-mode-item__action">
+                            <button type="submit" name="wizard_action" value="setup_apply_and_connect" class="btn btn-primary">Apply and connect</button>
+                        </div>
+                    </div>
+                    <div class="setup-mode-item" role="listitem">
+                        <div class="setup-mode-item__body">
+                            <h3>Set up dummy game and connect site</h3>
+                            <p>Builds the installable tables, seeds sample users, results, predictions, standings, and Fan Zone posts, then points the site at that dummy database straight away.</p>
+                        </div>
+                        <div class="setup-mode-item__action">
+                            <button type="submit" name="wizard_action" value="setup_dummy_game_and_connect" class="btn btn-success">Dummy game and connect</button>
+                        </div>
+                    </div>
+                    <div class="setup-mode-item setup-mode-item--muted" role="listitem">
+                        <div class="setup-mode-item__body">
+                            <h3>Inspect current database</h3>
+                            <p>Shows which setup tables already exist and how many rows are currently in each one, without changing anything.</p>
+                        </div>
+                        <div class="setup-mode-item__action">
+                            <button type="submit" name="wizard_action" value="inspect_current_setup" class="btn btn-outline-secondary" formnovalidate>Inspect current DB</button>
+                        </div>
+                    </div>
+                    <div class="setup-mode-item setup-mode-item--danger" role="listitem">
+                        <div class="setup-mode-item__body">
+                            <h3>Clear current tournament setup</h3>
+                            <p>Removes the current tournament config, schedule, standings, results, predictions, Fan Zone posts, and user info tables from this database, but leaves the database itself and its user in place.</p>
+                        </div>
+                        <div class="setup-mode-item__action">
+                            <button type="submit" name="wizard_action" value="reset_current_setup" class="btn btn-outline-danger" formnovalidate onclick="return confirm('Clear the current tournament setup tables from this database?');">Clear current setup</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1575,20 +2176,12 @@ $mysql_test_success = $wizard_action === 'test_db_connection' && $inline_mysql_f
                                         <div class="setup-sidebar__checks mt-4">
                                             <label class="form-check">
                                                 <input class="form-check-input" type="checkbox" id="truncate_schedule" name="truncate_schedule" <?= isset($_POST['truncate_schedule']) ? 'checked' : '' ?>>
-                                                <span class="form-check-label">Clear existing schedule rows before import</span>
-                                            </label>
-                                            <label class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="write_db_connect" name="write_db_connect" <?= !isset($_POST['wizard_action']) || isset($_POST['write_db_connect']) ? 'checked' : '' ?>>
-                                                <span class="form-check-label">Write the generated <code>php/db-connect.php</code> file when setup is applied</span>
-                                            </label>
-                                            <label class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="apply_changes" name="apply_changes" <?= isset($_POST['apply_changes']) ? 'checked' : '' ?>>
-                                                <span class="form-check-label">Apply generated setup to the target database now</span>
+                                                <span class="form-check-label">Replace existing fixture schedule during import</span>
                                             </label>
                                         </div>
 
                                         <div class="setup-panel__actions">
-                                            <button type="submit" name="wizard_action" value="setup_preview" class="btn btn-primary">Build installation plan</button>
+                                            <p class="setup-help mb-0">When the source looks right, use the run-mode buttons above to preview, apply the setup, or spin up a seeded dummy game.</p>
                                         </div>
                                     </div>
                                 </div>
@@ -1785,6 +2378,41 @@ $mysql_test_success = $wizard_action === 'test_db_connection' && $inline_mysql_f
         </div>
     <?php endif; ?>
 
+    <?php if (!empty($table_install_context)) : ?>
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h2 class="h5">Knockout Breakdown</h2>
+                <p class="text-muted">This is the stage structure the installer will use for prediction tables, runtime totals and scoring ranges.</p>
+                <div class="row g-3">
+                    <div class="col-md-6 col-xl-4">
+                        <div class="setup-stat">
+                            <div class="small text-muted">Group Stage</div>
+                            <div class="fw-semibold"><?= htmlspecialchars((string) ($table_install_context['group_fixture_count'] ?? 0)) ?> fixtures</div>
+                        </div>
+                    </div>
+                    <?php foreach ([
+                        'round_of_32_count' => false,
+                        'round_of_16_count' => false,
+                        'quarter_final_count' => false,
+                        'semi_final_count' => false,
+                        'final_count' => true,
+                    ] as $countKey => $isFinalStage) : ?>
+                        <?php $fixtureCount = (int) ($table_install_context[$countKey] ?? 0); ?>
+                        <?php if ($fixtureCount > 0) : ?>
+                            <div class="col-md-6 col-xl-4">
+                                <div class="setup-stat">
+                                    <div class="small text-muted"><?= htmlspecialchars(hh_knockout_label_from_fixture_count($fixtureCount, $isFinalStage)) ?></div>
+                                    <div class="fw-semibold"><?= htmlspecialchars((string) $fixtureCount) ?> fixtures</div>
+                                    <div class="small text-muted mt-1"><?= htmlspecialchars((string) ($fixtureCount * 2)) ?> score values</div>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+
     <?php if (!empty($config_preview)) : ?>
         <div class="card shadow-sm mb-4">
             <div class="card-body">
@@ -1851,6 +2479,38 @@ $mysql_test_success = $wizard_action === 'test_db_connection' && $inline_mysql_f
                                     <td><?= htmlspecialchars((string)$fixture['date']) ?></td>
                                     <td><?= htmlspecialchars($fixture['kotime']) ?></td>
                                     <td><?= htmlspecialchars($fixture['venue']) ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <?php if (!empty($database_contents)) : ?>
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h2 class="h5">Current Database Contents</h2>
+                <p class="text-muted">This shows what is already in <code><?= htmlspecialchars($mysql_diagnostics['target_database'] ?? ($_POST['target_db_name'] ?? '')) ?></code> right now.</p>
+                <div class="table-responsive">
+                    <table class="table table-sm table-striped align-middle">
+                        <thead>
+                            <tr>
+                                <th>Table</th>
+                                <th>Exists</th>
+                                <th>Rows</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($database_contents as $row) : ?>
+                                <tr>
+                                    <td>
+                                        <div class="fw-semibold"><?= htmlspecialchars($row['label']) ?></div>
+                                        <code class="small"><?= htmlspecialchars($row['table']) ?></code>
+                                    </td>
+                                    <td><?= !empty($row['exists']) ? 'Yes' : 'No' ?></td>
+                                    <td><?= $row['rows'] === null ? 'N/A' : htmlspecialchars((string) $row['rows']) ?></td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
@@ -1965,8 +2625,6 @@ $mysql_test_success = $wizard_action === 'test_db_connection' && $inline_mysql_f
                         <input type="hidden" name="tournament_name" value="<?= htmlspecialchars($_POST['tournament_name'] ?? '') ?>">
                         <input type="hidden" name="fixtures_url" value="<?= htmlspecialchars($_POST['fixtures_url'] ?? '') ?>">
                         <?php if (isset($_POST['truncate_schedule'])) : ?><input type="hidden" name="truncate_schedule" value="1"><?php endif; ?>
-                        <?php if (isset($_POST['write_db_connect'])) : ?><input type="hidden" name="write_db_connect" value="1"><?php endif; ?>
-                        <?php if (isset($_POST['apply_changes'])) : ?><input type="hidden" name="apply_changes" value="1"><?php endif; ?>
                         <?php foreach ($table_install_context as $contextKey => $contextValue) : ?>
                             <input type="hidden" name="<?= htmlspecialchars($contextKey) ?>" value="<?= htmlspecialchars((string) $contextValue) ?>">
                         <?php endforeach; ?>
@@ -1998,8 +2656,6 @@ $mysql_test_success = $wizard_action === 'test_db_connection' && $inline_mysql_f
                                     <input type="hidden" name="tournament_name" value="<?= htmlspecialchars($_POST['tournament_name'] ?? '') ?>">
                                     <input type="hidden" name="fixtures_url" value="<?= htmlspecialchars($_POST['fixtures_url'] ?? '') ?>">
                                     <?php if (isset($_POST['truncate_schedule'])) : ?><input type="hidden" name="truncate_schedule" value="1"><?php endif; ?>
-                                    <?php if (isset($_POST['write_db_connect'])) : ?><input type="hidden" name="write_db_connect" value="1"><?php endif; ?>
-                                    <?php if (isset($_POST['apply_changes'])) : ?><input type="hidden" name="apply_changes" value="1"><?php endif; ?>
                                     <?php foreach ($table_install_context as $contextKey => $contextValue) : ?>
                                         <input type="hidden" name="<?= htmlspecialchars($contextKey) ?>" value="<?= htmlspecialchars((string) $contextValue) ?>">
                                     <?php endforeach; ?>
@@ -2094,7 +2750,6 @@ $mysql_test_success = $wizard_action === 'test_db_connection' && $inline_mysql_f
     <?php endif; ?>
 </main>
 
-<script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
   var siteTitle = document.getElementById('site_title');
@@ -2226,5 +2881,4 @@ document.addEventListener('DOMContentLoaded', function () {
   <?php endif; ?>
 });
 </script>
-</body>
-</html>
+<?php include "../php/footer.php"; ?>

@@ -5,308 +5,126 @@ $page_title = 'Tournament Knockouts';
 require_once __DIR__ . '/php/auth.php';
 hh_require_login('index.php');
 
-include "php/header.php";
-include "php/navigation.php";
+include 'php/header.php';
+include 'php/navigation.php';
+include 'php/db-connect.php';
 
+$stages = [];
+$stageOrder = [];
+
+$sql_stages = "SELECT stage, MIN(date) AS stage_date
+               FROM live_match_schedule
+               WHERE stage IN ('Round of 32', 'Round of 16', 'Quarter-Finals', 'Semi-Finals', 'Third Place Play-Off', 'Final', 'Final Stage')
+               GROUP BY stage
+               ORDER BY stage_date ASC, MIN(kotime) ASC";
+$stageResult = mysqli_query($con, $sql_stages) or die(mysqli_error($con));
+
+while ($row = mysqli_fetch_assoc($stageResult)) {
+    $stage = trim((string) ($row['stage'] ?? ''));
+    if ($stage !== '') {
+        $stageOrder[] = $stage;
+    }
+}
+mysqli_free_result($stageResult);
+
+foreach ($stageOrder as $stage) {
+    $safeStage = mysqli_real_escape_string($con, $stage);
+    $fixtureResult = mysqli_query(
+        $con,
+        "SELECT hometeamimg, hometeam, homescore, awayscore, awayteam, awayteamimg, venue, kotime,
+                DATE_FORMAT(date, '%a, %D %b') AS formatted_date
+         FROM live_match_schedule
+         WHERE stage = '{$safeStage}'
+         ORDER BY date, kotime"
+    ) or die(mysqli_error($con));
+
+    $stages[$stage] = [];
+    while ($fixture = mysqli_fetch_assoc($fixtureResult)) {
+        $stages[$stage][] = $fixture;
+    }
+    mysqli_free_result($fixtureResult);
+}
+
+mysqli_close($con);
 ?>
 
-<!-- Main Content Section -->
 <main id="main" class="main">
-
     <div class="page-hero page-hero--competition">
-    <div>
-      <p class="eyebrow">Competition</p>
-      <h1>Tournament Knockouts</h1>
-      <p class="lead mb-0">The knockout path for <?= $GLOBALS['competition'] ?>, updated after each fixture.</p>
+        <div>
+            <p class="eyebrow">Competition</p>
+            <h1>Tournament Knockouts</h1>
+            <p class="lead mb-0">The knockout path for <?= htmlspecialchars($GLOBALS['competition']) ?>, updated after each fixture.</p>
+        </div>
+        <div class="page-hero__actions">
+            <a class="btn btn-primary" href="tournament-groups.php"><i class="bi bi-grid-3x3-gap"></i> Groups</a>
+            <a class="btn btn-outline-dark" href="rankings.php"><i class="bi bi-list-ol"></i> Rankings</a>
+        </div>
     </div>
-    <div class="page-hero__actions">
-      <a class="btn btn-primary" href="tournament-groups.php"><i class="bi bi-grid-3x3-gap"></i> Groups</a>
-      <a class="btn btn-outline-dark" href="rankings.php"><i class="bi bi-list-ol"></i> Rankings</a>
-    </div>
-    </div><!-- End Page Title -->
 
     <section class="section competition-page">
+        <?php if (empty($stages)) : ?>
+            <div class="competition-panel">
+                <div class="row">
+                    <div class="col-12">
+                        <p class="mb-0 text-muted">No knockout fixtures have been loaded yet.</p>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
 
-    <?php
-    // Connect to the database
-    include 'php/db-connect.php';
-
-    // SQL query to get the Round of 16 fixtures and results
-    $sql_fixtures = "SELECT hometeamimg, hometeam, homescore, awayscore, awayteam, awayteamimg, venue, kotime, DATE_FORMAT(date, '%a, %D %b') as formatted_date
-                    FROM live_match_schedule
-                    WHERE stage = 'Round of 16'
-                    ORDER BY date, kotime";
-
-    $result = mysqli_query($con, $sql_fixtures) or die(mysqli_error($con));
-
-    // Array of teams to highlight
-    $highlightTeamsRO16 = ['Switzerland', 'Germany', 'England', 'Spain', 'France', 'Portugal', 'Netherlands', 'Türkiye'];
-
-    echo "<!-- Round of 16 -->";
-    echo "<div class='competition-panel'>";
-    echo "<div class='row mb-4'>";
-    echo "<div class='col-12'>";
-    echo "<h4 class='competition-panel__title'>Round of 16</h4>";
-    echo "</div>";
-    echo "<div class='col-12'>";
-    echo "<div class='table-responsive'>";
-    echo "<table class='table table-bordered table-striped'>";
-    echo "<thead class='table-dark'>";
-    echo "<tr>";
-    echo "<th class='d-none d-sm-table-cell'>Kick-Off</th>";
-    echo "<th></th>";
-    echo "<th></th>";
-    echo "<th></th>";
-    echo "<th class='d-none d-sm-table-cell'>Venue</th>";
-    echo "</tr>";
-    echo "</thead>";
-    echo "<tbody>";
-
-    while ($row = mysqli_fetch_assoc($result)) {
-        $kickoff = $row['formatted_date'] . "<br>" . $row['kotime'];
-
-        // Check if the home team needs to be highlighted
-        $homeTeamClass = in_array($row['hometeam'], $highlightTeamsRO16) ? 'table-success' : '';
-        $team1 = "<img src='" . $row['hometeamimg'] . "' width='24px' style='width: 36px; border-radius: 50%; margin-right: 10px;' class='$homeTeamClass'>" . $row['hometeam'];
-
-        // Check if the away team needs to be highlighted
-        $awayTeamClass = in_array($row['awayteam'], $highlightTeamsRO16) ? 'table-success' : '';
-        $team2 = $row['awayteam'] . " <img src='" . $row['awayteamimg'] . "' width='24px' style='width: 36px; border-radius: 50%;' class='$awayTeamClass'>";
-
-        $venue = $row['venue'];
-        $match = $row['homescore'] !== NULL && $row['awayscore'] !== NULL ? $row['homescore'] . " - " . $row['awayscore'] : "vs";
-
-        echo "<tr>";
-        echo "<td class='small d-none d-sm-table-cell'>{$kickoff}</td>";
-        echo "<td class='{$homeTeamClass}'>{$team1}</td>";
-        echo "<td class='text-center'>{$match}</td>";
-        echo "<td class='text-end {$awayTeamClass}'>{$team2}</td>";
-        echo "<td class='small d-none d-sm-table-cell'>{$venue}</td>";
-        echo "</tr>";
-    }
-
-    echo "</tbody>";
-    echo "</table>";
-    echo "</div>";
-    echo "</div>";
-    echo "</div>";
-    echo "</div>";
-
-        // Close the database connection
-        mysqli_close($con);
-    ?>
-
-<?php
-    // Connect to the database
-    include 'php/db-connect.php';
-
-    // SQL query to get the Round of 16 fixtures and results
-    $sql_fixtures = "SELECT hometeamimg, hometeam, homescore, awayscore, awayteam, awayteamimg, venue, kotime, DATE_FORMAT(date, '%a, %D %b') as formatted_date
-                    FROM live_match_schedule
-                    WHERE stage = 'Quarter-Finals'
-                    ORDER BY date, kotime";
-
-    $result = mysqli_query($con, $sql_fixtures) or die(mysqli_error($con));
-
-    // Array of teams to highlight
-    $highlightTeamsQF = ['Spain', 'France', 'England', 'Netherlands'];
-
-    echo "<!-- Quarter-Finals -->";
-    echo "<div class='competition-panel'>";
-    echo "<div class='row mb-4'>";
-    echo "<div class='col-12'>";
-    echo "<h4 class='competition-panel__title'>Quarter-Finals</h4>";
-    echo "</div>";
-    echo "<div class='col-12'>";
-    echo "<div class='table-responsive'>";
-    echo "<table class='table table-bordered table-striped'>";
-    echo "<thead class='table-dark'>";
-    echo "<tr>";
-    echo "<th class='d-none d-sm-table-cell'>Kick-Off</th>";
-    echo "<th></th>";
-    echo "<th></th>";
-    echo "<th></th>";
-    echo "<th class='d-none d-sm-table-cell'>Venue</th>";
-    echo "</tr>";
-    echo "</thead>";
-    echo "<tbody>";
-
-    while ($row = mysqli_fetch_assoc($result)) {
-        $kickoff = $row['formatted_date'] . "<br>" . $row['kotime'];
-
-        // Check if the home team needs to be highlighted
-        $homeTeamClass = in_array($row['hometeam'], $highlightTeamsQF) ? 'table-success' : '';
-        $team1 = "<img src='" . $row['hometeamimg'] . "' width='24px' style='width: 36px; border-radius: 50%; margin-right: 10px;' class='$homeTeamClass'>" . $row['hometeam'];
-
-        // Check if the away team needs to be highlighted
-        $awayTeamClass = in_array($row['awayteam'], $highlightTeamsQF) ? 'table-success' : '';
-        $team2 = $row['awayteam'] . " <img src='" . $row['awayteamimg'] . "' width='24px' style='width: 36px; border-radius: 50%;' class='$awayTeamClass'>";
-
-        $venue = $row['venue'];
-        $match = $row['homescore'] !== NULL && $row['awayscore'] !== NULL ? $row['homescore'] . " - " . $row['awayscore'] : "vs";
-
-        echo "<tr>";
-        echo "<td class='small d-none d-sm-table-cell'>{$kickoff}</td>";
-        echo "<td class='{$homeTeamClass}'>{$team1}</td>";
-        echo "<td class='text-center'>{$match}</td>";
-        echo "<td class='text-end {$awayTeamClass}'>{$team2}</td>";
-        echo "<td class='small d-none d-sm-table-cell'>{$venue}</td>";
-        echo "</tr>";
-    }
-
-    echo "</tbody>";
-    echo "</table>";
-    echo "</div>";
-    echo "</div>";
-    echo "</div>";
-    echo "</div>";
-
-        // Close the database connection
-        mysqli_close($con);
-    ?>
-
-
-<?php
-    // Connect to the database
-    include 'php/db-connect.php';
-
-    // SQL query to get the Round of 16 fixtures and results
-    $sql_fixtures = "SELECT hometeamimg, hometeam, homescore, awayscore, awayteam, awayteamimg, venue, kotime, DATE_FORMAT(date, '%a, %D %b') as formatted_date
-                    FROM live_match_schedule
-                    WHERE stage = 'Semi-Finals'
-                    ORDER BY date, kotime";
-
-    $result = mysqli_query($con, $sql_fixtures) or die(mysqli_error($con));
-
-    // Array of teams to highlight
-    $highlightTeamsSF = ['Spain', 'England'];
-
-    echo "<!-- Semi-Finals -->";
-    echo "<div class='competition-panel'>";
-    echo "<div class='row mb-4'>";
-    echo "<div class='col-12'>";
-    echo "<h4 class='competition-panel__title'>Semi-Finals</h4>";
-    echo "</div>";
-    echo "<div class='col-12'>";
-    echo "<div class='table-responsive'>";
-    echo "<table class='table table-bordered table-striped'>";
-    echo "<thead class='table-dark'>";
-    echo "<tr>";
-    echo "<th class='d-none d-sm-table-cell'>Kick-Off</th>";
-    echo "<th></th>";
-    echo "<th></th>";
-    echo "<th></th>";
-    echo "<th class='d-none d-sm-table-cell'>Venue</th>";
-    echo "</tr>";
-    echo "</thead>";
-    echo "<tbody>";
-
-    while ($row = mysqli_fetch_assoc($result)) {
-        $kickoff = $row['formatted_date'] . "<br>" . $row['kotime'];
-
-        // Check if the home team needs to be highlighted
-        $homeTeamClass = in_array($row['hometeam'], $highlightTeamsSF) ? 'table-success' : '';
-        $team1 = "<img src='" . $row['hometeamimg'] . "' width='24px' style='width: 36px; border-radius: 50%; margin-right: 10px;' class='$homeTeamClass'>" . $row['hometeam'];
-
-        // Check if the away team needs to be highlighted
-        $awayTeamClass = in_array($row['awayteam'], $highlightTeamsSF) ? 'table-success' : '';
-        $team2 = $row['awayteam'] . " <img src='" . $row['awayteamimg'] . "' width='24px' style='width: 36px; border-radius: 50%;' class='$awayTeamClass'>";
-
-        $venue = $row['venue'];
-        $match = $row['homescore'] !== NULL && $row['awayscore'] !== NULL ? $row['homescore'] . " - " . $row['awayscore'] : "vs";
-
-        echo "<tr>";
-        echo "<td class='small d-none d-sm-table-cell'>{$kickoff}</td>";
-        echo "<td class='{$homeTeamClass}'>{$team1}</td>";
-        echo "<td class='text-center'>{$match}</td>";
-        echo "<td class='text-end {$awayTeamClass}'>{$team2}</td>";
-        echo "<td class='small d-none d-sm-table-cell'>{$venue}</td>";
-        echo "</tr>";
-    }
-
-    echo "</tbody>";
-    echo "</table>";
-    echo "</div>";
-    echo "</div>";
-    echo "</div>";
-    echo "</div>";
-
-        // Close the database connection
-        mysqli_close($con);
-    ?>
-
-<?php
-    // Connect to the database
-    include 'php/db-connect.php';
-
-    // SQL query to get the Round of 16 fixtures and results
-    $sql_fixtures = "SELECT hometeamimg, hometeam, homescore, awayscore, awayteam, awayteamimg, venue, kotime, DATE_FORMAT(date, '%a, %D %b') as formatted_date
-                    FROM live_match_schedule
-                    WHERE stage = 'Final'
-                    ORDER BY date, kotime";
-
-    $result = mysqli_query($con, $sql_fixtures) or die(mysqli_error($con));
-
-    // Array of teams to highlight
-    $highlightTeamsFi = [];
-
-    echo "<!-- Final -->";
-    echo "<div class='competition-panel'>";
-    echo "<div class='row mb-4'>";
-    echo "<div class='col-12'>";
-    echo "<h4 class='competition-panel__title'>Final</h4>";
-    echo "</div>";
-    echo "<div class='col-12'>";
-    echo "<div class='table-responsive'>";
-    echo "<table class='table table-bordered table-striped'>";
-    echo "<thead class='table-dark'>";
-    echo "<tr>";
-    echo "<th class='d-none d-sm-table-cell'>Kick-Off</th>";
-    echo "<th></th>";
-    echo "<th></th>";
-    echo "<th></th>";
-    echo "<th class='d-none d-sm-table-cell'>Venue</th>";
-    echo "</tr>";
-    echo "</thead>";
-    echo "<tbody>";
-
-    while ($row = mysqli_fetch_assoc($result)) {
-        $kickoff = $row['formatted_date'] . "<br>" . $row['kotime'];
-
-        // Check if the home team needs to be highlighted
-        $homeTeamClass = in_array($row['hometeam'], $highlightTeamsFi) ? 'table-success' : '';
-        $team1 = "<img src='" . $row['hometeamimg'] . "' width='24px' style='width: 36px; border-radius: 50%; margin-right: 10px;' class='$homeTeamClass'>" . $row['hometeam'];
-
-        // Check if the away team needs to be highlighted
-        $awayTeamClass = in_array($row['awayteam'], $highlightTeamsFi) ? 'table-success' : '';
-        $team2 = $row['awayteam'] . " <img src='" . $row['awayteamimg'] . "' width='24px' style='width: 36px; border-radius: 50%;' class='$awayTeamClass'>";
-
-        $venue = $row['venue'];
-        $match = $row['homescore'] !== NULL && $row['awayscore'] !== NULL ? $row['homescore'] . " - " . $row['awayscore'] : "vs";
-
-        echo "<tr>";
-        echo "<td class='small d-none d-sm-table-cell'>{$kickoff}</td>";
-        echo "<td class='{$homeTeamClass}'>{$team1}</td>";
-        echo "<td class='text-center'>{$match}</td>";
-        echo "<td class='text-end {$awayTeamClass}'>{$team2}</td>";
-        echo "<td class='small d-none d-sm-table-cell'>{$venue}</td>";
-        echo "</tr>";
-    }
-
-    echo "</tbody>";
-    echo "</table>";
-    echo "</div>";
-    echo "</div>";
-    echo "</div>";
-    echo "</div>";
-
-        // Close the database connection
-        mysqli_close($con);
-    ?>
-
+        <?php foreach ($stages as $stageLabel => $fixtures) : ?>
+            <div class="competition-panel">
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h4 class="competition-panel__title"><?= htmlspecialchars($stageLabel) ?></h4>
+                    </div>
+                    <div class="col-12">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th class="d-none d-sm-table-cell">Kick-Off</th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th class="d-none d-sm-table-cell">Venue</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($fixtures as $fixture) : ?>
+                                        <?php
+                                        $kickoff = htmlspecialchars((string) $fixture['formatted_date']) . '<br>' . htmlspecialchars((string) $fixture['kotime']);
+                                        $homeImage = htmlspecialchars((string) $fixture['hometeamimg']);
+                                        $awayImage = htmlspecialchars((string) $fixture['awayteamimg']);
+                                        $homeTeam = htmlspecialchars((string) $fixture['hometeam']);
+                                        $awayTeam = htmlspecialchars((string) $fixture['awayteam']);
+                                        $venue = htmlspecialchars((string) $fixture['venue']);
+                                        $match = ($fixture['homescore'] !== null && $fixture['awayscore'] !== null)
+                                            ? htmlspecialchars((string) $fixture['homescore']) . ' - ' . htmlspecialchars((string) $fixture['awayscore'])
+                                            : 'vs';
+                                        ?>
+                                        <tr>
+                                            <td class="small d-none d-sm-table-cell"><?= $kickoff ?></td>
+                                            <td>
+                                                <img src="<?= $homeImage ?>" width="24" style="width: 36px; border-radius: 50%; margin-right: 10px;" alt="<?= $homeTeam ?> flag">
+                                                <?= $homeTeam ?>
+                                            </td>
+                                            <td class="text-center"><?= $match ?></td>
+                                            <td class="text-end">
+                                                <?= $awayTeam ?>
+                                                <img src="<?= $awayImage ?>" width="24" style="width: 36px; border-radius: 50%;" alt="<?= $awayTeam ?> flag">
+                                            </td>
+                                            <td class="small d-none d-sm-table-cell"><?= $venue ?></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach; ?>
     </section>
-
 </main>
 
-<!-- Footer -->
-<?php include "php/footer.php" ?>   
+<?php include 'php/footer.php'; ?>

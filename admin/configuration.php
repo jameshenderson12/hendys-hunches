@@ -13,13 +13,14 @@ $errors = [];
 
 function hh_config_editor_state(): array
 {
-    global $hh_site_config, $hh_competition_config, $hh_finance_config, $hh_runtime_config, $hh_path_config, $hh_asset_config;
+    global $hh_site_config, $hh_competition_config, $hh_finance_config, $hh_runtime_config, $hh_preview_config, $hh_path_config, $hh_asset_config;
 
     return [
         'site' => $hh_site_config,
         'competition' => $hh_competition_config,
         'finance' => $hh_finance_config,
         'runtime' => $hh_runtime_config,
+        'preview' => $hh_preview_config,
         'paths' => $hh_path_config,
         'assets' => $hh_asset_config,
     ];
@@ -47,6 +48,7 @@ function hh_config_editor_normalize(array $source, array $current): array
     $footballKits = array_slice($footballKits, 0, 18);
 
     $groupFixtures = max(0, (int) ($source['no_of_group_fixtures'] ?? 0));
+    $ro32Fixtures = max(0, (int) ($source['no_of_ro32_fixtures'] ?? 0));
     $ro16Fixtures = max(0, (int) ($source['no_of_ro16_fixtures'] ?? 0));
     $qfFixtures = max(0, (int) ($source['no_of_qf_fixtures'] ?? 0));
     $sfFixtures = max(0, (int) ($source['no_of_sf_fixtures'] ?? 0));
@@ -77,11 +79,15 @@ function hh_config_editor_normalize(array $source, array $current): array
         ],
         'runtime' => [
             'no_of_group_fixtures' => $groupFixtures,
+            'no_of_ro32_fixtures' => $ro32Fixtures,
             'no_of_ro16_fixtures' => $ro16Fixtures,
             'no_of_qf_fixtures' => $qfFixtures,
             'no_of_sf_fixtures' => $sfFixtures,
             'no_of_final_fixtures' => $finalFixtures,
-            'no_of_total_fixtures' => $groupFixtures + $ro16Fixtures + $qfFixtures + $sfFixtures + $finalFixtures,
+            'no_of_total_fixtures' => $groupFixtures + $ro32Fixtures + $ro16Fixtures + $qfFixtures + $sfFixtures + $finalFixtures,
+        ],
+        'preview' => [
+            'today_override' => trim((string) ($source['today_override'] ?? '')),
         ],
         'paths' => [
             'backup_dir' => trim((string) ($source['backup_dir'] ?? '')),
@@ -100,6 +106,7 @@ function hh_config_editor_export(array $config): string
     $competition = var_export($config['competition'], true);
     $finance = var_export($config['finance'], true);
     $runtime = var_export($config['runtime'], true);
+    $preview = var_export($config['preview'], true);
     $paths = var_export($config['paths'], true);
     $assets = var_export($config['assets'], true);
 
@@ -114,6 +121,7 @@ function hh_config_editor_export(array $config): string
         . '$hh_competition_config = ' . $competition . ";\n\n"
         . '$hh_finance_config = ' . $finance . ";\n\n"
         . '$hh_runtime_config = ' . $runtime . ";\n\n"
+        . '$hh_preview_config = ' . $preview . ";\n\n"
         . '$hh_path_config = ' . $paths . ";\n\n"
         . '$hh_asset_config = ' . $assets . ";\n\n"
         . <<<'PHP'
@@ -144,14 +152,16 @@ $signup_fee_formatted = number_format($signup_fee, 2, '.', '');
 $charity_fee_formatted = number_format($charity_fee, 2, '.', '');
 $prize_fee_formatted = number_format($prize_fee, 2, '.', '');
 
-$no_of_group_fixtures = (int) $hh_runtime_config['no_of_group_fixtures'];
-$no_of_ro16_fixtures = (int) $hh_runtime_config['no_of_ro16_fixtures'];
-$no_of_qf_fixtures = (int) $hh_runtime_config['no_of_qf_fixtures'];
-$no_of_sf_fixtures = (int) $hh_runtime_config['no_of_sf_fixtures'];
-$no_of_final_fixtures = (int) $hh_runtime_config['no_of_final_fixtures'];
-$no_of_total_fixtures = (int) $hh_runtime_config['no_of_total_fixtures'];
+$no_of_group_fixtures = (int) ($hh_runtime_config['no_of_group_fixtures'] ?? 0);
+$no_of_ro32_fixtures = (int) ($hh_runtime_config['no_of_ro32_fixtures'] ?? 0);
+$no_of_ro16_fixtures = (int) ($hh_runtime_config['no_of_ro16_fixtures'] ?? 0);
+$no_of_qf_fixtures = (int) ($hh_runtime_config['no_of_qf_fixtures'] ?? 0);
+$no_of_sf_fixtures = (int) ($hh_runtime_config['no_of_sf_fixtures'] ?? 0);
+$no_of_final_fixtures = (int) ($hh_runtime_config['no_of_final_fixtures'] ?? 0);
+$no_of_total_fixtures = (int) ($hh_runtime_config['no_of_total_fixtures'] ?? 0);
+$preview_today_override = trim((string) ($hh_preview_config['today_override'] ?? ''));
 
-$no_of_knockout_fixtures = $no_of_ro16_fixtures + $no_of_qf_fixtures + $no_of_sf_fixtures + $no_of_final_fixtures;
+$no_of_knockout_fixtures = $no_of_ro32_fixtures + $no_of_ro16_fixtures + $no_of_qf_fixtures + $no_of_sf_fixtures + $no_of_final_fixtures;
 
 $backup_dir = (string) $hh_path_config['backup_dir'];
 $datalists_dir = (string) $hh_path_config['datalists_dir'];
@@ -161,34 +171,271 @@ for ($kitIndex = 0; $kitIndex < 18; $kitIndex++) {
     ${'fk' . ($kitIndex + 1)} = $football_kits[$kitIndex] ?? '';
 }
 
+if (!function_exists('hh_knockout_label_from_fixture_count')) {
+    function hh_knockout_label_from_fixture_count(int $fixtureCount, bool $isFinalStage = false): string
+    {
+        if ($isFinalStage) {
+            return $fixtureCount > 1 ? 'Final Stage' : 'Final';
+        }
+
+        return match ($fixtureCount) {
+            16 => 'Round of 32',
+            8 => 'Round of 16',
+            4 => 'Quarter-Finals',
+            2 => 'Semi-Finals',
+            1 => 'Knockout Match',
+            default => 'Knockout Round',
+        };
+    }
+}
+
+if (!function_exists('hh_stage_blueprint')) {
+    function hh_stage_blueprint(): array
+    {
+        global $no_of_group_fixtures, $no_of_ro32_fixtures, $no_of_ro16_fixtures, $no_of_qf_fixtures, $no_of_sf_fixtures, $no_of_final_fixtures;
+
+        $stages = [
+            [
+                'key' => 'groups',
+                'label' => 'Group Stage',
+                'fixtures' => $no_of_group_fixtures,
+                'table' => 'live_user_predictions_groups',
+                'legacy_key' => 'groups',
+            ],
+        ];
+
+        $knockoutStages = [
+            ['key' => 'ro32', 'label' => hh_knockout_label_from_fixture_count($no_of_ro32_fixtures), 'fixtures' => $no_of_ro32_fixtures, 'table' => 'live_user_predictions_ro32'],
+            ['key' => 'ro16', 'label' => hh_knockout_label_from_fixture_count($no_of_ro16_fixtures), 'fixtures' => $no_of_ro16_fixtures, 'table' => 'live_user_predictions_ro16'],
+            ['key' => 'qf', 'label' => hh_knockout_label_from_fixture_count($no_of_qf_fixtures), 'fixtures' => $no_of_qf_fixtures, 'table' => 'live_user_predictions_qf'],
+            ['key' => 'sf', 'label' => hh_knockout_label_from_fixture_count($no_of_sf_fixtures), 'fixtures' => $no_of_sf_fixtures, 'table' => 'live_user_predictions_sf'],
+            ['key' => 'final', 'label' => hh_knockout_label_from_fixture_count($no_of_final_fixtures, true), 'fixtures' => $no_of_final_fixtures, 'table' => 'live_user_predictions_final'],
+        ];
+
+        foreach ($knockoutStages as $stage) {
+            if (($stage['fixtures'] ?? 0) > 0) {
+                $stages[] = $stage;
+            }
+        }
+
+        return $stages;
+    }
+}
+
+if (!function_exists('hh_prediction_stage_contexts')) {
+    function hh_prediction_stage_contexts(): array
+    {
+        global $no_of_group_fixtures, $no_of_ro32_fixtures, $no_of_ro16_fixtures, $no_of_qf_fixtures, $no_of_sf_fixtures, $no_of_final_fixtures;
+
+        $contexts = [];
+        $fixtureStart = 1;
+        $scoreStart = 1;
+
+        foreach (hh_stage_blueprint() as $stage) {
+            $fixtureCount = (int) ($stage['fixtures'] ?? 0);
+            if ($fixtureCount <= 0) {
+                continue;
+            }
+
+            $scoreCount = $fixtureCount * 2;
+            $contexts[(string) $stage['key']] = [
+                'key' => (string) $stage['key'],
+                'label' => (string) $stage['label'],
+                'table' => (string) $stage['table'],
+                'fixtures' => $fixtureCount,
+                'fixture_start' => $fixtureStart,
+                'fixture_end' => $fixtureStart + $fixtureCount - 1,
+                'score_start' => $scoreStart,
+                'score_end' => $scoreStart + $scoreCount - 1,
+            ];
+
+            $fixtureStart += $fixtureCount;
+            $scoreStart += $scoreCount;
+        }
+
+        return $contexts;
+    }
+}
+
+if (!function_exists('hh_is_preview_mode')) {
+    function hh_is_preview_mode(): bool
+    {
+        return defined('IS_PREVIEW') && IS_PREVIEW;
+    }
+}
+
+if (!function_exists('hh_effective_now')) {
+    function hh_effective_now(?DateTimeZone $timezone = null): DateTimeImmutable
+    {
+        global $preview_today_override;
+
+        $timezone = $timezone ?? new DateTimeZone(date_default_timezone_get());
+        $now = new DateTimeImmutable('now', $timezone);
+
+        if (hh_is_preview_mode() && $preview_today_override !== '') {
+            $override = DateTimeImmutable::createFromFormat('Y-m-d', $preview_today_override, $timezone);
+            if ($override instanceof DateTimeImmutable) {
+                return $override->setTime(
+                    (int) $now->format('H'),
+                    (int) $now->format('i'),
+                    (int) $now->format('s')
+                );
+            }
+        }
+
+        return $now;
+    }
+}
+
+if (!function_exists('hh_effective_today')) {
+    function hh_effective_today(?DateTimeZone $timezone = null): DateTimeImmutable
+    {
+        $timezone = $timezone ?? new DateTimeZone(date_default_timezone_get());
+        return hh_effective_now($timezone)->setTime(0, 0, 0);
+    }
+}
+
+if (!function_exists('hh_effective_today_sql')) {
+    function hh_effective_today_sql(): string
+    {
+        return hh_effective_today()->format('Y-m-d');
+    }
+}
+
+if (!function_exists('hh_effective_today_label')) {
+    function hh_effective_today_label(string $format = 'jS F, Y'): string
+    {
+        return hh_effective_today()->format($format);
+    }
+}
+
+if (!function_exists('hh_prediction_stage_windows')) {
+    function hh_prediction_stage_windows(mysqli $con): array
+    {
+        $contexts = hh_prediction_stage_contexts();
+        if (empty($contexts)) {
+            return [];
+        }
+
+        $rowsByMatch = [];
+        $result = mysqli_query($con, "SELECT match_number, date, kotime, stage, venue FROM live_match_schedule ORDER BY match_number ASC");
+        if ($result instanceof mysqli_result) {
+            while ($row = mysqli_fetch_assoc($result)) {
+                $matchNumber = (int) ($row['match_number'] ?? 0);
+                if ($matchNumber > 0) {
+                    $rowsByMatch[$matchNumber] = $row;
+                }
+            }
+            mysqli_free_result($result);
+        }
+
+        $windows = [];
+        $previousLastKickoff = null;
+        $effectiveNowUtc = hh_effective_now(new DateTimeZone('UTC'));
+
+        foreach ($contexts as $key => $context) {
+            $kickoffs = [];
+            for ($matchNumber = $context['fixture_start']; $matchNumber <= $context['fixture_end']; $matchNumber++) {
+                $row = $rowsByMatch[$matchNumber] ?? null;
+                if (!$row) {
+                    continue;
+                }
+
+                $dateValue = trim((string) ($row['date'] ?? ''));
+                $timeValue = trim((string) ($row['kotime'] ?? ''));
+                if ($dateValue === '' || $timeValue === '') {
+                    continue;
+                }
+
+                $kickoff = DateTimeImmutable::createFromFormat('Y-m-d H:i', $dateValue . ' ' . $timeValue, new DateTimeZone('UTC'));
+                if ($kickoff instanceof DateTimeImmutable) {
+                    $kickoffs[] = $kickoff;
+                }
+            }
+
+            usort($kickoffs, static fn(DateTimeImmutable $left, DateTimeImmutable $right): int => $left <=> $right);
+
+            $firstKickoff = $kickoffs[0] ?? null;
+            $lastKickoff = !empty($kickoffs) ? $kickoffs[count($kickoffs) - 1] : null;
+            $opensAt = $key === 'groups' ? null : ($previousLastKickoff instanceof DateTimeImmutable ? $previousLastKickoff->modify('+5 hours') : null);
+            $closesAt = $firstKickoff instanceof DateTimeImmutable ? $firstKickoff->modify('-2 hours') : null;
+
+            $status = 'pending';
+            if ($firstKickoff instanceof DateTimeImmutable) {
+                if ($opensAt instanceof DateTimeImmutable && $effectiveNowUtc < $opensAt) {
+                    $status = 'upcoming';
+                } elseif ($closesAt instanceof DateTimeImmutable && $effectiveNowUtc >= $closesAt) {
+                    $status = 'closed';
+                } else {
+                    $status = 'open';
+                }
+            }
+
+            $windows[$key] = $context + [
+                'first_kickoff' => $firstKickoff,
+                'last_kickoff' => $lastKickoff,
+                'opens_at' => $opensAt,
+                'closes_at' => $closesAt,
+                'status' => $status,
+                'is_open' => $status === 'open',
+            ];
+
+            if ($lastKickoff instanceof DateTimeImmutable) {
+                $previousLastKickoff = $lastKickoff;
+            }
+        }
+
+        return $windows;
+    }
+}
+
 if (!function_exists('returnAvatar')) {
     function returnAvatar(): void
     {
+        global $app_path_prefix;
+        $assetPrefix = $app_path_prefix ?? '';
+        $fallbackLabel = !empty($_SESSION['firstname']) || !empty($_SESSION['surname'])
+            ? trim((string) ($_SESSION['firstname'] ?? '') . ' ' . (string) ($_SESSION['surname'] ?? ''))
+            : 'Preview User';
+
         if (!empty($_SESSION['is_dev_bypass'])) {
-            print("<img src='img/hh-icon-2024.png' id='avatar' class='img-fluid rounded-circle mx-1' alt='Developer Preview' name='Developer Preview' width='25'> Local Developer");
+            print("<img src='" . $assetPrefix . "img/hh-icon-2024.png' id='avatar' class='img-fluid rounded-circle mx-1' alt='Developer Preview' name='Developer Preview' width='25'> Local Developer");
             return;
         }
 
         $dbPath = __DIR__ . '/db-connect.php';
         if (!file_exists($dbPath)) {
-            print("<img src='img/hh-icon-2024.png' id='avatar' class='img-fluid rounded-circle mx-1' alt='User Avatar' name='User Avatar' width='25'> Preview User");
+            print("<img src='" . $assetPrefix . "img/hh-icon-2024.png' id='avatar' class='img-fluid rounded-circle mx-1' alt='User Avatar' name='User Avatar' width='25'> " . htmlspecialchars($fallbackLabel, ENT_QUOTES));
             return;
         }
 
         include $dbPath;
 
-        $sql_getavatar = "SELECT firstname, surname, avatar FROM live_user_information WHERE username = '".$_SESSION["username"]."'";
-        $getavatar = mysqli_query($con, $sql_getavatar);
-        $userid = mysqli_fetch_assoc($getavatar);
+        try {
+            $sql_getavatar = "SELECT firstname, surname, avatar FROM live_user_information WHERE username = '".$_SESSION["username"]."'";
+            $getavatar = mysqli_query($con, $sql_getavatar);
+            $userid = $getavatar instanceof mysqli_result ? mysqli_fetch_assoc($getavatar) : null;
+            if ($getavatar instanceof mysqli_result) {
+                mysqli_free_result($getavatar);
+            }
+        } catch (Throwable $exception) {
+            print("<img src='" . $assetPrefix . "img/hh-icon-2024.png' id='avatar' class='img-fluid rounded-circle mx-1' alt='User Avatar' name='User Avatar' width='25'> " . htmlspecialchars($fallbackLabel, ENT_QUOTES));
+            return;
+        }
 
         if (!$userid) {
-            print("<img src='img/hh-icon-2024.png' id='avatar' class='img-fluid rounded-circle mx-1' alt='User Avatar' name='User Avatar' width='25'> Preview User");
+            print("<img src='" . $assetPrefix . "img/hh-icon-2024.png' id='avatar' class='img-fluid rounded-circle mx-1' alt='User Avatar' name='User Avatar' width='25'> " . htmlspecialchars($fallbackLabel, ENT_QUOTES));
             return;
         }
 
         $firstname = $userid['firstname'];
         $surname = $userid['surname'];
-        $avatar = $userid['avatar'];
+        $avatar = trim((string) ($userid['avatar'] ?? ''));
+        if ($avatar === '') {
+            $avatar = $assetPrefix . 'img/hh-icon-2024.png';
+        } elseif (!preg_match('#^(?:[a-z]+:)?//#i', $avatar) && !str_starts_with($avatar, '/')) {
+            $avatar = $assetPrefix . ltrim($avatar, './');
+        }
         print("<img src='$avatar' id='avatar' class='img-fluid rounded-circle mx-1' alt='User Avatar' name='User Avatar' width='25'> $firstname $surname");
     }
 }
@@ -226,21 +473,13 @@ if (isset($_GET['saved']) && $_GET['saved'] === '1') {
 }
 
 $totalFixtures = (int) ($currentConfig['runtime']['no_of_total_fixtures'] ?? 0);
+
+$app_path_prefix = '../';
+$app_logout_path = '../php/logout.php';
+include '../php/header.php';
+include '../php/navigation.php';
 ?>
-<!DOCTYPE html>
-<html lang="en-GB">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta http-equiv="Content-Type" content="text/html">
-    <meta name="description" content="Hendy's Hunches site configuration">
-    <meta name="author" content="James Henderson">
-    <title><?= $page_title ?> - Hendy's Hunches</title>
-    <link href="../ico/favicon.ico" rel="icon">
-    <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-    <link href="../css/styles.css" rel="stylesheet">
-    <style>
+<style>
       .admin-shell {
         width: min(1320px, calc(100% - 32px));
         margin: 18px auto 28px;
@@ -300,16 +539,13 @@ $totalFixtures = (int) ($currentConfig['runtime']['no_of_total_fixtures'] ?? 0);
         }
       }
     </style>
-</head>
-<body>
-<?php hh_render_dev_banner('../php/logout.php'); ?>
 
 <div class="admin-shell">
     <div class="page-hero page-hero--admin">
         <div>
-            <p class="eyebrow">Admin control room</p>
+            <p class="eyebrow" style="color: #FF0000 !important">Admin control room</p>
             <h1>Site Configuration</h1>
-            <p class="lead mb-0">A single place to keep the live runtime values, branding and admin usernames tidy without hand-editing PHP.</p>
+            <p class="lead mb-0">A place to keep the live runtime values, branding and admin usernames tidy.</p>
         </div>
         <div class="page-hero__actions">
             <a class="btn btn-primary" href="functions.php"><i class="bi bi-sliders"></i> Admin functions</a>
@@ -341,6 +577,10 @@ $totalFixtures = (int) ($currentConfig['runtime']['no_of_total_fixtures'] ?? 0);
                 <div class="config-summary__item">
                     <strong><?= $totalFixtures ?></strong>
                     <span>Total fixtures tracked at runtime</span>
+                </div>
+                <div class="config-summary__item">
+                    <strong><?= htmlspecialchars((string) (($currentConfig['preview']['today_override'] ?? '') !== '' ? $currentConfig['preview']['today_override'] : 'Live system date'), ENT_QUOTES) ?></strong>
+                    <span>Preview day used as “today”</span>
                 </div>
                 <div class="config-summary__item">
                     <strong><?= count((array) $currentConfig['site']['admin_usernames']) ?></strong>
@@ -444,6 +684,10 @@ $totalFixtures = (int) ($currentConfig['runtime']['no_of_total_fixtures'] ?? 0);
                             <input class="form-control js-fixture-count" id="no_of_group_fixtures" name="no_of_group_fixtures" type="number" min="0" step="1" value="<?= (int) $currentConfig['runtime']['no_of_group_fixtures'] ?>">
                         </div>
                         <div>
+                            <label class="form-label" for="no_of_ro32_fixtures">Round of 32 fixtures</label>
+                            <input class="form-control js-fixture-count" id="no_of_ro32_fixtures" name="no_of_ro32_fixtures" type="number" min="0" step="1" value="<?= (int) ($currentConfig['runtime']['no_of_ro32_fixtures'] ?? 0) ?>">
+                        </div>
+                        <div>
                             <label class="form-label" for="no_of_ro16_fixtures">Round of 16 fixtures</label>
                             <input class="form-control js-fixture-count" id="no_of_ro16_fixtures" name="no_of_ro16_fixtures" type="number" min="0" step="1" value="<?= (int) $currentConfig['runtime']['no_of_ro16_fixtures'] ?>">
                         </div>
@@ -467,6 +711,13 @@ $totalFixtures = (int) ($currentConfig['runtime']['no_of_total_fixtures'] ?? 0);
                 </div>
 
                 <div>
+                    <h3>Preview Date</h3>
+                    <div class="mb-3">
+                        <label class="form-label" for="today_override">Preview today override</label>
+                        <input class="form-control" id="today_override" name="today_override" type="date" value="<?= htmlspecialchars((string) ($currentConfig['preview']['today_override'] ?? ''), ENT_QUOTES) ?>">
+                        <p class="admin-note mt-2">Leave blank to use the real current day. Set a tournament date such as <code>2026-06-11</code> or <code>2026-06-12</code> to preview what the dashboard treats as today.</p>
+                    </div>
+
                     <h3>Installer Defaults And Assets</h3>
                     <div class="mb-3">
                         <label class="form-label" for="backup_dir">Backup directory</label>
@@ -496,7 +747,6 @@ $totalFixtures = (int) ($currentConfig['runtime']['no_of_total_fixtures'] ?? 0);
     </div>
 </div>
 
-<script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script>
   const fixtureInputs = Array.from(document.querySelectorAll('.js-fixture-count'));
   const totalField = document.getElementById('no_of_total_fixtures');
@@ -514,5 +764,4 @@ $totalFixtures = (int) ($currentConfig['runtime']['no_of_total_fixtures'] ?? 0);
 
   refreshFixtureTotal();
 </script>
-</body>
-</html>
+<?php include "../php/footer.php"; ?>

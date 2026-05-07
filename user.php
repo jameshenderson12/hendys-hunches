@@ -4,376 +4,418 @@ $page_title = 'View Predictions';
 
 require_once __DIR__ . '/php/auth.php';
 require_once __DIR__ . '/php/flags.php';
+require_once __DIR__ . '/php/config.php';
+require_once __DIR__ . '/php/process.php';
+
 hh_require_login('index.php');
 
-include "php/header.php";
-include "php/navigation.php";
+include 'php/db-connect.php';
 
-?>
+function hh_prediction_stage_contexts_for_user(): array
+{
+    $contexts = [];
+    $fixtureStart = 1;
+    $definitions = hh_prediction_stage_definitions();
 
-<!-- Main Content Section -->
-<main id="main" class="main">
+    foreach (hh_stage_blueprint() as $stage) {
+        $key = (string) ($stage['key'] ?? '');
+        $fixtureCount = (int) ($stage['fixtures'] ?? 0);
+        $definition = $definitions[$key] ?? null;
 
-	<?php
-					// Connect to the database
-					include 'php/db-connect.php';
-
-					// Set up variable to capture result of SQL query to retrieve data from database tables
-					$sql_getuserinfo = "SELECT live_user_predictions_groups.*, live_user_information.avatar, live_user_information.faveteam, live_user_information.fieldofwork, live_user_information.location, live_user_information.tournwinner, live_user_information.currpos
-															FROM live_user_predictions_groups INNER JOIN live_user_information
-															ON live_user_predictions_groups.id = live_user_information.id
-															WHERE live_user_predictions_groups.id='".$_GET["id"]."'";
-
-					$sql_getuserro16 = "SELECT live_user_predictions_ro16.*, live_user_information.avatar, live_user_information.faveteam, live_user_information.fieldofwork, live_user_information.location, live_user_information.tournwinner, live_user_information.currpos
-					 										FROM live_user_predictions_ro16 INNER JOIN live_user_information
-					 										ON live_user_predictions_ro16.id = live_user_information.id
-					 										WHERE live_user_predictions_ro16.id='".$_GET["id"]."'";
-
-					$sql_getuserqf = "SELECT live_user_predictions_qf.*, live_user_information.avatar, live_user_information.faveteam, live_user_information.fieldofwork, live_user_information.location, live_user_information.tournwinner, live_user_information.currpos
-					 										FROM live_user_predictions_qf INNER JOIN live_user_information
-					 										ON live_user_predictions_qf.id = live_user_information.id
-					 										WHERE live_user_predictions_qf.id='".$_GET["id"]."'";
-
-					$sql_getusersf = "SELECT live_user_predictions_sf.*, live_user_information.avatar, live_user_information.faveteam, live_user_information.fieldofwork, live_user_information.location, live_user_information.tournwinner, live_user_information.currpos
-															FROM live_user_predictions_sf INNER JOIN live_user_information
-															ON live_user_predictions_sf.id = live_user_information.id
-															WHERE live_user_predictions_sf.id='".$_GET["id"]."'";
-
-					$sql_getuserfi = "SELECT live_user_predictions_final.*, live_user_information.avatar, live_user_information.faveteam, live_user_information.fieldofwork, live_user_information.location, live_user_information.tournwinner, live_user_information.currpos
-					 										FROM live_user_predictions_final INNER JOIN live_user_information
-					 										ON live_user_predictions_final.id = live_user_information.id
-					 										WHERE live_user_predictions_final.id='".$_GET["id"]."'";															
-
-					// Global SQL query strings
-					$sql_getresults = "SELECT SUM(score1_r) as score1_r, SUM(score2_r) as score2_r, SUM(score3_r) as score3_r, SUM(score4_r) as score4_r, SUM(score5_r) as score5_r, SUM(score6_r) as score6_r, SUM(score7_r) as score7_r, SUM(score8_r) as score8_r, SUM(score9_r) as score9_r, SUM(score10_r) as score10_r,
-					SUM(score11_r) as score11_r, SUM(score12_r) as score12_r, SUM(score13_r) as score13_r, SUM(score14_r) as score14_r, SUM(score15_r) as score15_r, SUM(score16_r) as score16_r, SUM(score17_r) as score17_r, SUM(score18_r) as score18_r, SUM(score19_r) as score19_r, SUM(score20_r) as score20_r,
-					SUM(score21_r) as score21_r, SUM(score22_r) as score22_r, SUM(score23_r) as score23_r, SUM(score24_r) as score24_r, SUM(score25_r) as score25_r, SUM(score26_r) as score26_r, SUM(score27_r) as score27_r, SUM(score28_r) as score28_r, SUM(score29_r) as score29_r, SUM(score30_r) as score30_r,
-					SUM(score31_r) as score31_r, SUM(score32_r) as score32_r, SUM(score33_r) as score33_r, SUM(score34_r) as score34_r, SUM(score35_r) as score35_r, SUM(score36_r) as score36_r, SUM(score37_r) as score37_r, SUM(score38_r) as score38_r, SUM(score39_r) as score39_r, SUM(score40_r) as score40_r,
-					SUM(score41_r) as score41_r, SUM(score42_r) as score42_r, SUM(score43_r) as score43_r, SUM(score44_r) as score44_r, SUM(score45_r) as score45_r, SUM(score46_r) as score46_r, SUM(score47_r) as score47_r, SUM(score48_r) as score48_r, SUM(score49_r) as score49_r, SUM(score50_r) as score50_r,
-					SUM(score51_r) as score51_r, SUM(score52_r) as score52_r, SUM(score53_r) as score53_r, SUM(score54_r) as score54_r, SUM(score55_r) as score55_r, SUM(score56_r) as score56_r, SUM(score57_r) as score57_r, SUM(score58_r) as score58_r, SUM(score59_r) as score59_r, SUM(score60_r) as score60_r,
-					SUM(score61_r) as score61_r, SUM(score62_r) as score62_r, SUM(score63_r) as score63_r, SUM(score64_r) as score64_r, SUM(score65_r) as score65_r, SUM(score66_r) as score66_r, SUM(score67_r) as score67_r, SUM(score68_r) as score68_r, SUM(score69_r) as score69_r, SUM(score70_r) as score70_r,
-					SUM(score71_r) as score71_r, SUM(score72_r) as score72_r, SUM(score73_r) as score73_r, SUM(score74_r) as score74_r, SUM(score75_r) as score75_r, SUM(score76_r) as score76_r, SUM(score77_r) as score77_r, SUM(score78_r) as score78_r, SUM(score79_r) as score79_r, SUM(score80_r) as score80_r,
-					SUM(score81_r) as score81_r, SUM(score82_r) as score82_r, SUM(score83_r) as score83_r, SUM(score84_r) as score84_r, SUM(score85_r) as score85_r, SUM(score86_r) as score86_r, SUM(score87_r) as score87_r, SUM(score88_r) as score88_r, SUM(score89_r) as score89_r, SUM(score90_r) as score90_r,
-					SUM(score91_r) as score91_r, SUM(score92_r) as score92_r, SUM(score93_r) as score93_r, SUM(score94_r) as score94_r, SUM(score95_r) as score95_r, SUM(score96_r) as score96_r, SUM(score97_r) as score97_r, SUM(score98_r) as score98_r, SUM(score99_r) as score99_r, SUM(score100_r) as score100_r,
-					SUM(score101_r) as score101_r, SUM(score102_r) as score102_r FROM live_match_results";
-
-					$sql_getid = "SELECT match_id FROM live_match_results";
-
-					// Create an array of match ids
-					$list_of_ids = mysqli_query($con, $sql_getid);
-					while($row = mysqli_fetch_array($list_of_ids)) {
-							$matchids[] = $row['match_id'];
-					}
-
-					$userdata = mysqli_fetch_assoc(mysqli_query($con, $sql_getuserinfo));					
-					$userdata2 = mysqli_fetch_assoc(mysqli_query($con, $sql_getuserro16));
-					$userdata3 = mysqli_fetch_assoc(mysqli_query($con, $sql_getuserqf));
-					$userdata4 = mysqli_fetch_assoc(mysqli_query($con, $sql_getusersf));
-					$result = mysqli_query($con, $sql_getuserfi);
-					if (!$result || mysqli_num_rows($result) == 0) {
-						$userdata5 = array('message' => 'No data available');
-					} else {
-						$userdata5 = mysqli_fetch_assoc($result);
-					}					
-					// $userdata5 = mysqli_fetch_assoc(mysqli_query($con, $sql_getuserfi));
-					$uppCaseFN = ucfirst($userdata["firstname"]);
-					$uppCaseSN = ucfirst($userdata["surname"]);
-					$userid = $userdata["id"];
-					$avatar = $userdata["avatar"];
-					$fieldofwork = $userdata["fieldofwork"];
-					$location = $userdata["location"];
-					$faveteam = $userdata["faveteam"];
-					$tournwinner = $userdata["tournwinner"];
-						$tournwinnerflag = hh_get_team_flag_path($tournwinner);
-					$currentpos = ordinal($userdata["currpos"]);
-
-					$pointstotal1 = $userdata["points_total"] ?? 0;
-					$pointstotal2 = $userdata2["points_total"] ?? 0;
-					$pointstotal3 = $userdata3["points_total"] ?? 0;
-					$pointstotal4 = $userdata4["points_total"] ?? 0;
-					$pointstotal5 = $userdata5["points_total"] ?? 0;
-					$pointstotal = $pointstotal1 + $pointstotal2 + $pointstotal3 + $pointstotal4 + $pointstotal5;					
-					$matchresult = mysqli_fetch_assoc(mysqli_query($con, $sql_getresults));
-
-		// Function for adding correct extention to a number
-		function ordinal($number) {
-			$ends = array('th','st','nd','rd','th','th','th','th','th','th');
-			if ($number == "N/A") {
-				return $number;
-			}
-			if ((($number % 100) >= 11) && (($number%100) <= 13))
-				return $number. 'th';
-			else
-				return $number. $ends[$number % 10];
-		}
-
-					// Test for match point totals...
-					$matchpoints[] = 0;
-
-					// SQL query strings to be looped on ID value
-					// $sql_getspecid = "SELECT id, firstname, surname, score1_p, score2_p, score3_p, score4_p, score5_p, score6_p, score7_p, score8_p, score9_p, score10_p,
-					// score11_p, score12_p, score13_p, score14_p, score15_p, score16_p, score17_p, score18_p, score19_p, score20_p, score21_p, score22_p, score23_p,
-					// score24_p, score25_p, score26_p, score27_p, score28_p, score29_p, score30_p, score31_p, score32_p, score33_p, score34_p, score35_p, score36_p,
-					// score37_p, score38_p, score39_p, score40_p, score41_p, score42_p, score43_p, score44_p, score45_p, score46_p, score47_p, score48_p, score49_p,
-					// score50_p, score51_p, score52_p, score53_p, score54_p, score55_p, score56_p, score57_p, score58_p, score59_p, score60_p, score61_p, score62_p,
-					// score63_p, score64_p, score65_p, score66_p, score67_p, score68_p, score69_p, score70_p, score71_p, score72_p FROM live_user_predictions_groups WHERE id='".$userid."'";
-					// $pvalue = mysqli_fetch_assoc(mysqli_query($con, $sql_getspecid));
-					// $rvalue = mysqli_fetch_assoc(mysqli_query($con, $sql_getresults));
-
-					// for ($gameno=1; $gameno<103; $gameno+=2) {
-					// 		$oddgameno[] = $gameno;
-					// 		$evengameno[] = $gameno + 1;
-					// }
-
-					// for ($i=0; $i<=35; $i++) {
-					// 		$matchpoints[$i] = 0;
-
-					// 		if( is_numeric($pvalue["score".$oddgameno[$i]."_p"]) && is_numeric($pvalue["score".$evengameno[$i]."_p"]) ) {
-
-					// 			if($pvalue["score".$oddgameno[$i]."_p"] === $rvalue["score".$oddgameno[$i]."_r"]) {
-					// 				$matchpoints[$i] += 1;
-					// 			}
-					// 			if($pvalue["score".$evengameno[$i]."_p"] === $rvalue["score".$evengameno[$i]."_r"]) {
-					// 				$matchpoints[$i] += 1;
-					// 			}
-					// 			if (($pvalue["score".$oddgameno[$i]."_p"] === $rvalue["score".$oddgameno[$i]."_r"]) && ($pvalue["score".$evengameno[$i]."_p"] === $rvalue["score".$evengameno[$i]."_r"])) {
-					// 				$matchpoints[$i] += 3;
-					// 			}
-
-					// 			if ((($pvalue["score".$oddgameno[$i]."_p"] > $pvalue["score".$evengameno[$i]."_p"]) && ($rvalue["score".$oddgameno[$i]."_r"] > $rvalue["score".$evengameno[$i]."_r"]))
-					// 			|| (($pvalue["score".$oddgameno[$i]."_p"] < $pvalue["score".$evengameno[$i]."_p"]) && ($rvalue["score".$oddgameno[$i]."_r"] < $rvalue["score".$evengameno[$i]."_r"]))
-					// 			|| (($pvalue["score".$oddgameno[$i]."_p"] === $pvalue["score".$evengameno[$i]."_p"]) && ($rvalue["score".$oddgameno[$i]."_r"] === $rvalue["score".$evengameno[$i]."_r"])) ) {
-					// 				$matchpoints[$i] += 2;
-					// 			}
-					// 		}
-					// }
-
-					// $sql_getspecidro16 = "SELECT id, firstname, surname, score73_p, score74_p, score75_p, score76_p, score77_p, score78_p, score79_p, score80_p, score81_p, score82_p, score83_p, score84_p, score85_p, score86_p, score87_p, score88_p FROM live_user_predictions_ro16 WHERE id='".$userid."'";
-					// $pval = mysqli_fetch_assoc(mysqli_query($con, $sql_getspecidro16));
-
-					// for ($i=36; $i<=43; $i++) {
-					// 		$matchpoints[$i] = 0;
-
-					// 		if( is_numeric($pval["score".$oddgameno[$i]."_p"]) && is_numeric($pval["score".$evengameno[$i]."_p"]) ) {
-
-					// 			if($pval["score".$oddgameno[$i]."_p"] === $rvalue["score".$oddgameno[$i]."_r"]) {
-					// 				$matchpoints[$i] += 1;
-					// 			}
-					// 			if($pval["score".$evengameno[$i]."_p"] === $rvalue["score".$evengameno[$i]."_r"]) {
-					// 				$matchpoints[$i] += 1;
-					// 			}
-					// 			if (($pval["score".$oddgameno[$i]."_p"] === $rvalue["score".$oddgameno[$i]."_r"]) && ($pval["score".$evengameno[$i]."_p"] === $rvalue["score".$evengameno[$i]."_r"])) {
-					// 				$matchpoints[$i] += 3;
-					// 			}
-					// 			if ((($pval["score".$oddgameno[$i]."_p"] > $pval["score".$evengameno[$i]."_p"]) && ($rvalue["score".$oddgameno[$i]."_r"] > $rvalue["score".$evengameno[$i]."_r"]))
-					// 			|| (($pval["score".$oddgameno[$i]."_p"] < $pval["score".$evengameno[$i]."_p"]) && ($rvalue["score".$oddgameno[$i]."_r"] < $rvalue["score".$evengameno[$i]."_r"]))
-					// 			|| (($pval["score".$oddgameno[$i]."_p"] === $pval["score".$evengameno[$i]."_p"]) && ($rvalue["score".$oddgameno[$i]."_r"] === $rvalue["score".$evengameno[$i]."_r"])) ) {
-					// 				$matchpoints[$i] += 2;
-					// 			}
-					// 		}
-					// }
-
-					// $sql_getspecidqf = "SELECT id, firstname, surname, score89_p, score90_p, score91_p, score92_p, score93_p, score94_p, score95_p, score96_p FROM live_user_predictions_qf WHERE id='".$userid."'";
-					// $pval = mysqli_fetch_assoc(mysqli_query($con, $sql_getspecidqf));
-
-					// for ($i=44; $i<=48; $i++) {
-					// 		$matchpoints[$i] = 0;
-
-					// 		if( is_numeric($pval["score".$oddgameno[$i]."_p"]) && is_numeric($pval["score".$evengameno[$i]."_p"]) ) {
-
-					// 			if($pval["score".$oddgameno[$i]."_p"] === $rvalue["score".$oddgameno[$i]."_r"]) {
-					// 				$matchpoints[$i] += 1;
-					// 			}
-					// 			if($pval["score".$evengameno[$i]."_p"] === $rvalue["score".$evengameno[$i]."_r"]) {
-					// 				$matchpoints[$i] += 1;
-					// 			}
-					// 			if (($pval["score".$oddgameno[$i]."_p"] === $rvalue["score".$oddgameno[$i]."_r"]) && ($pval["score".$evengameno[$i]."_p"] === $rvalue["score".$evengameno[$i]."_r"])) {
-					// 				$matchpoints[$i] += 3;
-					// 			}
-					// 			if ((($pval["score".$oddgameno[$i]."_p"] > $pval["score".$evengameno[$i]."_p"]) && ($rvalue["score".$oddgameno[$i]."_r"] > $rvalue["score".$evengameno[$i]."_r"]))
-					// 			|| (($pval["score".$oddgameno[$i]."_p"] < $pval["score".$evengameno[$i]."_p"]) && ($rvalue["score".$oddgameno[$i]."_r"] < $rvalue["score".$evengameno[$i]."_r"]))
-					// 			|| (($pval["score".$oddgameno[$i]."_p"] === $pval["score".$evengameno[$i]."_p"]) && ($rvalue["score".$oddgameno[$i]."_r"] === $rvalue["score".$evengameno[$i]."_r"])) ) {
-					// 				$matchpoints[$i] += 2;
-					// 			}
-					// 		}
-					// }
-
-					// $sql_getspecidsf = "SELECT id, firstname, surname, score97_p, score98_p, score99_p, score100_p FROM live_user_predictions_sf WHERE id='".$userid."'";
-					// $pval = mysqli_fetch_assoc(mysqli_query($con, $sql_getspecidsf));
-
-					// for ($i=49; $i<=50; $i++) {
-					// 		$matchpoints[$i] = 0;
-
-					// 		if( is_numeric($pval["score".$oddgameno[$i]."_p"]) && is_numeric($pval["score".$evengameno[$i]."_p"]) ) {
-
-					// 			if($pval["score".$oddgameno[$i]."_p"] === $rvalue["score".$oddgameno[$i]."_r"]) {
-					// 				$matchpoints[$i] += 1;
-					// 			}
-					// 			if($pval["score".$evengameno[$i]."_p"] === $rvalue["score".$evengameno[$i]."_r"]) {
-					// 				$matchpoints[$i] += 1;
-					// 			}
-					// 			if (($pval["score".$oddgameno[$i]."_p"] === $rvalue["score".$oddgameno[$i]."_r"]) && ($pval["score".$evengameno[$i]."_p"] === $rvalue["score".$evengameno[$i]."_r"])) {
-					// 				$matchpoints[$i] += 3;
-					// 			}
-					// 			if ((($pval["score".$oddgameno[$i]."_p"] > $pval["score".$evengameno[$i]."_p"]) && ($rvalue["score".$oddgameno[$i]."_r"] > $rvalue["score".$evengameno[$i]."_r"]))
-					// 			|| (($pval["score".$oddgameno[$i]."_p"] < $pval["score".$evengameno[$i]."_p"]) && ($rvalue["score".$oddgameno[$i]."_r"] < $rvalue["score".$evengameno[$i]."_r"]))
-					// 			|| (($pval["score".$oddgameno[$i]."_p"] === $pval["score".$evengameno[$i]."_p"]) && ($rvalue["score".$oddgameno[$i]."_r"] === $rvalue["score".$evengameno[$i]."_r"])) ) {
-					// 				$matchpoints[$i] += 2;
-					// 			}
-					// 		}
-					// }
-
-		// Convert PHP array to JSON
-	$userdata_json = json_encode($userdata5);	
-
-?>
-
-<div class="page-hero page-hero--user">
-    <div>
-	<p class="eyebrow">Player predictions</p>
-	<h1 class="page-header">Predictions by <?php print "$uppCaseFN $uppCaseSN" ?></h1>
-	<p class="lead mb-0">A match-by-match look at this player's scorelines and points.</p>
-    </div>
-    <div class="page-hero__actions">
-        <a class="btn btn-primary" href="rankings.php"><i class="bi bi-list-ol"></i> Rankings</a>
-        <a class="btn btn-outline-dark" href="dashboard.php"><i class="bi bi-speedometer2"></i> Dashboard</a>
-    </div>
-    </div><!-- End Page Title -->
-
-<section class="section user-page">
-    <p>Currently viewing predictions by <?php print "$uppCaseFN $uppCaseSN" ?>. Return to the <a href="rankings.php">rankings</a> table.</p>
-	      <div class="row">
-					<div class="col-md-3 col-sm-12">
-					<div class="card user-profile-card">
-					  <img src="<?php echo $avatar ?>" id="avatar" class="img-fluid mx-auto p-2" alt="User Avatar" name="User Avatar" width="100">
-					  <div class="card-body">
-						<!-- <h5 class="card-title"></h5> -->
-					    <p style="text-align: center; font-weight: bolder; font-size: 30px;"><?php printf("%s pts", $pointstotal); ?></p>					    
-					  </div>
-					  <ul class="list-group list-group-flush">
-						<li class="list-group-item"><?php printf ("<strong>Tournament winner:</strong><br> <img src='%s' alt='National flag of %s'> %s", $tournwinnerflag, $tournwinner, $tournwinner); ?></li>
-					    <li class="list-group-item"><?php printf ("<strong>Favourite team:</strong><br> %s", $faveteam); ?></li>
-					    <li class="list-group-item"><?php printf ("<strong>Location:</strong><br> %s", $location); ?></li>
-						<li class="list-group-item"><?php printf ("<strong>Field of expertise:</strong><br> %s", $fieldofwork); ?></li>
-					  </ul>
-					</div>
-				</div>
-				<div class="col-md-9 col-sm-12">
-					<div class="content-panel">
-							<!-- Placeholder for JSON table construction -->
-							<table id="table" class="table table-sm table-striped">
-								<thead>
-									<tr>
-										<th class="d-none d-md-table-cell"></th>
-										<th class="d-none d-md-table-cell"></th>
-										<th></th>
-										<th></th>
-										<th></th>
-										<th class="d-none d-md-table-cell"></th>
-										<th>Pred.</th>
-										<th>Res.</th>
-										<th>Pts</th>
-									</tr>
-								</thead>
-								<tbody>
-									<!-- Rows will be appended here by JavaScript -->
-								</tbody>
-							</table>
-					</div>
-				</div>
-      	</div><!--row-->
-    </section>
-
-</main>
-
-
-<script>
-$(document).ready(function () {
-const teamFlagMap = <?= json_encode(hh_get_known_team_flag_paths('')) ?>;
-// Fetch data from JSON file
-$.getJSON("json/uefa-euro-2024-fixtures-final.json", function (data) {
-	let fixture = '';
-	let m = 0, x = 101, y = 102;
-	const userdata5 = <?php echo $userdata_json; ?>;
-
-        // Function to calculate points
-        function calculatePoints(prediction, result) {
-            const [predictedHome, predictedAway] = prediction.split(' - ').map(Number);
-            const [actualHome, actualAway] = result.split(' - ').map(Number);
-
-            if (isNaN(predictedHome) || isNaN(predictedAway) || isNaN(actualHome) || isNaN(actualAway)) {
-                return ''; // If any score is not a number, return empty string
-            }
-
-            const predictedOutcome = predictedHome > predictedAway ? 'home' : predictedHome < predictedAway ? 'away' : 'draw';
-            const actualOutcome = actualHome > actualAway ? 'home' : actualHome < actualAway ? 'away' : 'draw';
-
-            if (predictedHome === actualHome && predictedAway === actualAway) {
-                return 7; // Both scores correct
-            }
-            if (predictedOutcome === actualOutcome) {
-                if (predictedHome === actualHome || predictedAway === actualAway) {
-                    return 3; // Correct outcome and one correct score
-                }
-                return 2; // Correct outcome only
-            }
-            if (predictedHome === actualHome || predictedAway === actualAway) {
-                return 1; // One correct score only
-            }
-            return 0; // No points
+        if ($key === '' || $fixtureCount <= 0 || !$definition) {
+            continue;
         }
 
+        $contexts[$key] = [
+            'key' => $key,
+            'label' => (string) ($stage['label'] ?? ucfirst($key)),
+            'table' => (string) ($stage['table'] ?? $definition['table']),
+            'fixture_start' => $fixtureStart,
+            'fixture_end' => $fixtureStart + $fixtureCount - 1,
+            'score_start' => (int) $definition['start'],
+            'score_end' => (int) $definition['end'],
+        ];
 
-        // Iterate through objects
-        $.each(data, function (key, value) {
-            const homeTeam = value.HomeTeam;
-            const awayTeam = value.AwayTeam;
-            const homeTeamFlag = teamFlagMap[homeTeam] || "";
-            const awayTeamFlag = teamFlagMap[awayTeam] || "";
-            const homeTeamScore = value.HomeTeamScore ?? "";
-            const awayTeamScore = value.AwayTeamScore ?? "";
-            const dateStr = value.DateUtc;
-            const [dateValues, timeValues] = dateStr.split(' ');
-            const [year, month, day] = dateValues.split('-');
-            const [hours, minutes] = timeValues.split(':');
-            const date = new Date(+year, +month - 1, +day, +hours, +minutes).toLocaleString().slice(0, -3);
-            const group = value.Group;
-			const stage = value.RoundNumber;
-            const matchNumber = value.MatchNumber;
-            const roundNumber = value.RoundNumber;
-            const location = value.Location;
-            const prediction = `${userdata5['score' + x + '_p']} - ${userdata5['score' + y + '_p']}`;
-            const result = homeTeamScore !== "" && awayTeamScore !== "" ? `${homeTeamScore} - ${awayTeamScore}` : "";
-            const points = result ? calculatePoints(prediction, result) : '';
+        $fixtureStart += $fixtureCount;
+    }
 
-            fixture += `
-                <tr>
-                    <td class="small text-muted d-none d-md-table-cell">${stage}<br>${date}</td>
-                    <td class="d-none d-md-table-cell" style="text-align: right">${homeTeam}</td>
-                    <td><img src="${homeTeamFlag}" alt="Flag of ${homeTeam}" title="Flag of ${homeTeam}" class="img-fluid"></td>
-                    <td>v</td>
-                    <td><img src="${awayTeamFlag}" alt="Flag of ${awayTeam}" title="Flag of ${awayTeam}" class="img-fluid"></td>
-                    <td class="d-none d-md-table-cell" class="right-team">${awayTeam}</td>            
-                    <td><span class="prediction">${prediction}</span></td>
-                    <td><span class="result">${result}</span></td>
-                    <td><span class="points">${points}</span></td>
-                </tr>
-            `;
+    return $contexts;
+}
 
-            m++;
-            x += 2;
-            y += 2;
-        });
+function hh_ordinal_position($number): string
+{
+    $number = (int) $number;
+    if ($number <= 0) {
+        return 'N/A';
+    }
 
-        // Insert rows into table
-        $('#table tbody').append(fixture);
-        
-        // Initialize Bootstrap tooltips
-        $('[data-bs-toggle="tooltip"]').tooltip();
+    $ends = ['th','st','nd','rd','th','th','th','th','th','th'];
+    if (($number % 100) >= 11 && ($number % 100) <= 13) {
+        return $number . 'th';
+    }
 
-    });
-});
-</script>
+    return $number . $ends[$number % 10];
+}
 
-<!-- Footer -->
-<?php include "php/footer.php" ?>
+function hh_score_value(array $row, int $scoreIndex, string $suffix): ?int
+{
+    $column = 'score' . $scoreIndex . '_' . $suffix;
+    if (!array_key_exists($column, $row) || $row[$column] === null || $row[$column] === '') {
+        return null;
+    }
+
+    return (int) $row[$column];
+}
+
+function hh_calculate_prediction_points(?int $predictedHome, ?int $predictedAway, ?int $actualHome, ?int $actualAway): ?int
+{
+    if ($predictedHome === null || $predictedAway === null || $actualHome === null || $actualAway === null) {
+        return null;
+    }
+
+    if ($predictedHome === $actualHome && $predictedAway === $actualAway) {
+        return 7;
+    }
+
+    $predictedOutcome = $predictedHome > $predictedAway ? 'home' : ($predictedHome < $predictedAway ? 'away' : 'draw');
+    $actualOutcome = $actualHome > $actualAway ? 'home' : ($actualHome < $actualAway ? 'away' : 'draw');
+
+    if ($predictedOutcome === $actualOutcome) {
+        if ($predictedHome === $actualHome || $predictedAway === $actualAway) {
+            return 3;
+        }
+
+        return 2;
+    }
+
+    if ($predictedHome === $actualHome || $predictedAway === $actualAway) {
+        return 1;
+    }
+
+    return 0;
+}
+
+function hh_stage_context_for_match(array $stageContexts, int $matchNumber): ?array
+{
+    foreach ($stageContexts as $context) {
+        if ($matchNumber >= $context['fixture_start'] && $matchNumber <= $context['fixture_end']) {
+            return $context;
+        }
+    }
+
+    return null;
+}
+
+$userId = isset($_GET['id']) ? (int) $_GET['id'] : 0;
+$stageContexts = hh_prediction_stage_contexts_for_user();
+
+$profile = null;
+$predictionRows = [];
+$fixtures = [];
+$matchResults = [];
+$totalPoints = 0;
+
+if ($userId > 0) {
+    $profileStatement = mysqli_prepare(
+        $con,
+        "SELECT id, username, firstname, surname, avatar, faveteam, fieldofwork, location, tournwinner, currpos, haspaid
+         FROM live_user_information
+         WHERE id = ?
+         LIMIT 1"
+    );
+
+    if ($profileStatement) {
+        mysqli_stmt_bind_param($profileStatement, 'i', $userId);
+        mysqli_stmt_execute($profileStatement);
+        $profileResult = mysqli_stmt_get_result($profileStatement);
+        if ($profileResult instanceof mysqli_result) {
+            $profile = mysqli_fetch_assoc($profileResult) ?: null;
+            mysqli_free_result($profileResult);
+        }
+        mysqli_stmt_close($profileStatement);
+    }
+
+    foreach ($stageContexts as $stageKey => $context) {
+        $statement = mysqli_prepare($con, "SELECT * FROM {$context['table']} WHERE id = ? LIMIT 1");
+        if (!$statement) {
+            continue;
+        }
+
+        mysqli_stmt_bind_param($statement, 'i', $userId);
+        mysqli_stmt_execute($statement);
+        $result = mysqli_stmt_get_result($statement);
+        if ($result instanceof mysqli_result) {
+            $predictionRows[$stageKey] = mysqli_fetch_assoc($result) ?: [];
+            mysqli_free_result($result);
+        } else {
+            $predictionRows[$stageKey] = [];
+        }
+        mysqli_stmt_close($statement);
+
+        $totalPoints += (int) ($predictionRows[$stageKey]['points_total'] ?? 0);
+    }
+
+    $fixtureResult = mysqli_query(
+        $con,
+        "SELECT match_number, stage, round_number, date, kotime, venue, hometeam, awayteam, hometeamimg, awayteamimg, homescore, awayscore
+         FROM live_match_schedule
+         ORDER BY match_number ASC"
+    );
+
+    if ($fixtureResult instanceof mysqli_result) {
+        while ($row = mysqli_fetch_assoc($fixtureResult)) {
+            $fixtures[] = $row;
+        }
+        mysqli_free_result($fixtureResult);
+    }
+}
+
+mysqli_close($con);
+
+if (!$profile) {
+    header('Location: rankings.php');
+    exit;
+}
+
+$fullName = ucfirst((string) $profile['firstname']) . ' ' . ucfirst((string) $profile['surname']);
+$tournwinner = (string) ($profile['tournwinner'] ?? '');
+$tournwinnerFlag = $tournwinner !== '' ? hh_get_team_flag_path($tournwinner) : '';
+$currentPosition = hh_ordinal_position((int) ($profile['currpos'] ?? 0));
+
+include 'php/header.php';
+include 'php/navigation.php';
+?>
+
+<style>
+.user-layout {
+  display: grid;
+  align-items: start;
+  grid-template-columns: minmax(270px, 320px) minmax(0, 1fr);
+  gap: 18px;
+}
+
+.user-page .concept-profile-card {
+  align-self: start;
+  position: sticky;
+  top: 104px;
+}
+
+.user-table .team-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+}
+
+.user-table .team-line--away {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.user-table .team-line--away img {
+  margin-left: 8px;
+  margin-right: 0;
+}
+
+/* .user-table .team-line img {
+  height: 24px;
+  margin-right: 8px;
+  border: 1px solid lightgray;
+  background: #ffffff;
+} */
+
+.user-table .fixture-meta {
+  color: var(--hh-muted);
+  font-size: 0.84rem;
+  line-height: 1.35;
+}
+
+.user-table .fixture-meta strong {
+  display: block;
+  color: var(--hh-green-dark);
+  font-size: 0.85rem;
+}
+
+.user-table .fixture-meta span {
+  display: block;
+}
+
+.user-table .prediction,
+.user-table .result,
+.user-table .points {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 52px;
+  min-height: 34px;
+  padding: 4px 9px;
+  border-radius: 8px;
+  background: rgba(12, 90, 67, 0.09);
+  font-weight: 900;
+}
+
+.user-table .result {
+  background: rgba(243, 199, 66, 0.2);
+}
+
+.user-table .points {
+  background: rgba(143, 102, 216, 0.16);
+  color: var(--hh-purple-dark);
+}
+
+@media (max-width: 991.98px) {
+  .user-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .user-page .concept-profile-card {
+    position: static;
+  }
+}
+</style>
+
+<main id="main" class="main">
+    <div class="page-hero page-hero--user">
+        <div>
+            <p class="eyebrow">Player predictions</p>
+            <h1 class="page-header">Predictions by <?= htmlspecialchars($fullName) ?></h1>
+            <p class="lead mb-0">A live fixture-by-fixture view of this player’s picks, results and points.</p>
+        </div>
+        <div class="page-hero__actions">
+            <a class="btn btn-primary" href="rankings.php"><i class="bi bi-list-ol"></i> Rankings</a>
+            <a class="btn btn-outline-dark" href="dashboard.php"><i class="bi bi-speedometer2"></i> Dashboard</a>
+        </div>
+    </div>
+
+    <section class="section user-page">
+        <p>Currently viewing predictions by <?= htmlspecialchars($fullName) ?>. Return to the <a href="rankings.php">rankings</a> table.</p>
+
+        <div class="user-layout">
+            <article class="concept-profile-card">
+                <div class="concept-profile-card__kit">
+                    <img src="<?= htmlspecialchars((string) $profile['avatar']) ?>" alt="<?= htmlspecialchars($fullName) ?> football strip avatar">
+                </div>
+                <div class="concept-profile-card__body">
+                    <div>
+                        <p class="eyebrow mb-2">Player card</p>
+                        <h2><?= htmlspecialchars($fullName) ?></h2>
+                        <p class="concept-subtle mb-0"><?= htmlspecialchars((string) $profile['username']) ?> · <?= htmlspecialchars($currentPosition) ?> in the rankings</p>
+                    </div>
+                    <div class="concept-profile-stats">
+                        <span><strong><?= htmlspecialchars((string) $totalPoints) ?></strong>Total points</span>
+                        <span><strong><?= htmlspecialchars((string) count($fixtures)) ?></strong>Fixtures tracked</span>
+                        <span><strong><?= htmlspecialchars((string) strtoupper((string) $profile['haspaid'])) ?></strong>Entry paid</span>
+                    </div>
+                    <dl class="concept-profile-details">
+                        <div>
+                            <dt>Tournament winner</dt>
+                            <dd>
+                                <?php if ($tournwinnerFlag !== '') : ?>
+                                    <img src="<?= htmlspecialchars($tournwinnerFlag) ?>" alt="<?= htmlspecialchars($tournwinner) ?> flag" width="24" height="24" style="border-radius:50%;margin-right:8px;">
+                                <?php endif; ?>
+                                <?= htmlspecialchars($tournwinner !== '' ? $tournwinner : 'Not chosen') ?>
+                            </dd>
+                        </div>
+                        <div>
+                            <dt>Favourite team</dt>
+                            <dd><?= htmlspecialchars((string) ($profile['faveteam'] ?? 'Not set')) ?></dd>
+                        </div>
+                        <div>
+                            <dt>Location</dt>
+                            <dd><?= htmlspecialchars((string) ($profile['location'] ?? 'Not set')) ?></dd>
+                        </div>
+                        <div>
+                            <dt>Field of expertise</dt>
+                            <dd><?= htmlspecialchars((string) ($profile['fieldofwork'] ?? 'Not set')) ?></dd>
+                        </div>
+                    </dl>
+                </div>
+            </article>
+
+            <div class="content-panel">
+                <div class="concept-panel__header">
+                    <div>
+                        <p class="eyebrow mb-2">Fixture list</p>
+                        <h2 class="mb-1">Predictions and results</h2>
+                        <p class="dashboard-subtle mb-0">Every fixture in the schedule, built from the live tournament data.</p>
+                    </div>
+                </div>
+
+                <div class="table-responsive user-table">
+                    <table id="table" class="table table-sm table-striped">
+                        <thead>
+                            <tr>
+                                <th class="d-none d-lg-table-cell">Fixture</th>
+                                <th>Home</th>
+                                <th></th>
+                                <th class="text-center">Pred.</th>
+                                <th class="text-center">Res.</th>
+                                <th class="text-center">Pts</th>
+                                <th></th>
+                                <th>Away</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($fixtures as $fixture) : ?>
+                                <?php
+                                $matchNumber = (int) ($fixture['match_number'] ?? 0);
+                                $stageContext = hh_stage_context_for_match($stageContexts, $matchNumber);
+                                $stageKey = $stageContext['key'] ?? '';
+                                $predictionRow = $stageKey !== '' ? ($predictionRows[$stageKey] ?? []) : [];
+                                $homeScoreIndex = ($matchNumber * 2) - 1;
+                                $awayScoreIndex = $matchNumber * 2;
+                                $predictedHome = hh_score_value($predictionRow, $homeScoreIndex, 'p');
+                                $predictedAway = hh_score_value($predictionRow, $awayScoreIndex, 'p');
+                                $actualHome = hh_score_value($fixture, $homeScoreIndex, 'r');
+                                $actualAway = hh_score_value($fixture, $awayScoreIndex, 'r');
+
+                                if ($actualHome === null && isset($fixture['homescore']) && $fixture['homescore'] !== null && $fixture['homescore'] !== '') {
+                                    $actualHome = (int) $fixture['homescore'];
+                                }
+                                if ($actualAway === null && isset($fixture['awayscore']) && $fixture['awayscore'] !== null && $fixture['awayscore'] !== '') {
+                                    $actualAway = (int) $fixture['awayscore'];
+                                }
+
+                                $points = hh_calculate_prediction_points($predictedHome, $predictedAway, $actualHome, $actualAway);
+                                $stageLabel = trim((string) ($fixture['stage'] ?? '')) ?: (string) ($stageContext['label'] ?? '');
+                                $kickoffDate = !empty($fixture['date']) ? date('D j M', strtotime((string) $fixture['date'])) : '';
+                                $kickoffTime = trim((string) ($fixture['kotime'] ?? ''));
+                                $fixtureDateTime = trim($kickoffDate . ($kickoffTime !== '' ? ' ' . $kickoffTime : ''));
+                                $fixtureVenue = trim((string) ($fixture['venue'] ?? ''));
+                                ?>
+                                <tr>
+                                    <td class="d-none d-lg-table-cell">
+                                        <div class="fixture-meta">
+                                            <strong>Match <?= htmlspecialchars((string) $matchNumber) ?> · <?= htmlspecialchars($stageLabel !== '' ? $stageLabel : 'Fixture') ?></strong>
+                                            <span><?= htmlspecialchars($fixtureDateTime !== '' ? $fixtureDateTime : 'Kick-off TBC') ?></span>
+                                            <span><?= htmlspecialchars($fixtureVenue !== '' ? $fixtureVenue : 'Venue TBC') ?></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="team-line">
+                                            <img src="<?= htmlspecialchars((string) $fixture['hometeamimg']) ?>" alt="<?= htmlspecialchars((string) $fixture['hometeam']) ?> flag">
+                                            <span><?= htmlspecialchars((string) $fixture['hometeam']) ?></span>
+                                        </div>
+                                    </td>
+                                    <td class="d-none d-md-table-cell"></td>
+                                    <td class="text-center"><span class="prediction"><?= $predictedHome !== null && $predictedAway !== null ? htmlspecialchars($predictedHome . ' - ' . $predictedAway) : '&mdash;' ?></span></td>
+                                    <td class="text-center"><span class="result"><?= $actualHome !== null && $actualAway !== null ? htmlspecialchars($actualHome . ' - ' . $actualAway) : '&mdash;' ?></span></td>
+                                    <td class="text-center"><span class="points"><?= $points !== null ? htmlspecialchars((string) $points) : '&mdash;' ?></span></td>
+                                    <td class="d-none d-md-table-cell"></td>
+                                    <td>
+                                        <div class="team-line team-line--away">
+                                            <span><?= htmlspecialchars((string) $fixture['awayteam']) ?></span>
+                                            <img src="<?= htmlspecialchars((string) $fixture['awayteamimg']) ?>" alt="<?= htmlspecialchars((string) $fixture['awayteam']) ?> flag">
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<?php include 'php/footer.php'; ?>

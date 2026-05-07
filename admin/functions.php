@@ -73,6 +73,7 @@ $tableOptions = [
     'live_match_schedule' => 'Match schedule',
     'live_match_results' => 'Match results',
     'live_user_predictions_groups' => 'Group predictions',
+    'live_user_predictions_ro32' => 'Round of 32 predictions',
     'live_user_predictions_ro16' => 'Round of 16 predictions',
     'live_user_predictions_qf' => 'Quarter-final predictions',
     'live_user_predictions_sf' => 'Semi-final predictions',
@@ -82,6 +83,7 @@ $tableOptions = [
 
 $stageOptions = [
     'live_user_predictions_groups' => 'Group stage points',
+    'live_user_predictions_ro32' => 'Round of 32 points',
     'live_user_predictions_ro16' => 'Round of 16 points',
     'live_user_predictions_qf' => 'Quarter-final points',
     'live_user_predictions_sf' => 'Semi-final points',
@@ -93,6 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($action === 'recalculate_all') {
         compareValues();
+        compareRO32Values();
         compareRO16Values();
         compareQFValues();
         compareSFValues();
@@ -103,6 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             "TRUNCATE TABLE live_match_results",
             "UPDATE live_match_schedule SET homescore = NULL, awayscore = NULL",
             "UPDATE live_user_predictions_groups SET points_total = 0",
+            "UPDATE live_user_predictions_ro32 SET points_total = 0",
             "UPDATE live_user_predictions_ro16 SET points_total = 0",
             "UPDATE live_user_predictions_qf SET points_total = 0",
             "UPDATE live_user_predictions_sf SET points_total = 0",
@@ -233,21 +237,13 @@ $fixturePreview = hh_admin_fetch_all(
 $tablePreview = hh_admin_preview_table($con, $selectedTable, 30);
 
 mysqli_close($con);
+
+$app_path_prefix = '../';
+$app_logout_path = '../php/logout.php';
+include '../php/header.php';
+include '../php/navigation.php';
 ?>
-<!DOCTYPE html>
-<html lang="en-GB">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta http-equiv="Content-Type" content="text/html">
-    <meta name="description" content="Hendy's Hunches administration hub">
-    <meta name="author" content="James Henderson">
-    <title><?= $page_title ?> - Hendy's Hunches</title>
-    <link href="../ico/favicon.ico" rel="icon">
-    <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-    <link href="../css/styles.css" rel="stylesheet">
-    <style>
+<style>
       .admin-shell {
         width: min(1320px, calc(100% - 32px));
         margin: 18px auto 28px;
@@ -331,20 +327,16 @@ mysqli_close($con);
         }
       }
     </style>
-</head>
-<body>
-<?php hh_render_dev_banner('../php/logout.php'); ?>
 
 <div class="admin-shell">
     <div class="page-hero page-hero--admin">
         <div>
-            <p class="eyebrow">Admin control room</p>
+            <p class="eyebrow" style="color: #FF0000 !important">Admin control room</p>
             <h1>Game Functions</h1>
             <p class="lead mb-0">A central place to run the core admin actions that steer the game and keep the data in shape.</p>
         </div>
         <div class="page-hero__actions">
             <a class="btn btn-primary" href="results.php"><i class="bi bi-trophy"></i> Record results</a>
-            <a class="btn btn-outline-success" href="configuration.php"><i class="bi bi-sliders2"></i> Site configuration</a>
             <a class="btn btn-outline-dark" href="../dashboard.php"><i class="bi bi-grid"></i> Back to dashboard</a>
         </div>
     </div>
@@ -547,7 +539,3 @@ mysqli_close($con);
 </div>
 
 <?php include "../php/footer.php"; ?>
-
-<script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>

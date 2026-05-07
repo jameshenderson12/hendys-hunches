@@ -19,15 +19,14 @@ include "php/navigation.php";
         <h1>Rankings</h1>
         <p class="lead mb-0">Check the table, chase the pack and see who made the final prize spots.</p>
       </div>
-      <div class="page-hero__actions">
-        <a class="btn btn-primary" href="dashboard.php"><i class="bi bi-speedometer2"></i> Dashboard</a>
-        <a class="btn btn-outline-dark" href="user.php?id=<?php echo $_SESSION['id']; ?>"><i class="bi bi-person-lines-fill"></i> My predictions</a>
+      <div class="page-hero__actions page-hero__actions--search">
+        <div id="rankingsSearchMount" class="rankings-hero-search"></div>
       </div>
     </div><!-- End Page Title -->
 
     <section class="section rankings-page">
     <!-- <p><strong>Note:</strong> The ability to view others' predictions has been purposefully removed temporarily.</p> -->
-		<p class="alert alert-success rankings-page__notice"><i class="bi bi-trophy-fill"></i> Congratulations to our winners Jonathan (1st), Paul (2nd), David (3rd), Ketan (4th) and Romina (5th).</p>
+		<!-- <p class="alert alert-success rankings-page__notice"><i class="bi bi-trophy-fill"></i> Congratulations to our winners Jonathan (1st), Paul (2nd), David (3rd), Ketan (4th) and Romina (5th).</p> -->
 		<!-- Display table of rankings from process.php -->		
 		
 		<div class="rankings-panel">
@@ -42,7 +41,7 @@ include "php/navigation.php";
 <script>
 $(document).ready(function() {
     // Initialise DataTables
-    $('#rankingsTable').DataTable({
+    const rankingsTable = $('#rankingsTable').DataTable({
         "responsive": true,
         "paging": false,  // Enable paging to use the lengthMenu
         "searching": true,
@@ -57,6 +56,22 @@ $(document).ready(function() {
             { "width": "15%", "targets": 3 },          
         ]   
     });
+
+    const searchNode = $('#rankingsTable').closest('.dt-container').find('.dt-search').first().detach();
+    const searchLabel = searchNode.find('label').first();
+    const searchInput = searchNode.find('input').first();
+
+    searchInput.attr('placeholder', 'Find a player');
+    searchInput.attr('aria-label', 'Find a player');
+
+    if (searchLabel.length) {
+      searchLabel.contents().filter(function() {
+        return this.nodeType === 3;
+      }).remove();
+      searchLabel.prepend('<span>Find a player</span>');
+    }
+
+    $('#rankingsSearchMount').append(searchNode);
 });
 
  $(document).ready(function () {
