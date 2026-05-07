@@ -240,6 +240,10 @@ include 'php/navigation.php';
   display: block;
 }
 
+.user-table .fixture-meta span:last-child {
+  font-size: 0.68rem;
+}
+
 .user-table .prediction,
 .user-table .result,
 .user-table .points {
@@ -288,8 +292,6 @@ include 'php/navigation.php';
     </div>
 
     <section class="section user-page">
-        <p>Currently viewing predictions by <?= htmlspecialchars($fullName) ?>. Return to the <a href="rankings.php">rankings</a> table.</p>
-
         <div class="user-layout">
             <article class="concept-profile-card">
                 <div class="concept-profile-card__kit">
@@ -352,7 +354,7 @@ include 'php/navigation.php';
                                 <th class="text-center">Res.</th>
                                 <th class="text-center">Pts</th>
                                 <th></th>
-                                <th>Away</th>
+                                <th class="text-end">Away</th>
                             </tr>
                         </thead>
                         <tbody>

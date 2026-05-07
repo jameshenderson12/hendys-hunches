@@ -43,29 +43,9 @@ $current_user_id = (int) ($_SESSION['id'] ?? 0);
 		            <li class="nav-item">
 		              <a id="tour-nav-dashboard" class="nav-link<?= $nav_active('dashboard.php') ?>" href="<?= htmlspecialchars($nav_href('dashboard.php'), ENT_QUOTES) ?>">Dashboard</a>
 		            </li>
-		            <li class="nav-item">
-		              <a id="tour-nav-fanzone" class="nav-link<?= $nav_active('fanzone.php') ?>" href="<?= htmlspecialchars($nav_href('fanzone.php'), ENT_QUOTES) ?>">Fan Zone</a>
-		            </li>
-					<!-- <li class="nav-item position-relative">
-					<a class="nav-link" href="tournament-groups.php">
-						Groups
-						<span class="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-success">
-						new
-						</span>
-					</a>
-					</li>
-					<li class="nav-item position-relative">
-					<a class="nav-link" href="tournament-knockouts.php">
-						Knockouts
-						<span class="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-success">
-						new
-						</span>
-					</a>
-					</li> -->
-
 		            <li class="nav-item position-relative">
 		              <a id="tour-nav-predictions" class="nav-link<?= $nav_active('predictions.php') ?>" href="<?= htmlspecialchars($nav_href('predictions.php'), ENT_QUOTES) ?>">
-						Predictions
+						My Predictions
 						<!-- <span class="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-success">
 						Final
 						</span> -->
@@ -81,6 +61,9 @@ $current_user_id = (int) ($_SESSION['id'] ?? 0);
 							<li><a id="tour-nav-knockouts" class="dropdown-item" href="<?= htmlspecialchars($nav_href('tournament-knockouts.php'), ENT_QUOTES) ?>">Knockout stages</a></li>
 						</ul>
 		            </li>										
+		            <li class="nav-item">
+		              <a id="tour-nav-fanzone" class="nav-link<?= $nav_active('fanzone.php') ?>" href="<?= htmlspecialchars($nav_href('fanzone.php'), ENT_QUOTES) ?>">Fan Zone</a>
+		            </li>
 					<li class="nav-item">
 		              <a id="tour-nav-guide" class="nav-link<?= $nav_active('how-it-works.php') ?>" href="<?= htmlspecialchars($nav_href('how-it-works.php'), ENT_QUOTES) ?>">How It Works</a>
 		            </li>
