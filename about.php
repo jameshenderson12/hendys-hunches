@@ -8,9 +8,159 @@ hh_require_login('index.php');
 include "php/header.php";
 include "php/navigation.php";
 
+$timeline = [
+    [
+        'tournament' => 'FIFA World Cup 2006',
+        'strapline' => 'No name, just spreadsheet pain',
+        'image' => 'img/wc2006-ss.png',
+        'story' => [
+            'Hendy\'s Hunches started as a shared spreadsheet, emailed around before kick-off and scored by hand every day.',
+            'It was clunky and time-heavy, but the banter landed immediately and made the whole thing worth bringing back.',
+        ],
+        'pro' => 'Kick-started the tradition with plenty of banter.',
+        'con' => 'Manual score updates swallowed hours every evening.',
+        'charity_name' => 'Charity placeholder',
+        'charity_copy' => 'A future space for the cause supported by that year\'s game and a short note on the impact.',
+        'charity_logo' => 'img/charity-logos/notts-county-foundation-logo.png',
+        'podium' => [
+            ['rank' => '1st', 'name' => 'Steven Lough, James Henderson'],
+            ['rank' => '2nd', 'name' => 'Kirsty Yarnold'],
+            ['rank' => '3rd', 'name' => 'Julien Alégre, Andrew Lough'],
+        ],
+    ],
+    [
+        'tournament' => 'FIFA World Cup 2014',
+        'strapline' => 'The online leap',
+        'image' => 'img/wc2014-site.png',
+        'story' => [
+            'This was the first proper web version, built to revive the game and make entering predictions far less painful.',
+            'It looked simple, but automatic scoring and live rankings made it feel like a real tournament experience for the first time.',
+        ],
+        'pro' => 'Online submissions made joining the game far easier.',
+        'con' => 'Predictions only covered the group stage.',
+        'charity_name' => 'Charity placeholder',
+        'charity_copy' => 'A space for the supported charity, the reason it was chosen, and a one-line outcome.',
+        'charity_logo' => 'img/charity-logos/In-Aid-Of-CALM.png',
+        'podium' => [
+            ['rank' => '1st', 'name' => 'Andrew Booth'],
+            ['rank' => '2nd', 'name' => 'Nigel Plant'],
+            ['rank' => '3rd', 'name' => 'Luke Fecowycz'],
+        ],
+    ],
+    [
+        'tournament' => 'UEFA Euro 2016',
+        'strapline' => 'Feature-rich fan favorite',
+        'image' => 'img/euro2016-site-v3.png',
+        'story' => [
+            'The 2016 build pushed the game forward with proper logins, better rankings, richer stats, and room to make late changes before kick-off.',
+            'It was the moment the site started to feel like a hobby project with real staying power rather than a one-off experiment.',
+        ],
+        'pro' => 'Richer stats and flexible edits kept people engaged.',
+        'con' => 'More features meant more upkeep behind the scenes.',
+        'charity_name' => 'Charity placeholder',
+        'charity_copy' => 'A space to show who the tournament supported and what the players helped fund.',
+        'charity_logo' => 'img/charity-logos/sands-logo.jpg',
+        'podium' => [
+            ['rank' => '1st', 'name' => 'Jonathan Lamley'],
+            ['rank' => '2nd', 'name' => 'Sam McGuigan'],
+            ['rank' => '3rd', 'name' => 'Steve Butt, Kirsty Yarnold'],
+        ],
+    ],
+    [
+        'tournament' => 'FIFA World Cup 2018',
+        'strapline' => 'The community grows',
+        'image' => 'img/hh-logo-2018.jpg',
+        'story' => [
+            'By 2018 the player list was bigger, the leaderboard was tighter, and every update felt like it mattered a little more.',
+            'It became less about proving the site worked and more about building a tournament ritual people looked forward to.',
+        ],
+        'pro' => 'A bigger player pool made the table feel alive.',
+        'con' => 'The competition became much less forgiving.',
+        'charity_name' => 'Charity placeholder',
+        'charity_copy' => 'A placeholder for the chosen cause, the fundraising total, and a quick thank-you note.',
+        'charity_logo' => 'img/charity-logos/notts-county-foundation-logo.png',
+        'podium' => [
+            ['rank' => '1st', 'name' => 'Nick Chandler'],
+            ['rank' => '2nd', 'name' => 'Snigdha Dutta, Sonia Fernandez'],
+            ['rank' => '3rd', 'name' => 'Daniel Waite'],
+        ],
+    ],
+    [
+        'tournament' => 'FIFA World Cup 2022',
+        'strapline' => 'Global spotlight',
+        'image' => 'img/qatar-2022-logo.png',
+        'story' => [
+            'Qatar 2022 brought a fast, intense tournament where every late goal seemed to rattle the rankings.',
+            'The pace of the match schedule made the game feel urgent, which only added to the fun once the predictions were in.',
+        ],
+        'pro' => 'Rapid results kept the leaderboard moving constantly.',
+        'con' => 'Quick turnarounds left little room for second thoughts.',
+        'charity_name' => 'Charity placeholder',
+        'charity_copy' => 'A placeholder for the supported charity and a short note about the year\'s good cause.',
+        'charity_logo' => 'img/charity-logos/In-Aid-Of-CALM.png',
+        'podium' => [
+            ['rank' => '1st', 'name' => 'Chloe McCandlish'],
+            ['rank' => '2nd', 'name' => 'Howard Kilbourn'],
+            ['rank' => '3rd', 'name' => 'Andrew Lough'],
+        ],
+    ],
+    [
+        'tournament' => 'UEFA Euro 2024',
+        'strapline' => 'Fresh ideas, same nerves',
+        'image' => 'img/germany-2024-logo-md.png',
+        'story' => [
+            'Euro 2024 became another chance to refine the experience, test new layout ideas, and keep the competition feeling fresh.',
+            'It also proved again that no matter how polished the site gets, the final standings still come down to a few nervy scorelines.',
+        ],
+        'pro' => 'New format ideas kept the game feeling fresh.',
+        'con' => 'Some scoring and UX ideas still needed another pass.',
+        'charity_name' => 'Charity placeholder',
+        'charity_copy' => 'A placeholder for the chosen cause and a short story about why it mattered that year.',
+        'charity_logo' => 'img/charity-logos/sands-logo.jpg',
+        'podium' => [
+            ['rank' => '1st', 'name' => 'Jonathan Lamley'],
+            ['rank' => '2nd', 'name' => 'Paul Hendrick'],
+            ['rank' => '3rd', 'name' => 'David Holmes'],
+        ],
+    ],
+    [
+        'tournament' => 'FIFA World Cup 2026',
+        'strapline' => 'The next horizon',
+        'image' => 'img/hh-logo-2026-purple.png',
+        'story' => [
+            'The 2026 edition is shaping up to be the biggest version yet, with more teams, more fixtures, and a stronger site underneath it.',
+            'The aim now is simple: keep the fun, reduce the panic, and make the whole thing feel effortless for players from day one.',
+        ],
+        'pro' => 'The expanded format should create more drama and variety.',
+        'con' => 'There is still fine-tuning to do before the opening day.',
+        'charity_name' => 'Charity placeholder',
+        'charity_copy' => 'A future slot for the next supported charity, impact note, and fundraising story.',
+        'charity_logo' => 'img/charity-logos/notts-county-foundation-logo.png',
+        'podium' => [
+            ['rank' => '1st', 'name' => 'Pending'],
+            ['rank' => '2nd', 'name' => 'TBC'],
+            ['rank' => '3rd', 'name' => 'TBC'],
+            'pending' => true,
+        ],
+    ],
+];
+
+$testimonials = [
+    [
+        'quote' => 'I still end up checking the rankings far more often than I should.',
+        'name' => 'Player testimonial',
+    ],
+    [
+        'quote' => 'It somehow manages to be competitive, chaotic, and very funny all at once.',
+        'name' => 'Player testimonial',
+    ],
+    [
+        'quote' => 'You think you know football until this game starts humbling you in public.',
+        'name' => 'Player testimonial',
+    ],
+];
 ?>
 
-<!-- Main Content Section -->
 <main id="main" class="main">
 
     <div class="page-hero page-hero--about">
@@ -19,377 +169,97 @@ include "php/navigation.php";
 			<h1>About this game</h1>
 			<p class="lead mb-0">The story of Hendy's Hunches, from spreadsheet slog to tournament tradition.</p>
 		</div>
-    </div><!-- End Page Title -->
+    </div>
 
     <section class="section about-page">
-		<div class="about-hero card border-0 mb-4">
-			<div class="card-body">
-				<h2 class="about-headline">"Fun and friendly-natured competiveness - bringing people together."</h2>
-				<p><strong>Let's start with a little bit of history...</strong></p>
-				<p>Hendy's Hunches has grown over the years from a simple idea I had back in 2005. I was keen to make a little game to add some fun to World Cup 2006. Today, it has become something of a hobby project that I continue to develop in my spare time. The online version began in 2013 and, despite coding challenges, many colleagues, family and friends all continue to enjoy it and look forward to taking part. I don't proclaim the game or website to be perfect, but if it helps adds some fun to the big-stage competitions then I'm delighted with that!</p>
-				<p>I always like to give a special mention of thanks to my very supportive wife, EJ, whose patience has been much appreciated in the hours of our time I've dedicated to this project!</p>
-				<p class="mb-0">The following details the journey of Hendy's Hunches including past winners and notable charity causes supported.</p>
-			</div>
-		</div>
+        <section class="about-intro">
+            <div class="about-intro__media">
+                <img src="img/james-scotland-edited-lg.png" alt="James Henderson in a football shirt with arms folded">
+            </div>
+            <div class="about-intro__copy">
+                <p class="eyebrow">From James</p>
+                <h2>A small football game that got a bit out of hand</h2>
+                <p>Hendy's Hunches began as a simple way to make tournament football more fun for friends, family, and colleagues, and it has somehow kept growing ever since. It is still a hobby project, still evolving, and still built around the same idea: make the big competitions feel even more memorable together.</p>
+                <p class="mb-0">I know the site is never truly finished, but that is part of the charm. If it adds a bit of tension, laughter, and conversation to a tournament, then it is doing its job.</p>
+            </div>
+        </section>
 
-		<div class="row g-4 about-grid">
-			<div class="col-12">
-				<div class="card about-card about-card--horizontal h-100">
-					<div class="about-card__layout">
-						<div class="about-card__media">
-							<img src="img/wc2006-ss.png" alt="World Cup 2006 Game Image" class="about-card__image">
-							<ul class="about-podium list-unstyled">
-								<li class="about-podium__item">
-									<span class="about-podium__rank">1st</span>
-									<span class="about-podium__name">Steven Lough, James Henderson</span>
-								</li>
-								<li class="about-podium__item">
-									<span class="about-podium__rank">2nd</span>
-									<span class="about-podium__name">Kirsty Yarnold</span>
-								</li>
-								<li class="about-podium__item">
-									<span class="about-podium__rank">3rd</span>
-									<span class="about-podium__name">Julien Alégre, Andrew Lough</span>
-								</li>
-							</ul>
-						</div>
-						<div class="about-card__content">
-							<div class="card-body">
-								<span class="about-season">FIFA World Cup 2006</span>
-								<h5 class="card-title">No name, just spreadsheet pain</h5>
-								<!--<p class="card-text"><!Hendy’s Hunches began as a very simple idea, long before there was a name or website. Friends submitted their predictions using a shared spreadsheet, with scores calculated and updated manually each day. It was far from slick, but the positive response showed there was something worth returning to in the future.</p>-->
-								<p class="card-text">The first origins of Hendy's Hunches - complete with no game name and no supporting website! It was a very monotonous process which consisted simply of sending friends a basic spreadsheet template, having them input their scores for each game and return it to me before the competition began. It was flaky at best although it did seem to be well perceived by those who had taken part. I'd spend a couple of hours a day trauling through each player's spreadsheet and manually calculating points before sending a daily email update of a table with scores and rankings. Despite the tedious effort, it left me thinking that it would be great to repeat the event again some time in the future.</p>
-							</div>
-							<ul class="about-insights list-unstyled">
-								<li class="about-insights__item about-insights__item--pro">
-									<i class="bi bi-plus-circle-fill" aria-hidden="true"></i>
-									<span>Kick-started the tradition with plenty of banter.</span>
-								</li>
-								<li class="about-insights__item about-insights__item--con">
-									<i class="bi bi-dash-circle-fill" aria-hidden="true"></i>
-									<span>Manual score updates took hours of effort.</span>
-								</li>
-							</ul>
-							<div class="about-charity">
-								<h6 class="about-charity__title">Charity spotlight</h6>
-								<p class="about-charity__text">Placeholder for the chosen charity partner, impact notes, and donation highlights.</p>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
+        <section class="about-testimonials">
+            <div class="about-section-heading">
+                <p class="eyebrow">What players say</p>
+                <h2>Small quotes, big tournament energy</h2>
+            </div>
+            <div class="about-testimonials__grid">
+                <?php foreach ($testimonials as $testimonial) : ?>
+                    <article class="about-testimonial">
+                        <p class="about-testimonial__quote">“<?= htmlspecialchars($testimonial['quote']) ?>”</p>
+                        <span class="about-testimonial__name"><?= htmlspecialchars($testimonial['name']) ?></span>
+                    </article>
+                <?php endforeach; ?>
+            </div>
+        </section>
 
-			<div class="col-12">
-				<div class="card about-card about-card--horizontal h-100">
-					<div class="about-card__layout">
-						<div class="about-card__media">
-							<img src="img/wc2014-site.png" alt="World Cup 2014 Game Image" class="about-card__image">
-							<ul class="about-podium list-unstyled">
-								<li class="about-podium__item">
-									<span class="about-podium__rank">1st</span>
-									<span class="about-podium__name">Andrew Booth</span>
-								</li>
-								<li class="about-podium__item">
-									<span class="about-podium__rank">2nd</span>
-									<span class="about-podium__name">Nigel Plant</span>
-								</li>
-								<li class="about-podium__item">
-									<span class="about-podium__rank">3rd</span>
-									<span class="about-podium__name">Luke Fecowycz</span>
-								</li>
-							</ul>
-						</div>
-						<div class="about-card__content">
-							<div class="card-body">
-								<span class="about-season">FIFA World Cup 2014</span>
-								<h5 class="card-title">The online leap</h5>
-								<p class="card-text">Looking to revive the game and sharpen my programming skills, I rebuilt Hendy’s Hunches as a basic web experience. Players submitted all their group-stage predictions via an online form, with results and points calculated automatically after each match. While visually simple, it introduced fair scoring, live rankings, and a much smoother experience.</p>
-							</div>
-							<ul class="about-insights list-unstyled">
-								<li class="about-insights__item about-insights__item--pro">
-									<i class="bi bi-plus-circle-fill" aria-hidden="true"></i>
-									<span>Online submissions made joining the game effortless.</span>
-								</li>
-								<li class="about-insights__item about-insights__item--con">
-									<i class="bi bi-dash-circle-fill" aria-hidden="true"></i>
-									<span>Predictions were limited to the group stages only.</span>
-								</li>
-							</ul>
-							<div class="about-charity">
-								<h6 class="about-charity__title">Charity spotlight</h6>
-								<p class="about-charity__text">Placeholder for the chosen charity partner, impact notes, and donation highlights.</p>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div class="col-12">
-				<div class="card about-card about-card--horizontal h-100">
-					<div class="about-card__layout">
-						<div class="about-card__media">
-							<img src="img/euro2016-site-v3.png" alt="Euro 2016 Game Image" class="about-card__image">
-							<ul class="about-podium list-unstyled">
-								<li class="about-podium__item">
-									<span class="about-podium__rank">1st</span>
-									<span class="about-podium__name">Jonathan Lamley</span>
-								</li>
-								<li class="about-podium__item">
-									<span class="about-podium__rank">2nd</span>
-									<span class="about-podium__name">Sam McGuigan</span>
-								</li>
-								<li class="about-podium__item">
-									<span class="about-podium__rank">3rd</span>
-									<span class="about-podium__name">Steve Butt, Kirsty Yarnold</span>
-								</li>
-							</ul>
-						</div>
-						<div class="about-card__content">
-							<div class="card-body">
-								<span class="about-season">UEFA Euro 2016</span>
-								<h5 class="card-title">Feature-rich fan favorite</h5>
-								<p class="card-text">Building on the success of the 2014 version, this iteration focused on refinement and depth. Behind the scenes, core systems were reworked to support features like detailed statistics, improved rankings, better communication, and late prediction changes right up to kick-off. All of this now sits within a secure login system, with plenty of scope for future enhancements.</p>
-							</div>
-							<ul class="about-insights list-unstyled">
-								<li class="about-insights__item about-insights__item--pro">
-									<i class="bi bi-plus-circle-fill" aria-hidden="true"></i>
-									<span>Richer stats and flexible edits kept everyone engaged.</span>
-								</li>
-								<li class="about-insights__item about-insights__item--con">
-									<i class="bi bi-dash-circle-fill" aria-hidden="true"></i>
-									<span>More features meant more upkeep behind the scenes.</span>
-								</li>
-							</ul>
-							<div class="about-charity">
-								<h6 class="about-charity__title">Charity spotlight</h6>
-								<p class="about-charity__text">Placeholder for the chosen charity partner, impact notes, and donation highlights.</p>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div class="col-12">
-				<div class="card about-card about-card--horizontal h-100">
-					<div class="about-card__layout">
-						<div class="about-card__media">
-							<img src="img/hh-logo-2024.jpg" alt="FIFA World Cup 2018 Game Image" class="about-card__image">
-							<ul class="about-podium list-unstyled">
-								<li class="about-podium__item">
-									<span class="about-podium__rank">1st</span>
-									<span class="about-podium__name">Nick Chandler</span>
-								</li>
-								<li class="about-podium__item">
-									<span class="about-podium__rank">2nd</span>
-									<span class="about-podium__name">Snigdha Dutta, Sonia Fernandez</span>
-								</li>
-								<li class="about-podium__item">
-									<span class="about-podium__rank">3rd</span>
-									<span class="about-podium__name">Daniel Waite</span>
-								</li>
-							</ul>
-						</div>
-						<div class="about-card__content">
-							<div class="card-body">
-								<span class="about-season">FIFA World Cup 2018</span>
-								<h5 class="card-title">The community grows</h5>
-								<p class="card-text">More players, tighter competition, and a thriving scoreboard made this edition one of the most competitive yet.</p>
-							</div>
-							<ul class="about-insights list-unstyled">
-								<li class="about-insights__item about-insights__item--pro">
-									<i class="bi bi-plus-circle-fill" aria-hidden="true"></i>
-									<span>The growing community brought nonstop match chatter.</span>
-								</li>
-								<li class="about-insights__item about-insights__item--con">
-									<i class="bi bi-dash-circle-fill" aria-hidden="true"></i>
-									<span>Points were harder to come by with so many sharp predictors.</span>
-								</li>
-							</ul>
-							<div class="about-charity">
-								<h6 class="about-charity__title">Charity spotlight</h6>
-								<p class="about-charity__text">Placeholder for the chosen charity partner, impact notes, and donation highlights.</p>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div class="col-12">
-				<div class="card about-card about-card--horizontal h-100">
-					<div class="about-card__layout">
-						<div class="about-card__media">
-							<img src="img/qatar-2022-logo.png" alt="FIFA World Cup 2022 Game Image" class="about-card__image">
-							<ul class="about-podium list-unstyled">
-								<li class="about-podium__item">
-									<span class="about-podium__rank">1st</span>
-									<span class="about-podium__name">Chloe McCandlish</span>
-								</li>
-								<li class="about-podium__item">
-									<span class="about-podium__rank">2nd</span>
-									<span class="about-podium__name">Howard Kilbourn</span>
-								</li>
-								<li class="about-podium__item">
-									<span class="about-podium__rank">3rd</span>
-									<span class="about-podium__name">Andrew Lough</span>
-								</li>
-							</ul>
-						</div>
-						<div class="about-card__content">
-							<div class="card-body">
-								<span class="about-season">FIFA World Cup 2022</span>
-								<h5 class="card-title">Global spotlight</h5>
-								<p class="card-text">A fast-paced tournament where every last-minute goal kept the predictions on edge.</p>
-							</div>
-							<ul class="about-insights list-unstyled">
-								<li class="about-insights__item about-insights__item--pro">
-									<i class="bi bi-plus-circle-fill" aria-hidden="true"></i>
-									<span>Rapid updates kept the leaderboard feeling alive.</span>
-								</li>
-								<li class="about-insights__item about-insights__item--con">
-									<i class="bi bi-dash-circle-fill" aria-hidden="true"></i>
-									<span>Quick turnarounds left little time for last tweaks.</span>
-								</li>
-							</ul>
-							<div class="about-charity">
-								<h6 class="about-charity__title">Charity spotlight</h6>
-								<p class="about-charity__text">Placeholder for the chosen charity partner, impact notes, and donation highlights.</p>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div class="col-12">
-				<div class="card about-card about-card--horizontal h-100">
-					<div class="about-card__layout">
-						<div class="about-card__media">
-							<img src="img/germany-2024-logo-md.png" alt="UEFA Euro 2024 Game Image" class="about-card__image">
-							<ul class="about-podium list-unstyled">
-								<li class="about-podium__item">
-									<span class="about-podium__rank">1st</span>
-									<span class="about-podium__name">Jonathan Lamley</span>
-								</li>
-								<li class="about-podium__item">
-									<span class="about-podium__rank">2nd</span>
-									<span class="about-podium__name">Paul Hendrick</span>
-								</li>
-								<li class="about-podium__item">
-									<span class="about-podium__rank">3rd</span>
-									<span class="about-podium__name">David Holmes</span>
-								</li>
-							</ul>
-						</div>
-						<div class="about-card__content">
-							<div class="card-body">
-								<span class="about-season">UEFA Euro 2024</span>
-								<h5 class="card-title">Next chapter loading</h5>
-								<p class="card-text">The latest edition is underway. Who will earn the next bragging rights?</p>
-							</div>
-							<ul class="about-insights list-unstyled">
-								<li class="about-insights__item about-insights__item--pro">
-									<i class="bi bi-plus-circle-fill" aria-hidden="true"></i>
-									<span>Fresh format ideas kept predictions feeling new again.</span>
-								</li>
-								<li class="about-insights__item about-insights__item--con">
-									<i class="bi bi-dash-circle-fill" aria-hidden="true"></i>
-									<span>Still fine-tuning the scoring rules for next time.</span>
-								</li>
-							</ul>
-							<div class="about-charity">
-								<h6 class="about-charity__title">Charity spotlight</h6>
-								<p class="about-charity__text">Placeholder for the chosen charity partner, impact notes, and donation highlights.</p>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div class="col-12">
-				<div class="card about-card about-card--horizontal h-100">
-					<div class="about-card__layout">
-						<div class="about-card__media">
-							<img src="img/hh-logo-2024.jpg" alt="FIFA World Cup 2026 Game Image" class="about-card__image">
-							<ul class="about-podium list-unstyled">
-								<li class="about-podium__item about-podium__item--pending">
-									<span class="about-podium__rank">1st</span>
-									<span class="about-podium__name">Pending</span>
-								</li>
-								<li class="about-podium__item about-podium__item--pending">
-									<span class="about-podium__rank">2nd</span>
-									<span class="about-podium__name">TBC</span>
-								</li>
-								<li class="about-podium__item about-podium__item--pending">
-									<span class="about-podium__rank">3rd</span>
-									<span class="about-podium__name">TBC</span>
-								</li>
-							</ul>
-						</div>
-						<div class="about-card__content">
-							<div class="card-body">
-								<span class="about-season">FIFA World Cup 2026</span>
-								<h5 class="card-title">The next horizon</h5>
-								<p class="card-text">Planning is underway for the biggest tournament yet. Expect more teams, more matches, and more chances to climb the leaderboard.</p>
-							</div>
-							<ul class="about-insights list-unstyled">
-								<li class="about-insights__item about-insights__item--pro">
-									<i class="bi bi-plus-circle-fill" aria-hidden="true"></i>
-									<span>Expanded format should bring a wider mix of matchups.</span>
-								</li>
-								<li class="about-insights__item about-insights__item--con">
-									<i class="bi bi-dash-circle-fill" aria-hidden="true"></i>
-									<span>Final schedule and scoring tweaks are still TBC.</span>
-								</li>
-							</ul>
-							<div class="about-charity">
-								<h6 class="about-charity__title">Charity spotlight</h6>
-								<p class="about-charity__text">Placeholder for the chosen charity partner, impact notes, and donation highlights.</p>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-    </section>        
+        <section class="about-timeline">
+            <div class="about-section-heading">
+                <p class="eyebrow">Tournament archive</p>
+                <h2>Each edition, one card at a time</h2>
+            </div>
+            <div class="about-timeline__grid">
+                <?php foreach ($timeline as $entry) : ?>
+                    <?php $isPending = !empty($entry['podium']['pending']); ?>
+                    <article class="about-season-card">
+                        <div class="about-season-card__visual">
+                            <img src="<?= htmlspecialchars($entry['image']) ?>" alt="<?= htmlspecialchars($entry['tournament']) ?> visual">
+                        </div>
+                        <div class="about-season-card__body">
+                            <div class="about-season-card__header">
+                                <p class="about-season-card__tournament"><?= htmlspecialchars($entry['tournament']) ?></p>
+                                <h3><?= htmlspecialchars($entry['strapline']) ?></h3>
+                            </div>
+                            <div class="about-season-card__story">
+                                <?php foreach ($entry['story'] as $sentence) : ?>
+                                    <p><?= htmlspecialchars($sentence) ?></p>
+                                <?php endforeach; ?>
+                            </div>
+                            <div class="about-season-card__insights">
+                                <div class="about-season-insight about-season-insight--pro">
+                                    <i class="bi bi-plus-circle-fill" aria-hidden="true"></i>
+                                    <strong><?= htmlspecialchars($entry['pro']) ?></strong>
+                                </div>
+                                <div class="about-season-insight about-season-insight--con">
+                                    <i class="bi bi-dash-circle-fill" aria-hidden="true"></i>
+                                    <strong><?= htmlspecialchars($entry['con']) ?></strong>
+                                </div>
+                            </div>
+                            <div class="about-season-card__footer">
+                                <div class="about-charity-block">
+                                    <div class="about-charity-block__logo">
+                                        <img src="<?= htmlspecialchars($entry['charity_logo']) ?>" alt="<?= htmlspecialchars($entry['charity_name']) ?>">
+                                    </div>
+                                    <div class="about-charity-block__copy">
+                                        <p class="about-charity-block__label">Charity placeholder</p>
+                                        <p><?= htmlspecialchars($entry['charity_copy']) ?></p>
+                                    </div>
+                                </div>
+                                <div class="about-podium-block">
+                                    <p class="about-podium-block__label">Top 3</p>
+                                    <ol class="about-podium-list">
+                                        <?php foreach ($entry['podium'] as $podiumIndex => $podiumEntry) : ?>
+                                            <?php if (!is_array($podiumEntry)) { continue; } ?>
+                                            <li class="<?= $isPending ? 'is-pending' : '' ?>">
+                                                <span class="about-podium-list__rank about-podium-list__rank--<?= $podiumIndex + 1 ?>"><?= htmlspecialchars($podiumEntry['rank']) ?></span>
+                                                <strong><?= htmlspecialchars($podiumEntry['name']) ?></strong>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                <?php endforeach; ?>
+            </div>
+        </section>
+    </section>
 </main>
 
-<script>
-	document.addEventListener('DOMContentLoaded', () => {
-		const wordLimit = 200;
-		const descriptions = document.querySelectorAll('.about-card .card-text');
-
-		descriptions.forEach((description) => {
-			const fullText = description.textContent.trim();
-			const words = fullText.split(/\s+/);
-
-			if (words.length <= wordLimit) {
-				return;
-			}
-
-			const shortText = `${words.slice(0, wordLimit).join(' ')}...`;
-			const toggle = document.createElement('button');
-
-			toggle.type = 'button';
-			toggle.className = 'about-readmore btn btn-link p-0';
-			toggle.textContent = 'read more';
-			toggle.setAttribute('aria-expanded', 'false');
-
-			const updateText = (expanded) => {
-				description.classList.toggle('is-expanded', expanded);
-				description.textContent = expanded ? fullText : shortText;
-				description.append(' ');
-				description.appendChild(toggle);
-				toggle.textContent = expanded ? 'read less' : 'read more';
-				toggle.setAttribute('aria-expanded', expanded.toString());
-			};
-
-			toggle.addEventListener('click', () => {
-				updateText(!description.classList.contains('is-expanded'));
-			});
-
-			updateText(false);
-		});
-	});
-</script>
-
-<!-- Footer -->
 <?php include "php/footer.php" ?>

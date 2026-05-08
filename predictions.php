@@ -124,17 +124,48 @@ include 'php/navigation.php';
 .predictions-stage-card {
   display: grid;
   gap: 12px;
+  min-height: 100%;
   color: inherit;
   text-decoration: none;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background-color 0.18s ease;
 }
 
 .predictions-stage-card:hover {
   text-decoration: none;
+  transform: translateY(-2px);
+  box-shadow: 0 18px 30px rgba(22, 35, 29, 0.12);
+}
+
+.predictions-stage-card:not(.is-active) {
+  background: #f4f5f2;
+  border-color: rgba(22, 35, 29, 0.10);
 }
 
 .predictions-stage-card.is-active {
-  border-color: rgba(143, 102, 216, 0.34);
-  box-shadow: inset 0 0 0 2px rgba(143, 102, 216, 0.16);
+  border-color: var(--hh-purple);
+  background: #ffffff;
+  box-shadow:
+    inset 0 0 0 2px rgba(143, 102, 216, 0.16),
+    0 18px 30px rgba(22, 35, 29, 0.12);
+  transform: translateY(-2px);
+}
+
+.predictions-stage-card.is-active .overview-stage-card__top h3 {
+  color: var(--hh-purple-dark);
+}
+
+.predictions-stage-card.is-active::after {
+  content: "Selected";
+  justify-self: start;
+  margin-top: -2px;
+  padding: 0.18rem 0.48rem;
+  border-radius: 999px;
+  background: rgba(143, 102, 216, 0.14);
+  color: var(--hh-purple-dark);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .predictions-stage-card__footer {
@@ -264,6 +295,10 @@ include 'php/navigation.php';
   margin-bottom: 16px;
 }
 
+.predictions-stage-heading__content {
+  min-width: 0;
+}
+
 .predictions-stage-heading h2 {
   margin: 0;
   color: var(--hh-green-dark);
@@ -273,6 +308,39 @@ include 'php/navigation.php';
 .predictions-stage-heading p {
   margin: 6px 0 0;
   color: var(--hh-muted);
+}
+
+.predictions-stage-actions {
+  position: sticky;
+  top: 104px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 10px 0;
+  margin-left: auto;
+  background: linear-gradient(180deg, rgba(251, 252, 248, 0.98), rgba(251, 252, 248, 0.94));
+  z-index: 4;
+}
+
+.predictions-stage-actions .btn {
+  min-width: 180px;
+}
+
+@media (max-width: 991.98px) {
+  .predictions-stage-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .predictions-stage-actions {
+    position: static;
+    width: 100%;
+    justify-content: flex-start;
+    padding: 0;
+    margin-left: 0;
+    background: transparent;
+  }
 }
 </style>
 
@@ -362,13 +430,17 @@ include 'php/navigation.php';
 
                 <div class="content-panel table-responsive">
                     <div class="predictions-stage-heading">
-                        <div>
+                        <div class="predictions-stage-heading__content">
                             <p class="eyebrow mb-2">Selected stage</p>
                             <h2><?= htmlspecialchars($selectedStage['label']) ?></h2>
                             <p>
                                 Matches <?= htmlspecialchars((string) $selectedStage['fixture_start']) ?>-<?= htmlspecialchars((string) $selectedStage['fixture_end']) ?>
                                 <?php if ($stageLastUpdate !== '') : ?> · last saved <?= htmlspecialchars($stageLastUpdate) ?><?php endif; ?>
                             </p>
+                        </div>
+                        <div class="predictions-stage-actions">
+                            <button type="button" class="btn btn-secondary populate-scores" <?= ($selectedWindow && !$selectedWindow['is_open']) ? 'disabled' : '' ?>><i class="bi bi-magic"></i> Populate for me</button>
+                            <button type="submit" class="btn btn-primary" name="predictionsSubmitted" <?= ($selectedWindow && !$selectedWindow['is_open']) ? 'disabled' : '' ?>><i class="bi bi-floppy-fill"></i> Save <?= htmlspecialchars($selectedStage['label']) ?> predictions</button>
                         </div>
                     </div>
                     <table id="table" class="table table-sm table-striped">
@@ -432,9 +504,6 @@ include 'php/navigation.php';
                         </tbody>
                     </table>
                 </div>
-
-                <button type="button" class="btn btn-secondary mt-3 mb-2 populate-scores" <?= ($selectedWindow && !$selectedWindow['is_open']) ? 'disabled' : '' ?>><i class="bi bi-magic"></i> Populate for me</button>
-                <button type="submit" class="btn btn-primary mt-3 mb-2" name="predictionsSubmitted" <?= ($selectedWindow && !$selectedWindow['is_open']) ? 'disabled' : '' ?>><i class="bi bi-send-check-fill"></i> Save <?= htmlspecialchars($selectedStage['label']) ?> predictions</button>
             </form>
         <?php endif; ?>
     </section>

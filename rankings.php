@@ -61,8 +61,8 @@ $(document).ready(function() {
     const searchLabel = searchNode.find('label').first();
     const searchInput = searchNode.find('input').first();
 
-    searchInput.attr('placeholder', 'Find a player');
-    searchInput.attr('aria-label', 'Find a player');
+    searchInput.attr('placeholder', 'Enter a player\'s name');
+    searchInput.attr('aria-label', 'Enter a player\'s name');
 
     if (searchLabel.length) {
       searchLabel.contents().filter(function() {
