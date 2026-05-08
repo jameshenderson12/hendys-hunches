@@ -200,6 +200,20 @@ include 'php/navigation.php';
   line-height: 1.35;
 }
 
+.predictions-page .fixture-meta strong {
+  display: block;
+  color: var(--hh-green-dark);
+  font-size: 0.85rem;
+}
+
+.predictions-page .fixture-meta span {
+  display: block;
+}
+
+.predictions-page .fixture-meta span:last-child {
+  font-size: 0.68rem;
+}
+
 .predictions-page .team-cell {
   display: flex;
   align-items: center;
@@ -213,10 +227,8 @@ include 'php/navigation.php';
 }
 
 .predictions-page .team-cell img {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  object-fit: cover;
+  height: 24px;
+  border: 1px solid var(--hh-line);
 }
 
 .predictions-page .score-field {
@@ -243,6 +255,25 @@ include 'php/navigation.php';
 .predictions-page .table th {
   vertical-align: middle;
 }
+
+.predictions-stage-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.predictions-stage-heading h2 {
+  margin: 0;
+  color: var(--hh-green-dark);
+  font-size: 1.35rem;
+}
+
+.predictions-stage-heading p {
+  margin: 6px 0 0;
+  color: var(--hh-muted);
+}
 </style>
 
 <main id="main" class="main">
@@ -259,8 +290,6 @@ include 'php/navigation.php';
     </div>
 
     <section class="section predictions-page">
-        <p class="alert alert-warning"><i class="bi bi-exclamation-triangle-fill"></i> Predictions can include draws because they are based on the 90-minute score only, not extra time or penalties.</p>
-
         <?php if (isset($_GET['saved'])) : ?>
             <p class="alert alert-success"><i class="bi bi-check-circle-fill"></i> Your <?= htmlspecialchars((string) ($selectedStage['label'] ?? 'stage')) ?> predictions were saved.</p>
         <?php endif; ?>
@@ -321,47 +350,6 @@ include 'php/navigation.php';
             <?php endforeach; ?>
         </div>
 
-        <?php if ($selectedStage) : ?>
-            <div class="predictions-stage-summary">
-                <div class="predictions-stage-summary__item">
-                    <strong><?= htmlspecialchars($selectedStage['label']) ?></strong>
-                    <span>Matches <?= htmlspecialchars((string) $selectedStage['fixture_start']) ?>-<?= htmlspecialchars((string) $selectedStage['fixture_end']) ?></span>
-                </div>
-                <div class="predictions-stage-summary__item">
-                    <strong><?= htmlspecialchars((string) count($fixtures)) ?> fixtures loaded</strong>
-                    <span>Built from the live schedule in your database</span>
-                </div>
-                <div class="predictions-stage-summary__item">
-                    <strong><?= $stageLastUpdate !== '' ? htmlspecialchars($stageLastUpdate) : 'Not submitted yet' ?></strong>
-                    <span>Latest save for this stage</span>
-                </div>
-                <?php if ($selectedWindow) : ?>
-                    <div class="predictions-stage-summary__item">
-                        <strong><?= htmlspecialchars(ucfirst((string) $selectedWindow['status'])) ?></strong>
-                        <span>
-                            <?php if ($selectedWindow['status'] === 'open' && $selectedWindow['closes_at'] instanceof DateTimeImmutable) : ?>
-                                Closes <?= htmlspecialchars($selectedWindow['closes_at']->setTimezone(new DateTimeZone(date_default_timezone_get()))->format('D j M H:i')) ?>
-                            <?php elseif ($selectedWindow['status'] === 'upcoming' && $selectedWindow['opens_at'] instanceof DateTimeImmutable) : ?>
-                                Opens <?= htmlspecialchars($selectedWindow['opens_at']->setTimezone(new DateTimeZone(date_default_timezone_get()))->format('D j M H:i')) ?>
-                            <?php elseif ($selectedWindow['status'] === 'closed') : ?>
-                                This stage is locked
-                            <?php else : ?>
-                                Waiting for fixture timings
-                            <?php endif; ?>
-                        </span>
-                    </div>
-                <?php endif; ?>
-            </div>
-        <?php endif; ?>
-
-        <?php if ($selectedWindow && $selectedWindow['status'] === 'open') : ?>
-            <p class="alert alert-info"><i class="bi bi-clock-history"></i> <?= htmlspecialchars($selectedStage['label']) ?> predictions are open. They will lock 2 hours before the first kick-off of this stage.</p>
-        <?php elseif ($selectedWindow && $selectedWindow['status'] === 'upcoming') : ?>
-            <p class="alert alert-secondary"><i class="bi bi-hourglass-split"></i> <?= htmlspecialchars($selectedStage['label']) ?> predictions are not open yet. They unlock 5 hours after the previous stage’s last kick-off.</p>
-        <?php elseif ($selectedWindow && $selectedWindow['status'] === 'closed') : ?>
-            <p class="alert alert-warning"><i class="bi bi-lock-fill"></i> <?= htmlspecialchars($selectedStage['label']) ?> predictions are now closed.</p>
-        <?php endif; ?>
-
         <a id="matches"></a>
 
         <?php if (!$selectedStage || empty($fixtures)) : ?>
@@ -373,6 +361,16 @@ include 'php/navigation.php';
                 <input type="hidden" name="stage" value="<?= htmlspecialchars($selectedStageKey) ?>">
 
                 <div class="content-panel table-responsive">
+                    <div class="predictions-stage-heading">
+                        <div>
+                            <p class="eyebrow mb-2">Selected stage</p>
+                            <h2><?= htmlspecialchars($selectedStage['label']) ?></h2>
+                            <p>
+                                Matches <?= htmlspecialchars((string) $selectedStage['fixture_start']) ?>-<?= htmlspecialchars((string) $selectedStage['fixture_end']) ?>
+                                <?php if ($stageLastUpdate !== '') : ?> · last saved <?= htmlspecialchars($stageLastUpdate) ?><?php endif; ?>
+                            </p>
+                        </div>
+                    </div>
                     <table id="table" class="table table-sm table-striped">
                         <thead>
                             <tr>
@@ -397,13 +395,15 @@ include 'php/navigation.php';
                                 $stageLabel = trim((string) ($fixture['stage'] ?? '')) ?: ($selectedStage['label'] ?? '');
                                 $kickoffDate = !empty($fixture['date']) ? date('D j M', strtotime((string) $fixture['date'])) : '';
                                 $kickoffTime = trim((string) ($fixture['kotime'] ?? ''));
-                                $metaBits = array_filter([$stageLabel, trim($kickoffDate . ($kickoffTime !== '' ? ' · ' . $kickoffTime : '')), (string) ($fixture['venue'] ?? '')]);
+                                $fixtureDateTime = trim($kickoffDate . ($kickoffTime !== '' ? ' ' . $kickoffTime : ''));
+                                $fixtureVenue = trim((string) ($fixture['venue'] ?? ''));
                                 ?>
                                 <tr>
                                     <td class="d-none d-lg-table-cell">
                                         <div class="fixture-meta">
-                                            <strong>Match <?= htmlspecialchars((string) $matchNumber) ?></strong><br>
-                                            <?= htmlspecialchars(implode(' · ', $metaBits)) ?>
+                                            <strong>Match <?= htmlspecialchars((string) $matchNumber) ?> · <?= htmlspecialchars($stageLabel !== '' ? $stageLabel : 'Fixture') ?></strong>
+                                            <span><?= htmlspecialchars($fixtureDateTime !== '' ? $fixtureDateTime : 'Kick-off TBC') ?></span>
+                                            <span><?= htmlspecialchars($fixtureVenue !== '' ? $fixtureVenue : 'Venue TBC') ?></span>
                                         </div>
                                     </td>
                                     <td>

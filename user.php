@@ -217,13 +217,6 @@ include 'php/navigation.php';
   margin-right: 0;
 }
 
-/* .user-table .team-line img {
-  height: 24px;
-  margin-right: 8px;
-  border: 1px solid lightgray;
-  background: #ffffff;
-} */
-
 .user-table .fixture-meta {
   color: var(--hh-muted);
   font-size: 0.84rem;
