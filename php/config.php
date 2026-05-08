@@ -14,7 +14,7 @@ $hh_site_config = array (
   'year' => '2026',
   'base_url' => 'https://www.hendyshunches.co.uk',
   'developer' => 'James Henderson',
-  'admin_usernames' =>
+  'admin_usernames' => 
   array (
     0 => 'james',
   ),
@@ -47,7 +47,7 @@ $hh_runtime_config = array (
 );
 
 $hh_preview_config = array (
-  'today_override' => '2026-06-12',
+  'today_override' => '2026-06-10',
 );
 
 $hh_path_config = array (
@@ -57,7 +57,7 @@ $hh_path_config = array (
 );
 
 $hh_asset_config = array (
-  'football_kits' =>
+  'football_kits' => 
   array (
     0 => 'img/football-kits/green-white.png',
     1 => 'img/football-kits/blue-white.png',

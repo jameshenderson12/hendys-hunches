@@ -14,7 +14,8 @@ $hh_site_config = array (
   'year' => '2026',
   'base_url' => 'https://www.hendyshunches.co.uk',
   'developer' => 'James Henderson',
-  'admin_usernames' => array (
+  'admin_usernames' =>
+  array (
     0 => 'james',
   ),
 );
@@ -46,7 +47,7 @@ $hh_runtime_config = array (
 );
 
 $hh_preview_config = array (
-  'today_override' => '2026-05-12',
+  'today_override' => '2026-06-12',
 );
 
 $hh_path_config = array (
@@ -56,7 +57,8 @@ $hh_path_config = array (
 );
 
 $hh_asset_config = array (
-  'football_kits' => array (
+  'football_kits' =>
+  array (
     0 => 'img/football-kits/green-white.png',
     1 => 'img/football-kits/blue-white.png',
     2 => 'img/football-kits/red-white-blue.png',
@@ -347,6 +349,9 @@ if (!function_exists('returnAvatar')) {
     {
         global $app_path_prefix;
         $assetPrefix = $app_path_prefix ?? '';
+        $fallbackLabel = !empty($_SESSION['firstname']) || !empty($_SESSION['surname'])
+            ? trim((string) ($_SESSION['firstname'] ?? '') . ' ' . (string) ($_SESSION['surname'] ?? ''))
+            : 'Preview User';
 
         if (!empty($_SESSION['is_dev_bypass'])) {
             print("<img src='" . $assetPrefix . "img/hh-icon-2024.png' id='avatar' class='img-fluid rounded-circle mx-1' alt='Developer Preview' name='Developer Preview' width='25'> Local Developer");
@@ -355,18 +360,26 @@ if (!function_exists('returnAvatar')) {
 
         $dbPath = __DIR__ . '/db-connect.php';
         if (!file_exists($dbPath)) {
-            print("<img src='" . $assetPrefix . "img/hh-icon-2024.png' id='avatar' class='img-fluid rounded-circle mx-1' alt='User Avatar' name='User Avatar' width='25'> Preview User");
+            print("<img src='" . $assetPrefix . "img/hh-icon-2024.png' id='avatar' class='img-fluid rounded-circle mx-1' alt='User Avatar' name='User Avatar' width='25'> " . htmlspecialchars($fallbackLabel, ENT_QUOTES));
             return;
         }
 
         include $dbPath;
 
-        $sql_getavatar = "SELECT firstname, surname, avatar FROM live_user_information WHERE username = '".$_SESSION["username"]."'";
-        $getavatar = mysqli_query($con, $sql_getavatar);
-        $userid = mysqli_fetch_assoc($getavatar);
+        try {
+            $sql_getavatar = "SELECT firstname, surname, avatar FROM live_user_information WHERE username = '".$_SESSION["username"]."'";
+            $getavatar = mysqli_query($con, $sql_getavatar);
+            $userid = $getavatar instanceof mysqli_result ? mysqli_fetch_assoc($getavatar) : null;
+            if ($getavatar instanceof mysqli_result) {
+                mysqli_free_result($getavatar);
+            }
+        } catch (Throwable $exception) {
+            print("<img src='" . $assetPrefix . "img/hh-icon-2024.png' id='avatar' class='img-fluid rounded-circle mx-1' alt='User Avatar' name='User Avatar' width='25'> " . htmlspecialchars($fallbackLabel, ENT_QUOTES));
+            return;
+        }
 
         if (!$userid) {
-            print("<img src='" . $assetPrefix . "img/hh-icon-2024.png' id='avatar' class='img-fluid rounded-circle mx-1' alt='User Avatar' name='User Avatar' width='25'> Preview User");
+            print("<img src='" . $assetPrefix . "img/hh-icon-2024.png' id='avatar' class='img-fluid rounded-circle mx-1' alt='User Avatar' name='User Avatar' width='25'> " . htmlspecialchars($fallbackLabel, ENT_QUOTES));
             return;
         }
 

@@ -21,6 +21,29 @@ function hh_prediction_value(array $row, int $scoreIndex): string
     return (string) $row[$column];
 }
 
+function hh_prediction_submission_state(array $row, array $context): array
+{
+    $filledScores = 0;
+    $requiredScores = max(0, ((int) ($context['fixture_end'] ?? 0) - (int) ($context['fixture_start'] ?? 0) + 1) * 2);
+
+    for ($scoreIndex = (int) ($context['score_start'] ?? 0); $scoreIndex <= (int) ($context['score_end'] ?? -1); $scoreIndex++) {
+        if ($scoreIndex <= 0) {
+            continue;
+        }
+
+        $column = 'score' . $scoreIndex . '_p';
+        if (array_key_exists($column, $row) && $row[$column] !== null && $row[$column] !== '') {
+            $filledScores++;
+        }
+    }
+
+    return [
+        'filled' => $filledScores,
+        'required' => $requiredScores,
+        'submitted' => $requiredScores > 0 && $filledScores >= $requiredScores,
+    ];
+}
+
 $stageContexts = hh_prediction_stage_contexts();
 $stageWindows = hh_prediction_stage_windows($con);
 $selectedStageKey = isset($_GET['stage']) ? trim((string) $_GET['stage']) : '';
@@ -32,7 +55,30 @@ $selectedStage = $stageContexts[$selectedStageKey] ?? null;
 $selectedWindow = $stageWindows[$selectedStageKey] ?? null;
 $fixtures = [];
 $predictionRow = [];
+$predictionRows = [];
 $stageLastUpdate = '';
+
+foreach ($stageContexts as $stageKey => $context) {
+    $predictionStatement = mysqli_prepare($con, "SELECT * FROM {$context['table']} WHERE id = ? LIMIT 1");
+    if (!$predictionStatement) {
+        $predictionRows[$stageKey] = [];
+        continue;
+    }
+
+    $sessionId = (int) ($_SESSION['id'] ?? 0);
+    mysqli_stmt_bind_param($predictionStatement, 'i', $sessionId);
+    mysqli_stmt_execute($predictionStatement);
+    $predictionResult = mysqli_stmt_get_result($predictionStatement);
+
+    if ($predictionResult instanceof mysqli_result) {
+        $predictionRows[$stageKey] = mysqli_fetch_assoc($predictionResult) ?: [];
+        mysqli_free_result($predictionResult);
+    } else {
+        $predictionRows[$stageKey] = [];
+    }
+
+    mysqli_stmt_close($predictionStatement);
+}
 
 if ($selectedStage) {
     $fixtureStatement = mysqli_prepare(
@@ -58,25 +104,7 @@ if ($selectedStage) {
         mysqli_stmt_close($fixtureStatement);
     }
 
-    $predictionStatement = mysqli_prepare(
-        $con,
-        "SELECT * FROM {$selectedStage['table']} WHERE id = ? LIMIT 1"
-    );
-
-    if ($predictionStatement) {
-        $sessionId = (int) ($_SESSION['id'] ?? 0);
-        mysqli_stmt_bind_param($predictionStatement, 'i', $sessionId);
-        mysqli_stmt_execute($predictionStatement);
-        $predictionResult = mysqli_stmt_get_result($predictionStatement);
-
-        if ($predictionResult instanceof mysqli_result) {
-            $predictionRow = mysqli_fetch_assoc($predictionResult) ?: [];
-            mysqli_free_result($predictionResult);
-        }
-
-        mysqli_stmt_close($predictionStatement);
-    }
-
+    $predictionRow = $predictionRows[$selectedStageKey] ?? [];
     $stageLastUpdate = !empty($predictionRow['lastupdate'])
         ? date('D j M Y, H:i', strtotime((string) $predictionRow['lastupdate']))
         : '';
@@ -89,57 +117,79 @@ include 'php/navigation.php';
 ?>
 
 <style>
-.predictions-stage-nav {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+.predictions-stage-grid {
   margin-bottom: 18px;
 }
 
-.predictions-stage-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
-  border: 1px solid var(--hh-line);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.84);
-  color: var(--hh-ink);
-  font-weight: 800;
+.predictions-stage-card {
+  display: grid;
+  gap: 12px;
+  color: inherit;
   text-decoration: none;
 }
 
-.predictions-stage-link small {
+.predictions-stage-card:hover {
+  text-decoration: none;
+}
+
+.predictions-stage-card.is-active {
+  border-color: rgba(143, 102, 216, 0.34);
+  box-shadow: inset 0 0 0 2px rgba(143, 102, 216, 0.16);
+}
+
+.predictions-stage-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px solid var(--hh-line);
+}
+
+.predictions-stage-card__submission {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   color: var(--hh-muted);
-  font-weight: 700;
+  font-size: 0.86rem;
+  font-weight: 800;
 }
 
-.predictions-stage-link.is-active {
-  border-color: rgba(143, 102, 216, 0.32);
-  background: rgba(143, 102, 216, 0.14);
-  color: var(--hh-purple-dark);
+.predictions-stage-card__submission.is-submitted {
+  color: var(--hh-green-dark);
 }
 
-.predictions-summary {
+.predictions-stage-card__submission.is-pending {
+  color: #8f5a14;
+}
+
+.predictions-stage-card__updated {
+  color: var(--hh-muted);
+  font-size: 0.76rem;
+  text-align: right;
+}
+
+.predictions-stage-summary {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
   margin-bottom: 18px;
 }
 
-.predictions-summary__item {
+.predictions-stage-summary__item {
+  min-width: 180px;
   padding: 12px 14px;
   border: 1px solid var(--hh-line);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.9);
+  background: #ffffff;
 }
 
-.predictions-summary__item strong {
+.predictions-stage-summary__item strong {
   display: block;
   color: var(--hh-ink);
 }
 
-.predictions-summary__item span {
+.predictions-stage-summary__item span {
   color: var(--hh-muted);
   font-size: 0.9rem;
 }
@@ -218,35 +268,75 @@ include 'php/navigation.php';
             <p class="alert alert-danger"><i class="bi bi-exclamation-octagon-fill"></i> <?= htmlspecialchars((string) $_GET['error']) ?></p>
         <?php endif; ?>
 
-        <div class="predictions-stage-nav">
+        <div class="overview-stage-grid predictions-stage-grid">
             <?php foreach ($stageContexts as $stageContext) : ?>
-                <?php $window = $stageWindows[$stageContext['key']] ?? null; ?>
-                <a class="predictions-stage-link <?= $stageContext['key'] === $selectedStageKey ? 'is-active' : '' ?>" href="predictions.php?stage=<?= urlencode($stageContext['key']) ?>">
-                    <span><?= htmlspecialchars($stageContext['label']) ?></span>
-                    <small>
-                        <?= htmlspecialchars((string) (($stageContext['fixture_end'] - $stageContext['fixture_start']) + 1)) ?> fixtures
-                        <?php if ($window) : ?> · <?= htmlspecialchars(ucfirst((string) $window['status'])) ?><?php endif; ?>
-                    </small>
+                <?php
+                $window = $stageWindows[$stageContext['key']] ?? null;
+                $status = (string) ($window['status'] ?? 'pending');
+                $submission = hh_prediction_submission_state($predictionRows[$stageContext['key']] ?? [], $stageContext);
+                $stageUpdated = !empty($predictionRows[$stageContext['key']]['lastupdate'])
+                    ? date('D j M H:i', strtotime((string) $predictionRows[$stageContext['key']]['lastupdate']))
+                    : '';
+                ?>
+                <a class="overview-stage-card overview-stage-card--<?= htmlspecialchars($status) ?> predictions-stage-card <?= $stageContext['key'] === $selectedStageKey ? 'is-active' : '' ?>" href="predictions.php?stage=<?= urlencode($stageContext['key']) ?>">
+                    <div class="overview-stage-card__top">
+                        <h3><?= htmlspecialchars($stageContext['label']) ?></h3>
+                        <span class="overview-stage-pill overview-stage-pill--<?= htmlspecialchars($status) ?>">
+                            <?= htmlspecialchars(ucfirst($status)) ?>
+                        </span>
+                    </div>
+                    <p><?= htmlspecialchars((string) (($stageContext['fixture_end'] - $stageContext['fixture_start']) + 1)) ?> fixtures · matches <?= htmlspecialchars((string) $stageContext['fixture_start']) ?>-<?= htmlspecialchars((string) $stageContext['fixture_end']) ?></p>
+                    <dl>
+                        <div>
+                            <dt>Opens</dt>
+                            <dd>
+                                <?php if ($window && $window['opens_at'] instanceof DateTimeImmutable) : ?>
+                                    <?= htmlspecialchars($window['opens_at']->setTimezone(new DateTimeZone(date_default_timezone_get()))->format('D j M, g:ia')) ?>
+                                <?php else : ?>
+                                    Open from setup
+                                <?php endif; ?>
+                            </dd>
+                        </div>
+                        <div>
+                            <dt>Closes</dt>
+                            <dd>
+                                <?php if ($window && $window['closes_at'] instanceof DateTimeImmutable) : ?>
+                                    <?= htmlspecialchars($window['closes_at']->setTimezone(new DateTimeZone(date_default_timezone_get()))->format('D j M, g:ia')) ?>
+                                <?php else : ?>
+                                    Awaiting fixture timings
+                                <?php endif; ?>
+                            </dd>
+                        </div>
+                    </dl>
+                    <div class="predictions-stage-card__footer">
+                        <span class="predictions-stage-card__submission <?= $submission['submitted'] ? 'is-submitted' : 'is-pending' ?>">
+                            <i class="bi <?= $submission['submitted'] ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill' ?>"></i>
+                            <?= $submission['submitted'] ? 'Predictions submitted' : 'Predictions not submitted' ?>
+                        </span>
+                        <span class="predictions-stage-card__updated">
+                            <?= $stageUpdated !== '' ? htmlspecialchars('Saved ' . $stageUpdated) : 'No saved set yet' ?>
+                        </span>
+                    </div>
                 </a>
             <?php endforeach; ?>
         </div>
 
         <?php if ($selectedStage) : ?>
-            <div class="predictions-summary">
-                <div class="predictions-summary__item">
+            <div class="predictions-stage-summary">
+                <div class="predictions-stage-summary__item">
                     <strong><?= htmlspecialchars($selectedStage['label']) ?></strong>
                     <span>Matches <?= htmlspecialchars((string) $selectedStage['fixture_start']) ?>-<?= htmlspecialchars((string) $selectedStage['fixture_end']) ?></span>
                 </div>
-                <div class="predictions-summary__item">
+                <div class="predictions-stage-summary__item">
                     <strong><?= htmlspecialchars((string) count($fixtures)) ?> fixtures loaded</strong>
                     <span>Built from the live schedule in your database</span>
                 </div>
-                <div class="predictions-summary__item">
+                <div class="predictions-stage-summary__item">
                     <strong><?= $stageLastUpdate !== '' ? htmlspecialchars($stageLastUpdate) : 'Not submitted yet' ?></strong>
                     <span>Latest save for this stage</span>
                 </div>
                 <?php if ($selectedWindow) : ?>
-                    <div class="predictions-summary__item">
+                    <div class="predictions-stage-summary__item">
                         <strong><?= htmlspecialchars(ucfirst((string) $selectedWindow['status'])) ?></strong>
                         <span>
                             <?php if ($selectedWindow['status'] === 'open' && $selectedWindow['closes_at'] instanceof DateTimeImmutable) : ?>
