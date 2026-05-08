@@ -175,6 +175,7 @@
     gap: 24px;
   }
 
+  .about-section-card,
   .about-intro,
   .about-testimonial,
   .about-season-card {
@@ -188,6 +189,12 @@
     display: grid;
     grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
     overflow: hidden;
+  }
+
+  .about-section-card {
+    display: grid;
+    gap: 18px;
+    padding: 20px;
   }
 
   .about-intro__media {
@@ -225,8 +232,7 @@
   }
 
   .about-testimonials {
-    display: grid;
-    gap: 18px;
+    gap: 16px;
   }
 
   .about-testimonials__grid {
@@ -256,8 +262,7 @@
   }
 
   .about-timeline {
-    display: grid;
-    gap: 18px;
+    gap: 16px;
   }
 
   .about-timeline__grid {
@@ -330,11 +335,15 @@
     display: flex;
     align-items: flex-start;
     gap: 10px;
+    color: var(--hh-ink);
+    font-size: 0.95rem;
+    line-height: 1.45;
   }
 
   .about-season-insight i {
     margin-top: 2px;
     font-size: 1rem;
+    margin-right: 8px;
   }
 
   .about-season-insight strong {
@@ -355,9 +364,14 @@
     display: grid;
     gap: 14px;
     grid-template-columns: minmax(0, 1.2fr) minmax(240px, 0.9fr);
+    align-items: start;
   }
 
-  .about-charity-block,
+  .about-season-card__pros {
+    min-height: 100%;
+  }
+
+  .about-meta-block,
   .about-podium-block {
     padding: 16px;
     border-radius: 8px;
@@ -365,7 +379,17 @@
     border: 1px solid var(--hh-line);
   }
 
-  .about-charity-block {
+  .about-meta-block__label,
+  .about-podium-block__label {
+    margin: 0 0 8px;
+    color: var(--hh-purple-dark);
+    font-size: 0.74rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .about-charity-block__content {
     display: grid;
     gap: 14px;
     grid-template-columns: 104px minmax(0, 1fr);
@@ -378,7 +402,6 @@
     min-height: 88px;
     padding: 10px;
     border-radius: 8px;
-    background: #ffffff;
     border: 1px solid var(--hh-line);
   }
 
@@ -388,14 +411,10 @@
     object-fit: contain;
   }
 
-  .about-charity-block__label,
-  .about-podium-block__label {
-    margin: 0 0 8px;
-    color: var(--hh-purple-dark);
-    font-size: 0.74rem;
-    font-weight: 900;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+  .about-charity-block__name {
+    margin: 0 0 6px;
+    color: var(--hh-green-dark);
+    font-weight: 800;
   }
 
   .about-charity-block__copy p:last-child {
@@ -414,13 +433,14 @@
 
   .about-podium-list li {
     display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-columns: 96px minmax(0, 1fr);
     align-items: center;
     gap: 10px;
-    padding: 12px 14px;
-    border-radius: 8px;
+    padding: 0;
+    border-radius: 20px;
     background: #f6f7f3;
     border: 1px solid rgba(22, 35, 29, 0.08);
+    overflow: hidden;
   }
 
   .about-podium-list li.is-pending {
@@ -431,10 +451,9 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 48px;
     min-height: 48px;
-    padding: 0.2rem 0.45rem;
-    border-radius: 8px;
+    padding: 0.2rem 0.75rem;
+    border-radius: 0 16px 16px 0;
     color: #ffffff;
     font-size: 0.74rem;
     font-weight: 900;
@@ -457,6 +476,11 @@
   .about-podium-list strong {
     color: var(--hh-ink);
     line-height: 1.45;
+    padding-right: 16px;
+  }
+
+  .about-charity-block {
+    grid-column: 1 / -1;
   }
 
   @media (max-width: 991.98px) {
@@ -480,7 +504,8 @@
 
   @media (max-width: 576px) {
     .about-intro__copy,
-    .about-season-card__body {
+    .about-season-card__body,
+    .about-section-card {
       padding: 18px;
     }
 
@@ -489,7 +514,7 @@
       font-size: 1.45rem;
     }
 
-    .about-charity-block {
+    .about-charity-block__content {
       grid-template-columns: 1fr;
     }
   }

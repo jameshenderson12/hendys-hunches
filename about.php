@@ -19,9 +19,10 @@ $timeline = [
         ],
         'pro' => 'Kick-started the tradition with plenty of banter.',
         'con' => 'Manual score updates swallowed hours every evening.',
-        'charity_name' => 'Charity placeholder',
-        'charity_copy' => 'A future space for the cause supported by that year\'s game and a short note on the impact.',
-        'charity_logo' => 'img/charity-logos/notts-county-foundation-logo.png',
+        'charity_name' => 'N/A',
+        'charity_copy' => 'No charity supported with this tournament.',
+        'charity_logo' => 'img/charity-logos/football-placeholder.jpg',
+        'charity_bg' => '#ffffff',
         'podium' => [
             ['rank' => '1st', 'name' => 'Steven Lough, James Henderson'],
             ['rank' => '2nd', 'name' => 'Kirsty Yarnold'],
@@ -38,9 +39,10 @@ $timeline = [
         ],
         'pro' => 'Online submissions made joining the game far easier.',
         'con' => 'Predictions only covered the group stage.',
-        'charity_name' => 'Charity placeholder',
-        'charity_copy' => 'A space for the supported charity, the reason it was chosen, and a one-line outcome.',
-        'charity_logo' => 'img/charity-logos/In-Aid-Of-CALM.png',
+        'charity_name' => 'N/A',
+        'charity_copy' => 'No charity supported with this tournament.',
+        'charity_logo' => 'img/charity-logos/football-placeholder.jpg',
+        'charity_bg' => '#ffffff',
         'podium' => [
             ['rank' => '1st', 'name' => 'Andrew Booth'],
             ['rank' => '2nd', 'name' => 'Nigel Plant'],
@@ -57,9 +59,10 @@ $timeline = [
         ],
         'pro' => 'Richer stats and flexible edits kept people engaged.',
         'con' => 'More features meant more upkeep behind the scenes.',
-        'charity_name' => 'Charity placeholder',
-        'charity_copy' => 'A space to show who the tournament supported and what the players helped fund.',
-        'charity_logo' => 'img/charity-logos/sands-logo.jpg',
+        'charity_name' => 'Ballboys',
+        'charity_copy' => 'Ballboys is a charity that raises awareness and educates the population (not just the guys) on the facts, figures and issues of testicular cancer.',
+        'charity_logo' => 'img/charity-logos/ballboys-logo-bl.png',
+        'charity_bg' => '#ffffff',
         'podium' => [
             ['rank' => '1st', 'name' => 'Jonathan Lamley'],
             ['rank' => '2nd', 'name' => 'Sam McGuigan'],
@@ -76,9 +79,10 @@ $timeline = [
         ],
         'pro' => 'A bigger player pool made the table feel alive.',
         'con' => 'The competition became much less forgiving.',
-        'charity_name' => 'Charity placeholder',
+        'charity_name' => 'CALM (Campaign Against Living Miserably)',
         'charity_copy' => 'A placeholder for the chosen cause, the fundraising total, and a quick thank-you note.',
-        'charity_logo' => 'img/charity-logos/notts-county-foundation-logo.png',
+        'charity_logo' => 'img/charity-logos/CALM-Logo-Blue-647x1024.png',
+        'charity_bg' => '#ffffff',
         'podium' => [
             ['rank' => '1st', 'name' => 'Nick Chandler'],
             ['rank' => '2nd', 'name' => 'Snigdha Dutta, Sonia Fernandez'],
@@ -95,9 +99,10 @@ $timeline = [
         ],
         'pro' => 'Rapid results kept the leaderboard moving constantly.',
         'con' => 'Quick turnarounds left little room for second thoughts.',
-        'charity_name' => 'Charity placeholder',
-        'charity_copy' => 'A placeholder for the supported charity and a short note about the year\'s good cause.',
-        'charity_logo' => 'img/charity-logos/In-Aid-Of-CALM.png',
+        'charity_name' => 'Sands',
+        'charity_copy' => 'Sands provides a safe, understanding and caring community for anyone touched by pregnancy or baby loss.',
+        'charity_logo' => 'img/charity-logos/sands-logo.jpg',
+        'charity_bg' => '#ffffff',
         'podium' => [
             ['rank' => '1st', 'name' => 'Chloe McCandlish'],
             ['rank' => '2nd', 'name' => 'Howard Kilbourn'],
@@ -114,9 +119,10 @@ $timeline = [
         ],
         'pro' => 'New format ideas kept the game feeling fresh.',
         'con' => 'Some scoring and UX ideas still needed another pass.',
-        'charity_name' => 'Charity placeholder',
-        'charity_copy' => 'A placeholder for the chosen cause and a short story about why it mattered that year.',
-        'charity_logo' => 'img/charity-logos/sands-logo.jpg',
+        'charity_name' => 'Notts County Foundation',
+        'charity_copy' => 'The Notts County Foundation harness the power of sport and physical activity to improve the physical and mental wellbeing of participants.',
+        'charity_logo' => 'img/charity-logos/notts-county-foundation-logo.png',
+        'charity_bg' => '#000000',
         'podium' => [
             ['rank' => '1st', 'name' => 'Jonathan Lamley'],
             ['rank' => '2nd', 'name' => 'Paul Hendrick'],
@@ -136,6 +142,7 @@ $timeline = [
         'charity_name' => 'Charity placeholder',
         'charity_copy' => 'A future slot for the next supported charity, impact note, and fundraising story.',
         'charity_logo' => 'img/charity-logos/notts-county-foundation-logo.png',
+        'charity_bg' => '#ffffff',
         'podium' => [
             ['rank' => '1st', 'name' => 'Pending'],
             ['rank' => '2nd', 'name' => 'TBC'],
@@ -184,7 +191,7 @@ $testimonials = [
             </div>
         </section>
 
-        <section class="about-testimonials">
+        <section class="about-section-card about-testimonials">
             <div class="about-section-heading">
                 <p class="eyebrow">What players say</p>
                 <h2>Small quotes, big tournament energy</h2>
@@ -199,7 +206,7 @@ $testimonials = [
             </div>
         </section>
 
-        <section class="about-timeline">
+        <section class="about-section-card about-timeline">
             <div class="about-section-heading">
                 <p class="eyebrow">Tournament archive</p>
                 <h2>Each edition, one card at a time</h2>
@@ -221,24 +228,18 @@ $testimonials = [
                                     <p><?= htmlspecialchars($sentence) ?></p>
                                 <?php endforeach; ?>
                             </div>
-                            <div class="about-season-card__insights">
-                                <div class="about-season-insight about-season-insight--pro">
-                                    <i class="bi bi-plus-circle-fill" aria-hidden="true"></i>
-                                    <strong><?= htmlspecialchars($entry['pro']) ?></strong>
-                                </div>
-                                <div class="about-season-insight about-season-insight--con">
-                                    <i class="bi bi-dash-circle-fill" aria-hidden="true"></i>
-                                    <strong><?= htmlspecialchars($entry['con']) ?></strong>
-                                </div>
-                            </div>
                             <div class="about-season-card__footer">
-                                <div class="about-charity-block">
-                                    <div class="about-charity-block__logo">
-                                        <img src="<?= htmlspecialchars($entry['charity_logo']) ?>" alt="<?= htmlspecialchars($entry['charity_name']) ?>">
-                                    </div>
-                                    <div class="about-charity-block__copy">
-                                        <p class="about-charity-block__label">Charity placeholder</p>
-                                        <p><?= htmlspecialchars($entry['charity_copy']) ?></p>
+                                <div class="about-meta-block about-season-card__pros">
+                                    <p class="about-meta-block__label">Pros and Cons</p>
+                                    <div class="about-season-card__insights">
+                                        <div class="about-season-insight about-season-insight--pro">
+                                            <i class="bi bi-plus-circle-fill" aria-hidden="true"></i>
+                                            <?= htmlspecialchars($entry['pro']) ?>
+                                        </div>
+                                        <div class="about-season-insight about-season-insight--con">
+                                            <i class="bi bi-dash-circle-fill" aria-hidden="true"></i>
+                                            <?= htmlspecialchars($entry['con']) ?>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="about-podium-block">
@@ -252,6 +253,18 @@ $testimonials = [
                                             </li>
                                         <?php endforeach; ?>
                                     </ol>
+                                </div>
+                                <div class="about-meta-block about-charity-block">
+                                    <p class="about-meta-block__label">Charity Focus</p>
+                                    <div class="about-charity-block__content">
+                                        <div class="about-charity-block__logo" style="background: <?= htmlspecialchars((string) ($entry['charity_bg'] ?? '#ffffff')) ?>;">
+                                            <img src="<?= htmlspecialchars($entry['charity_logo']) ?>" alt="<?= htmlspecialchars($entry['charity_name']) ?>">
+                                        </div>
+                                        <div class="about-charity-block__copy">
+                                            <p class="about-charity-block__name"><?= htmlspecialchars($entry['charity_name']) ?></p>
+                                            <p><?= htmlspecialchars($entry['charity_copy']) ?></p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
