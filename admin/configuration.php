@@ -332,6 +332,7 @@ if (!function_exists('hh_prediction_stage_windows')) {
         $windows = [];
         $previousLastKickoff = null;
         $effectiveNowUtc = hh_effective_now(new DateTimeZone('UTC'));
+        $upcomingThresholdUtc = $effectiveNowUtc->modify('+3 days');
 
         foreach ($contexts as $key => $context) {
             $kickoffs = [];
@@ -363,7 +364,7 @@ if (!function_exists('hh_prediction_stage_windows')) {
             $status = 'pending';
             if ($firstKickoff instanceof DateTimeImmutable) {
                 if ($opensAt instanceof DateTimeImmutable && $effectiveNowUtc < $opensAt) {
-                    $status = 'upcoming';
+                    $status = $opensAt <= $upcomingThresholdUtc ? 'upcoming' : 'na';
                 } elseif ($closesAt instanceof DateTimeImmutable && $effectiveNowUtc >= $closesAt) {
                     $status = 'closed';
                 } else {
@@ -386,6 +387,20 @@ if (!function_exists('hh_prediction_stage_windows')) {
         }
 
         return $windows;
+    }
+}
+
+if (!function_exists('hh_stage_status_label')) {
+    function hh_stage_status_label(string $status): string
+    {
+        return match ($status) {
+            'na' => 'N/A',
+            'open' => 'Open',
+            'upcoming' => 'Upcoming',
+            'closed' => 'Closed',
+            'pending' => 'Pending',
+            default => ucfirst($status),
+        };
     }
 }
 

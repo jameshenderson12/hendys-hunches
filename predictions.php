@@ -118,13 +118,17 @@ include 'php/navigation.php';
 
 <style>
 .predictions-stage-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   margin-bottom: 18px;
 }
 
 .predictions-stage-card {
   display: grid;
-  gap: 12px;
+  gap: 10px;
   min-height: 100%;
+  padding: 14px;
   color: inherit;
   text-decoration: none;
   transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background-color 0.18s ease;
@@ -145,35 +149,52 @@ include 'php/navigation.php';
   border-color: var(--hh-purple);
   background: #ffffff;
   box-shadow:
-    inset 0 0 0 2px rgba(143, 102, 216, 0.16),
+    inset 0 0 0 2px rgba(143, 102, 216, 0.2),
     0 18px 30px rgba(22, 35, 29, 0.12);
   transform: translateY(-2px);
+  position: relative;
 }
 
 .predictions-stage-card.is-active .overview-stage-card__top h3 {
   color: var(--hh-purple-dark);
 }
 
-.predictions-stage-card.is-active::after {
-  content: "Selected";
-  justify-self: start;
-  margin-top: -2px;
-  padding: 0.18rem 0.48rem;
-  border-radius: 999px;
-  background: rgba(143, 102, 216, 0.14);
-  color: var(--hh-purple-dark);
-  font-size: 0.72rem;
-  font-weight: 900;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+.predictions-stage-card.is-active::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 6px;
+  border-radius: 8px 0 0 8px;
+  background: var(--hh-purple);
+}
+
+.predictions-stage-card .overview-stage-card__top {
+  align-items: flex-start;
+  margin-bottom: 0;
+}
+
+.predictions-stage-card .overview-stage-card__top h3 {
+  font-size: 0.98rem;
+  line-height: 1.2;
+}
+
+.predictions-stage-card dl {
+  gap: 8px;
+}
+
+.predictions-stage-card dt {
+  font-size: 0.68rem;
+}
+
+.predictions-stage-card dd {
+  font-size: 0.84rem;
+  line-height: 1.35;
 }
 
 .predictions-stage-card__footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding-top: 12px;
+  display: grid;
+  gap: 6px;
+  padding-top: 10px;
   border-top: 1px solid var(--hh-line);
 }
 
@@ -182,7 +203,7 @@ include 'php/navigation.php';
   align-items: center;
   gap: 8px;
   color: var(--hh-muted);
-  font-size: 0.86rem;
+  font-size: 0.8rem;
   font-weight: 800;
 }
 
@@ -196,33 +217,7 @@ include 'php/navigation.php';
 
 .predictions-stage-card__updated {
   color: var(--hh-muted);
-  font-size: 0.76rem;
-  text-align: right;
-}
-
-.predictions-stage-summary {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 18px;
-}
-
-.predictions-stage-summary__item {
-  min-width: 180px;
-  padding: 12px 14px;
-  border: 1px solid var(--hh-line);
-  border-radius: 8px;
-  background: #ffffff;
-}
-
-.predictions-stage-summary__item strong {
-  display: block;
-  color: var(--hh-ink);
-}
-
-.predictions-stage-summary__item span {
-  color: var(--hh-muted);
-  font-size: 0.9rem;
+  font-size: 0.72rem;
 }
 
 .predictions-page .fixture-meta {
@@ -328,6 +323,10 @@ include 'php/navigation.php';
 }
 
 @media (max-width: 991.98px) {
+  .predictions-stage-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .predictions-stage-heading {
     align-items: stretch;
     flex-direction: column;
@@ -342,6 +341,12 @@ include 'php/navigation.php';
     background: transparent;
   }
 }
+
+@media (max-width: 575.98px) {
+  .predictions-stage-grid {
+    grid-template-columns: 1fr;
+  }
+}
 </style>
 
 <main id="main" class="main">
@@ -349,7 +354,7 @@ include 'php/navigation.php';
         <div>
             <p class="eyebrow">Predictions</p>
             <h1>Submit your predictions</h1>
-            <p class="lead mb-0">Work through each tournament stage and lock in your scorelines before kick-off.</p>
+            <p class="lead mb-0">Make predictions for each tournament stage before the window for each closes.</p>
         </div>
         <div class="page-hero__actions">
             <a class="btn btn-primary" href="#matches"><i class="bi bi-pencil-square"></i> Match list</a>
@@ -379,10 +384,9 @@ include 'php/navigation.php';
                     <div class="overview-stage-card__top">
                         <h3><?= htmlspecialchars($stageContext['label']) ?></h3>
                         <span class="overview-stage-pill overview-stage-pill--<?= htmlspecialchars($status) ?>">
-                            <?= htmlspecialchars(ucfirst($status)) ?>
+                            <?= htmlspecialchars(hh_stage_status_label($status)) ?>
                         </span>
                     </div>
-                    <p><?= htmlspecialchars((string) (($stageContext['fixture_end'] - $stageContext['fixture_start']) + 1)) ?> fixtures · matches <?= htmlspecialchars((string) $stageContext['fixture_start']) ?>-<?= htmlspecialchars((string) $stageContext['fixture_end']) ?></p>
                     <dl>
                         <div>
                             <dt>Opens</dt>
@@ -405,15 +409,17 @@ include 'php/navigation.php';
                             </dd>
                         </div>
                     </dl>
-                    <div class="predictions-stage-card__footer">
-                        <span class="predictions-stage-card__submission <?= $submission['submitted'] ? 'is-submitted' : 'is-pending' ?>">
-                            <i class="bi <?= $submission['submitted'] ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill' ?>"></i>
-                            <?= $submission['submitted'] ? 'Predictions submitted' : 'Predictions not submitted' ?>
-                        </span>
-                        <span class="predictions-stage-card__updated">
-                            <?= $stageUpdated !== '' ? htmlspecialchars('Saved ' . $stageUpdated) : 'No saved set yet' ?>
-                        </span>
-                    </div>
+                    <?php if (!in_array($status, ['upcoming', 'pending', 'na'], true)) : ?>
+                        <div class="predictions-stage-card__footer">
+                            <span class="predictions-stage-card__submission <?= $submission['submitted'] ? 'is-submitted' : 'is-pending' ?>">
+                                <i class="bi <?= $submission['submitted'] ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill' ?>"></i>
+                                <?= $submission['submitted'] ? 'Predictions submitted' : 'Predictions not submitted' ?>
+                            </span>
+                            <span class="predictions-stage-card__updated">
+                                <?= $stageUpdated !== '' ? htmlspecialchars('Saved ' . $stageUpdated) : 'No saved set yet' ?>
+                            </span>
+                        </div>
+                    <?php endif; ?>
                 </a>
             <?php endforeach; ?>
         </div>
@@ -423,6 +429,26 @@ include 'php/navigation.php';
         <?php if (!$selectedStage || empty($fixtures)) : ?>
             <div class="content-panel">
                 <p class="mb-0 text-muted">No fixtures were found for this stage yet.</p>
+            </div>
+        <?php elseif ($selectedWindow && !$selectedWindow['is_open']) : ?>
+            <div class="content-panel">
+                <div class="predictions-stage-heading">
+                    <div class="predictions-stage-heading__content">
+                        <p class="eyebrow mb-2">Selected stage</p>
+                        <h2><?= htmlspecialchars($selectedStage['label']) ?></h2>
+                        <p>
+                            <?php if (($selectedWindow['status'] ?? '') === 'upcoming' && $selectedWindow['opens_at'] instanceof DateTimeImmutable) : ?>
+                                Not available yet. This stage opens <?= htmlspecialchars($selectedWindow['opens_at']->setTimezone(new DateTimeZone(date_default_timezone_get()))->format('D j M Y, g:ia')) ?>.
+                            <?php elseif (($selectedWindow['status'] ?? '') === 'closed') : ?>
+                                No longer available. This stage is now closed for changes.
+                            <?php elseif (($selectedWindow['status'] ?? '') === 'na') : ?>
+                                Not available yet. This stage will appear here closer to its opening window.
+                            <?php else : ?>
+                                Not available yet.
+                            <?php endif; ?>
+                        </p>
+                    </div>
+                </div>
             </div>
         <?php else : ?>
             <form id="predictionForm" name="predictionForm" class="form-horizontal" action="submit.php" method="POST">
@@ -440,7 +466,7 @@ include 'php/navigation.php';
                         </div>
                         <div class="predictions-stage-actions">
                             <button type="button" class="btn btn-secondary populate-scores" <?= ($selectedWindow && !$selectedWindow['is_open']) ? 'disabled' : '' ?>><i class="bi bi-magic"></i> Populate for me</button>
-                            <button type="submit" class="btn btn-primary" name="predictionsSubmitted" <?= ($selectedWindow && !$selectedWindow['is_open']) ? 'disabled' : '' ?>><i class="bi bi-floppy-fill"></i> Save <?= htmlspecialchars($selectedStage['label']) ?> predictions</button>
+                            <button type="submit" class="btn btn-primary" name="predictionsSubmitted" <?= ($selectedWindow && !$selectedWindow['is_open']) ? 'disabled' : '' ?>><i class="bi bi-floppy-fill"></i> Save my predictions</button>
                         </div>
                     </div>
                     <table id="table" class="table table-sm table-striped">

@@ -14,8 +14,7 @@ $timeline = [
         'strapline' => 'No name, just spreadsheet pain',
         'image' => 'img/wc2006-ss.png',
         'story' => [
-            'Hendy\'s Hunches started as a shared spreadsheet, emailed around before kick-off and scored by hand every day.',
-            'It was clunky and time-heavy, but the banter landed immediately and made the whole thing worth bringing back.',
+            'Hendy\'s Hunches started as a shared spreadsheet, emailed around before kick-off and scored by hand every day. It was clunky and time-heavy, but the banter landed immediately and made the whole thing worth bringing back.',
         ],
         'pro' => 'Kick-started the tradition with plenty of banter.',
         'con' => 'Manual score updates swallowed hours every evening.',
@@ -34,8 +33,7 @@ $timeline = [
         'strapline' => 'The online leap',
         'image' => 'img/wc2014-site.png',
         'story' => [
-            'This was the first proper web version, built to revive the game and make entering predictions far less painful.',
-            'It looked simple, but automatic scoring and live rankings made it feel like a real tournament experience for the first time.',
+            'This was the first proper web version, built to revive the game and make entering predictions far less painful. It looked simple, but automatic scoring and live rankings made it feel like a real tournament experience for the first time.',
         ],
         'pro' => 'Online submissions made joining the game far easier.',
         'con' => 'Predictions only covered the group stage.',
@@ -54,8 +52,7 @@ $timeline = [
         'strapline' => 'Feature-rich fan favorite',
         'image' => 'img/euro2016-site-v3.png',
         'story' => [
-            'The 2016 build pushed the game forward with proper logins, better rankings, richer stats, and room to make late changes before kick-off.',
-            'It was the moment the site started to feel like a hobby project with real staying power rather than a one-off experiment.',
+            'The 2016 build pushed the game forward with proper logins, better rankings, richer stats, and room to make late changes before kick-off. It was the moment the site started to feel like a hobby project with real staying power rather than a one-off experiment.',
         ],
         'pro' => 'Richer stats and flexible edits kept people engaged.',
         'con' => 'More features meant more upkeep behind the scenes.',
@@ -74,13 +71,12 @@ $timeline = [
         'strapline' => 'The community grows',
         'image' => 'img/hh-logo-2018.jpg',
         'story' => [
-            'By 2018 the player list was bigger, the leaderboard was tighter, and every update felt like it mattered a little more.',
-            'It became less about proving the site worked and more about building a tournament ritual people looked forward to.',
+            'By 2018 the player list was bigger, the leaderboard was tighter, and every update felt like it mattered a little more. It became less about proving the site worked and more about building a tournament ritual people looked forward to.',
         ],
         'pro' => 'A bigger player pool made the table feel alive.',
         'con' => 'The competition became much less forgiving.',
         'charity_name' => 'CALM (Campaign Against Living Miserably)',
-        'charity_copy' => 'A placeholder for the chosen cause, the fundraising total, and a quick thank-you note.',
+        'charity_copy' => 'CALM is suicide prevention charity that provides life-saving services and practical mental health support to anyone who needs it.',
         'charity_logo' => 'img/charity-logos/CALM-Logo-Blue-647x1024.png',
         'charity_bg' => '#ffffff',
         'podium' => [
@@ -94,8 +90,7 @@ $timeline = [
         'strapline' => 'Global spotlight',
         'image' => 'img/qatar-2022-logo.png',
         'story' => [
-            'Qatar 2022 brought a fast, intense tournament where every late goal seemed to rattle the rankings.',
-            'The pace of the match schedule made the game feel urgent, which only added to the fun once the predictions were in.',
+            'Qatar 2022 brought a fast, intense tournament where every late goal seemed to rattle the rankings. The pace of the match schedule made the game feel urgent, which only added to the fun once the predictions were in.',
         ],
         'pro' => 'Rapid results kept the leaderboard moving constantly.',
         'con' => 'Quick turnarounds left little room for second thoughts.',
@@ -114,8 +109,7 @@ $timeline = [
         'strapline' => 'Fresh ideas, same nerves',
         'image' => 'img/germany-2024-logo-md.png',
         'story' => [
-            'Euro 2024 became another chance to refine the experience, test new layout ideas, and keep the competition feeling fresh.',
-            'It also proved again that no matter how polished the site gets, the final standings still come down to a few nervy scorelines.',
+            'Euro 2024 became another chance to refine the experience, test new layout ideas, and keep the competition feeling fresh. It also proved again that no matter how polished the site gets, the final standings still come down to a few nervy scorelines.',
         ],
         'pro' => 'New format ideas kept the game feeling fresh.',
         'con' => 'Some scoring and UX ideas still needed another pass.',
@@ -132,19 +126,18 @@ $timeline = [
     [
         'tournament' => 'FIFA World Cup 2026',
         'strapline' => 'The next horizon',
-        'image' => 'img/hh-logo-2026-purple.png',
+        'image' => 'img/hh-login-page-2026.png',
         'story' => [
-            'The 2026 edition is shaping up to be the biggest version yet, with more teams, more fixtures, and a stronger site underneath it.',
-            'The aim now is simple: keep the fun, reduce the panic, and make the whole thing feel effortless for players from day one.',
+            'The 2026 edition is shaping up to be the biggest version yet, with more teams, more fixtures, and a stronger site underneath it. The aim now is simple: keep the fun, reduce the panic, and make the whole thing feel effortless for players from day one.',
         ],
         'pro' => 'The expanded format should create more drama and variety.',
         'con' => 'There is still fine-tuning to do before the opening day.',
-        'charity_name' => 'Charity placeholder',
-        'charity_copy' => 'A future slot for the next supported charity, impact note, and fundraising story.',
-        'charity_logo' => 'img/charity-logos/notts-county-foundation-logo.png',
-        'charity_bg' => '#ffffff',
+        'charity_name' => 'CALM (Campaign Against Living Miserably)',
+        'charity_copy' => 'CALM is suicide prevention charity that provides life-saving services and practical mental health support to anyone who needs it.',
+        'charity_logo' => 'img/charity-logos/In-Aid-Of-CALM.png',
+        'charity_bg' => '#cbfa00',
         'podium' => [
-            ['rank' => '1st', 'name' => 'Pending'],
+            ['rank' => '1st', 'name' => 'TBC'],
             ['rank' => '2nd', 'name' => 'TBC'],
             ['rank' => '3rd', 'name' => 'TBC'],
             'pending' => true,
@@ -154,18 +147,26 @@ $timeline = [
 
 $testimonials = [
     [
-        'quote' => 'I still end up checking the rankings far more often than I should.',
-        'name' => 'Player testimonial',
+        'quote' => 'I\'m invested in the less exciting games and definitely check the rankings more than I should.',
+        'name' => 'Jonathan L.',
     ],
     [
-        'quote' => 'It somehow manages to be competitive, chaotic, and very funny all at once.',
-        'name' => 'Player testimonial',
+        'quote' => 'This has been so much fun for our family and given us a reason to watch football together.',
+        'name' => 'Jan R.',
     ],
     [
         'quote' => 'You think you know football until this game starts humbling you in public.',
-        'name' => 'Player testimonial',
+        'name' => 'Neil B.',
     ],
 ];
+
+$seasonCoverLabel = static function (string $tournament): string {
+    if (preg_match('/\b(20\d{2})\b/', $tournament, $matches)) {
+        return 'Edition ' . $matches[1];
+    }
+
+    return 'Tournament Archive';
+};
 ?>
 
 <main id="main" class="main">
@@ -181,7 +182,7 @@ $testimonials = [
     <section class="section about-page">
         <section class="about-intro">
             <div class="about-intro__media">
-                <img src="img/james-scotland-edited-lg.png" alt="James Henderson in a football shirt with arms folded">
+                <img src="img/james-cartoon-hobbies.png" alt="Cartoon character of James surrounded by footballs, laptops, and coffee cups">
             </div>
             <div class="about-intro__copy">
                 <p class="eyebrow">From James</p>
@@ -216,7 +217,17 @@ $testimonials = [
                     <?php $isPending = !empty($entry['podium']['pending']); ?>
                     <article class="about-season-card">
                         <div class="about-season-card__visual">
-                            <img src="<?= htmlspecialchars($entry['image']) ?>" alt="<?= htmlspecialchars($entry['tournament']) ?> visual">
+                            <img class="about-season-card__visual-bg" src="<?= htmlspecialchars($entry['image']) ?>" alt="<?= htmlspecialchars($entry['tournament']) ?> visual">
+                            <div class="about-season-card__cover">
+                                <span class="about-season-card__cover-label"><?= htmlspecialchars($seasonCoverLabel($entry['tournament'])) ?></span>
+                                <div class="about-season-card__cover-frame">
+                                    <img class="about-season-card__cover-art" src="<?= htmlspecialchars($entry['image']) ?>" alt="<?= htmlspecialchars($entry['tournament']) ?> edition cover">
+                                </div>
+                                <div class="about-season-card__cover-copy">
+                                    <p><?= htmlspecialchars($entry['tournament']) ?></p>
+                                    <strong><?= htmlspecialchars($entry['strapline']) ?></strong>
+                                </div>
+                            </div>
                         </div>
                         <div class="about-season-card__body">
                             <div class="about-season-card__header">

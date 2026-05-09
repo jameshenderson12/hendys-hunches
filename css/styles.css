@@ -207,6 +207,8 @@
     height: 100%;
     object-fit: cover;
     object-position: center top;
+    padding: 20px;
+    background: #f3f4ef;
   }
 
   .about-intro__copy {
@@ -277,16 +279,92 @@
   }
 
   .about-season-card__visual {
+    position: relative;
     min-height: 100%;
-    background: #f3f4ef;
+    background: linear-gradient(160deg, rgba(7, 54, 41, 0.94), rgba(64, 32, 100, 0.88));
     border-right: 1px solid var(--hh-line);
+    overflow: hidden;
   }
 
-  .about-season-card__visual img {
+  .about-season-card__visual-bg {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     min-height: 280px;
     object-fit: cover;
+    opacity: 0.24;
+    filter: saturate(0.92) blur(2px);
+    transform: scale(1.04);
+  }
+
+  .about-season-card__cover {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 14px;
+    height: 100%;
+    align-content: space-between;
+    padding: 18px;
+    background: linear-gradient(180deg, rgba(7, 54, 41, 0.16), rgba(7, 54, 41, 0.74));
+  }
+
+  .about-season-card__cover-label {
+    display: inline-flex;
+    justify-self: flex-start;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.14);
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .about-season-card__cover-frame {
+    display: grid;
+    place-items: center;
+    min-height: 176px;
+    margin: 0 10px;
+    padding: 12px;
+    border-radius: 8px;
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.96), rgba(248, 248, 244, 0.88));
+    border: 1px solid rgba(255, 255, 255, 0.34);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+  }
+
+  .about-season-card__cover-art {
+    width: 100%;
+    max-width: 100%;
+    max-height: 164px;
+    object-fit: contain;
+    object-position: center;
+    border-radius: 4px;
+  }
+
+  .about-season-card__cover-copy {
+    display: grid;
+    gap: 6px;
+  }
+
+  .about-season-card__cover-copy p,
+  .about-season-card__cover-copy strong {
+    margin: 0;
+    color: #ffffff;
+  }
+
+  .about-season-card__cover-copy p {
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .about-season-card__cover-copy strong {
+    font-size: 1.1rem;
+    line-height: 1.2;
   }
 
   .about-season-card__body {
@@ -326,22 +404,22 @@
     line-height: 1.55;
   }
 
-  .about-season-card__insights {
+  /* .about-season-card__insights {
     display: grid;
     gap: 8px;
-  }
+  } */
 
   .about-season-insight {
-    display: flex;
+    /* display: flex;
     align-items: flex-start;
-    gap: 10px;
+    gap: 10px; */
     color: var(--hh-ink);
     font-size: 0.95rem;
     line-height: 1.45;
   }
 
   .about-season-insight i {
-    margin-top: 2px;
+    /* margin-top: 2px; */
     font-size: 1rem;
     margin-right: 8px;
   }
@@ -425,14 +503,14 @@
 
   .about-podium-list {
     display: grid;
-    gap: 10px;
+    gap: 5px;
     margin: 0;
     padding: 0;
     list-style: none;
   }
 
   .about-podium-list li {
-    display: grid;
+    display: flex;
     grid-template-columns: 96px minmax(0, 1fr);
     align-items: center;
     gap: 10px;
@@ -448,18 +526,19 @@
   }
 
   .about-podium-list__rank {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 48px;
-    padding: 0.2rem 0.75rem;
-    border-radius: 0 16px 16px 0;
-    color: #ffffff;
-    font-size: 0.74rem;
-    font-weight: 900;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
+	  display: flex;
+	  /* align-items: center; */
+	  justify-content: center;
+	  /* min-height: 48px; */
+	  padding: 0.2rem 0.75rem;
+	  /* border-radius: 0 16px 16px 0; */
+	  color: #ffffff;
+	  font-size: 0.74rem;
+	  font-weight: 900;
+	  letter-spacing: 0.06em;
+	  text-transform: uppercase;
+	  width: 60px;
+}
 
   .about-podium-list__rank--1 {
     background: linear-gradient(135deg, #f3c742, #d5a21f);
@@ -471,12 +550,6 @@
 
   .about-podium-list__rank--3 {
     background: linear-gradient(135deg, #bc6c25, #915220);
-  }
-
-  .about-podium-list strong {
-    color: var(--hh-ink);
-    line-height: 1.45;
-    padding-right: 16px;
   }
 
   .about-charity-block {
@@ -496,8 +569,13 @@
       border-bottom: 1px solid var(--hh-line);
     }
 
-    .about-season-card__visual img {
+    .about-season-card__visual-bg {
       min-height: 220px;
+    }
+
+    .about-season-card__cover-frame {
+      margin: 0;
+      min-height: 150px;
     }
 
   }
@@ -1934,13 +2012,13 @@ h6 {
 .page-hero--competition {
   background:
     linear-gradient(90deg, rgba(7, 54, 41, 0.93), rgba(7, 54, 41, 0.68) 52%, rgba(143, 102, 216, 0.56)),
-    url("../img/flag-2056420_640.png") center / cover no-repeat;
+    url("../img/hero-backgrounds/fifa-wc2026-mascots.png") center / cover no-repeat;
 }
 
 .page-hero--predictions {
   background:
     linear-gradient(90deg, rgba(7, 54, 41, 0.93), rgba(7, 54, 41, 0.68) 52%, rgba(143, 102, 216, 0.6)),
-    url("../img/scoring.jpg") center / cover no-repeat;
+    url("../img/hero-backgrounds/new-balls-please.png") center / cover no-repeat;
 }
 
 .page-hero--account {
@@ -2603,6 +2681,11 @@ h6 {
   box-shadow: inset 0 0 0 1px rgba(143, 102, 216, 0.08);
 }
 
+.overview-stage-card--na {
+  border-color: rgba(89, 99, 95, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(89, 99, 95, 0.05);
+}
+
 .overview-stage-card--closed {
   border-color: rgba(22, 35, 29, 0.16);
 }
@@ -2673,7 +2756,17 @@ h6 {
   color: var(--hh-purple-dark);
 }
 
+.overview-stage-pill--na {
+  background: rgba(89, 99, 95, 0.14);
+  color: var(--hh-muted);
+}
+
 .overview-stage-pill--closed,
+.overview-stage-pill--pending {
+  background: rgba(220, 53, 69, 0.14);
+  color: #9f1c2a;
+}
+
 .overview-stage-pill--pending {
   background: rgba(89, 99, 95, 0.14);
   color: var(--hh-muted);

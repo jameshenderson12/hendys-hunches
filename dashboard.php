@@ -591,16 +591,16 @@ mysqli_close($con);
                                         <img src="<?= htmlspecialchars($fixture['home_flag']) ?>" alt="<?= htmlspecialchars($fixture['home']) ?> flag">
                                         <div>
                                             <strong><?= htmlspecialchars($fixture['home']) ?></strong>
-                                            <span><?= htmlspecialchars($fixture['home_avg']) ?></span>
+                                            <!-- <span><?= htmlspecialchars($fixture['home_avg']) ?></span> -->
                                         </div>
                                     </div>
                                     <div class="fixture-card-row__divider">vs</div>
-                                    <div class="fixture-card-row__team fixture-card-row__team--away">
-                                        <img src="<?= htmlspecialchars($fixture['away_flag']) ?>" alt="<?= htmlspecialchars($fixture['away']) ?> flag">
+                                    <div class="fixture-card-row__team fixture-card-row__team--away">                                        
                                         <div>
                                             <strong><?= htmlspecialchars($fixture['away']) ?></strong>
-                                            <span><?= htmlspecialchars($fixture['away_avg']) ?></span>
+                                            <!-- <span><?= htmlspecialchars($fixture['away_avg']) ?></span> -->
                                         </div>
+                                        <img src="<?= htmlspecialchars($fixture['away_flag']) ?>" alt="<?= htmlspecialchars($fixture['away']) ?> flag">
                                     </div>
                                 </div>
                                 <p class="fixture-card-row__pick"><?= htmlspecialchars($fixture['pick']) ?> · <?= htmlspecialchars($fixture['away_avg']) ?></p>

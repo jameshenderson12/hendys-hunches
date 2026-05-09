@@ -121,8 +121,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     throw new RuntimeException(mysqli_error($con));
                 }
             }
+            hh_reset_initial_rankings_with_connection($con);
             mysqli_commit($con);
-            $messages[] = 'Match results, schedule scores and player points have been reset.';
+            $messages[] = 'Match results, schedule scores and player points have been reset. Starting rankings now follow signup order again.';
         } catch (Throwable $exception) {
             mysqli_rollback($con);
             $errors[] = 'Reset failed: ' . $exception->getMessage();
@@ -202,13 +203,15 @@ $snapshot = [
     'users' => 0,
     'fixtures' => 0,
     'results' => 0,
+    'result_snapshots' => 0,
     'fanzone' => 0,
 ];
 
 $countQueries = [
     'users' => "SELECT COUNT(*) AS total FROM live_user_information",
     'fixtures' => "SELECT COUNT(*) AS total FROM live_match_schedule",
-    'results' => "SELECT COUNT(*) AS total FROM live_match_results",
+    'results' => "SELECT COUNT(*) AS total FROM live_match_schedule WHERE homescore IS NOT NULL AND awayscore IS NOT NULL",
+    'result_snapshots' => "SELECT COUNT(*) AS total FROM live_match_results",
 ];
 
 foreach ($countQueries as $key => $query) {
@@ -355,7 +358,8 @@ include '../php/navigation.php';
             <div class="admin-kpi">
                 <div class="admin-kpi__item"><strong><?= $snapshot['users'] ?></strong><span>registered players</span></div>
                 <div class="admin-kpi__item"><strong><?= $snapshot['fixtures'] ?></strong><span>scheduled fixtures</span></div>
-                <div class="admin-kpi__item"><strong><?= $snapshot['results'] ?></strong><span>result rows recorded</span></div>
+                <div class="admin-kpi__item"><strong><?= $snapshot['results'] ?></strong><span>fixtures with results</span></div>
+                <div class="admin-kpi__item"><strong><?= $snapshot['result_snapshots'] ?></strong><span>result snapshots saved</span></div>
                 <div class="admin-kpi__item"><strong><?= $snapshot['fanzone'] ?></strong><span>live Fan Zone posts</span></div>
             </div>
         </div>

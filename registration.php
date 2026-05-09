@@ -35,9 +35,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $sql1 = "SELECT count(*) AS totalusers FROM live_user_information";
     $totalusers = mysqli_query($con, $sql1) or die(mysqli_error($con));
     $row = mysqli_fetch_assoc($totalusers);
-    $setdefstartpos = $row["totalusers"];
-    $setdefcurrpos = $row["totalusers"] + 1;
-    $setdeflastpos = $row["totalusers"] + 1;
+    $signupPosition = ((int) ($row["totalusers"] ?? 0)) + 1;
+    $setdefstartpos = $signupPosition;
+    $setdefcurrpos = $signupPosition;
+    $setdeflastpos = $signupPosition;
 
     // Prepare and bind SQL statements
     $stmt1 = mysqli_prepare($con, "INSERT INTO live_user_information (username, password, firstname, surname, email, avatar, fieldofwork, location, faveteam, tournwinner, startpos, lastpos, currpos) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");

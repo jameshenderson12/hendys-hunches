@@ -14,7 +14,7 @@ $hh_site_config = array (
   'year' => '2026',
   'base_url' => 'https://www.hendyshunches.co.uk',
   'developer' => 'James Henderson',
-  'admin_usernames' =>
+  'admin_usernames' => 
   array (
     0 => 'james',
   ),
@@ -47,7 +47,7 @@ $hh_runtime_config = array (
 );
 
 $hh_preview_config = array (
-  'today_override' => '2026-06-12',
+  'today_override' => '2026-06-10',
 );
 
 $hh_path_config = array (
@@ -57,7 +57,7 @@ $hh_path_config = array (
 );
 
 $hh_asset_config = array (
-  'football_kits' =>
+  'football_kits' => 
   array (
     0 => 'img/football-kits/green-white.png',
     1 => 'img/football-kits/blue-white.png',
@@ -287,6 +287,7 @@ if (!function_exists('hh_prediction_stage_windows')) {
         $windows = [];
         $previousLastKickoff = null;
         $effectiveNowUtc = hh_effective_now(new DateTimeZone('UTC'));
+        $upcomingThresholdUtc = $effectiveNowUtc->modify('+3 days');
 
         foreach ($contexts as $key => $context) {
             $kickoffs = [];
@@ -318,7 +319,7 @@ if (!function_exists('hh_prediction_stage_windows')) {
             $status = 'pending';
             if ($firstKickoff instanceof DateTimeImmutable) {
                 if ($opensAt instanceof DateTimeImmutable && $effectiveNowUtc < $opensAt) {
-                    $status = 'upcoming';
+                    $status = $opensAt <= $upcomingThresholdUtc ? 'upcoming' : 'na';
                 } elseif ($closesAt instanceof DateTimeImmutable && $effectiveNowUtc >= $closesAt) {
                     $status = 'closed';
                 } else {
@@ -341,6 +342,20 @@ if (!function_exists('hh_prediction_stage_windows')) {
         }
 
         return $windows;
+    }
+}
+
+if (!function_exists('hh_stage_status_label')) {
+    function hh_stage_status_label(string $status): string
+    {
+        return match ($status) {
+            'na' => 'N/A',
+            'open' => 'Open',
+            'upcoming' => 'Upcoming',
+            'closed' => 'Closed',
+            'pending' => 'Pending',
+            default => ucfirst($status),
+        };
     }
 }
 

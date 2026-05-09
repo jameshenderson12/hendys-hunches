@@ -33,6 +33,43 @@ function hh_prediction_stage_definitions(): array {
 	return $definitions;
 }
 
+function hh_reset_initial_rankings_with_connection(mysqli $con): void {
+	$userResult = mysqli_query(
+		$con,
+		"SELECT id FROM live_user_information ORDER BY signupdate ASC, id ASC"
+	);
+
+	if (!$userResult) {
+		throw new RuntimeException(mysqli_error($con));
+	}
+
+	$updateStatement = mysqli_prepare(
+		$con,
+		"UPDATE live_user_information SET startpos = ?, lastpos = ?, currpos = ? WHERE id = ? LIMIT 1"
+	);
+
+	if (!$updateStatement) {
+		mysqli_free_result($userResult);
+		throw new RuntimeException(mysqli_error($con));
+	}
+
+	$position = 1;
+	while ($row = mysqli_fetch_assoc($userResult)) {
+		$userId = (int) ($row['id'] ?? 0);
+		mysqli_stmt_bind_param($updateStatement, 'iiii', $position, $position, $position, $userId);
+		if (!mysqli_stmt_execute($updateStatement)) {
+			$error = mysqli_stmt_error($updateStatement);
+			mysqli_stmt_close($updateStatement);
+			mysqli_free_result($userResult);
+			throw new RuntimeException($error);
+		}
+		$position++;
+	}
+
+	mysqli_stmt_close($updateStatement);
+	mysqli_free_result($userResult);
+}
+
 function hh_update_move_status_with_connection(mysqli $con): void {
 	$sql_getrankings = "SELECT lui.id, lui.firstname, lui.surname, lui.avatar, lui.faveteam, lui.startpos, lui.currpos, lui.lastpos,
 						(lup_groups.points_total +
@@ -118,11 +155,14 @@ function hh_compare_prediction_stage(mysqli $con, string $predictionTable, int $
 	$predictionFields = ['username', 'firstname', 'surname'];
 
 	for ($i = $startIndex; $i <= $endIndex; $i++) {
-		$resultFields[] = "SUM(score{$i}_r) AS score{$i}_r";
+		$resultFields[] = "score{$i}_r";
 		$predictionFields[] = "score{$i}_p";
 	}
 
-	$resultQuery = mysqli_query($con, "SELECT " . implode(', ', $resultFields) . " FROM live_match_results");
+	$resultQuery = mysqli_query(
+		$con,
+		"SELECT " . implode(', ', $resultFields) . " FROM live_match_results ORDER BY match_id DESC LIMIT 1"
+	);
 	$rvalue = $resultQuery ? mysqli_fetch_assoc($resultQuery) : null;
 	if ($resultQuery) {
 		mysqli_free_result($resultQuery);
@@ -219,6 +259,69 @@ function hh_recalculate_all_prediction_points(mysqli $con): void {
 	}
 
 	hh_update_move_status_with_connection($con);
+}
+
+function hh_save_match_results_with_connection(mysqli $con, array $scoresByMatch): void {
+	global $no_of_total_fixtures;
+
+	$totalScoreColumns = max(0, $no_of_total_fixtures * 2);
+	if ($totalScoreColumns <= 0) {
+		return;
+	}
+
+	$resultColumns = [];
+	$resultValues = [];
+	$resultTypes = '';
+
+	for ($scoreIndex = 1; $scoreIndex <= $totalScoreColumns; $scoreIndex++) {
+		$resultColumns[] = "score{$scoreIndex}_r";
+		$resultTypes .= 'i';
+		$resultValues[] = array_key_exists($scoreIndex, $scoresByMatch) ? $scoresByMatch[$scoreIndex] : null;
+	}
+
+	mysqli_begin_transaction($con);
+
+	try {
+		$insertSql = "INSERT INTO live_match_results (" . implode(', ', $resultColumns) . ") VALUES (" . implode(', ', array_fill(0, count($resultColumns), '?')) . ")";
+		$insertStatement = mysqli_prepare($con, $insertSql);
+		if (!$insertStatement) {
+			throw new RuntimeException(mysqli_error($con));
+		}
+
+		hh_bind_stmt_values($insertStatement, $resultTypes, $resultValues);
+		if (!mysqli_stmt_execute($insertStatement)) {
+			$error = mysqli_stmt_error($insertStatement);
+			mysqli_stmt_close($insertStatement);
+			throw new RuntimeException($error);
+		}
+		mysqli_stmt_close($insertStatement);
+
+		$scheduleStatement = mysqli_prepare($con, "UPDATE live_match_schedule SET homescore = ?, awayscore = ? WHERE match_number = ? LIMIT 1");
+		if (!$scheduleStatement) {
+			throw new RuntimeException(mysqli_error($con));
+		}
+
+		for ($matchNumber = 1; $matchNumber <= $no_of_total_fixtures; $matchNumber++) {
+			$homeIndex = ($matchNumber * 2) - 1;
+			$awayIndex = $matchNumber * 2;
+			$homeScore = array_key_exists($homeIndex, $scoresByMatch) ? $scoresByMatch[$homeIndex] : null;
+			$awayScore = array_key_exists($awayIndex, $scoresByMatch) ? $scoresByMatch[$awayIndex] : null;
+
+			mysqli_stmt_bind_param($scheduleStatement, 'iii', $homeScore, $awayScore, $matchNumber);
+			if (!mysqli_stmt_execute($scheduleStatement)) {
+				$error = mysqli_stmt_error($scheduleStatement);
+				mysqli_stmt_close($scheduleStatement);
+				throw new RuntimeException($error);
+			}
+		}
+
+		mysqli_stmt_close($scheduleStatement);
+		hh_recalculate_all_prediction_points($con);
+		mysqli_commit($con);
+	} catch (Throwable $exception) {
+		mysqli_rollback($con);
+		throw $exception;
+	}
 }
 
 function hh_bind_stmt_values(mysqli_stmt $statement, string $types, array $values): void {
@@ -439,31 +542,12 @@ function insertMatchResult() {
 	global $no_of_total_fixtures;
 
 	$totalScoreColumns = max(0, $no_of_total_fixtures * 2);
-	$params = [];
-	$columns = [];
-	$placeholders = [];
-
+	$scoresByMatch = [];
 	for ($i = 1; $i <= $totalScoreColumns; $i++) {
-		$columns[] = "score{$i}_r";
-		$placeholders[] = '?';
-		$params[] = isset($_POST["score{$i}_r"]) && $_POST["score{$i}_r"] !== '' ? (int) $_POST["score{$i}_r"] : null;
+		$scoresByMatch[$i] = isset($_POST["score{$i}_r"]) && $_POST["score{$i}_r"] !== '' ? (int) $_POST["score{$i}_r"] : null;
 	}
 
-	$sql = "INSERT INTO live_match_results (" . implode(', ', $columns) . ") VALUES (" . implode(', ', $placeholders) . ")";
-	$stmt = $con->prepare($sql);
-	if (!$stmt) {
-		die("Prepare failed: " . $con->error);
-	}
-
-	$types = str_repeat('i', $totalScoreColumns);
-	hh_bind_stmt_values($stmt, $types, $params);
-
-	if (!$stmt->execute()) {
-		die("Execute failed: " . $stmt->error);
-	}
-
-	$stmt->close();
-	hh_recalculate_all_prediction_points($con);
+	hh_save_match_results_with_connection($con, $scoresByMatch);
 	mysqli_close($con);
 }
 
@@ -878,7 +962,7 @@ function displayRankingsEq5() {
     include 'php/db-connect.php';
 
     // Set up SQL query to retrieve data from database tables
-		$sql_maketable = "SELECT lui.id, lui.firstname, lui.surname, lui.avatar, lui.faveteam, lui.startpos, lui.currpos, lui.lastpos,
+		$sql_maketable = "SELECT lui.id, lui.firstname, lui.surname, lui.avatar, lui.faveteam, lui.startpos, lui.currpos, lui.lastpos, lui.signupdate,
 						(lup_groups.points_total +
 						IFNULL(lup_ro32.points_total, 0) +
 						IFNULL(lup_ro16.points_total, 0) +
@@ -924,11 +1008,33 @@ function displayRankingsEq5() {
 					LEFT JOIN live_user_predictions_final lup_fi ON lui.id = lup_fi.id
 					ORDER BY rank ASC, surname ASC";
 
-    $sql_matchresults = "SELECT * FROM live_match_results";
+    $sql_matchresults = "SELECT COUNT(*) AS total FROM live_match_schedule WHERE homescore IS NOT NULL AND awayscore IS NOT NULL";
 
     // Execute the query and return the results or display an appropriate error message
     $table = mysqli_query($con, $sql_maketable) or die(mysqli_error($con));
     $result = mysqli_query($con, $sql_matchresults) or die(mysqli_error($con));
+    $resultMeta = mysqli_fetch_assoc($result);
+    $hasRecordedResults = ((int) ($resultMeta['total'] ?? 0)) > 0;
+    mysqli_free_result($result);
+
+    $rows = [];
+    while ($row = mysqli_fetch_assoc($table)) {
+        $rows[] = $row;
+    }
+    mysqli_free_result($table);
+
+    if (!$hasRecordedResults) {
+        usort($rows, static function (array $left, array $right): int {
+            $leftSignedUp = strtotime((string) ($left['signupdate'] ?? '')) ?: 0;
+            $rightSignedUp = strtotime((string) ($right['signupdate'] ?? '')) ?: 0;
+
+            if ($leftSignedUp === $rightSignedUp) {
+                return ((int) ($left['id'] ?? 0)) <=> ((int) ($right['id'] ?? 0));
+            }
+
+            return $leftSignedUp <=> $rightSignedUp;
+        });
+    }
 
     echo "<div class='table-responsive'>";
     echo "<table id='rankingsTable' class='table table-striped'>";
@@ -937,10 +1043,9 @@ function displayRankingsEq5() {
 
     // Keep track of the previous rank to identify non-unique ranks
     $prevRank = null;
-    while ($row = mysqli_fetch_assoc($table)) {
-        // Check if match results table contains any data
-        if (mysqli_num_rows($result) == 0) {
-            $rank = $row["startpos"];
+    foreach ($rows as $index => $row) {
+        if (!$hasRecordedResults) {
+            $rank = $index + 1;
         } else {
             $rank = $row["rank"];
         }
@@ -953,7 +1058,9 @@ function displayRankingsEq5() {
         }
 
         // Determine if move is upwards, downwards or the same and calculate the difference between current and previous ranking
-        if ($row["lastpos"] > $row["currpos"]) {
+        if (!$hasRecordedResults) {
+            $move = "<span class='text-secondary'>-</span>";
+        } elseif ($row["lastpos"] > $row["currpos"]) {
             $diff = $row["lastpos"] - $row["currpos"];
             $move = "<span class='text-success'><i class='bi bi-caret-up-fill'></i>" . $diff . "</span>";
         } elseif ($row["lastpos"] < $row["currpos"]) {

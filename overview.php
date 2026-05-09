@@ -358,7 +358,7 @@ mysqli_close($con);
                         <div class="overview-stage-card__top">
                             <h3><?= htmlspecialchars($stageRow['label']) ?></h3>
                             <span class="overview-stage-pill overview-stage-pill--<?= htmlspecialchars($stageRow['status']) ?>">
-                                <?= htmlspecialchars(ucfirst($stageRow['status'])) ?>
+                                <?= htmlspecialchars(hh_stage_status_label((string) $stageRow['status'])) ?>
                             </span>
                         </div>
                         <p><?= htmlspecialchars((string) $stageRow['fixtures']) ?> fixtures · matches <?= htmlspecialchars($stageRow['match_range']) ?></p>

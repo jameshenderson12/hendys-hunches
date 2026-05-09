@@ -106,8 +106,25 @@ function hh_stage_context_for_match(array $stageContexts, int $matchNumber): ?ar
     return null;
 }
 
+function hh_stage_short_label(string $stageKey, string $fallbackLabel): string
+{
+    return match ($stageKey) {
+        'groups' => 'Groups',
+        'ro32' => 'Round of 32',
+        'ro16' => 'Round of 16',
+        'qf' => 'Quarter-Finals',
+        'sf' => 'Semi-Finals',
+        'final' => 'Final',
+        default => $fallbackLabel,
+    };
+}
+
 $userId = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 $stageContexts = hh_prediction_stage_contexts_for_user();
+$selectedStageKey = isset($_GET['stage']) ? trim((string) $_GET['stage']) : '';
+if ($selectedStageKey === '' || !isset($stageContexts[$selectedStageKey])) {
+    $selectedStageKey = array_key_first($stageContexts) ?: 'groups';
+}
 
 $profile = null;
 $predictionRows = [];
@@ -181,12 +198,58 @@ $fullName = ucfirst((string) $profile['firstname']) . ' ' . ucfirst((string) $pr
 $tournwinner = (string) ($profile['tournwinner'] ?? '');
 $tournwinnerFlag = $tournwinner !== '' ? hh_get_team_flag_path($tournwinner) : '';
 $currentPosition = hh_ordinal_position((int) ($profile['currpos'] ?? 0));
+$selectedStage = $stageContexts[$selectedStageKey] ?? null;
+$visibleFixtures = [];
+$selectedStagePoints = (int) (($predictionRows[$selectedStageKey]['points_total'] ?? 0));
+
+if ($selectedStage) {
+    foreach ($fixtures as $fixture) {
+        $matchNumber = (int) ($fixture['match_number'] ?? 0);
+        if ($matchNumber >= (int) $selectedStage['fixture_start'] && $matchNumber <= (int) $selectedStage['fixture_end']) {
+            $visibleFixtures[] = $fixture;
+        }
+    }
+}
 
 include 'php/header.php';
 include 'php/navigation.php';
 ?>
 
 <style>
+.user-stage-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0 0 16px;
+}
+
+.user-stage-nav__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid var(--hh-line);
+  border-radius: 8px;
+  background: #f4f5f2;
+  color: var(--hh-ink);
+  font-size: 0.92rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.user-stage-nav__link:hover {
+  background: #ffffff;
+  color: var(--hh-purple-dark);
+  text-decoration: none;
+}
+
+.user-stage-nav__link.is-active {
+  border-color: rgba(143, 102, 216, 0.34);
+  background: rgba(143, 102, 216, 0.12);
+  color: var(--hh-purple-dark);
+  box-shadow: inset 0 0 0 1px rgba(143, 102, 216, 0.1);
+}
+
 .user-layout {
   display: grid;
   align-items: start;
@@ -260,6 +323,11 @@ include 'php/navigation.php';
   color: var(--hh-purple-dark);
 }
 
+.user-table tfoot td {
+  border-top: 2px solid var(--hh-line);
+  font-weight: 800;
+}
+
 @media (max-width: 991.98px) {
   .user-layout {
     grid-template-columns: 1fr;
@@ -294,7 +362,7 @@ include 'php/navigation.php';
                     <div>
                         <p class="eyebrow mb-2">Player card</p>
                         <h2><?= htmlspecialchars($fullName) ?></h2>
-                        <p class="concept-subtle mb-0"><?= htmlspecialchars((string) $profile['username']) ?> · <?= htmlspecialchars($currentPosition) ?> in the rankings</p>
+                        <p class="concept-subtle mb-0"><?= htmlspecialchars($currentPosition) ?> in the rankings</p>
                     </div>
                     <div class="concept-profile-stats">
                         <span><strong><?= htmlspecialchars((string) $totalPoints) ?></strong>Total points</span>
@@ -331,9 +399,17 @@ include 'php/navigation.php';
                 <div class="concept-panel__header">
                     <div>
                         <p class="eyebrow mb-2">Fixture list</p>
-                        <h2 class="mb-1">Predictions and results</h2>
-                        <p class="dashboard-subtle mb-0">Every fixture in the schedule, built from the live tournament data.</p>
+                        <h2 class="mb-1"><?= htmlspecialchars($selectedStage ? $selectedStage['label'] : 'Predictions and results') ?></h2>
+                        <p class="dashboard-subtle mb-0">Predictions and results for the selected tournament stage.</p>
                     </div>
+                </div>
+
+                <div class="user-stage-nav">
+                    <?php foreach ($stageContexts as $stageKey => $stageContext) : ?>
+                        <a class="user-stage-nav__link <?= $stageKey === $selectedStageKey ? 'is-active' : '' ?>" href="user.php?id=<?= urlencode((string) $userId) ?>&stage=<?= urlencode($stageKey) ?>">
+                            <?= htmlspecialchars(hh_stage_short_label($stageKey, (string) $stageContext['label'])) ?>
+                        </a>
+                    <?php endforeach; ?>
                 </div>
 
                 <div class="table-responsive user-table">
@@ -351,7 +427,7 @@ include 'php/navigation.php';
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($fixtures as $fixture) : ?>
+                            <?php foreach ($visibleFixtures as $fixture) : ?>
                                 <?php
                                 $matchNumber = (int) ($fixture['match_number'] ?? 0);
                                 $stageContext = hh_stage_context_for_match($stageContexts, $matchNumber);
@@ -406,6 +482,13 @@ include 'php/navigation.php';
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="5" class="text-end">Stage total</td>
+                                <td class="text-center"><span class="points"><?= htmlspecialchars((string) $selectedStagePoints) ?></span></td>
+                                <td colspan="2"></td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
             </div>
