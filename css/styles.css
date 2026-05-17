@@ -3947,6 +3947,12 @@ body.tour-active {
     url("../img/hero-backgrounds/ball-stadium.jpg") center 52% / cover no-repeat;
 }
 
+.page-hero--submit {
+  background:
+    linear-gradient(90deg, rgba(7, 54, 41, 0.9), rgba(12, 90, 67, 0.76) 50%, rgba(143, 102, 216, 0.52)),
+    url("../img/pixel-sepp-football-stadium-227561.jpg") center 50% / cover no-repeat;
+}
+
 .dashboard-board {
   --dashboard-primary: var(--hh-green);
   --dashboard-primary-dark: var(--hh-green-dark);
@@ -3960,6 +3966,89 @@ body.tour-active {
   --dashboard-accent-soft: rgba(143, 102, 216, 0.10);
   display: grid;
   gap: 22px;
+}
+
+.submit-page {
+  display: grid;
+  place-items: start center;
+}
+
+.submit-status-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 20px;
+  align-items: center;
+  padding: 24px;
+}
+
+.submit-status-card.is-success {
+  border-color: rgba(12, 90, 67, 0.18);
+}
+
+.submit-status-card.is-error {
+  border-color: rgba(214, 64, 69, 0.24);
+}
+
+.submit-status-card__icon {
+  display: inline-grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  background: rgba(12, 90, 67, 0.08);
+  color: var(--hh-green-dark);
+  font-size: 1.9rem;
+}
+
+.submit-status-card.is-error .submit-status-card__icon {
+  background: rgba(214, 64, 69, 0.12);
+  color: #9f1c2a;
+}
+
+.submit-status-card__body {
+  display: grid;
+  gap: 6px;
+}
+
+.submit-status-card__body h2 {
+  margin: 0;
+  font-size: 1.45rem;
+  font-weight: 900;
+}
+
+.submit-status-card__body p {
+  color: var(--hh-muted);
+}
+
+.submit-status-card__meta {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 4px;
+}
+
+.submit-status-card__redirect {
+  color: var(--hh-muted);
+  font-weight: 700;
+}
+
+.submit-status-spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid rgba(12, 90, 67, 0.14);
+  border-top-color: var(--hh-purple);
+  border-radius: 999px;
+  animation: hh-submit-spin 0.8s linear infinite;
+}
+
+@keyframes hh-submit-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .brand-section-label {

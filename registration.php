@@ -89,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="author" content="James Henderson">
     <meta name="keywords" content="football, predictions, game">
 	  <title>Registration - Hendy's Hunches</title>
-    <link href="ico/favicon.ico" rel="icon">
+    <link href="img/hh-logo-2026-simple.png" rel="icon" type="image/png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
@@ -734,7 +734,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               <h5 class="text-center">Hendy's Hunches: Terms &amp; Conditions</h5>
               <p>By registering to play Hendy's Hunches, you acknowledge that:</p>
               <ul>
-                <li>your involvement in this game, and the game itself, is intended only for entertainment; it is not a gambling site</li>
+                <li>your involvement in this game, and the game itself, is intended only for entertainment</li>
                 <li>the game is based on <?=$competition?></li>
                 <li>only one registration per person is permitted although family and friends are welcome to participate</li>
                 <li>an entry fee of £<?=$signup_fee_formatted?> is to be paid prior to <?=$signup_close_date?>; split for charity donation and prize funds</li>
