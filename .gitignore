@@ -2,5 +2,6 @@ sql/bak
 php/db-connect.php
 php/send-welcome-email.php
 php/send-temppass-email.php
+*.psd
 .env
 .DS_Store
