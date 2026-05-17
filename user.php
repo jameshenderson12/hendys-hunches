@@ -265,7 +265,7 @@ include 'php/navigation.php';
   gap: 18px;
 }
 
-.user-page .concept-profile-card {
+.user-page .dashboard-player-card {
   align-self: start;
   position: sticky;
   top: 104px;
@@ -341,7 +341,7 @@ include 'php/navigation.php';
     grid-template-columns: 1fr;
   }
 
-  .user-page .concept-profile-card {
+  .user-page .dashboard-player-card {
     position: static;
   }
 }
@@ -362,24 +362,24 @@ include 'php/navigation.php';
 
     <section class="section user-page">
         <div class="user-layout">
-            <article class="concept-profile-card">
-                <div class="concept-profile-card__kit">
+            <article class="dashboard-player-card">
+                <div class="dashboard-player-card__kit">
                     <img src="<?= htmlspecialchars((string) $profile['avatar']) ?>" alt="<?= htmlspecialchars($fullName) ?> football strip avatar">
                 </div>
-                <div class="concept-profile-card__body">
+                <div class="dashboard-player-card__body">
                     <div>
                         <p class="eyebrow mb-2">Player card</p>
                         <h2><?= htmlspecialchars($fullName) ?></h2>
-                        <p class="concept-subtle mb-0">
+                        <p class="dashboard-note mb-0">
                             <?= $hasRecordedResults ? htmlspecialchars($currentPosition) . ' in the rankings' : 'Ranking begins after the first recorded result' ?>
                         </p>
                     </div>
-                    <div class="concept-profile-stats">
+                    <div class="dashboard-player-stats">
                         <span><strong><?= htmlspecialchars((string) $totalPoints) ?></strong>Total points</span>
                         <span><strong><?= htmlspecialchars((string) count($fixtures)) ?></strong>Fixtures tracked</span>
                         <span><strong><?= htmlspecialchars((string) strtoupper((string) $profile['haspaid'])) ?></strong>Entry paid</span>
                     </div>
-                    <dl class="concept-profile-details">
+                    <dl class="dashboard-player-details">
                         <div>
                             <dt>Tournament winner</dt>
                             <dd>
@@ -406,7 +406,7 @@ include 'php/navigation.php';
             </article>
 
             <div class="content-panel">
-                <div class="concept-panel__header">
+                <div class="dashboard-panel__header">
                     <div>
                         <p class="eyebrow mb-2">Fixture list</p>
                         <h2 class="mb-1"><?= htmlspecialchars($selectedStage ? $selectedStage['label'] : 'Predictions and results') ?></h2>

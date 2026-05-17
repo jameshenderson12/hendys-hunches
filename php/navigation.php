@@ -7,7 +7,7 @@ $nav_href = static fn(string $path): string => $app_path_prefix . $path;
 $nav_active = function ($page) use ($current_page) {
 	return $current_page === $page ? ' active' : '';
 };
-$use_concept_logo = isset($nav_logo_variant) && $nav_logo_variant === 'concept';
+$use_featured_logo = isset($nav_logo_variant) && $nav_logo_variant === 'featured';
 $is_admin_user = hh_is_admin_user();
 $current_user_id = (int) ($_SESSION['id'] ?? 0);
 $brand_logo_path = $nav_href('img/hh-logo-2026-simple.png');
@@ -15,8 +15,8 @@ $brand_logo_path = $nav_href('img/hh-logo-2026-simple.png');
 
 <nav class="navbar navbar-expand-lg site-navbar" aria-label="Main navigation">
 	<div class="container">
-			<a class="navbar-brand<?= $use_concept_logo ? ' navbar-brand--concept' : '' ?>" href="<?= htmlspecialchars($nav_href('dashboard.php'), ENT_QUOTES) ?>">
-				<?php if ($use_concept_logo): ?>
+			<a class="navbar-brand<?= $use_featured_logo ? ' navbar-brand--featured' : '' ?>" href="<?= htmlspecialchars($nav_href('dashboard.php'), ENT_QUOTES) ?>">
+				<?php if ($use_featured_logo): ?>
 					<span class="hh-brand-mark" aria-hidden="true">
 						<span class="hh-brand-mark__initials">HH</span>
 					</span>
