@@ -13,7 +13,7 @@ $errors = [];
 
 function hh_config_editor_state(): array
 {
-    global $hh_site_config, $hh_competition_config, $hh_finance_config, $hh_runtime_config, $hh_preview_config, $hh_path_config, $hh_asset_config;
+    global $hh_site_config, $hh_competition_config, $hh_finance_config, $hh_runtime_config, $hh_preview_config, $hh_email_config, $hh_path_config, $hh_asset_config;
 
     return [
         'site' => $hh_site_config,
@@ -21,6 +21,7 @@ function hh_config_editor_state(): array
         'finance' => $hh_finance_config,
         'runtime' => $hh_runtime_config,
         'preview' => $hh_preview_config,
+        'email' => $hh_email_config,
         'paths' => $hh_path_config,
         'assets' => $hh_asset_config,
     ];
@@ -89,6 +90,19 @@ function hh_config_editor_normalize(array $source, array $current): array
         'preview' => [
             'today_override' => trim((string) ($source['today_override'] ?? '')),
         ],
+        'email' => [
+            'enabled' => !empty($source['email_enabled']),
+            'transport' => in_array((string) ($source['email_transport'] ?? 'smtp'), ['smtp', 'mail'], true) ? (string) $source['email_transport'] : 'smtp',
+            'from_name' => trim((string) ($source['email_from_name'] ?? '')),
+            'from_email' => trim((string) ($source['email_from_email'] ?? '')),
+            'reply_to_name' => trim((string) ($source['email_reply_to_name'] ?? '')),
+            'reply_to_email' => trim((string) ($source['email_reply_to_email'] ?? '')),
+            'smtp_host' => trim((string) ($source['email_smtp_host'] ?? '')),
+            'smtp_port' => max(1, (int) ($source['email_smtp_port'] ?? 587)),
+            'smtp_secure' => in_array((string) ($source['email_smtp_secure'] ?? 'tls'), ['', 'tls', 'ssl'], true) ? (string) $source['email_smtp_secure'] : 'tls',
+            'smtp_username' => trim((string) ($source['email_smtp_username'] ?? '')),
+            'smtp_password' => (string) ($source['email_smtp_password'] ?? ''),
+        ],
         'paths' => [
             'backup_dir' => trim((string) ($source['backup_dir'] ?? '')),
             'datalists_dir' => trim((string) ($source['datalists_dir'] ?? '')),
@@ -107,6 +121,7 @@ function hh_config_editor_export(array $config): string
     $finance = var_export($config['finance'], true);
     $runtime = var_export($config['runtime'], true);
     $preview = var_export($config['preview'], true);
+    $email = var_export($config['email'], true);
     $paths = var_export($config['paths'], true);
     $assets = var_export($config['assets'], true);
 
@@ -122,6 +137,7 @@ function hh_config_editor_export(array $config): string
         . '$hh_finance_config = ' . $finance . ";\n\n"
         . '$hh_runtime_config = ' . $runtime . ";\n\n"
         . '$hh_preview_config = ' . $preview . ";\n\n"
+        . '$hh_email_config = ' . $email . ";\n\n"
         . '$hh_path_config = ' . $paths . ";\n\n"
         . '$hh_asset_config = ' . $assets . ";\n\n"
         . <<<'PHP'
@@ -162,6 +178,8 @@ $no_of_total_fixtures = (int) ($hh_runtime_config['no_of_total_fixtures'] ?? 0);
 $preview_today_override = trim((string) ($hh_preview_config['today_override'] ?? ''));
 
 $no_of_knockout_fixtures = $no_of_ro32_fixtures + $no_of_ro16_fixtures + $no_of_qf_fixtures + $no_of_sf_fixtures + $no_of_final_fixtures;
+
+$mail_enabled = !empty($hh_email_config['enabled']);
 
 $backup_dir = (string) $hh_path_config['backup_dir'];
 $datalists_dir = (string) $hh_path_config['datalists_dir'];
@@ -601,6 +619,10 @@ include '../php/navigation.php';
                     <strong><?= count((array) $currentConfig['site']['admin_usernames']) ?></strong>
                     <span>Configured admin usernames</span>
                 </div>
+                <div class="config-summary__item">
+                    <strong><?= !empty($currentConfig['email']['enabled']) ? 'Enabled' : 'Disabled' ?></strong>
+                    <span>Player email delivery</span>
+                </div>
             </div>
         </div>
 
@@ -731,6 +753,62 @@ include '../php/navigation.php';
                         <label class="form-label" for="today_override">Preview today override</label>
                         <input class="form-control" id="today_override" name="today_override" type="date" value="<?= htmlspecialchars((string) ($currentConfig['preview']['today_override'] ?? ''), ENT_QUOTES) ?>">
                         <p class="admin-note mt-2">Leave blank to use the real current day. Set a tournament date such as <code>2026-06-11</code> or <code>2026-06-12</code> to preview what the dashboard treats as today.</p>
+                    </div>
+
+                    <h3>Email Comms</h3>
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" id="email_enabled" name="email_enabled" type="checkbox" value="1" <?= !empty($currentConfig['email']['enabled']) ? 'checked' : '' ?>>
+                        <label class="form-check-label" for="email_enabled">Enable outbound email</label>
+                    </div>
+                    <div class="admin-grid admin-grid--two">
+                        <div>
+                            <label class="form-label" for="email_transport">Transport</label>
+                            <select class="form-select" id="email_transport" name="email_transport">
+                                <option value="smtp" <?= (($currentConfig['email']['transport'] ?? 'smtp') === 'smtp') ? 'selected' : '' ?>>SMTP</option>
+                                <option value="mail" <?= (($currentConfig['email']['transport'] ?? '') === 'mail') ? 'selected' : '' ?>>PHP mail()</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label" for="email_from_name">From name</label>
+                            <input class="form-control" id="email_from_name" name="email_from_name" type="text" value="<?= htmlspecialchars((string) ($currentConfig['email']['from_name'] ?? ''), ENT_QUOTES) ?>">
+                        </div>
+                        <div>
+                            <label class="form-label" for="email_from_email">From email</label>
+                            <input class="form-control" id="email_from_email" name="email_from_email" type="email" value="<?= htmlspecialchars((string) ($currentConfig['email']['from_email'] ?? ''), ENT_QUOTES) ?>">
+                        </div>
+                        <div>
+                            <label class="form-label" for="email_reply_to_email">Reply-to email</label>
+                            <input class="form-control" id="email_reply_to_email" name="email_reply_to_email" type="email" value="<?= htmlspecialchars((string) ($currentConfig['email']['reply_to_email'] ?? ''), ENT_QUOTES) ?>">
+                        </div>
+                        <div>
+                            <label class="form-label" for="email_reply_to_name">Reply-to name</label>
+                            <input class="form-control" id="email_reply_to_name" name="email_reply_to_name" type="text" value="<?= htmlspecialchars((string) ($currentConfig['email']['reply_to_name'] ?? ''), ENT_QUOTES) ?>">
+                        </div>
+                        <div>
+                            <label class="form-label" for="email_smtp_host">SMTP host</label>
+                            <input class="form-control" id="email_smtp_host" name="email_smtp_host" type="text" value="<?= htmlspecialchars((string) ($currentConfig['email']['smtp_host'] ?? ''), ENT_QUOTES) ?>">
+                        </div>
+                        <div>
+                            <label class="form-label" for="email_smtp_port">SMTP port</label>
+                            <input class="form-control" id="email_smtp_port" name="email_smtp_port" type="number" min="1" step="1" value="<?= (int) ($currentConfig['email']['smtp_port'] ?? 587) ?>">
+                        </div>
+                        <div>
+                            <label class="form-label" for="email_smtp_secure">SMTP security</label>
+                            <select class="form-select" id="email_smtp_secure" name="email_smtp_secure">
+                                <option value="" <?= (($currentConfig['email']['smtp_secure'] ?? '') === '') ? 'selected' : '' ?>>None</option>
+                                <option value="tls" <?= (($currentConfig['email']['smtp_secure'] ?? 'tls') === 'tls') ? 'selected' : '' ?>>TLS</option>
+                                <option value="ssl" <?= (($currentConfig['email']['smtp_secure'] ?? '') === 'ssl') ? 'selected' : '' ?>>SSL</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label" for="email_smtp_username">SMTP username</label>
+                            <input class="form-control" id="email_smtp_username" name="email_smtp_username" type="text" value="<?= htmlspecialchars((string) ($currentConfig['email']['smtp_username'] ?? ''), ENT_QUOTES) ?>">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="email_smtp_password">SMTP password</label>
+                        <input class="form-control" id="email_smtp_password" name="email_smtp_password" type="text" value="<?= htmlspecialchars((string) ($currentConfig['email']['smtp_password'] ?? ''), ENT_QUOTES) ?>">
+                        <p class="admin-note mt-2">Keep this disabled until you are happy with the SMTP details. Once enabled, registration and password reset emails can be sent for real.</p>
                     </div>
 
                     <h3>Installer Defaults And Assets</h3>

@@ -16,7 +16,7 @@ $hh_site_config = array (
   'developer' => 'James Henderson',
   'admin_usernames' => 
   array (
-    0 => 'james',
+    0 => 'James',
   ),
 );
 
@@ -47,7 +47,21 @@ $hh_runtime_config = array (
 );
 
 $hh_preview_config = array (
-  'today_override' => '2026-06-10',
+  'today_override' => '',
+);
+
+$hh_email_config = array (
+  'enabled' => false,
+  'transport' => 'smtp',
+  'from_name' => 'Hendy\'s Hunches',
+  'from_email' => '',
+  'reply_to_name' => 'James Henderson',
+  'reply_to_email' => '',
+  'smtp_host' => '',
+  'smtp_port' => 587,
+  'smtp_secure' => 'tls',
+  'smtp_username' => '',
+  'smtp_password' => '',
 );
 
 $hh_path_config = array (
@@ -117,6 +131,8 @@ $no_of_total_fixtures = (int) ($hh_runtime_config['no_of_total_fixtures'] ?? 0);
 $preview_today_override = trim((string) ($hh_preview_config['today_override'] ?? ''));
 
 $no_of_knockout_fixtures = $no_of_ro32_fixtures + $no_of_ro16_fixtures + $no_of_qf_fixtures + $no_of_sf_fixtures + $no_of_final_fixtures;
+
+$mail_enabled = !empty($hh_email_config['enabled']);
 
 $backup_dir = (string) $hh_path_config['backup_dir'];
 $datalists_dir = (string) $hh_path_config['datalists_dir'];

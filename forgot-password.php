@@ -2,12 +2,9 @@
 // Include necessary files for configuration and database connection
 include 'php/config.php';
 include 'php/db-connect.php';
-//include 'php/send-temppass-email.php';
+require_once 'php/email.php';
 
-// Initialise variable for error messages
-$generateTempPassSuccess = false;
-
-if (isset($_POST['e'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['e'])) {
     $e = mysqli_real_escape_string($con, $_POST['e']);
     $sql = "SELECT id, firstname, username FROM live_user_information WHERE email='$e' LIMIT 1";
     $query = mysqli_query($con, $sql);
@@ -25,8 +22,23 @@ if (isset($_POST['e'])) {
         $hashTempPass = md5($tempPass);
         $sql = "UPDATE live_temp_information SET temp_pass='$hashTempPass' WHERE username='$u' LIMIT 1";
         $query = mysqli_query($con, $sql);
-      }      
+        $mailSent = sendTempPasswordEmail($fn, $u, $e, $tempPass, $hashTempPass);
+        mysqli_close($con);
+
+        if ($mailSent) {
+            echo "success";
+        } elseif (hh_mail_is_enabled()) {
+            echo "email_send_failed";
+        } else {
+            echo "success";
+        }
+        exit();
     }
+
+    mysqli_close($con);
+    echo "no_exist";
+    exit();
+}
 
 if (isset($_GET['u']) && isset($_GET['p'])) {
     $u = $_GET['u'];
@@ -53,14 +65,6 @@ if (isset($_GET['u']) && isset($_GET['p'])) {
 }
 
 mysqli_close($con);
-
-// Set success flag
-$generateTempPassSuccess = true;
-
-// If registration is successful, send the welcome email
-if ($generateTempPassSuccess) {  
-  sendTempPasswordEmail($fn, $u, $e, $tempPass, $hashTempPass);
-}
 ?>
 <!DOCTYPE html>
 <html lang="en-GB" class="h-100">

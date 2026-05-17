@@ -10,6 +10,7 @@ $nav_active = function ($page) use ($current_page) {
 $use_concept_logo = isset($nav_logo_variant) && $nav_logo_variant === 'concept';
 $is_admin_user = hh_is_admin_user();
 $current_user_id = (int) ($_SESSION['id'] ?? 0);
+$brand_logo_path = $nav_href('img/hh-logo-2026-simple.png');
 ?>
 
 <nav class="navbar navbar-expand-lg site-navbar" aria-label="Main navigation">
@@ -24,6 +25,9 @@ $current_user_id = (int) ($_SESSION['id'] ?? 0);
 						<span class="hh-wordmark__tag">Hunches</span>
 					</span>
 				<?php else: ?>
+					<span class="site-navbar__logo" aria-hidden="true">
+						<img src="<?= htmlspecialchars($brand_logo_path, ENT_QUOTES) ?>" alt="">
+					</span>
 					<span class="site-wordmark" aria-label="Hendy's Hunches">
 						<span class="site-wordmark__name">Hendy's Hunches</span>
 						<span class="site-wordmark__tag">Football prediction game</span>

@@ -17,12 +17,38 @@ $totalFixtures = (int) ($no_of_total_fixtures ?? 0);
 $resultScores = [];
 $recordedFixtureCount = 0;
 $resultSnapshotCount = 0;
+$lockedScores = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $lockResult = mysqli_query(
+        $con,
+        "SELECT match_number, homescore, awayscore
+         FROM live_match_schedule
+         WHERE homescore IS NOT NULL AND awayscore IS NOT NULL"
+    );
+
+    if ($lockResult instanceof mysqli_result) {
+        while ($lockRow = mysqli_fetch_assoc($lockResult)) {
+            $matchNumber = (int) ($lockRow['match_number'] ?? 0);
+            if ($matchNumber <= 0) {
+                continue;
+            }
+
+            $lockedScores[($matchNumber * 2) - 1] = (int) ($lockRow['homescore'] ?? 0);
+            $lockedScores[$matchNumber * 2] = (int) ($lockRow['awayscore'] ?? 0);
+        }
+        mysqli_free_result($lockResult);
+    }
+
     $postedScores = [];
     $totalScoreColumns = max(0, $totalFixtures * 2);
 
     for ($scoreIndex = 1; $scoreIndex <= $totalScoreColumns; $scoreIndex++) {
+        if (array_key_exists($scoreIndex, $lockedScores)) {
+            $postedScores[$scoreIndex] = $lockedScores[$scoreIndex];
+            continue;
+        }
+
         $value = $_POST["score{$scoreIndex}_r"] ?? '';
         $value = trim((string) $value);
         $postedScores[$scoreIndex] = $value === '' ? null : (int) $value;
@@ -230,6 +256,13 @@ include '../php/navigation.php';
   font-weight: 800;
 }
 
+.results-score-input[readonly] {
+  background: rgba(12, 90, 67, 0.08);
+  border-color: rgba(12, 90, 67, 0.18);
+  color: var(--hh-muted);
+  cursor: not-allowed;
+}
+
 .results-locked {
   display: inline-flex;
   align-items: center;
@@ -325,6 +358,7 @@ include '../php/navigation.php';
                                 $homeValue = $resultScores["score{$homeScoreIndex}_r"] ?? ($fixture['homescore'] ?? '');
                                 $awayValue = $resultScores["score{$awayScoreIndex}_r"] ?? ($fixture['awayscore'] ?? '');
                                 $isRecorded = $homeValue !== null && $homeValue !== '' && $awayValue !== null && $awayValue !== '';
+                                $lockAttribute = $isRecorded ? ' readonly aria-readonly="true"' : '';
                                 ?>
                                 <tr>
                                     <td class="d-none d-lg-table-cell">
@@ -346,11 +380,11 @@ include '../php/navigation.php';
                                     </td>
                                     <td class="d-none d-md-table-cell"></td>
                                     <td class="text-center">
-                                        <input type="number" min="0" max="20" inputmode="numeric" class="form-control results-score-input" name="score<?= $homeScoreIndex ?>_r" value="<?= htmlspecialchars((string) $homeValue) ?>">
+                                        <input type="number" min="0" max="20" inputmode="numeric" class="form-control results-score-input" name="score<?= $homeScoreIndex ?>_r" value="<?= htmlspecialchars((string) $homeValue) ?>"<?= $lockAttribute ?>>
                                     </td>
                                     <td class="text-center"><span class="results-locked">v</span></td>
                                     <td class="text-center">
-                                        <input type="number" min="0" max="20" inputmode="numeric" class="form-control results-score-input" name="score<?= $awayScoreIndex ?>_r" value="<?= htmlspecialchars((string) $awayValue) ?>">
+                                        <input type="number" min="0" max="20" inputmode="numeric" class="form-control results-score-input" name="score<?= $awayScoreIndex ?>_r" value="<?= htmlspecialchars((string) $awayValue) ?>"<?= $lockAttribute ?>>
                                     </td>
                                     <td class="d-none d-md-table-cell"></td>
                                     <td>

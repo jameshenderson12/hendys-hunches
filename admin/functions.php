@@ -65,6 +65,129 @@ function hh_admin_preview_table(mysqli $con, string $table, int $limit = 30): ar
     return ['columns' => $columns, 'rows' => $rows];
 }
 
+function hh_admin_prediction_score_columns(array $context): array
+{
+    $columns = [];
+    $start = (int) ($context['score_start'] ?? 0);
+    $end = (int) ($context['score_end'] ?? -1);
+
+    for ($scoreIndex = $start; $scoreIndex <= $end; $scoreIndex++) {
+        if ($scoreIndex > 0) {
+            $columns[] = 'score' . $scoreIndex . '_p';
+        }
+    }
+
+    return $columns;
+}
+
+function hh_admin_prediction_integrity_audit(mysqli $con, array $users): array
+{
+    $audit = [];
+    $expectedUsers = count($users);
+    $contexts = hh_prediction_stage_contexts();
+
+    foreach ($contexts as $stageKey => $context) {
+        $table = (string) ($context['table'] ?? '');
+        $scoreColumns = hh_admin_prediction_score_columns($context);
+        $scoreChecks = [];
+        foreach ($scoreColumns as $column) {
+            $scoreChecks[] = "{$column} IS NOT NULL";
+        }
+
+        $summary = [
+            'key' => $stageKey,
+            'label' => (string) ($context['label'] ?? $stageKey),
+            'table' => $table,
+            'expected_users' => $expectedUsers,
+            'rows' => 0,
+            'complete_rows' => 0,
+            'duplicate_ids' => 0,
+            'duplicate_usernames' => 0,
+            'missing_users' => [],
+            'incomplete_rows' => [],
+            'orphan_rows' => [],
+            'status' => 'missing-table',
+        ];
+
+        if ($table === '' || !hh_admin_table_exists($con, $table)) {
+            $audit[] = $summary;
+            continue;
+        }
+
+        $countResult = mysqli_query($con, "SELECT COUNT(*) AS total FROM {$table}");
+        if ($countResult instanceof mysqli_result) {
+            $countRow = mysqli_fetch_assoc($countResult);
+            $summary['rows'] = (int) ($countRow['total'] ?? 0);
+            mysqli_free_result($countResult);
+        }
+
+        $completeWhere = !empty($scoreChecks) ? implode(' AND ', $scoreChecks) : '1 = 1';
+        $completeResult = mysqli_query($con, "SELECT COUNT(*) AS total FROM {$table} WHERE {$completeWhere}");
+        if ($completeResult instanceof mysqli_result) {
+            $completeRow = mysqli_fetch_assoc($completeResult);
+            $summary['complete_rows'] = (int) ($completeRow['total'] ?? 0);
+            mysqli_free_result($completeResult);
+        }
+
+        $duplicateIdResult = mysqli_query($con, "SELECT COUNT(*) AS total FROM (SELECT id FROM {$table} GROUP BY id HAVING COUNT(*) > 1) duplicates");
+        if ($duplicateIdResult instanceof mysqli_result) {
+            $duplicateIdRow = mysqli_fetch_assoc($duplicateIdResult);
+            $summary['duplicate_ids'] = (int) ($duplicateIdRow['total'] ?? 0);
+            mysqli_free_result($duplicateIdResult);
+        }
+
+        $duplicateUsernameResult = mysqli_query($con, "SELECT COUNT(*) AS total FROM (SELECT username FROM {$table} GROUP BY username HAVING COUNT(*) > 1) duplicates");
+        if ($duplicateUsernameResult instanceof mysqli_result) {
+            $duplicateUsernameRow = mysqli_fetch_assoc($duplicateUsernameResult);
+            $summary['duplicate_usernames'] = (int) ($duplicateUsernameRow['total'] ?? 0);
+            mysqli_free_result($duplicateUsernameResult);
+        }
+
+        $missingUsers = hh_admin_fetch_all(
+            $con,
+            "SELECT lui.id, lui.username, lui.firstname, lui.surname
+             FROM live_user_information lui
+             LEFT JOIN {$table} stage ON stage.id = lui.id
+             WHERE stage.id IS NULL
+             ORDER BY lui.surname ASC, lui.firstname ASC"
+        );
+        $summary['missing_users'] = $missingUsers;
+
+        $incompleteWhere = !empty($scoreChecks)
+            ? 'id IS NOT NULL AND NOT (' . implode(' AND ', $scoreChecks) . ')'
+            : '0 = 1';
+        $summary['incomplete_rows'] = hh_admin_fetch_all(
+            $con,
+            "SELECT id, username, firstname, surname, lastupdate
+             FROM {$table}
+             WHERE {$incompleteWhere}
+             ORDER BY surname ASC, firstname ASC"
+        );
+
+        $summary['orphan_rows'] = hh_admin_fetch_all(
+            $con,
+            "SELECT stage.id, stage.username, stage.firstname, stage.surname, stage.lastupdate
+             FROM {$table} stage
+             LEFT JOIN live_user_information lui ON lui.id = stage.id
+             WHERE lui.id IS NULL
+             ORDER BY stage.surname ASC, stage.firstname ASC"
+        );
+
+        $hasIssues =
+            $summary['rows'] !== $expectedUsers
+            || !empty($summary['missing_users'])
+            || !empty($summary['incomplete_rows'])
+            || !empty($summary['orphan_rows'])
+            || $summary['duplicate_ids'] > 0
+            || $summary['duplicate_usernames'] > 0;
+
+        $summary['status'] = $hasIssues ? 'review' : 'ready';
+        $audit[] = $summary;
+    }
+
+    return $audit;
+}
+
 $messages = [];
 $errors = [];
 
@@ -237,6 +360,8 @@ $fixturePreview = hh_admin_fetch_all(
     "SELECT id, hometeam, awayteam, homescore, awayscore, date, kotime, stage FROM live_match_schedule ORDER BY date ASC, kotime ASC LIMIT 8"
 );
 
+$predictionIntegrityAudit = hh_admin_prediction_integrity_audit($con, $users);
+
 $tablePreview = hh_admin_preview_table($con, $selectedTable, 30);
 
 mysqli_close($con);
@@ -322,10 +447,105 @@ include '../php/navigation.php';
         margin-bottom: 0;
         white-space: nowrap;
       }
+      .admin-audit-grid {
+        display: grid;
+        gap: 16px;
+      }
+      .admin-audit-card {
+        padding: 16px;
+        border: 1px solid var(--hh-line);
+        border-radius: 8px;
+        background: #ffffff;
+      }
+      .admin-audit-card.is-ready {
+        border-color: rgba(25, 135, 84, 0.22);
+      }
+      .admin-audit-card.is-review {
+        border-color: rgba(255, 193, 7, 0.28);
+      }
+      .admin-audit-card.is-missing-table {
+        border-color: rgba(214, 64, 69, 0.22);
+      }
+      .admin-audit-card__top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+      .admin-audit-card__top h4 {
+        margin: 0 0 4px;
+        font-size: 1.02rem;
+        font-weight: 900;
+      }
+      .admin-audit-card__top p {
+        margin: 0;
+        color: var(--hh-muted);
+        font-size: 0.82rem;
+      }
+      .admin-audit-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 900;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+      .admin-audit-status--ready {
+        background: rgba(25, 135, 84, 0.12);
+        color: #146c43;
+      }
+      .admin-audit-status--review {
+        background: rgba(255, 193, 7, 0.16);
+        color: #8a6d03;
+      }
+      .admin-audit-status--missing-table {
+        background: rgba(214, 64, 69, 0.12);
+        color: #a52f33;
+      }
+      .admin-audit-metrics {
+        display: grid;
+        gap: 10px;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        margin-bottom: 12px;
+      }
+      .admin-audit-metrics div {
+        padding: 12px;
+        border: 1px solid var(--hh-line);
+        border-radius: 8px;
+        background: rgba(12, 90, 67, 0.04);
+      }
+      .admin-audit-metrics strong,
+      .admin-audit-metrics span {
+        display: block;
+      }
+      .admin-audit-metrics strong {
+        font-size: 1.15rem;
+        line-height: 1;
+      }
+      .admin-audit-metrics span {
+        margin-top: 6px;
+        color: var(--hh-muted);
+        font-size: 0.78rem;
+        font-weight: 700;
+      }
+      .admin-audit-list {
+        margin: 0;
+        padding-left: 18px;
+        color: var(--hh-muted);
+      }
+      .admin-audit-list li + li {
+        margin-top: 4px;
+      }
       @media (max-width: 991px) {
         .admin-grid--two,
         .admin-grid--three,
-        .admin-kpi {
+        .admin-kpi,
+        .admin-audit-metrics {
           grid-template-columns: 1fr;
         }
       }
@@ -505,6 +725,71 @@ include '../php/navigation.php';
                     <input type="hidden" name="admin_action" value="clear_fanzone">
                     <button type="submit" class="btn btn-outline-danger"><i class="bi bi-trash3"></i> Clear Fan Zone board</button>
                 </form>
+            </div>
+        </div>
+
+        <div class="admin-card">
+            <h3>Prediction Integrity Audit</h3>
+            <p class="admin-note">A pre-flight check for stage tables, player rows, and suspicious prediction data before you trust the game to run itself.</p>
+            <div class="admin-audit-grid mt-3">
+                <?php foreach ($predictionIntegrityAudit as $audit) : ?>
+                    <?php
+                    $statusClass = 'admin-audit-status--' . $audit['status'];
+                    $cardClass = 'is-' . $audit['status'];
+                    ?>
+                    <article class="admin-audit-card <?= htmlspecialchars($cardClass, ENT_QUOTES) ?>">
+                        <div class="admin-audit-card__top">
+                            <div>
+                                <h4><?= htmlspecialchars($audit['label'], ENT_QUOTES) ?></h4>
+                                <p><?= htmlspecialchars($audit['table'], ENT_QUOTES) ?></p>
+                            </div>
+                            <span class="admin-audit-status <?= htmlspecialchars($statusClass, ENT_QUOTES) ?>">
+                                <?php if ($audit['status'] === 'ready') : ?>
+                                    <i class="bi bi-check-circle-fill"></i> Ready
+                                <?php elseif ($audit['status'] === 'missing-table') : ?>
+                                    <i class="bi bi-x-octagon-fill"></i> Missing table
+                                <?php else : ?>
+                                    <i class="bi bi-exclamation-triangle-fill"></i> Review
+                                <?php endif; ?>
+                            </span>
+                        </div>
+
+                        <div class="admin-audit-metrics">
+                            <div><strong><?= (int) $audit['rows'] ?></strong><span>rows present</span></div>
+                            <div><strong><?= (int) $audit['expected_users'] ?></strong><span>users expected</span></div>
+                            <div><strong><?= (int) $audit['complete_rows'] ?></strong><span>complete rows</span></div>
+                            <div><strong><?= (int) count($audit['missing_users']) + (int) count($audit['incomplete_rows']) + (int) count($audit['orphan_rows']) + (int) $audit['duplicate_ids'] + (int) $audit['duplicate_usernames'] ?></strong><span>issues found</span></div>
+                        </div>
+
+                        <?php if ($audit['status'] === 'ready') : ?>
+                            <p class="mb-0 text-success-emphasis">Every registered player has one complete row in this stage table.</p>
+                        <?php else : ?>
+                            <ul class="admin-audit-list">
+                                <?php if ($audit['rows'] !== $audit['expected_users']) : ?>
+                                    <li><?= (int) $audit['rows'] ?> rows found for <?= (int) $audit['expected_users'] ?> registered players.</li>
+                                <?php endif; ?>
+                                <?php if ($audit['duplicate_ids'] > 0) : ?>
+                                    <li><?= (int) $audit['duplicate_ids'] ?> duplicate player ID group(s) detected.</li>
+                                <?php endif; ?>
+                                <?php if ($audit['duplicate_usernames'] > 0) : ?>
+                                    <li><?= (int) $audit['duplicate_usernames'] ?> duplicate username group(s) detected.</li>
+                                <?php endif; ?>
+                                <?php if (!empty($audit['missing_users'])) : ?>
+                                    <li>Missing rows for: <?= htmlspecialchars(implode(', ', array_map(static fn(array $row): string => trim(($row['firstname'] ?? '') . ' ' . ($row['surname'] ?? '')) ?: (string) ($row['username'] ?? ''), array_slice($audit['missing_users'], 0, 5))), ENT_QUOTES) ?><?= count($audit['missing_users']) > 5 ? '…' : '' ?></li>
+                                <?php endif; ?>
+                                <?php if (!empty($audit['incomplete_rows'])) : ?>
+                                    <li>Incomplete rows for: <?= htmlspecialchars(implode(', ', array_map(static fn(array $row): string => trim(($row['firstname'] ?? '') . ' ' . ($row['surname'] ?? '')) ?: (string) ($row['username'] ?? ''), array_slice($audit['incomplete_rows'], 0, 5))), ENT_QUOTES) ?><?= count($audit['incomplete_rows']) > 5 ? '…' : '' ?></li>
+                                <?php endif; ?>
+                                <?php if (!empty($audit['orphan_rows'])) : ?>
+                                    <li>Orphan rows exist for usernames no longer linked to a live user record.</li>
+                                <?php endif; ?>
+                                <?php if ($audit['status'] === 'missing-table') : ?>
+                                    <li>This stage table has not been created in the current database.</li>
+                                <?php endif; ?>
+                            </ul>
+                        <?php endif; ?>
+                    </article>
+                <?php endforeach; ?>
             </div>
         </div>
 

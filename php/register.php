@@ -29,11 +29,12 @@
 	  }
 
 	$stmt1 = mysqli_prepare($con, "INSERT INTO live_user_information (`username`, `password`, `firstname`, `surname`, `email`, `avatar`, `fieldofwork`, `location`, `faveteam`, `tournwinner`, `startpos`, `lastpos`, `currpos`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
-	$stmt2 = mysqli_prepare($con, "INSERT INTO live_temp_information (`username`) VALUES (?)");
+	$blankTempPassword = '';
+	$stmt2 = mysqli_prepare($con, "INSERT INTO live_temp_information (`username`, `temp_pass`) VALUES (?, ?)");
 
 	// Bind the input parameters to the prepared statement
 	mysqli_stmt_bind_param($stmt1, "ssssssssssddd", $username, md5($password), $firstname, $surname, $email, $avatar, $fieldofwork, $location, $faveteam, $tournwinner, $setdefstartpos, $setdeflastpos, $setdefcurrpos);
-	mysqli_stmt_bind_param($stmt2, "s", $username);
+	mysqli_stmt_bind_param($stmt2, "ss", $username, $blankTempPassword);
 
 	// Execute the query
 	mysqli_stmt_execute($stmt1);

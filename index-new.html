@@ -371,6 +371,10 @@
         width: 36px;
       }
 
+      .brand-stage__mobile-tag {
+        display: none;
+      }
+
       .concept-footer {
         color: rgba(255, 255, 255, 0.72);
         font-size: 0.9rem;
@@ -439,18 +443,28 @@
 
         .concept-topbar {
           align-items: flex-start;
-          flex-direction: column;
-          gap: 10px;
+          gap: 8px;
+          justify-content: space-between;
+          flex-direction: row;
         }
 
         .concept-nav {
-          justify-content: flex-start;
-          gap: 10px;
+          gap: 8px;
+          justify-content: flex-end;
         }
 
         .concept-nav a {
-          font-size: 0.92rem;
+          font-size: 0.82rem;
+          font-weight: 800;
           padding: 2px 0;
+        }
+
+        .concept-nav a[data-mobile-hide="true"] {
+          display: none;
+        }
+
+        .concept-brand-mini span {
+          display: none;
         }
 
         .concept-shell {
@@ -459,7 +473,7 @@
             "brandcopy brandlogo"
             "login login";
           grid-template-columns: minmax(0, 1fr) 92px;
-          padding: 10px 0 20px;
+          padding: 6px 0 12px;
         }
 
         .brand-stage {
@@ -479,7 +493,7 @@
 
         .brand-stage__copy {
           align-self: center;
-          gap: 6px;
+          gap: 5px;
           grid-area: brandcopy;
           justify-items: start;
           margin-top: 0;
@@ -487,29 +501,35 @@
         }
 
         .brand-stage__copy p {
-          font-size: 0.88rem;
+          display: none;
+        }
+
+        .brand-stage__mobile-tag {
+          display: block;
+          color: rgba(255, 255, 255, 0.84);
+          font-size: 0.86rem;
+          font-weight: 800;
           margin: 0;
-          max-width: 220px;
+          max-width: 180px;
+        }
+
+        .host-flags {
+          display: none;
         }
 
         .login-panel {
           grid-area: login;
-          margin-top: 10px;
-          padding: 26px 18px 18px;
+          margin-top: 2px;
+          padding: 18px 16px 16px;
         }
 
-        .login-panel__mascot {
-          height: 118px;
-          opacity: 0.92;
-          right: -28px;
-          top: -14px;
-          width: 150px;
+        .login-panel__eyebrow {
+          font-size: 0.72rem;
+          margin-bottom: 12px;
         }
 
         .login-panel::after {
-          height: 110px;
-          top: 0;
-          width: 146px;
+          display: none;
         }
 
         .login-panel h2 {
@@ -520,60 +540,50 @@
           margin-bottom: 18px;
         }
 
-        .host-flags {
-          gap: 7px;
-          justify-content: flex-start;
+        .login-actions {
+          gap: 10px;
+          grid-template-columns: minmax(0, 1fr);
+          margin-top: 18px;
         }
 
-        .host-flags span {
-          font-size: 0;
-          gap: 0;
-        }
-
-        .host-flags img {
-          height: 18px;
-          width: 28px;
+        .login-meta {
+          margin-top: 16px;
+          padding-top: 14px;
         }
 
         .concept-footer {
-          font-size: 0.82rem;
+          display: none;
         }
       }
 
-      @media (max-width: 380px) {
+      @media (max-width: 420px) {
         .concept-brand-mini strong {
-          font-size: 1rem;
-        }
-
-        .concept-brand-mini span,
-        .concept-nav a {
-          font-size: 0.76rem;
+          font-size: 0.96rem;
         }
 
         .concept-shell {
           grid-template-columns: minmax(0, 1fr) 76px;
+          gap: 8px;
         }
 
         .brand-stage__logo {
-          max-width: 74px;
+          max-width: 72px;
         }
 
-        .brand-stage__copy p {
-          font-size: 0.84rem;
-          max-width: 205px;
+        .brand-stage__mobile-tag {
+          margin: 0;
+          font-size: 0.8rem;
+          max-width: 160px;
+        }
+      }
+
+      @media (max-width: 380px) {
+        .concept-nav a {
+          font-size: 0.76rem;
         }
 
         .login-panel {
-          padding: 24px 14px 16px;
-        }
-
-        .login-panel__mascot {
-          height: 108px;
-          right: -34px;
-        }
-
-        .concept-footer {
-          font-size: 0.76rem;
+          padding: 16px 14px 15px;
         }
       }
     </style>
@@ -588,7 +598,7 @@
         </a>
         <nav class="concept-nav" aria-label="Login links">
           <a href="registration.php">Register</a>
-          <a href="forgot-password.php">Reset Password</a>
+          <a href="forgot-password.php" data-mobile-hide="true">Reset Password</a>
           <a href="#" data-bs-toggle="modal" data-bs-target="#terms">Terms</a>
         </nav>
       </header>
@@ -599,6 +609,7 @@
             <img class="brand-stage__logo" src="img/hh-logo-2026-purple.png" alt="Hendy's Hunches football predictions logo">
             <div class="brand-stage__copy">
               <p>FIFA World Cup 2026 predictions with friends, family and colleagues.</p>
+              <p class="brand-stage__mobile-tag">World Cup 2026</p>
               <div class="host-flags" aria-label="World Cup 2026 host nations">
                 <span><img src="img/flags/ca.svg" alt=""> Canada</span>
                 <span><img src="img/flags/mx.svg" alt=""> Mexico</span>

@@ -361,9 +361,8 @@ function hh_insert_prediction_stage_row(string $stageKey): void {
 		$columns[] = "score{$scoreIndex}_p";
 		$placeholders[] = '?';
 		$types .= 'i';
-		$values[] = isset($_POST["score{$scoreIndex}_p"]) && $_POST["score{$scoreIndex}_p"] !== ''
-			? (int) $_POST["score{$scoreIndex}_p"]
-			: 0;
+		$value = trim((string) ($_POST["score{$scoreIndex}_p"] ?? ''));
+		$values[] = $value === '' ? null : (int) $value;
 	}
 
 	$columns[] = 'lastupdate';
@@ -394,6 +393,34 @@ function hh_stage_has_posted_scores(array $definition): bool {
 	return false;
 }
 
+function hh_stage_posted_score_stats(array $definition): array {
+	$present = 0;
+	$filled = 0;
+
+	for ($scoreIndex = $definition['start']; $scoreIndex <= $definition['end']; $scoreIndex++) {
+		$field = "score{$scoreIndex}_p";
+		if (!array_key_exists($field, $_POST)) {
+			continue;
+		}
+
+		$present++;
+		$value = trim((string) $_POST[$field]);
+		if ($value !== '') {
+			$filled++;
+		}
+	}
+
+	$required = max(0, $definition['end'] - $definition['start'] + 1);
+
+	return [
+		'present' => $present,
+		'filled' => $filled,
+		'required' => $required,
+		'has_any' => $present > 0,
+		'is_complete' => $required > 0 && $filled === $required,
+	];
+}
+
 function hh_upsert_prediction_stage_row_with_connection(mysqli $con, string $stageKey): void {
 	if (session_status() !== PHP_SESSION_ACTIVE) {
 		session_start();
@@ -412,9 +439,8 @@ function hh_upsert_prediction_stage_row_with_connection(mysqli $con, string $sta
 
 	$scoreValues = [];
 	for ($scoreIndex = $definition['start']; $scoreIndex <= $definition['end']; $scoreIndex++) {
-		$scoreValues[] = isset($_POST["score{$scoreIndex}_p"]) && $_POST["score{$scoreIndex}_p"] !== ''
-			? (int) $_POST["score{$scoreIndex}_p"]
-			: 0;
+		$value = trim((string) ($_POST["score{$scoreIndex}_p"] ?? ''));
+		$scoreValues[] = $value === '' ? null : (int) $value;
 	}
 
 	$existsStatement = mysqli_prepare($con, "SELECT id FROM {$definition['table']} WHERE id = ? LIMIT 1");
@@ -691,6 +717,7 @@ function submitPredictions(): array {
 	if ($selectedStage !== '' && isset($stageDefinitions[$selectedStage])) {
 		$stageWindows = hh_prediction_stage_windows($con);
 		$selectedWindow = $stageWindows[$selectedStage] ?? null;
+		$selectedStats = hh_stage_posted_score_stats($stageDefinitions[$selectedStage]);
 
 		if (!$selectedWindow || !$selectedWindow['is_open']) {
 			mysqli_close($con);
@@ -701,23 +728,62 @@ function submitPredictions(): array {
 			];
 		}
 
+		if ($selectedStats['has_any'] && !$selectedStats['is_complete']) {
+			mysqli_close($con);
+			return [
+				'ok' => false,
+				'stage' => $selectedStage,
+				'message' => 'Please complete every score in this stage before saving your predictions.',
+			];
+		}
+
 		if (hh_stage_has_posted_scores($stageDefinitions[$selectedStage])) {
-			hh_upsert_prediction_stage_row_with_connection($con, $selectedStage);
-			$submittedAnyStage = true;
+			mysqli_begin_transaction($con);
+			try {
+				hh_upsert_prediction_stage_row_with_connection($con, $selectedStage);
+				hh_recalculate_all_prediction_points($con);
+				mysqli_commit($con);
+				$submittedAnyStage = true;
+			} catch (Throwable $exception) {
+				mysqli_rollback($con);
+				mysqli_close($con);
+				return [
+					'ok' => false,
+					'stage' => $selectedStage,
+					'message' => 'Predictions could not be saved: ' . $exception->getMessage(),
+				];
+			}
 		}
 	} else {
-		foreach ($stageDefinitions as $stageKey => $definition) {
-			if (!hh_stage_has_posted_scores($definition)) {
-				continue;
+		mysqli_begin_transaction($con);
+		try {
+			foreach ($stageDefinitions as $stageKey => $definition) {
+				$stats = hh_stage_posted_score_stats($definition);
+				if (!$stats['has_any']) {
+					continue;
+				}
+
+				if (!$stats['is_complete']) {
+					throw new RuntimeException('Please complete every score in each stage before saving your predictions.');
+				}
+
+				hh_upsert_prediction_stage_row_with_connection($con, $stageKey);
+				$submittedAnyStage = true;
 			}
 
-			hh_upsert_prediction_stage_row_with_connection($con, $stageKey);
-			$submittedAnyStage = true;
+			if ($submittedAnyStage) {
+				hh_recalculate_all_prediction_points($con);
+			}
+			mysqli_commit($con);
+		} catch (Throwable $exception) {
+			mysqli_rollback($con);
+			mysqli_close($con);
+			return [
+				'ok' => false,
+				'stage' => $selectedStage,
+				'message' => $exception->getMessage(),
+			];
 		}
-	}
-
-	if ($submittedAnyStage) {
-		hh_recalculate_all_prediction_points($con);
 	}
 
 	// Close the DB connection
@@ -962,7 +1028,7 @@ function displayRankingsEq5() {
     include 'php/db-connect.php';
 
     // Set up SQL query to retrieve data from database tables
-		$sql_maketable = "SELECT lui.id, lui.firstname, lui.surname, lui.avatar, lui.faveteam, lui.startpos, lui.currpos, lui.lastpos, lui.signupdate,
+		$sql_maketable = "SELECT lui.id, lui.firstname, lui.surname, lui.avatar, lui.faveteam, lui.location, lui.startpos, lui.currpos, lui.lastpos, lui.signupdate,
 						(lup_groups.points_total +
 						IFNULL(lup_ro32.points_total, 0) +
 						IFNULL(lup_ro16.points_total, 0) +
@@ -1083,9 +1149,22 @@ function displayRankingsEq5() {
         echo "<tr" . $rowClass . ">";
         echo "<td><span class=''>" . $displayRank . "</span></td>";
 		echo "<td><span class=''>" . $move . "</span></td>";		
-        echo "<td><img src='".$row["avatar"]."' class='img-responsive pull-left' width='20px'>&nbsp;<a href='user.php?id=".$row["id"]."'>".$uppCaseFN." ".$uppCaseSN."</a>" . $youBadge . "</td>";
+        $playerMeta = trim((string) ($row["location"] ?? ''));
+        if ($playerMeta === '') {
+            $playerMeta = trim((string) ($row["faveteam"] ?? ''));
+        }
+
+        echo "<td>"
+            . "<div class='rankings-player-cell'>"
+            . "<img src='" . $row["avatar"] . "' class='img-responsive pull-left' width='20px'>"
+            . "<div class='rankings-player-cell__text'>"
+            . "<div><a href='user.php?id=" . $row["id"] . "'>" . $uppCaseFN . " " . $uppCaseSN . "</a>" . $youBadge . "</div>"
+            . ($playerMeta !== '' ? "<small>" . htmlspecialchars($playerMeta, ENT_QUOTES) . "</small>" : "")
+            . "</div>"
+            . "</div>"
+            . "</td>";
         //echo "<td><img src='".$row["avatar"]."' class='img-responsive pull-left' width='20px'>&nbsp;".$uppCaseFN." ".$uppCaseSN."</td>";
-        echo "<td>".$row["points_total"]."</td>";		
+        echo "<td><span class='rankings-points-pill'>" . $row["points_total"] . "</span></td>";
         echo "</tr>";
 
         // Update the previous rank

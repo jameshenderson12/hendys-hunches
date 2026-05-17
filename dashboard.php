@@ -83,19 +83,42 @@ if (!function_exists('hh_dashboard_score_columns')) {
     }
 }
 
+if (!function_exists('hh_dashboard_table_exists')) {
+    function hh_dashboard_table_exists(mysqli $con, string $tableName): bool
+    {
+        $safeName = mysqli_real_escape_string($con, $tableName);
+        $result = mysqli_query($con, "SHOW TABLES LIKE '{$safeName}'");
+        if (!($result instanceof mysqli_result)) {
+            return false;
+        }
+
+        $exists = mysqli_num_rows($result) > 0;
+        mysqli_free_result($result);
+        return $exists;
+    }
+}
+
 $stageContexts = hh_prediction_stage_contexts();
 $sessionUserId = (int) ($_SESSION['id'] ?? 0);
+$messages = [];
+$errors = [];
 $todayFixtures = [];
 $effectiveToday = hh_effective_today_sql();
 $effectiveTodayLabel = hh_effective_today_label('D j M Y');
 $stageWindows = hh_prediction_stage_windows($con);
+$hasRecordedResults = false;
 $dashboardReminder = null;
 $stagePoints = [];
 $winnerPicks = [];
+$miniLeagueSelectionIds = [];
+$miniLeagueIsConfigured = false;
+$miniLeagueTableExists = hh_dashboard_table_exists($con, 'live_user_minileague');
+$availableMiniLeaguePlayers = [];
 $accuracy = [
-    ['label' => 'Exact scores', 'value' => 0],
-    ['label' => 'Right outcome', 'value' => 0],
-    ['label' => 'One-score hits', 'value' => 0],
+    ['label' => '7-point perfects', 'value' => 0],
+    ['label' => '3-point reads', 'value' => 0],
+    ['label' => '2-point outcomes', 'value' => 0],
+    ['label' => '1-point hits', 'value' => 0],
     ['label' => 'Misses', 'value' => 0],
 ];
 $rankingRows = [];
@@ -115,6 +138,84 @@ $closestRivalSummary = [
     'behind' => null,
     'count' => 0,
 ];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['dashboard_action'] ?? '') === 'save_mini_league') {
+    if (!$miniLeagueTableExists) {
+        $errors[] = 'The mini-league table is not available yet. Create the remaining tables in the installation manager first.';
+    } else {
+        $postedMembers = $_POST['mini_league_members'] ?? [];
+        $postedMembers = is_array($postedMembers) ? $postedMembers : [];
+        $postedMembers = array_values(array_unique(array_map('intval', $postedMembers)));
+        $postedMembers = array_values(array_filter($postedMembers, static fn (int $memberId): bool => $memberId > 0 && $memberId !== (int) $_SESSION['id']));
+
+        if (count($postedMembers) > 8) {
+            $errors[] = 'You can choose up to 8 mini-league players.';
+        } else {
+            $validMemberIds = [];
+            if (!empty($postedMembers)) {
+                $idList = implode(',', array_map('intval', $postedMembers));
+                $validResult = mysqli_query(
+                    $con,
+                    "SELECT id FROM live_user_information WHERE id IN ({$idList}) AND id <> " . (int) $_SESSION['id']
+                );
+
+                if ($validResult instanceof mysqli_result) {
+                    while ($row = mysqli_fetch_assoc($validResult)) {
+                        $validMemberIds[] = (int) ($row['id'] ?? 0);
+                    }
+                    mysqli_free_result($validResult);
+                }
+            }
+
+            sort($validMemberIds);
+            sort($postedMembers);
+
+            if ($validMemberIds !== $postedMembers) {
+                $errors[] = 'One or more selected mini-league players could not be saved.';
+            } else {
+                mysqli_begin_transaction($con);
+
+                try {
+                    mysqli_query($con, "DELETE FROM live_user_minileague WHERE owner_id = " . (int) $_SESSION['id']);
+
+                    if (!empty($validMemberIds)) {
+                        $insertStatement = mysqli_prepare(
+                            $con,
+                            "INSERT INTO live_user_minileague (owner_id, member_id) VALUES (?, ?)"
+                        );
+
+                        if (!$insertStatement) {
+                            throw new RuntimeException('Mini-league selections could not be prepared.');
+                        }
+
+                        foreach ($validMemberIds as $memberId) {
+                            $ownerId = (int) $_SESSION['id'];
+                            mysqli_stmt_bind_param($insertStatement, 'ii', $ownerId, $memberId);
+                            mysqli_stmt_execute($insertStatement);
+                        }
+
+                        mysqli_stmt_close($insertStatement);
+                    }
+
+                    mysqli_commit($con);
+                    $messages[] = empty($validMemberIds)
+                        ? 'Your mini-league has been cleared.'
+                        : 'Your mini-league players have been saved.';
+                } catch (Throwable $exception) {
+                    mysqli_rollback($con);
+                    $errors[] = 'Mini-league selections could not be saved: ' . $exception->getMessage();
+                }
+            }
+        }
+    }
+}
+
+$resultStateQuery = mysqli_query($con, "SELECT COUNT(*) AS total FROM live_match_schedule WHERE homescore IS NOT NULL AND awayscore IS NOT NULL");
+if ($resultStateQuery instanceof mysqli_result) {
+    $resultStateRow = mysqli_fetch_assoc($resultStateQuery) ?: [];
+    $hasRecordedResults = ((int) ($resultStateRow['total'] ?? 0)) > 0;
+    mysqli_free_result($resultStateQuery);
+}
 
 $rankingSelectParts = [
     'lui.id',
@@ -157,6 +258,14 @@ if ($rankingsResult instanceof mysqli_result) {
         $currentPos = max(1, (int) ($row['currpos'] ?? $row['startpos'] ?? 1));
         $lastPos = max(1, (int) ($row['lastpos'] ?? $currentPos));
         $moveMeta = hh_dashboard_move_meta($lastPos, $currentPos);
+        if (!$hasRecordedResults) {
+            $moveMeta = [
+                'diff' => 0,
+                'label' => '-',
+                'class' => 'concept-neutral',
+                'icon' => 'bi bi-dash',
+            ];
+        }
         $player = [
             'id' => (int) ($row['id'] ?? 0),
             'username' => (string) ($row['username'] ?? ''),
@@ -171,7 +280,7 @@ if ($rankingsResult instanceof mysqli_result) {
             'signupdate' => (string) ($row['signupdate'] ?? ''),
             'haspaid' => trim((string) ($row['haspaid'] ?? 'No')),
             'rank' => $currentPos,
-            'rank_label' => hh_dashboard_ordinal($currentPos),
+            'rank_label' => $hasRecordedResults ? hh_dashboard_ordinal($currentPos) : '-',
             'lastpos' => $lastPos,
             'points_total' => (int) ($row['total_points'] ?? 0),
             'move' => $moveMeta,
@@ -191,6 +300,42 @@ if ($rankingsResult instanceof mysqli_result) {
     }
 
     mysqli_free_result($rankingsResult);
+}
+
+if ($miniLeagueTableExists && $sessionUserId > 0) {
+    $miniLeagueSelectionResult = mysqli_query(
+        $con,
+        "SELECT member_id FROM live_user_minileague WHERE owner_id = " . (int) $sessionUserId . " ORDER BY created_at ASC, id ASC"
+    );
+
+    if ($miniLeagueSelectionResult instanceof mysqli_result) {
+        while ($row = mysqli_fetch_assoc($miniLeagueSelectionResult)) {
+            $memberId = (int) ($row['member_id'] ?? 0);
+            if ($memberId > 0) {
+                $miniLeagueSelectionIds[] = $memberId;
+            }
+        }
+        mysqli_free_result($miniLeagueSelectionResult);
+    }
+}
+
+$miniLeagueSelectionIds = array_values(array_unique($miniLeagueSelectionIds));
+$miniLeagueIsConfigured = !empty($miniLeagueSelectionIds);
+
+if ($sessionUserId > 0) {
+    $availablePlayersResult = mysqli_query(
+        $con,
+        "SELECT id, firstname, surname, avatar
+         FROM live_user_information
+         WHERE id <> " . (int) $sessionUserId . "
+         ORDER BY surname ASC, firstname ASC"
+    );
+    if ($availablePlayersResult instanceof mysqli_result) {
+        while ($row = mysqli_fetch_assoc($availablePlayersResult)) {
+            $availableMiniLeaguePlayers[] = $row;
+        }
+        mysqli_free_result($availablePlayersResult);
+    }
 }
 
 foreach ($stageContexts as $stageKey => $context) {
@@ -339,41 +484,52 @@ if ($dashboardReminder === null) {
 }
 
 if ($currentUser) {
-    foreach ($rankingRows as $index => $player) {
-        if ($player['id'] === $currentUser['id']) {
-            $sliceStart = max(0, $index - 2);
-            $miniLeagueRows = array_slice($rankingRows, $sliceStart, 5);
-            $closestRivalSummary['ahead'] = $rankingRows[$index - 1] ?? null;
-            $closestRivalSummary['behind'] = $rankingRows[$index + 1] ?? null;
-            break;
-        }
-    }
+    if ($miniLeagueIsConfigured) {
+        $allowedIds = array_fill_keys($miniLeagueSelectionIds, true);
+        $allowedIds[(int) $currentUser['id']] = true;
 
-    if (empty($miniLeagueRows)) {
-        $miniLeagueRows = array_slice($rankingRows, 0, 5);
+        foreach ($rankingRows as $player) {
+            if (isset($allowedIds[(int) ($player['id'] ?? 0)])) {
+                $miniLeagueRows[] = $player;
+            }
+        }
+
+        foreach ($miniLeagueRows as $index => $player) {
+            if ($player['id'] === $currentUser['id']) {
+                $closestRivalSummary['ahead'] = $miniLeagueRows[$index - 1] ?? null;
+                $closestRivalSummary['behind'] = $miniLeagueRows[$index + 1] ?? null;
+                break;
+            }
+        }
+    } else {
+        $miniLeagueRows = [];
     }
 
     $closestRivalSummary['count'] = count($miniLeagueRows);
 }
 
 $momentumRows = $rankingRows;
-usort(
-    $momentumRows,
-    static function (array $left, array $right): int {
-        $leftAbs = abs((int) ($left['move']['diff'] ?? 0));
-        $rightAbs = abs((int) ($right['move']['diff'] ?? 0));
+if ($hasRecordedResults) {
+    usort(
+        $momentumRows,
+        static function (array $left, array $right): int {
+            $leftAbs = abs((int) ($left['move']['diff'] ?? 0));
+            $rightAbs = abs((int) ($right['move']['diff'] ?? 0));
 
-        if ($leftAbs === $rightAbs) {
-            return ($left['rank'] ?? 9999) <=> ($right['rank'] ?? 9999);
+            if ($leftAbs === $rightAbs) {
+                return ($left['rank'] ?? 9999) <=> ($right['rank'] ?? 9999);
+            }
+
+            return $rightAbs <=> $leftAbs;
         }
+    );
+    $momentumRows = array_values(array_filter($momentumRows, static fn(array $player): bool => (int) ($player['move']['diff'] ?? 0) !== 0));
+    $momentumRows = array_slice($momentumRows, 0, 4);
+} else {
+    $momentumRows = [];
+}
 
-        return $rightAbs <=> $leftAbs;
-    }
-);
-$momentumRows = array_values(array_filter($momentumRows, static fn(array $player): bool => (int) ($player['move']['diff'] ?? 0) !== 0));
-$momentumRows = array_slice($momentumRows, 0, 4);
-
-if ($currentUser && !empty($rankingRows)) {
+if ($hasRecordedResults && $currentUser && !empty($rankingRows)) {
     $prizePlace = min(5, count($rankingRows));
     $currentRank = (int) $currentUser['rank'];
     $currentPoints = (int) $currentUser['points_total'];
@@ -410,16 +566,14 @@ if ($currentUser && !empty($rankingRows)) {
 
 if ($currentUser && !empty($stageContexts)) {
     $resultScoreColumns = hh_dashboard_score_columns($con, 'live_match_results', 'r');
-    $allResultFields = [];
     $predictionByScore = [];
 
-    foreach ($resultScoreColumns as $scoreIndex => $fieldName) {
-        $allResultFields[] = "SUM({$fieldName}) AS {$fieldName}";
-    }
-
     $resultScores = null;
-    if (!empty($allResultFields)) {
-        $resultsQuery = mysqli_query($con, "SELECT " . implode(', ', $allResultFields) . " FROM live_match_results");
+    if (!empty($resultScoreColumns)) {
+        $resultsQuery = mysqli_query(
+            $con,
+            "SELECT " . implode(', ', array_values($resultScoreColumns)) . " FROM live_match_results ORDER BY match_id DESC LIMIT 1"
+        );
         $resultScores = $resultsQuery ? mysqli_fetch_assoc($resultsQuery) : null;
         if ($resultsQuery instanceof mysqli_result) {
             mysqli_free_result($resultsQuery);
@@ -476,7 +630,10 @@ if ($currentUser && !empty($stageContexts)) {
                 $predHome = (int) $predHome;
                 $predAway = (int) $predAway;
 
-                if ($predHome === $resHome && $predAway === $resAway) {
+                $homeScoreHit = $predHome === $resHome;
+                $awayScoreHit = $predAway === $resAway;
+
+                if ($homeScoreHit && $awayScoreHit) {
                     $accuracy[0]['value']++;
                     continue;
                 }
@@ -487,16 +644,20 @@ if ($currentUser && !empty($stageContexts)) {
                     || (($predHome === $predAway) && ($resHome === $resAway));
 
                 if ($sameOutcome) {
-                    $accuracy[1]['value']++;
+                    if ($homeScoreHit || $awayScoreHit) {
+                        $accuracy[1]['value']++;
+                    } else {
+                        $accuracy[2]['value']++;
+                    }
                     continue;
                 }
 
-                if ($predHome === $resHome || $predAway === $resAway) {
-                    $accuracy[2]['value']++;
+                if ($homeScoreHit || $awayScoreHit) {
+                    $accuracy[3]['value']++;
                     continue;
                 }
 
-                $accuracy[3]['value']++;
+                $accuracy[4]['value']++;
             }
         }
     }
@@ -520,6 +681,13 @@ mysqli_close($con);
     </div>
 
     <section class="section dashboard-board" id="dashboardBoard">
+        <?php foreach ($messages as $message) : ?>
+            <p class="alert alert-success mb-0"><i class="bi bi-check-circle-fill"></i> <?= htmlspecialchars($message) ?></p>
+        <?php endforeach; ?>
+        <?php foreach ($errors as $error) : ?>
+            <p class="alert alert-danger mb-0"><i class="bi bi-exclamation-octagon-fill"></i> <?= htmlspecialchars($error) ?></p>
+        <?php endforeach; ?>
+
         <?php if ($dashboardReminder) : ?>
             <div class="alert alert-<?= htmlspecialchars($dashboardReminder['type']) ?> d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3" role="alert">
                 <div>
@@ -615,29 +783,6 @@ mysqli_close($con);
         </div>
 
         <div class="concept-grid concept-grid--insights">
-            <article class="concept-panel">
-                <div class="concept-panel__header">
-                    <div>
-                        <p class="eyebrow">Prize race</p>
-                        <h2><?= htmlspecialchars((string) ($prizeRace['title'] ?? 'Prize places')) ?></h2>
-                    </div>
-                    <span class="concept-pill concept-pill--gold"><?= htmlspecialchars((string) (($prizeRace['gap'] ?? 0) . ' pts')) ?></span>
-                </div>
-                <div class="race-card">
-                    <div>
-                        <span><?= htmlspecialchars((string) ($prizeRace['top']['label'] ?? 'Target')) ?></span>
-                        <strong><?= htmlspecialchars((string) ($prizeRace['top']['name'] ?? 'Waiting for standings')) ?></strong>
-                        <small><?= htmlspecialchars((string) (($prizeRace['top']['points'] ?? 0) . ' pts')) ?></small>
-                    </div>
-                    <i class="bi bi-arrow-down"></i>
-                    <div>
-                        <span><?= htmlspecialchars((string) ($prizeRace['bottom']['label'] ?? 'You')) ?></span>
-                        <strong><?= htmlspecialchars((string) ($prizeRace['bottom']['name'] ?? ($currentUser['rank_label'] ?? 'N/A'))) ?></strong>
-                        <small><?= htmlspecialchars((string) (($prizeRace['bottom']['points'] ?? ($currentUser['points_total'] ?? 0)) . ' pts')) ?></small>
-                    </div>
-                </div>
-            </article>
-
             <article class="concept-panel concept-panel--wide">
                 <div class="concept-panel__header">
                     <div>
@@ -672,7 +817,7 @@ mysqli_close($con);
                 <div class="accuracy-donut" aria-label="Accuracy breakdown">
                     <div class="accuracy-donut__ring">
                         <div>
-                            <strong><?= (int) $accuracy[0]['value'] + (int) $accuracy[1]['value'] + (int) $accuracy[2]['value'] ?></strong>
+                            <strong><?= (int) $accuracy[0]['value'] + (int) $accuracy[1]['value'] + (int) $accuracy[2]['value'] + (int) $accuracy[3]['value'] ?></strong>
                             <span>scoring picks</span>
                         </div>
                     </div>
@@ -736,50 +881,79 @@ mysqli_close($con);
             <article class="concept-panel concept-panel--wide">
                 <div class="concept-panel__header">
                     <div>
-                        <p class="eyebrow">Closest rivals</p>
-                        <h2>Mini-League Snapshot</h2>
+                        <p class="eyebrow">Mini-league</p>
+                        <h2><?= $miniLeagueIsConfigured ? 'Your Mini-League' : 'Set Up Your Mini-League' ?></h2>
                     </div>
-                    <a class="btn btn-sm btn-outline-success" href="rankings.php"><i class="bi bi-list-ol"></i> Full table</a>
+                    <button class="btn btn-sm btn-outline-success" type="button" data-bs-toggle="collapse" data-bs-target="#dashboardMiniLeagueManager" aria-expanded="false" aria-controls="dashboardMiniLeagueManager">
+                        <i class="bi bi-people"></i> <?= $miniLeagueIsConfigured ? 'Manage mini-league' : 'Choose players' ?>
+                    </button>
                 </div>
-                <div class="mini-league-table">
-                    <?php if (!empty($miniLeagueRows)) : ?>
+                <?php if ($miniLeagueIsConfigured && !empty($miniLeagueRows)) : ?>
+                    <div class="mini-league-table">
                         <?php foreach ($miniLeagueRows as $player) : ?>
                             <div class="mini-league-row<?= !empty($player['is_me']) ? ' mini-league-row--me' : '' ?>">
-                                <span class="mini-league-rank"><?= htmlspecialchars((string) $player['rank']) ?></span>
+                                <span class="mini-league-rank"><?= htmlspecialchars((string) ($hasRecordedResults ? $player['rank'] : '-')) ?></span>
                                 <img class="mini-league-avatar" src="<?= htmlspecialchars((string) $player['avatar']) ?>" alt="<?= htmlspecialchars((string) $player['name']) ?> kit avatar">
                                 <span class="mini-league-player">
                                     <strong><?= htmlspecialchars((string) $player['name']) ?></strong>
-                                    <small><?= htmlspecialchars((string) ($player['location'] !== '' ? $player['location'] : ($player['faveteam'] !== '' ? $player['faveteam'] : 'Overall standings'))) ?></small>
+                                    <small><?= htmlspecialchars((string) ($player['location'] !== '' ? $player['location'] : ($player['faveteam'] !== '' ? $player['faveteam'] : 'Mini-league player'))) ?></small>
                                 </span>
                                 <span class="mini-league-points"><?= htmlspecialchars((string) $player['points_total']) ?> pts</span>
                                 <span class="mini-league-move <?= htmlspecialchars((string) $player['move']['class']) ?>"><?= htmlspecialchars((string) $player['move']['label']) ?></span>
                             </div>
                         <?php endforeach; ?>
+                    </div>
+                    <p class="concept-subtle mb-0">This table is built from the players you chose for your personal mini-league.</p>
+                <?php else : ?>
+                    <div class="mini-league-empty-state">
+                        <p class="concept-subtle mb-0">Choose up to 8 other players and your personalised mini-league will appear here on the dashboard.</p>
+                        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#dashboardMiniLeagueManager" aria-expanded="false" aria-controls="dashboardMiniLeagueManager">
+                            <i class="bi bi-plus-circle"></i> Choose players
+                        </button>
+                    </div>
+                <?php endif; ?>
+
+                <div class="collapse mt-3<?= !empty($errors) ? ' show' : '' ?>" id="dashboardMiniLeagueManager">
+                    <div class="mini-league-manager__summary">
+                        <span><strong><?= count($miniLeagueSelectionIds) ?></strong> chosen</span>
+                        <span><strong>8</strong> max</span>
+                        <span><strong><?= count($availableMiniLeaguePlayers) ?></strong> available</span>
+                    </div>
+                    <?php if ($miniLeagueTableExists) : ?>
+                        <form method="post" class="mini-league-manager" id="dashboardMiniLeagueForm">
+                            <input type="hidden" name="dashboard_action" value="save_mini_league">
+                            <div class="mini-league-manager__search">
+                                <label class="form-label" for="miniLeagueSearch">Find players</label>
+                                <input class="form-control" id="miniLeagueSearch" type="search" placeholder="Search by name">
+                            </div>
+                            <div class="mini-league-manager__list" id="miniLeagueOptions">
+                                <?php foreach ($availableMiniLeaguePlayers as $playerOption) : ?>
+                                    <?php
+                                    $optionId = (int) ($playerOption['id'] ?? 0);
+                                    $optionName = trim((string) ($playerOption['firstname'] ?? '') . ' ' . (string) ($playerOption['surname'] ?? ''));
+                                    ?>
+                                    <label class="mini-league-option" data-player-name="<?= htmlspecialchars(strtolower($optionName), ENT_QUOTES) ?>">
+                                        <input
+                                            class="form-check-input mini-league-option__checkbox"
+                                            type="checkbox"
+                                            name="mini_league_members[]"
+                                            value="<?= $optionId ?>"
+                                            <?= in_array($optionId, $miniLeagueSelectionIds, true) ? 'checked' : '' ?>
+                                        >
+                                        <img src="<?= htmlspecialchars((string) ($playerOption['avatar'] ?? 'img/hh-icon-2024.png')) ?>" alt="" width="24" height="24">
+                                        <span><?= htmlspecialchars($optionName) ?></span>
+                                    </label>
+                                <?php endforeach; ?>
+                            </div>
+                            <div class="d-flex flex-wrap gap-2 align-items-center mt-3">
+                                <button class="btn btn-primary" type="submit"><i class="bi bi-floppy"></i> Save mini-league</button>
+                                <span class="concept-subtle" id="miniLeagueCount"><?= count($miniLeagueSelectionIds) ?> of 8 chosen</span>
+                            </div>
+                        </form>
                     <?php else : ?>
-                        <p class="concept-subtle mb-0">Mini-league standings will appear as soon as player records are available.</p>
+                        <p class="concept-subtle mb-0">The mini-league table has not been created yet. Create the remaining tables in the installation manager and this selector will come to life.</p>
                     <?php endif; ?>
                 </div>
-            </article>
-
-            <article class="concept-panel mini-league-summary">
-                <div class="concept-panel__header">
-                    <div>
-                        <p class="eyebrow">Rival watch</p>
-                        <h2>Close Calls</h2>
-                    </div>
-                </div>
-                <div class="rival-watch-card">
-                    <p>
-                        <strong><?= $closestRivalSummary['ahead'] && $currentUser ? max(0, (int) $closestRivalSummary['ahead']['points_total'] - (int) $currentUser['points_total']) : 0 ?> pts</strong>
-                        <span><?= $closestRivalSummary['ahead'] ? 'behind ' . htmlspecialchars((string) $closestRivalSummary['ahead']['name']) : 'to the next player' ?></span>
-                    </p>
-                    <p>
-                        <strong><?= $closestRivalSummary['behind'] && $currentUser ? max(0, (int) $currentUser['points_total'] - (int) $closestRivalSummary['behind']['points_total']) : 0 ?> pts</strong>
-                        <span><?= $closestRivalSummary['behind'] ? 'ahead of ' . htmlspecialchars((string) $closestRivalSummary['behind']['name']) : 'clear of the next player' ?></span>
-                    </p>
-                    <p><strong><?= (int) $closestRivalSummary['count'] ?></strong><span>players in view</span></p>
-                </div>
-                <p class="concept-subtle mb-0">Until custom opponent lists arrive, this shows the players nearest to you in the live standings.</p>
             </article>
         </div>
 
@@ -811,5 +985,50 @@ mysqli_close($con);
         </div>
     </section>
 </main>
+
+<script>
+  (function () {
+    const searchInput = document.getElementById('miniLeagueSearch');
+    const optionsWrap = document.getElementById('miniLeagueOptions');
+    const countNode = document.getElementById('miniLeagueCount');
+    const form = document.getElementById('dashboardMiniLeagueForm');
+
+    if (!searchInput || !optionsWrap || !countNode || !form) {
+      return;
+    }
+
+    const checkboxes = Array.from(optionsWrap.querySelectorAll('.mini-league-option__checkbox'));
+
+    function refreshCount() {
+      const checked = checkboxes.filter((checkbox) => checkbox.checked).length;
+      countNode.textContent = `${checked} of 8 chosen`;
+    }
+
+    function filterOptions() {
+      const query = searchInput.value.trim().toLowerCase();
+      const options = Array.from(optionsWrap.querySelectorAll('.mini-league-option'));
+
+      options.forEach((option) => {
+        const playerName = option.getAttribute('data-player-name') || '';
+        option.hidden = query !== '' && !playerName.includes(query);
+      });
+    }
+
+    checkboxes.forEach((checkbox) => {
+      checkbox.addEventListener('change', function () {
+        const checked = checkboxes.filter((item) => item.checked);
+        if (checked.length > 8) {
+          this.checked = false;
+          refreshCount();
+          return;
+        }
+        refreshCount();
+      });
+    });
+
+    searchInput.addEventListener('input', filterOptions);
+    refreshCount();
+  })();
+</script>
 
 <?php include "php/footer.php" ?>

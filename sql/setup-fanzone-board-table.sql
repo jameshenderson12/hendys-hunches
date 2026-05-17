@@ -17,7 +17,3 @@ CREATE TABLE IF NOT EXISTS live_fanzone_posts (
         FOREIGN KEY (parent_id) REFERENCES live_fanzone_posts(id)
         ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-ALTER TABLE live_fanzone_posts
-    ADD COLUMN IF NOT EXISTS is_pinned TINYINT(1) NOT NULL DEFAULT 0 AFTER is_deleted,
-    ADD COLUMN IF NOT EXISTS is_announcement TINYINT(1) NOT NULL DEFAULT 0 AFTER is_pinned;

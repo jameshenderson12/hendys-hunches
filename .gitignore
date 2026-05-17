@@ -5,3 +5,4 @@ php/send-temppass-email.php
 *.psd
 .env
 .DS_Store
+*.psd

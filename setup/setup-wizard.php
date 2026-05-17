@@ -556,14 +556,14 @@ function build_match_results_create_sql(int $totalScoreColumns): string {
 
 function build_prediction_table_create_sql(string $tableName, int $startScoreIndex, int $scoreColumnCount): string {
     $columns = [
-        'id SMALLINT(6) NOT NULL',
+        'id SMALLINT(6) PRIMARY KEY NOT NULL',
         'username CHAR(50) UNIQUE NOT NULL',
         'firstname CHAR(50) NOT NULL',
         'surname CHAR(50) NOT NULL',
     ];
 
     for ($match = $startScoreIndex; $match < $startScoreIndex + $scoreColumnCount; $match++) {
-        $columns[] = 'score' . $match . '_p TINYINT(4) NOT NULL';
+        $columns[] = 'score' . $match . '_p TINYINT(4) DEFAULT NULL';
     }
 
     $columns[] = 'lastupdate TIMESTAMP NULL';
@@ -639,12 +639,40 @@ function build_installable_table_definitions(array $context): array {
             'sql' => file_get_contents(__DIR__ . '/../sql/setup-group-standings-table.sql') ?: '',
             'description' => 'Cached standings table for the group stage.',
         ],
+        'user_minileague' => [
+            'label' => 'Mini-League Links',
+            'file' => 'sql/setup-user-minileague-table.sql',
+            'table' => 'live_user_minileague',
+            'sql' => file_get_contents(__DIR__ . '/../sql/setup-user-minileague-table.sql') ?: '',
+            'description' => 'Stores each player’s chosen mini-league opponents for personalised dashboard standings.',
+        ],
         'fanzone_posts' => [
             'label' => 'Fan Zone Message Board',
             'file' => 'sql/setup-fanzone-board-table.sql',
             'table' => 'live_fanzone_posts',
             'sql' => file_get_contents(__DIR__ . '/../sql/setup-fanzone-board-table.sql') ?: '',
             'description' => 'Threaded community posts, replies, pinned updates and announcements.',
+        ],
+        'polls' => [
+            'label' => 'Poll Questions',
+            'file' => 'sql/setup-poll-table.sql',
+            'table' => 'live_polls',
+            'sql' => file_get_contents(__DIR__ . '/../sql/setup-poll-table.sql') ?: '',
+            'description' => 'Stores the live Fan Zone poll question and whether it is currently active.',
+        ],
+        'poll_options' => [
+            'label' => 'Poll Options',
+            'file' => 'sql/setup-poll-options-table.sql',
+            'table' => 'live_poll_options',
+            'sql' => file_get_contents(__DIR__ . '/../sql/setup-poll-options-table.sql') ?: '',
+            'description' => 'Stores the answer options for each Fan Zone poll.',
+        ],
+        'poll_votes' => [
+            'label' => 'Poll Votes',
+            'file' => 'sql/setup-poll-votes-table.sql',
+            'table' => 'live_poll_votes',
+            'sql' => file_get_contents(__DIR__ . '/../sql/setup-poll-votes-table.sql') ?: '',
+            'description' => 'Stores one vote per player for each Fan Zone poll.',
         ],
         'match_results' => [
             'label' => 'Match Results',
@@ -755,6 +783,39 @@ function execute_multi_sql_statements(mysqli $connection, string $sql): void {
             continue;
         }
         if (!mysqli_query($connection, $statement)) {
+            throw new RuntimeException(mysqli_error($connection));
+        }
+    }
+}
+
+function ensure_fanzone_posts_schema(mysqli $connection): void {
+    $createSql = file_get_contents(__DIR__ . '/../sql/setup-fanzone-board-table.sql') ?: '';
+    if ($createSql === '') {
+        throw new RuntimeException('The Fan Zone setup SQL could not be loaded.');
+    }
+
+    execute_multi_sql_statements($connection, $createSql);
+
+    $existingColumns = [];
+    $columnResult = mysqli_query($connection, "SHOW COLUMNS FROM live_fanzone_posts");
+    if ($columnResult instanceof mysqli_result) {
+        while ($column = mysqli_fetch_assoc($columnResult)) {
+            $existingColumns[] = (string) ($column['Field'] ?? '');
+        }
+        mysqli_free_result($columnResult);
+    }
+
+    $alterStatements = [];
+    if (!in_array('is_pinned', $existingColumns, true)) {
+        $alterStatements[] = "ADD COLUMN is_pinned TINYINT(1) NOT NULL DEFAULT 0 AFTER is_deleted";
+    }
+    if (!in_array('is_announcement', $existingColumns, true)) {
+        $alterStatements[] = "ADD COLUMN is_announcement TINYINT(1) NOT NULL DEFAULT 0 AFTER is_pinned";
+    }
+
+    if (!empty($alterStatements)) {
+        $alterSql = "ALTER TABLE live_fanzone_posts\n    " . implode(",\n    ", $alterStatements);
+        if (!mysqli_query($connection, $alterSql)) {
             throw new RuntimeException(mysqli_error($connection));
         }
     }
@@ -1049,6 +1110,71 @@ function seed_dummy_fanzone_posts(mysqli $connection, array $users): void {
     mysqli_stmt_close($reply);
 }
 
+function seed_dummy_poll_data(mysqli $connection, array $users): void {
+    mysqli_query($connection, "DELETE FROM live_poll_votes");
+    mysqli_query($connection, "DELETE FROM live_poll_options");
+    mysqli_query($connection, "DELETE FROM live_polls");
+
+    $creatorId = (int) ($users[0]['id'] ?? 1);
+    $pollStmt = mysqli_prepare($connection, "INSERT INTO live_polls (question, created_by, is_active) VALUES (?, ?, 1)");
+    if (!$pollStmt) {
+        throw new RuntimeException(mysqli_error($connection));
+    }
+
+    $question = 'Which host nation do you think will go the furthest?';
+    mysqli_stmt_bind_param($pollStmt, 'si', $question, $creatorId);
+    mysqli_stmt_execute($pollStmt);
+    $pollId = (int) mysqli_insert_id($connection);
+    mysqli_stmt_close($pollStmt);
+
+    if ($pollId <= 0) {
+        return;
+    }
+
+    $optionStmt = mysqli_prepare($connection, "INSERT INTO live_poll_options (poll_id, option_label, sort_order) VALUES (?, ?, ?)");
+    if (!$optionStmt) {
+        throw new RuntimeException(mysqli_error($connection));
+    }
+
+    $options = [
+        1 => 'Canada',
+        2 => 'Mexico',
+        3 => 'United States',
+    ];
+    $optionIds = [];
+
+    foreach ($options as $sortOrder => $label) {
+        mysqli_stmt_bind_param($optionStmt, 'isi', $pollId, $label, $sortOrder);
+        mysqli_stmt_execute($optionStmt);
+        $optionIds[$sortOrder] = (int) mysqli_insert_id($connection);
+    }
+    mysqli_stmt_close($optionStmt);
+
+    $voteStmt = mysqli_prepare($connection, "INSERT INTO live_poll_votes (poll_id, option_id, user_id) VALUES (?, ?, ?)");
+    if (!$voteStmt) {
+        throw new RuntimeException(mysqli_error($connection));
+    }
+
+    $voteMap = [
+        1 => $optionIds[3] ?? null,
+        2 => $optionIds[3] ?? null,
+        3 => $optionIds[2] ?? null,
+        4 => $optionIds[1] ?? null,
+        5 => $optionIds[3] ?? null,
+        6 => $optionIds[2] ?? null,
+    ];
+
+    foreach ($voteMap as $userId => $optionId) {
+        if ($optionId === null) {
+            continue;
+        }
+        mysqli_stmt_bind_param($voteStmt, 'iii', $pollId, $optionId, $userId);
+        mysqli_stmt_execute($voteStmt);
+    }
+
+    mysqli_stmt_close($voteStmt);
+}
+
 function seed_dummy_game(mysqli $connection, array $tableInstallContext, array $groupPreview, array $footballKits): void {
     $users = build_dummy_users($footballKits);
     $totalMatches = max(0, (int) ($tableInstallContext['total_matches'] ?? 0));
@@ -1058,6 +1184,7 @@ function seed_dummy_game(mysqli $connection, array $tableInstallContext, array $
     seed_dummy_schedule_scores($connection, $resultsByMatch);
     seed_dummy_group_standings($connection, $groupPreview);
     seed_dummy_fanzone_posts($connection, $users);
+    seed_dummy_poll_data($connection, $users);
 
     foreach (build_prediction_stage_contexts($tableInstallContext) as $stageDefinition) {
         seed_dummy_prediction_table(
@@ -1148,7 +1275,11 @@ function build_database_contents_snapshot(mysqli $connection, array $installable
         'live_user_information' => 'User Information',
         'live_temp_information' => 'Temporary Passwords',
         'live_group_standings' => 'Group Standings',
+        'live_user_minileague' => 'Mini-League Links',
         'live_fanzone_posts' => 'Fan Zone Message Board',
+        'live_polls' => 'Poll Questions',
+        'live_poll_options' => 'Poll Options',
+        'live_poll_votes' => 'Poll Votes',
         'live_match_results' => 'Match Results',
         'live_user_predictions_groups' => 'Group Predictions',
         'live_user_predictions_ro32' => 'Round of 32 Predictions',
@@ -1194,7 +1325,11 @@ function clear_current_tournament_setup(mysqli $connection, array $installableTa
         'live_user_information',
         'live_temp_information',
         'live_group_standings',
+        'live_user_minileague',
         'live_fanzone_posts',
+        'live_polls',
+        'live_poll_options',
+        'live_poll_votes',
         'live_match_results',
         'live_user_predictions_groups',
         'live_user_predictions_ro32',
@@ -1293,7 +1428,48 @@ function build_table_audit(mysqli $connection, array $installableTables): array 
 
     foreach ($installableTables as $definition) {
         $expectedSql = $definition['sql'];
-        preg_match_all('/\n\s+[a-zA-Z0-9_]+\s+/m', $expectedSql, $matches);
+        if (($definition['table'] ?? '') === 'live_fanzone_posts') {
+            $expectedTables[$definition['table']] = [
+                'label' => $definition['label'],
+                'expected_columns' => 10,
+                'score_columns' => 0,
+            ];
+            continue;
+        }
+        if (($definition['table'] ?? '') === 'live_polls') {
+            $expectedTables[$definition['table']] = [
+                'label' => $definition['label'],
+                'expected_columns' => 6,
+                'score_columns' => 0,
+            ];
+            continue;
+        }
+        if (($definition['table'] ?? '') === 'live_poll_options') {
+            $expectedTables[$definition['table']] = [
+                'label' => $definition['label'],
+                'expected_columns' => 4,
+                'score_columns' => 0,
+            ];
+            continue;
+        }
+        if (($definition['table'] ?? '') === 'live_poll_votes') {
+            $expectedTables[$definition['table']] = [
+                'label' => $definition['label'],
+                'expected_columns' => 5,
+                'score_columns' => 0,
+            ];
+            continue;
+        }
+        if (($definition['table'] ?? '') === 'live_user_minileague') {
+            $expectedTables[$definition['table']] = [
+                'label' => $definition['label'],
+                'expected_columns' => 4,
+                'score_columns' => 0,
+            ];
+            continue;
+        }
+
+        preg_match_all('/\n\s+(?!PRIMARY\b|KEY\b|CONSTRAINT\b)[a-zA-Z0-9_]+\s+[a-zA-Z]+/m', $expectedSql, $matches);
         preg_match_all('/score\d+_[pr]/', $expectedSql, $scoreMatches);
         $expectedTables[$definition['table']] = [
             'label' => $definition['label'],
@@ -1407,14 +1583,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'install_setup_t
             $errors[] = 'The target database could not be selected: ' . mysqli_error($adminConnection);
         } else {
             $tableDefinition = $installableTables[$tableKey];
-            if (!mysqli_query($adminConnection, $tableDefinition['sql'])) {
-                $errors[] = 'Failed to create ' . $tableDefinition['table'] . ': ' . mysqli_error($adminConnection);
-            } else {
+            try {
+                if ($tableKey === 'fanzone_posts') {
+                    ensure_fanzone_posts_schema($adminConnection);
+                } else {
+                    execute_multi_sql_statements($adminConnection, $tableDefinition['sql']);
+                }
                 $messages[] = $tableDefinition['table'] . ' is ready in ' . $targetDbName . '.';
                 $inspection = inspect_target_database($adminConnection, $targetDbName);
                 $mysql_diagnostics['database_exists'] = $inspection['exists'];
                 $mysql_diagnostics['tables'] = $inspection['tables'];
                 $mysql_diagnostics['table_count'] = count($inspection['tables']);
+            } catch (Throwable $exception) {
+                $errors[] = 'Failed to create ' . $tableDefinition['table'] . ': ' . $exception->getMessage();
             }
         }
 
@@ -1445,9 +1626,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $wizard_action === 'install_all_set
         } elseif (!mysqli_select_db($adminConnection, $targetDbName)) {
             $errors[] = 'The target database could not be selected: ' . mysqli_error($adminConnection);
         } else {
-            foreach ($installableTables as $tableDefinition) {
-                if (!mysqli_query($adminConnection, $tableDefinition['sql'])) {
-                    $errors[] = 'Failed to create ' . $tableDefinition['table'] . ': ' . mysqli_error($adminConnection);
+            foreach ($installableTables as $tableKey => $tableDefinition) {
+                try {
+                    if ($tableKey === 'fanzone_posts') {
+                        ensure_fanzone_posts_schema($adminConnection);
+                    } else {
+                        execute_multi_sql_statements($adminConnection, $tableDefinition['sql']);
+                    }
+                } catch (Throwable $exception) {
+                    $errors[] = 'Failed to create ' . $tableDefinition['table'] . ': ' . $exception->getMessage();
                     break;
                 }
             }

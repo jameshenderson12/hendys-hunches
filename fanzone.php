@@ -105,22 +105,232 @@ function hh_fanzone_schema_ready(mysqli $con, string $table): array
     return ['ready' => $missing === [], 'missing' => $missing];
 }
 
+function hh_fanzone_poll_schema_ready(mysqli $con): array
+{
+    $definitions = [
+        'live_polls' => ['id', 'question', 'created_by', 'is_active', 'created_at', 'closed_at'],
+        'live_poll_options' => ['id', 'poll_id', 'option_label', 'sort_order'],
+        'live_poll_votes' => ['id', 'poll_id', 'option_id', 'user_id', 'created_at'],
+    ];
+
+    $missing = [];
+    foreach ($definitions as $table => $requiredColumns) {
+        if (!hh_fanzone_table_exists($con, $table)) {
+            $missing[$table] = $requiredColumns;
+            continue;
+        }
+
+        $result = mysqli_query($con, "SHOW COLUMNS FROM {$table}");
+        if (!$result) {
+            $missing[$table] = $requiredColumns;
+            continue;
+        }
+
+        $columns = [];
+        while ($row = mysqli_fetch_assoc($result)) {
+            $columns[] = $row['Field'];
+        }
+        mysqli_free_result($result);
+
+        $missingColumns = array_values(array_diff($requiredColumns, $columns));
+        if ($missingColumns !== []) {
+            $missing[$table] = $missingColumns;
+        }
+    }
+
+    return ['ready' => $missing === [], 'missing' => $missing];
+}
+
+function hh_fanzone_fetch_poll_with_results(mysqli $con, int $pollId, int $sessionUserId = 0): ?array
+{
+    if ($pollId <= 0) {
+        return null;
+    }
+
+    $pollStmt = mysqli_prepare(
+        $con,
+        "SELECT id, question, is_active, created_at, closed_at FROM live_polls WHERE id = ? LIMIT 1"
+    );
+    if (!$pollStmt) {
+        return null;
+    }
+
+    mysqli_stmt_bind_param($pollStmt, 'i', $pollId);
+    mysqli_stmt_execute($pollStmt);
+    $pollResult = mysqli_stmt_get_result($pollStmt);
+    $poll = $pollResult ? mysqli_fetch_assoc($pollResult) : null;
+    mysqli_stmt_close($pollStmt);
+
+    if ($poll === null) {
+        return null;
+    }
+
+    $options = [];
+    $totalVotes = 0;
+    $userVoteOptionId = null;
+    $sessionIdSql = $sessionUserId > 0 ? (string) $sessionUserId : '0';
+
+    $optionSql = "
+        SELECT
+            o.id,
+            o.option_label,
+            o.sort_order,
+            COUNT(v.id) AS vote_total,
+            MAX(CASE WHEN v.user_id = {$sessionIdSql} THEN v.option_id ELSE NULL END) AS user_vote_option_id
+        FROM live_poll_options o
+        LEFT JOIN live_poll_votes v ON v.option_id = o.id AND v.poll_id = o.poll_id
+        WHERE o.poll_id = " . (int) $pollId . "
+        GROUP BY o.id, o.option_label, o.sort_order
+        ORDER BY o.sort_order ASC, o.id ASC
+    ";
+    $optionResult = mysqli_query($con, $optionSql);
+    if ($optionResult instanceof mysqli_result) {
+        while ($row = mysqli_fetch_assoc($optionResult)) {
+            $voteTotal = (int) ($row['vote_total'] ?? 0);
+            $totalVotes += $voteTotal;
+            if ($userVoteOptionId === null && !empty($row['user_vote_option_id'])) {
+                $userVoteOptionId = (int) $row['user_vote_option_id'];
+            }
+            $options[] = [
+                'id' => (int) $row['id'],
+                'label' => (string) $row['option_label'],
+                'sort_order' => (int) $row['sort_order'],
+                'votes' => $voteTotal,
+            ];
+        }
+        mysqli_free_result($optionResult);
+    }
+
+    foreach ($options as &$option) {
+        $option['percent'] = $totalVotes > 0 ? (int) round(($option['votes'] / $totalVotes) * 100) : 0;
+        $option['selected_by_user'] = $userVoteOptionId !== null && $userVoteOptionId === $option['id'];
+    }
+    unset($option);
+
+    $poll['id'] = (int) $poll['id'];
+    $poll['is_active'] = (int) $poll['is_active'] === 1;
+    $poll['options'] = $options;
+    $poll['total_votes'] = $totalVotes;
+    $poll['user_voted'] = $userVoteOptionId !== null;
+    $poll['user_vote_option_id'] = $userVoteOptionId;
+
+    return $poll;
+}
+
 $boardTable = 'live_fanzone_posts';
 $boardReady = isset($con) && $con instanceof mysqli && hh_fanzone_table_exists($con, $boardTable);
 $boardSchema = $boardReady ? hh_fanzone_schema_ready($con, $boardTable) : ['ready' => false, 'missing' => []];
 $boardSchemaReady = $boardReady && $boardSchema['ready'];
+$pollSchema = isset($con) && $con instanceof mysqli ? hh_fanzone_poll_schema_ready($con) : ['ready' => false, 'missing' => []];
+$pollSchemaReady = $pollSchema['ready'];
 $boardError = null;
 $boardNotice = null;
+$pollError = null;
+$pollNotice = null;
 $composerDraft = '';
 $editingPost = null;
 $threads = [];
 $replyMap = [];
+$currentPoll = null;
+$previousPolls = [];
+$pollDraftQuestion = '';
+$pollDraftOptions = array_fill(0, 6, '');
+$sessionUserId = (int) ($_SESSION['id'] ?? 0);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['fanzone_action'])) {
-    if (!$boardReady || !$boardSchemaReady) {
+    $action = (string) $_POST['fanzone_action'];
+
+    if ($action === 'create_poll') {
+        $pollDraftQuestion = trim((string) ($_POST['poll_question'] ?? ''));
+        $pollDraftOptions = [];
+        foreach ((array) ($_POST['poll_options'] ?? []) as $optionValue) {
+            $pollDraftOptions[] = trim((string) $optionValue);
+        }
+        $pollDraftOptions = array_pad(array_slice($pollDraftOptions, 0, 6), 6, '');
+
+        if (!$pollSchemaReady) {
+            $pollError = 'The Fan Zone poll tables need their latest database setup before polls can be managed here.';
+        } elseif (!hh_fanzone_is_admin()) {
+            $pollError = 'Only admins can launch a new Fan Zone poll.';
+        } elseif ($pollDraftQuestion === '') {
+            $pollError = 'Please write the poll question first.';
+        } else {
+            $options = array_values(array_filter($pollDraftOptions, static fn(string $option): bool => $option !== ''));
+            if (count($options) < 2) {
+                $pollError = 'Please include at least two answer options.';
+            } else {
+                mysqli_begin_transaction($con);
+                try {
+                    mysqli_query($con, "UPDATE live_polls SET is_active = 0, closed_at = NOW() WHERE is_active = 1");
+
+                    $pollStmt = mysqli_prepare($con, "INSERT INTO live_polls (question, created_by, is_active) VALUES (?, ?, 1)");
+                    if (!$pollStmt) {
+                        throw new RuntimeException(mysqli_error($con));
+                    }
+
+                    mysqli_stmt_bind_param($pollStmt, 'si', $pollDraftQuestion, $sessionUserId);
+                    mysqli_stmt_execute($pollStmt);
+                    $pollId = (int) mysqli_insert_id($con);
+                    mysqli_stmt_close($pollStmt);
+
+                    $optionStmt = mysqli_prepare($con, "INSERT INTO live_poll_options (poll_id, option_label, sort_order) VALUES (?, ?, ?)");
+                    if (!$optionStmt) {
+                        throw new RuntimeException(mysqli_error($con));
+                    }
+
+                    foreach ($options as $index => $optionLabel) {
+                        $sortOrder = $index + 1;
+                        mysqli_stmt_bind_param($optionStmt, 'isi', $pollId, $optionLabel, $sortOrder);
+                        mysqli_stmt_execute($optionStmt);
+                    }
+                    mysqli_stmt_close($optionStmt);
+
+                    mysqli_commit($con);
+                    header('Location: fanzone.php?poll=created#fanzonePoll');
+                    exit();
+                } catch (Throwable $exception) {
+                    mysqli_rollback($con);
+                    $pollError = 'The poll could not be created just now.';
+                }
+            }
+        }
+    } elseif ($action === 'vote_poll') {
+        $pollId = (int) ($_POST['poll_id'] ?? 0);
+        $optionId = (int) ($_POST['option_id'] ?? 0);
+
+        if (!$pollSchemaReady) {
+            $pollError = 'The Fan Zone poll tables need their latest database setup before players can vote.';
+        } elseif ($pollId <= 0 || $optionId <= 0 || $sessionUserId <= 0) {
+            $pollError = 'That vote could not be understood.';
+        } else {
+            $activePoll = hh_fanzone_fetch_poll_with_results($con, $pollId, $sessionUserId);
+            if ($activePoll === null || !$activePoll['is_active']) {
+                $pollError = 'That poll is no longer live.';
+            } elseif ($activePoll['user_voted']) {
+                $pollNotice = 'You have already voted in this poll, so here are the live results.';
+            } else {
+                $validOptionIds = array_column($activePoll['options'], 'id');
+                if (!in_array($optionId, $validOptionIds, true)) {
+                    $pollError = 'Please choose one of the listed answers.';
+                } else {
+                    $voteStmt = mysqli_prepare($con, "INSERT INTO live_poll_votes (poll_id, option_id, user_id) VALUES (?, ?, ?)");
+                    if ($voteStmt) {
+                        mysqli_stmt_bind_param($voteStmt, 'iii', $pollId, $optionId, $sessionUserId);
+                        if (mysqli_stmt_execute($voteStmt)) {
+                            mysqli_stmt_close($voteStmt);
+                            header('Location: fanzone.php?poll=voted#fanzonePoll');
+                            exit();
+                        }
+                        mysqli_stmt_close($voteStmt);
+                    }
+
+                    $pollError = 'Your vote could not be saved just now.';
+                }
+            }
+        }
+    } elseif (!$boardReady || !$boardSchemaReady) {
         $boardError = 'The Fan Zone board needs its latest database setup before posts can be managed here.';
     } else {
-        $action = (string) $_POST['fanzone_action'];
         $body = trim((string) ($_POST['message_body'] ?? ''));
         $displayName = hh_fanzone_display_name();
         $username = (string) ($_SESSION['username'] ?? '');
@@ -266,6 +476,14 @@ if (isset($_GET['posted'])) {
     }
 }
 
+if (isset($_GET['poll'])) {
+    if ($_GET['poll'] === 'created') {
+        $pollNotice = 'The new live poll is up and ready for players.';
+    } elseif ($_GET['poll'] === 'voted') {
+        $pollNotice = 'Vote saved. Here are the live results so far.';
+    }
+}
+
 if ($boardSchemaReady && isset($_GET['edit_post']) && $_GET['edit_post'] !== '') {
     $editPostId = (int) $_GET['edit_post'];
     if ($editPostId > 0) {
@@ -342,6 +560,28 @@ if ($boardSchemaReady) {
     }
 }
 
+if ($pollSchemaReady) {
+    $activePollResult = mysqli_query($con, "SELECT id FROM live_polls WHERE is_active = 1 ORDER BY created_at DESC, id DESC LIMIT 1");
+    if ($activePollResult instanceof mysqli_result) {
+        $activePollRow = mysqli_fetch_assoc($activePollResult) ?: null;
+        mysqli_free_result($activePollResult);
+        if ($activePollRow !== null) {
+            $currentPoll = hh_fanzone_fetch_poll_with_results($con, (int) $activePollRow['id'], $sessionUserId);
+        }
+    }
+
+    $previousResult = mysqli_query($con, "SELECT id FROM live_polls WHERE is_active = 0 ORDER BY COALESCE(closed_at, created_at) DESC, id DESC LIMIT 5");
+    if ($previousResult instanceof mysqli_result) {
+        while ($previousRow = mysqli_fetch_assoc($previousResult)) {
+            $poll = hh_fanzone_fetch_poll_with_results($con, (int) $previousRow['id'], $sessionUserId);
+            if ($poll !== null) {
+                $previousPolls[] = $poll;
+            }
+        }
+        mysqli_free_result($previousResult);
+    }
+}
+
 include "php/header.php";
 include "php/navigation.php";
 ?>
@@ -364,26 +604,128 @@ include "php/navigation.php";
             <section class="fanzone-panel">
                 <div class="fanzone-panel__header">
                     <div>
-                        <p class="eyebrow">Coming alive</p>
-                        <h2>Fan Zone nuggets</h2>
+                        <p class="eyebrow">Live question</p>
+                        <h2 id="fanzonePoll">Fan poll</h2>
                     </div>
                 </div>
-                <div class="fanzone-nuggets">
-                    <article class="fanzone-nugget">
-                        <span class="fanzone-nugget__icon"><i class="bi bi-chat-heart"></i></span>
-                        <div>
-                            <h3>Message board</h3>
-                            <p class="mb-0">Quick threads and replies for banter, reactions and questions during the tournament.</p>
+                <?php if ($pollNotice !== null) : ?>
+                    <div class="alert alert-success" role="alert"><?= htmlspecialchars($pollNotice, ENT_QUOTES) ?></div>
+                <?php endif; ?>
+
+                <?php if ($pollError !== null) : ?>
+                    <div class="alert alert-danger" role="alert"><?= htmlspecialchars($pollError, ENT_QUOTES) ?></div>
+                <?php endif; ?>
+
+                <?php if (!$pollSchemaReady) : ?>
+                    <div class="fanzone-empty fanzone-empty--compact">
+                        <i class="bi bi-bar-chart-line"></i>
+                        <h3>Polls not ready yet</h3>
+                        <p class="mb-0">Run the poll setup tables in the installation manager and this area can start carrying live player votes.</p>
+                    </div>
+                <?php elseif ($currentPoll !== null) : ?>
+                    <div class="fanzone-poll-card">
+                        <div class="fanzone-poll-card__header">
+                            <div>
+                                <span class="fanzone-chip fanzone-chip--soft"><?= $currentPoll['user_voted'] ? 'Results live' : 'Vote now' ?></span>
+                                <h3><?= htmlspecialchars($currentPoll['question'], ENT_QUOTES) ?></h3>
+                            </div>
+                            <p class="concept-subtle mb-0"><?= (int) $currentPoll['total_votes'] ?> vote<?= (int) $currentPoll['total_votes'] === 1 ? '' : 's' ?> so far</p>
                         </div>
-                    </article>
-                    <article class="fanzone-nugget fanzone-nugget--muted">
-                        <span class="fanzone-nugget__icon"><i class="bi bi-emoji-sunglasses"></i></span>
-                        <div>
-                            <h3>More to come</h3>
-                            <p class="mb-0">This page can also hold little extras later like fun facts, mini-polls, odd stats and supporter moments.</p>
-                        </div>
-                    </article>
-                </div>
+
+                        <?php if (!$currentPoll['user_voted']) : ?>
+                            <form method="post" class="fanzone-poll-form">
+                                <input type="hidden" name="fanzone_action" value="vote_poll">
+                                <input type="hidden" name="poll_id" value="<?= (int) $currentPoll['id'] ?>">
+                                <div class="fanzone-poll-options">
+                                    <?php foreach ($currentPoll['options'] as $option) : ?>
+                                        <label class="fanzone-poll-option">
+                                            <input type="radio" name="option_id" value="<?= (int) $option['id'] ?>" required>
+                                            <span><?= htmlspecialchars($option['label'], ENT_QUOTES) ?></span>
+                                        </label>
+                                    <?php endforeach; ?>
+                                </div>
+                                <div class="fanzone-composer__actions">
+                                    <span class="concept-subtle">Players see the results as soon as they vote.</span>
+                                    <button type="submit" class="btn btn-primary"><i class="bi bi-check2-circle"></i> Submit vote</button>
+                                </div>
+                            </form>
+                        <?php else : ?>
+                            <div class="fanzone-poll-results">
+                                <?php foreach ($currentPoll['options'] as $option) : ?>
+                                    <div class="fanzone-poll-result<?= $option['selected_by_user'] ? ' is-selected' : '' ?>">
+                                        <div class="fanzone-poll-result__meta">
+                                            <strong><?= htmlspecialchars($option['label'], ENT_QUOTES) ?></strong>
+                                            <span><?= (int) $option['votes'] ?> vote<?= (int) $option['votes'] === 1 ? '' : 's' ?> · <?= (int) $option['percent'] ?>%</span>
+                                        </div>
+                                        <div class="fanzone-poll-result__bar">
+                                            <span style="width: <?= (int) $option['percent'] ?>%"></span>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if ($previousPolls !== []) : ?>
+                            <details class="fanzone-poll-history">
+                                <summary><i class="bi bi-clock-history"></i> Previous polls</summary>
+                                <div class="fanzone-poll-history__list">
+                                    <?php foreach ($previousPolls as $previousPoll) : ?>
+                                        <article class="fanzone-poll-history__item">
+                                            <div class="fanzone-poll-history__header">
+                                                <h4><?= htmlspecialchars($previousPoll['question'], ENT_QUOTES) ?></h4>
+                                                <span><?= (int) $previousPoll['total_votes'] ?> vote<?= (int) $previousPoll['total_votes'] === 1 ? '' : 's' ?></span>
+                                            </div>
+                                            <div class="fanzone-poll-results">
+                                                <?php foreach ($previousPoll['options'] as $option) : ?>
+                                                    <div class="fanzone-poll-result">
+                                                        <div class="fanzone-poll-result__meta">
+                                                            <strong><?= htmlspecialchars($option['label'], ENT_QUOTES) ?></strong>
+                                                            <span><?= (int) $option['votes'] ?> · <?= (int) $option['percent'] ?>%</span>
+                                                        </div>
+                                                        <div class="fanzone-poll-result__bar">
+                                                            <span style="width: <?= (int) $option['percent'] ?>%"></span>
+                                                        </div>
+                                                    </div>
+                                                <?php endforeach; ?>
+                                            </div>
+                                        </article>
+                                    <?php endforeach; ?>
+                                </div>
+                            </details>
+                        <?php endif; ?>
+                    </div>
+                <?php else : ?>
+                    <div class="fanzone-empty fanzone-empty--compact">
+                        <i class="bi bi-megaphone"></i>
+                        <h3>No live poll just now</h3>
+                        <p class="mb-0">When there is something fun to vote on, the current poll will appear here and then flip to the live results once you answer.</p>
+                    </div>
+                <?php endif; ?>
+
+                <?php if ($pollSchemaReady && hh_fanzone_is_admin()) : ?>
+                    <details class="fanzone-admin-poll">
+                        <summary><i class="bi bi-sliders2"></i> Create or replace the live poll</summary>
+                        <form method="post" class="fanzone-poll-admin-form">
+                            <input type="hidden" name="fanzone_action" value="create_poll">
+                            <div>
+                                <label class="form-label" for="pollQuestion">Question</label>
+                                <input id="pollQuestion" type="text" class="form-control" name="poll_question" maxlength="255" value="<?= htmlspecialchars($pollDraftQuestion, ENT_QUOTES) ?>" placeholder="e.g. Which host nation will go the furthest?">
+                            </div>
+                            <div class="fanzone-poll-admin-form__grid">
+                                <?php foreach ($pollDraftOptions as $index => $optionDraft) : ?>
+                                    <div>
+                                        <label class="form-label" for="pollOption<?= $index + 1 ?>">Option <?= $index + 1 ?></label>
+                                        <input id="pollOption<?= $index + 1 ?>" type="text" class="form-control" name="poll_options[]" maxlength="120" value="<?= htmlspecialchars($optionDraft, ENT_QUOTES) ?>" placeholder="Answer option">
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                            <div class="fanzone-composer__actions">
+                                <span class="concept-subtle">Launching a new poll closes the current one and keeps the older results below.</span>
+                                <button type="submit" class="btn btn-outline-dark"><i class="bi bi-plus-circle"></i> Launch poll</button>
+                            </div>
+                        </form>
+                    </details>
+                <?php endif; ?>
             </section>
 
             <aside class="fanzone-panel fanzone-panel--side">

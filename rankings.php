@@ -74,19 +74,6 @@ $(document).ready(function() {
     $('#rankingsSearchMount').append(searchNode);
 });
 
- $(document).ready(function () {
-   const prizeRows = [
-     'rankings-row--gold',
-     'rankings-row--silver',
-     'rankings-row--bronze',
-     'rankings-row--prize',
-     'rankings-row--prize'
-   ];
-
-   prizeRows.forEach(function(className, index) {
-     $('#rankingsTable tbody tr').eq(index).addClass(className);
-   });
- });
 </script>
 
 <!-- Footer -->

@@ -1781,8 +1781,9 @@ h6 {
 }
 
 .site-navbar .navbar-brand {
-  display: grid;
-  gap: 2px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
   color: #ffffff;
   font-family: 'Lato', sans-serif;
   font-weight: 700;
@@ -1795,10 +1796,17 @@ h6 {
 }
 
 .site-navbar__logo {
-  border: 2px solid rgba(255, 255, 255, 0.82);
-  border-radius: 8px;
-  background: #ffffff;
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.site-navbar__logo img {
+  display: block;
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
 }
 
 .site-wordmark {
@@ -3355,6 +3363,161 @@ body.tour-active {
   color: var(--hh-muted);
 }
 
+.fanzone-empty--compact {
+  min-height: 0;
+}
+
+.fanzone-poll-card,
+.fanzone-admin-poll,
+.fanzone-poll-history__item {
+  display: grid;
+  gap: 16px;
+}
+
+.fanzone-poll-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.fanzone-poll-card__header h3,
+.fanzone-poll-history__header h4 {
+  margin: 10px 0 0;
+  color: var(--hh-ink);
+}
+
+.fanzone-poll-form,
+.fanzone-poll-admin-form {
+  display: grid;
+  gap: 16px;
+}
+
+.fanzone-poll-options {
+  display: grid;
+  gap: 10px;
+}
+
+.fanzone-poll-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--hh-line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.92);
+  font-weight: 700;
+  color: var(--hh-ink);
+}
+
+.fanzone-poll-option input {
+  margin: 0;
+}
+
+.fanzone-poll-results {
+  display: grid;
+  gap: 12px;
+}
+
+.fanzone-poll-result {
+  display: grid;
+  gap: 8px;
+}
+
+.fanzone-poll-result.is-selected strong::after {
+  content: " • Your vote";
+  color: var(--hh-purple-dark);
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.fanzone-poll-result__meta,
+.fanzone-poll-history__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.fanzone-poll-result__meta strong,
+.fanzone-poll-history__header h4 {
+  font-size: 1rem;
+}
+
+.fanzone-poll-result__meta span,
+.fanzone-poll-history__header span {
+  color: var(--hh-muted);
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.fanzone-poll-result__bar {
+  height: 12px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(12, 90, 67, 0.08);
+}
+
+.fanzone-poll-result__bar span {
+  display: block;
+  height: 100%;
+  min-width: 8px;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--hh-green), var(--hh-purple));
+}
+
+.fanzone-poll-history,
+.fanzone-admin-poll {
+  margin-top: 6px;
+  padding-top: 14px;
+  border-top: 1px solid var(--hh-line);
+}
+
+.fanzone-poll-history summary,
+.fanzone-admin-poll summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  color: var(--hh-purple-dark);
+  font-weight: 800;
+  list-style: none;
+}
+
+.fanzone-poll-history summary::-webkit-details-marker,
+.fanzone-admin-poll summary::-webkit-details-marker {
+  display: none;
+}
+
+.fanzone-poll-history__list {
+  display: grid;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.fanzone-poll-admin-form {
+  margin-top: 14px;
+}
+
+.fanzone-poll-admin-form__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+@media (max-width: 767.98px) {
+  .fanzone-poll-card__header,
+  .fanzone-poll-result__meta,
+  .fanzone-poll-history__header {
+    grid-template-columns: 1fr;
+    display: grid;
+  }
+
+  .fanzone-poll-admin-form__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .competition-page {
   display: grid;
   gap: 18px;
@@ -3712,6 +3875,56 @@ body.tour-active {
   margin-right: 8px;
   height: auto;
   vertical-align: middle;
+}
+
+.rankings-player-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rankings-player-cell__text {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.rankings-player-cell__text > div {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.rankings-player-cell__text a {
+  color: var(--hh-ink);
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.rankings-player-cell__text a:hover,
+.rankings-player-cell__text a:focus {
+  color: var(--hh-purple-dark);
+  text-decoration: underline;
+}
+
+.rankings-player-cell__text small {
+  color: var(--hh-muted);
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.rankings-points-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 56px;
+  min-height: 34px;
+  padding: 0.28rem 0.62rem;
+  border-radius: 999px;
+  background: rgba(12, 90, 67, 0.10);
+  color: var(--hh-green-dark);
+  font-weight: 900;
 }
 
 .rankings-you-badge {
@@ -5235,6 +5448,76 @@ body.tour-active {
 .mini-league-summary {
   display: flex;
   flex-direction: column;
+}
+
+.mini-league-manager {
+  display: grid;
+  gap: 12px;
+}
+
+.mini-league-manager__summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.mini-league-manager__summary span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border: 1px solid var(--hh-line);
+  border-radius: 999px;
+  background: rgba(12, 90, 67, 0.08);
+  color: var(--hh-green-dark);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.mini-league-manager__search {
+  display: grid;
+  gap: 6px;
+}
+
+.mini-league-manager__list {
+  display: grid;
+  gap: 8px;
+  max-height: 320px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.mini-league-option {
+  display: grid;
+  grid-template-columns: auto 28px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px solid var(--hh-line);
+  border-radius: 8px;
+  background: var(--concept-soft);
+}
+
+.mini-league-option img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.mini-league-option__checkbox {
+  margin-top: 0;
+}
+
+.mini-league-empty-state {
+  display: grid;
+  gap: 12px;
+  justify-items: start;
+  padding: 16px;
+  border: 1px dashed var(--hh-line);
+  border-radius: 8px;
+  background: rgba(143, 102, 216, 0.05);
+  margin-bottom: 12px;
 }
 
 .rival-watch-card {

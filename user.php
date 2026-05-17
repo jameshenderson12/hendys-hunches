@@ -131,6 +131,7 @@ $predictionRows = [];
 $fixtures = [];
 $matchResults = [];
 $totalPoints = 0;
+$hasRecordedResults = false;
 
 if ($userId > 0) {
     $profileStatement = mysqli_prepare(
@@ -185,6 +186,13 @@ if ($userId > 0) {
         }
         mysqli_free_result($fixtureResult);
     }
+
+    $resultStateResult = mysqli_query($con, "SELECT COUNT(*) AS total FROM live_match_schedule WHERE homescore IS NOT NULL AND awayscore IS NOT NULL");
+    if ($resultStateResult instanceof mysqli_result) {
+        $resultStateRow = mysqli_fetch_assoc($resultStateResult) ?: [];
+        $hasRecordedResults = ((int) ($resultStateRow['total'] ?? 0)) > 0;
+        mysqli_free_result($resultStateResult);
+    }
 }
 
 mysqli_close($con);
@@ -197,7 +205,7 @@ if (!$profile) {
 $fullName = ucfirst((string) $profile['firstname']) . ' ' . ucfirst((string) $profile['surname']);
 $tournwinner = (string) ($profile['tournwinner'] ?? '');
 $tournwinnerFlag = $tournwinner !== '' ? hh_get_team_flag_path($tournwinner) : '';
-$currentPosition = hh_ordinal_position((int) ($profile['currpos'] ?? 0));
+$currentPosition = $hasRecordedResults ? hh_ordinal_position((int) ($profile['currpos'] ?? 0)) : '-';
 $selectedStage = $stageContexts[$selectedStageKey] ?? null;
 $visibleFixtures = [];
 $selectedStagePoints = (int) (($predictionRows[$selectedStageKey]['points_total'] ?? 0));
@@ -362,7 +370,9 @@ include 'php/navigation.php';
                     <div>
                         <p class="eyebrow mb-2">Player card</p>
                         <h2><?= htmlspecialchars($fullName) ?></h2>
-                        <p class="concept-subtle mb-0"><?= htmlspecialchars($currentPosition) ?> in the rankings</p>
+                        <p class="concept-subtle mb-0">
+                            <?= $hasRecordedResults ? htmlspecialchars($currentPosition) . ' in the rankings' : 'Ranking begins after the first recorded result' ?>
+                        </p>
                     </div>
                     <div class="concept-profile-stats">
                         <span><strong><?= htmlspecialchars((string) $totalPoints) ?></strong>Total points</span>
