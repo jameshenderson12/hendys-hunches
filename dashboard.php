@@ -115,11 +115,11 @@ $miniLeagueIsConfigured = false;
 $miniLeagueTableExists = hh_dashboard_table_exists($con, 'live_user_minileague');
 $availableMiniLeaguePlayers = [];
 $accuracy = [
-    ['label' => '7-point perfects', 'value' => 0],
-    ['label' => '3-point reads', 'value' => 0],
-    ['label' => '2-point outcomes', 'value' => 0],
-    ['label' => '1-point hits', 'value' => 0],
-    ['label' => 'Misses', 'value' => 0],
+    ['label' => '7-pointers', 'value' => 0, 'color' => '#0c5a43'],
+    ['label' => '3-pointers', 'value' => 0, 'color' => '#8f66d8'],
+    ['label' => '2-pointers', 'value' => 0, 'color' => '#118ab2'],
+    ['label' => '1-pointer', 'value' => 0, 'color' => '#f3c742'],
+    ['label' => '0-pointers', 'value' => 0, 'color' => '#d7dde1'],
 ];
 $rankingRows = [];
 $currentUser = null;
@@ -613,7 +613,7 @@ if ($currentUser && !empty($stageContexts)) {
         }
     }
 
-    if (is_array($resultScores)) {
+if (is_array($resultScores)) {
         foreach ($stageContexts as $context) {
             for ($home = $context['score_start'], $away = $context['score_start'] + 1; $home <= $context['score_end'] && $away <= $context['score_end']; $home += 2, $away += 2) {
                 $resHome = $resultScores["score{$home}_r"] ?? null;
@@ -662,6 +662,31 @@ if ($currentUser && !empty($stageContexts)) {
         }
     }
 }
+
+$accuracyScoringTotal = 0;
+$accuracyOverallTotal = 0;
+$accuracyGradientParts = [];
+$accuracyStart = 0.0;
+
+foreach ($accuracy as $index => $item) {
+    $accuracyOverallTotal += (int) $item['value'];
+    if ($index < 4) {
+        $accuracyScoringTotal += (int) $item['value'];
+    }
+}
+
+if ($accuracyOverallTotal > 0) {
+    foreach ($accuracy as $item) {
+        $share = ((int) $item['value'] / $accuracyOverallTotal) * 100;
+        $accuracyEnd = $accuracyStart + $share;
+        $accuracyGradientParts[] = $item['color'] . ' ' . round($accuracyStart, 2) . '% ' . round($accuracyEnd, 2) . '%';
+        $accuracyStart = $accuracyEnd;
+    }
+} else {
+    $accuracyGradientParts[] = 'rgba(22, 35, 29, 0.14) 0% 100%';
+}
+
+$accuracyRingStyle = 'background: conic-gradient(' . implode(', ', $accuracyGradientParts) . ');';
 
 mysqli_close($con);
 
@@ -815,15 +840,18 @@ mysqli_close($con);
                     </div>
                 </div>
                 <div class="accuracy-donut" aria-label="Accuracy breakdown">
-                    <div class="accuracy-donut__ring">
-                        <div>
-                            <strong><?= (int) $accuracy[0]['value'] + (int) $accuracy[1]['value'] + (int) $accuracy[2]['value'] + (int) $accuracy[3]['value'] ?></strong>
-                            <span>scoring picks</span>
-                        </div>
+                    <div class="accuracy-donut__ring" style="<?= htmlspecialchars($accuracyRingStyle, ENT_QUOTES) ?>">
+                        <div aria-hidden="true"></div>
                     </div>
                     <ul class="accuracy-list">
                         <?php foreach ($accuracy as $item) : ?>
-                            <li><span><?= $item['label'] ?></span><strong><?= $item['value'] ?></strong></li>
+                            <li>
+                                <span class="accuracy-list__label">
+                                    <span class="accuracy-list__swatch" style="background: <?= htmlspecialchars($item['color'], ENT_QUOTES) ?>"></span>
+                                    <?= htmlspecialchars($item['label']) ?>
+                                </span>
+                                <strong><?= (int) $item['value'] ?></strong>
+                            </li>
                         <?php endforeach; ?>
                     </ul>
                 </div>
