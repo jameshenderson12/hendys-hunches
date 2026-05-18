@@ -384,7 +384,7 @@ include 'php/navigation.php';
                             <dt>Tournament winner</dt>
                             <dd>
                                 <?php if ($tournwinnerFlag !== '') : ?>
-                                    <img src="<?= htmlspecialchars($tournwinnerFlag) ?>" alt="<?= htmlspecialchars($tournwinner) ?> flag" width="24" height="24" style="border-radius:50%;margin-right:8px;">
+                                    <img src="<?= htmlspecialchars($tournwinnerFlag) ?>" alt="<?= htmlspecialchars($tournwinner) ?> flag" width="24" style="border: 1px solid lightgray; margin-right:4px;">
                                 <?php endif; ?>
                                 <?= htmlspecialchars($tournwinner !== '' ? $tournwinner : 'Not chosen') ?>
                             </dd>

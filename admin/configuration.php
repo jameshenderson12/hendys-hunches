@@ -4,12 +4,15 @@ $page_title = 'Site Configuration';
 
 require_once dirname(__DIR__) . '/php/auth.php';
 require_once dirname(__DIR__) . '/php/config.php';
+require_once dirname(__DIR__) . '/php/email.php';
 
 hh_require_admin('../dashboard.php');
 
 $configPath = dirname(__DIR__) . '/php/config.php';
 $messages = [];
 $errors = [];
+$testEmailAddress = trim((string) ($_POST['test_email_to'] ?? ''));
+$testEmailName = trim((string) ($_POST['test_email_name'] ?? ''));
 
 function hh_config_editor_state(): array
 {
@@ -480,10 +483,26 @@ $currentConfig = hh_config_editor_state();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $draftConfig = hh_config_editor_normalize($_POST, $currentConfig);
+    $action = trim((string) ($_POST['configuration_action'] ?? 'save'));
 
     if ($draftConfig['site']['title'] === '' || $draftConfig['competition']['competition'] === '') {
         $errors[] = 'Site title and competition name are required.';
         $currentConfig = $draftConfig;
+    } elseif ($action === 'send_test_email') {
+        $currentConfig = $draftConfig;
+        $hh_email_config = $draftConfig['email'];
+
+        if ($testEmailAddress === '') {
+            $errors[] = 'Enter an email address to receive the test message.';
+        } elseif (!filter_var($testEmailAddress, FILTER_VALIDATE_EMAIL)) {
+            $errors[] = 'Enter a valid recipient email address for the test message.';
+        } elseif (!hh_mail_is_enabled()) {
+            $errors[] = 'Enable outbound email before sending a test message.';
+        } elseif (!sendTestEmail($testEmailAddress, $testEmailName)) {
+            $errors[] = 'The test email could not be sent. Check the SMTP details and try again.';
+        } else {
+            $messages[] = 'Test email sent to ' . $testEmailAddress . '.';
+        }
     } elseif (!is_writable($configPath)) {
         $errors[] = 'The config file is not writable, so the changes could not be saved.';
         $currentConfig = $draftConfig;
@@ -810,6 +829,23 @@ include '../php/navigation.php';
                         <input class="form-control" id="email_smtp_password" name="email_smtp_password" type="text" value="<?= htmlspecialchars((string) ($currentConfig['email']['smtp_password'] ?? ''), ENT_QUOTES) ?>">
                         <p class="admin-note mt-2">Keep this disabled until you are happy with the SMTP details. Once enabled, registration and password reset emails can be sent for real.</p>
                     </div>
+                    <div class="admin-card" style="padding:16px 18px;">
+                        <h3 class="mb-2">Send Test Email</h3>
+                        <p class="admin-note mb-3">Uses the email settings currently shown on this form, even if you have not saved them yet.</p>
+                        <div class="admin-grid admin-grid--two">
+                            <div>
+                                <label class="form-label" for="test_email_to">Recipient email</label>
+                                <input class="form-control" id="test_email_to" name="test_email_to" type="email" value="<?= htmlspecialchars($testEmailAddress, ENT_QUOTES) ?>" placeholder="you@example.com">
+                            </div>
+                            <div>
+                                <label class="form-label" for="test_email_name">Recipient name</label>
+                                <input class="form-control" id="test_email_name" name="test_email_name" type="text" value="<?= htmlspecialchars($testEmailName, ENT_QUOTES) ?>" placeholder="Optional">
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <button class="btn btn-outline-dark" type="submit" name="configuration_action" value="send_test_email"><i class="bi bi-envelope-check"></i> Send test email</button>
+                        </div>
+                    </div>
 
                     <h3>Installer Defaults And Assets</h3>
                     <div class="mb-3">
@@ -833,7 +869,7 @@ include '../php/navigation.php';
             </section>
 
             <div class="d-flex flex-wrap gap-2">
-                <button class="btn btn-primary" type="submit"><i class="bi bi-floppy"></i> Save configuration</button>
+                <button class="btn btn-primary" type="submit" name="configuration_action" value="save"><i class="bi bi-floppy"></i> Save configuration</button>
                 <a class="btn btn-outline-dark" href="functions.php"><i class="bi bi-arrow-left"></i> Back to admin functions</a>
             </div>
         </form>

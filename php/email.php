@@ -231,3 +231,41 @@ if (!function_exists('sendTempPasswordEmail')) {
         return hh_send_email($email, $firstname, "{$title} password reset", $html);
     }
 }
+
+if (!function_exists('sendTestEmail')) {
+    function sendTestEmail(string $email, string $name = ''): bool
+    {
+        global $title, $competition, $developer, $base_url;
+
+        $greetingName = trim($name) !== '' ? trim($name) : 'there';
+        $subject = "{$title} test email";
+        $loginUrl = rtrim((string) $base_url, '/') . '/index.php';
+
+        $html = <<<HTML
+<!DOCTYPE html>
+<html lang="en">
+  <body style="margin:0;padding:24px;background:#f4f6f1;font-family:Arial,sans-serif;color:#16231d;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:640px;margin:0 auto;background:#ffffff;border:1px solid rgba(22,35,29,0.12);border-radius:8px;overflow:hidden;">
+      <tr>
+        <td style="padding:24px 28px;background:linear-gradient(90deg,#073629,#8f66d8);color:#ffffff;">
+          <h1 style="margin:0;font-size:28px;line-height:1.1;">{$title}</h1>
+          <p style="margin:10px 0 0;font-size:14px;opacity:0.9;">Test email successful</p>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:24px 28px;">
+          <p style="margin:0 0 16px;">Hi {$greetingName},</p>
+          <p style="margin:0 0 16px;">This is a test email from the Hendy's Hunches mail configuration page. If this has arrived, your outgoing email setup is working for {$competition}.</p>
+          <p style="margin:0 0 16px;">You can now use the same settings for player registration, password resets and future reminder emails.</p>
+          <p style="margin:0 0 20px;"><a href="{$loginUrl}" style="display:inline-block;padding:12px 16px;background:#8f66d8;color:#ffffff;text-decoration:none;border-radius:8px;font-weight:700;">Open Hendy's Hunches</a></p>
+          <p style="margin:0;color:#59635f;font-size:14px;">Sent by {$developer}</p>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
+HTML;
+
+        return hh_send_email($email, $greetingName, $subject, $html);
+    }
+}

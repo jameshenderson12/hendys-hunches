@@ -21,7 +21,7 @@
     <meta name="author" content="James Henderson">
     <meta name="keywords" content="football, predictions, game">
 	  <title><?= $page_title ?> - Hendy's Hunches</title>
-    <link href="<?= htmlspecialchars($asset_prefix . 'img/hh-logo-2026-simple.png', ENT_QUOTES) ?>" rel="icon" type="image/png">
+    <link href="<?= htmlspecialchars($asset_prefix . 'ico/favicon.ico', ENT_QUOTES) ?>" rel="icon">
     <!-- Vendor CSS Files -->
     <link href="<?= htmlspecialchars($asset_prefix . 'vendor/bootstrap/css/bootstrap.min.css', ENT_QUOTES) ?>" rel="stylesheet">
     <link href="<?= htmlspecialchars($asset_prefix . 'vendor/bootstrap-icons/bootstrap-icons.css', ENT_QUOTES) ?>" rel="stylesheet">

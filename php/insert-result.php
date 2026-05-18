@@ -11,7 +11,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="../img/hh-logo-2026-simple.png" type="image/png">
+    <link rel="shortcut icon" href="../ico/favicon.ico">
     <title>Hendy's Hunches: Administration</title>
     <!-- Vendor CSS Files -->
     <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">

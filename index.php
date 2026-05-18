@@ -11,7 +11,7 @@ hh_handle_dev_bypass_request();
     <meta name="description" content="Hendy's Hunches: Predictions Game">
     <meta name="author" content="James Henderson">
     <title>Login - Hendy's Hunches</title>
-    <link rel="icon" href="img/hh-logo-2026-simple.png" type="image/png">
+    <link rel="shortcut icon" href="ico/favicon.ico">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
