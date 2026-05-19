@@ -33,6 +33,103 @@ function hh_prediction_stage_definitions(): array {
 	return $definitions;
 }
 
+function hh_prediction_stage_context_for_match_number(int $matchNumber): ?array {
+	foreach (hh_prediction_stage_contexts() as $context) {
+		$fixtureStart = (int) ($context['fixture_start'] ?? 0);
+		$fixtureEnd = (int) ($context['fixture_end'] ?? 0);
+		if ($matchNumber >= $fixtureStart && $matchNumber <= $fixtureEnd) {
+			return $context;
+		}
+	}
+
+	return null;
+}
+
+function hh_fixture_score_indexes(int $matchNumber): array {
+	$homeIndex = max(1, ($matchNumber * 2) - 1);
+
+	return [
+		'home' => $homeIndex,
+		'away' => $homeIndex + 1,
+	];
+}
+
+function hh_prediction_fixture_score_detail($predHome, $predAway, $actualHome, $actualAway): array {
+	$submitted = is_numeric($predHome) && is_numeric($predAway);
+	$recorded = is_numeric($actualHome) && is_numeric($actualAway);
+
+	if (!$recorded) {
+		return [
+			'points' => null,
+			'category' => 'pending',
+			'label' => 'Awaiting result',
+			'submitted' => $submitted,
+			'recorded' => false,
+		];
+	}
+
+	if (!$submitted) {
+		return [
+			'points' => 0,
+			'category' => 'missing',
+			'label' => 'No prediction submitted',
+			'submitted' => false,
+			'recorded' => true,
+		];
+	}
+
+	$predHome = (int) $predHome;
+	$predAway = (int) $predAway;
+	$actualHome = (int) $actualHome;
+	$actualAway = (int) $actualAway;
+
+	$homeHit = $predHome === $actualHome;
+	$awayHit = $predAway === $actualAway;
+	$exact = $homeHit && $awayHit;
+	$sameOutcome =
+		(($predHome > $predAway) && ($actualHome > $actualAway))
+		|| (($predHome < $predAway) && ($actualHome < $actualAway))
+		|| (($predHome === $predAway) && ($actualHome === $actualAway));
+
+	$points = 0;
+	if ($homeHit) {
+		$points += 1;
+	}
+	if ($awayHit) {
+		$points += 1;
+	}
+	if ($sameOutcome) {
+		$points += 2;
+	}
+	if ($exact) {
+		$points += 3;
+	}
+
+	$label = match (true) {
+		$exact => 'Exact scoreline',
+		$sameOutcome && ($homeHit || $awayHit) => 'Correct outcome + one team score',
+		$sameOutcome => 'Correct outcome',
+		$homeHit || $awayHit => 'One team score right',
+		default => 'Miss',
+	};
+
+	$category = match ($points) {
+		7 => 'perfect',
+		3 => 'strong',
+		2 => 'outcome',
+		1 => 'single',
+		default => 'miss',
+	};
+
+	return [
+		'points' => $points,
+		'category' => $category,
+		'label' => $label,
+		'submitted' => true,
+		'recorded' => true,
+	];
+}
+
 function hh_reset_initial_rankings_with_connection(mysqli $con): void {
 	$userResult = mysqli_query(
 		$con,

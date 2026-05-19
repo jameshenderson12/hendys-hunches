@@ -2,6 +2,7 @@
 // Start the session
 session_start();
 require_once __DIR__ . '/php/auth.php';
+require_once __DIR__ . '/php/terms.php';
 hh_handle_dev_bypass_request();
 ?>
 <!DOCTYPE html>
@@ -113,33 +114,7 @@ hh_handle_dev_bypass_request();
       
       
 
-      <!-- HH Terms Modal -->
-      <div class="modal fade" id="terms" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h1 class="modal-title fs-5" id="staticBackdropLabel">Hendy's Hunches: Terms &amp; Conditions</h1>
-              <!--<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
-            </div>
-            <div class="modal-body">
-              <img src="img/hh-logo-2018.jpg" class="img-responsive mt-auto" title="Hendy's Hunches Logo" alt="Hendy's Hunches Logo" style="width: 180px; margin-bottom: 10px;">
-              <p>By registering to play Hendy's Hunches, you acknowledge that:</p>
-              <ul>
-                <li>your involvement in this game, and the game itself, is intended only for entertainment</li>
-                <li>the game is based on <?=$competition?></li>
-                <li>only one registration per person is permitted although family and friends are welcome to participate</li>
-                <li>an entry fee of £<?=$signup_fee_formatted?> is to be paid prior to <?=$signup_close_date?>; split for charity donation and prize funds</li>
-                <li>an unpaid entry fee results in removal from the game</li>
-                <li>the number of prize funds, and their amounts, are revealed in due course, awarded to winners after the final tournament fixture and, in the event of a shared winning spot, divided accordingly.</li>
-              </ul>
-            </div>
-            <div class="modal-footer">
-              <!--<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
-              <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Understood</button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <?php hh_render_terms_modal(); ?>
 
       <footer class="mt-auto">
         <!-- <img src="img/germany-2024-logo-md.png" alt="Hendy's Hunches logo for Germany 2024" class="w-25"> -->

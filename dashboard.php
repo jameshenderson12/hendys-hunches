@@ -4,6 +4,7 @@ $page_title = 'Dashboard';
 
 require_once __DIR__ . '/php/auth.php';
 require_once __DIR__ . '/php/config.php';
+require_once __DIR__ . '/php/flags.php';
 hh_require_login('index.php');
 
 include 'php/db-connect.php';
@@ -289,6 +290,11 @@ if (!function_exists('hh_dashboard_flag_for_team')) {
 
         if (isset($teamFlagMap[$normalizedName])) {
             return (string) $teamFlagMap[$normalizedName];
+        }
+
+        $knownFlagPath = hh_get_team_flag_path($teamName);
+        if ($knownFlagPath !== '') {
+            return hh_normalize_flag_src($knownFlagPath);
         }
 
         foreach ($teamFlagMap as $candidateName => $flagPath) {
@@ -619,7 +625,8 @@ $winnerPicksResult = mysqli_query(
     $con,
     "SELECT tournwinner, COUNT(*) AS pick_count
      FROM live_user_information
-     WHERE tournwinner <> ''
+     WHERE TRIM(tournwinner) <> ''
+       AND LOWER(TRIM(tournwinner)) NOT IN ('prefer not to say', 'not set')
      GROUP BY tournwinner
      ORDER BY pick_count DESC, tournwinner ASC
      LIMIT 5"

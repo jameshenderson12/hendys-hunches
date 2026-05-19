@@ -685,7 +685,7 @@
       <main class="concept-shell">
         <section class="brand-stage" aria-label="Hendy's Hunches brand">
           <div>
-            <img class="brand-stage__logo" src="img/hh-logo-2026-purple.png" alt="Hendy's Hunches football predictions logo">
+            <img class="brand-stage__logo" src="img/hh-logo-2026-main.png" alt="Hendy's Hunches football predictions logo">
             <div class="brand-stage__copy">
               <p>FIFA World Cup 2026 predictions with friends, family and colleagues.</p>
               <div class="countdown-card" aria-label="Countdown to World Cup 2026 opening day">
@@ -758,15 +758,8 @@
           <div class="modal-header">
             <h1 class="modal-title fs-5" id="termsTitle">Hendy's Hunches: Terms &amp; Conditions</h1>
           </div>
-          <div class="modal-body">
-            <img src="img/hh-logo-2026-purple.png" class="img-fluid d-block mx-auto mb-3" alt="Hendy's Hunches logo" style="max-width: 180px;">
-            <p>By registering to play Hendy's Hunches, you acknowledge that:</p>
-            <ul>
-              <li>your involvement in this game, and the game itself, is intended only for entertainment</li>
-              <li>only one registration per person is permitted although family and friends are welcome to participate</li>
-              <li>an entry fee is paid before the tournament begins, split for charity donation and prize funds</li>
-              <li>the number of prize funds and their amounts are revealed in due course</li>
-            </ul>
+          <div class="modal-body" id="termsContent">
+            <p>Loading terms…</p>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-hh-primary" data-bs-dismiss="modal">Understood</button>
@@ -779,6 +772,18 @@
       const toggleLoginPwd = document.querySelector('#toggleLoginPwd');
       const loginPassword = document.querySelector('#password');
       const countdownDays = document.querySelector('#countdownDays');
+      const termsContent = document.querySelector('#termsContent');
+
+      if (termsContent) {
+        fetch('php/terms-content.php')
+          .then((response) => response.text())
+          .then((html) => {
+            termsContent.innerHTML = html;
+          })
+          .catch(() => {
+            termsContent.innerHTML = '<p>Terms could not be loaded right now.</p>';
+          });
+      }
 
       if (countdownDays) {
         const worldCupStart = new Date('2026-06-11T00:00:00');

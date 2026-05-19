@@ -5,6 +5,76 @@ session_start();
 include 'php/config.php';
 include 'php/process.php';
 require_once 'php/email.php';
+require_once 'php/terms.php';
+
+function hh_registration_fallback_file_options(string $filePath): array
+{
+    $options = [];
+    $handle = @fopen($filePath, 'r');
+    if (!$handle) {
+        return $options;
+    }
+
+    while (!feof($handle)) {
+        $line = fgets($handle, 4096);
+        $value = trim((string) $line);
+        if ($value !== '') {
+            $options[] = $value;
+        }
+    }
+
+    fclose($handle);
+
+    $options = array_values(array_unique($options));
+    natcasesort($options);
+
+    return array_values($options);
+}
+
+function hh_registration_tournament_team_options(?mysqli $con): array
+{
+    if (!($con instanceof mysqli)) {
+        return [];
+    }
+
+    $options = [];
+    $result = mysqli_query(
+        $con,
+        "SELECT hometeam AS team_name FROM live_match_schedule WHERE TRIM(hometeam) <> ''
+         UNION
+         SELECT awayteam AS team_name FROM live_match_schedule WHERE TRIM(awayteam) <> ''"
+    );
+
+    if (!($result instanceof mysqli_result)) {
+        return [];
+    }
+
+    while ($row = mysqli_fetch_assoc($result)) {
+        $teamName = trim((string) ($row['team_name'] ?? ''));
+        if ($teamName === '' || strcasecmp($teamName, 'To be announced') === 0 || preg_match('/^\d[A-Z]+$/', $teamName)) {
+            continue;
+        }
+
+        $options[] = $teamName;
+    }
+
+    mysqli_free_result($result);
+
+    $options = array_values(array_unique($options));
+    natcasesort($options);
+
+    return array_values($options);
+}
+
+$con = null;
+if (file_exists(__DIR__ . '/php/db-connect.php')) {
+    include 'php/db-connect.php';
+}
+
+$tournamentWinnerOptions = hh_registration_tournament_team_options($con);
+if (empty($tournamentWinnerOptions)) {
+    $tournamentWinnerOptions = hh_registration_fallback_file_options('text/select-countryteams-input.txt');
+}
 
 // Initialise variable for error messages
 $registrationSuccess = false;
@@ -27,9 +97,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $location = $location !== '' ? $location : 'Prefer Not To Say';
     $faveteam = $faveteam !== '' ? $faveteam : 'Prefer Not To Say';
     $tournwinner = $tournwinner !== '' ? $tournwinner : 'Prefer Not To Say';
-
-    // Include database connection
-    include 'php/db-connect.php';
 
     // Query to get the total number of users to set positional values
     $sql1 = "SELECT count(*) AS totalusers FROM live_user_information";
@@ -209,10 +276,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
       .registration-shell {
         align-items: center;
+        background: var(--hh-green);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 8px;
+        box-shadow: var(--hh-shadow);
         display: grid;
         gap: 28px;
         grid-template-columns: minmax(280px, 0.78fr) minmax(0, 1.22fr);
         margin: 0 auto;
+        padding: 28px;
         width: 100%;
       }
 
@@ -307,8 +379,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
       .registration-panel label {
         color: var(--hh-ink);
-        font-size: 1rem;
+        font-size: 0.95rem;
+        font-weight: 800;
         letter-spacing: 0;
+      }
+
+      .registration-panel .text-warning {
+        color: #b3262d !important;
       }
 
       .registration-panel .form-control,
@@ -320,15 +397,82 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
       .registration-panel .form-control,
       .registration-panel .form-select {
+        background: #ffffff;
         border: 1px solid rgba(22, 35, 29, 0.22);
         border-radius: 8px;
+        color: var(--hh-ink);
         min-height: 46px;
+        padding-right: 44px;
       }
 
       .registration-panel .form-control:focus,
       .registration-panel .form-select:focus {
         border-color: var(--hh-purple);
         box-shadow: 0 0 0 0.2rem rgba(143, 102, 216, 0.22);
+      }
+
+      .registration-panel .form-control.is-valid,
+      .registration-panel .form-select.is-valid {
+        border-color: #2f8f63;
+        box-shadow: 0 0 0 0.18rem rgba(47, 143, 99, 0.18);
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle fill='%232f8f63' cx='8' cy='8' r='8'/%3E%3Cpath fill='white' d='M6.6 10.7 4.3 8.4l-.9.9 3.2 3.2 5.9-5.9-.9-.9z'/%3E%3C/svg%3E");
+        background-position: right 12px center;
+        background-repeat: no-repeat;
+        background-size: 18px 18px;
+      }
+
+      .registration-panel .form-control.is-invalid,
+      .registration-panel .form-select.is-invalid {
+        border-color: #d64045;
+        box-shadow: 0 0 0 0.18rem rgba(214, 64, 69, 0.18);
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle fill='%23d64045' cx='8' cy='8' r='8'/%3E%3Cpath fill='white' d='M5 5.9 5.9 5 8 7.1 10.1 5l.9.9L8.9 8l2.1 2.1-.9.9L8 8.9 5.9 11l-.9-.9L7.1 8z'/%3E%3C/svg%3E");
+        background-position: right 12px center;
+        background-repeat: no-repeat;
+        background-size: 18px 18px;
+      }
+
+      .registration-panel .input-group .form-control {
+        padding-right: 16px;
+      }
+
+      .registration-panel .input-group .form-control.is-valid,
+      .registration-panel .input-group .form-control.is-invalid {
+        background-image: none;
+      }
+
+      .registration-panel .input-group.is-valid,
+      .registration-panel .input-group.is-invalid {
+        border-radius: 8px;
+        position: relative;
+      }
+
+      .registration-panel .input-group.is-valid::after,
+      .registration-panel .input-group.is-invalid::after {
+        align-items: center;
+        border-radius: 999px;
+        color: #ffffff;
+        display: inline-flex;
+        font-size: 0.72rem;
+        font-weight: 900;
+        height: 20px;
+        justify-content: center;
+        pointer-events: none;
+        position: absolute;
+        right: 54px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 20px;
+        z-index: 3;
+      }
+
+      .registration-panel .input-group.is-valid::after {
+        background: #2f8f63;
+        content: "✓";
+      }
+
+      .registration-panel .input-group.is-invalid::after {
+        background: #d64045;
+        content: "×";
       }
 
       .registration-panel .btn-primary {
@@ -393,6 +537,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       }
 
       .registration-panel .btn-check:checked + .btn-outline-light {
+        background: rgba(251, 252, 248, 0.96);
         border-color: var(--hh-purple);
         box-shadow: 0 0 0 0.2rem rgba(143, 102, 216, 0.26);
       }
@@ -408,9 +553,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         font-weight: 900;
       }
 
+      .registration-panel .terms-panel p,
+      .registration-panel .terms-panel li {
+        color: var(--hh-ink);
+      }
+
       .registration-panel hr {
         border-color: rgba(22, 35, 29, 0.18);
         opacity: 1;
+      }
+
+      .registration-panel .invalid-feedback {
+        color: #55615a;
+        display: none;
+        font-size: 0.82rem;
+        font-weight: 700;
+        margin: -0.55rem 0 0.9rem;
+      }
+
+      .registration-panel .invalid-feedback.is-active,
+      .registration-panel .invalid-feedback.d-block {
+        display: block !important;
+      }
+
+      .registration-panel .un-msg {
+        color: #55615a;
+        display: none;
+        font-size: 0.8rem;
+        margin: -0.55rem 0 0.9rem;
+      }
+
+      .registration-panel .un-msg.is-active,
+      .registration-panel .un-msg.is-valid {
+        display: block;
+      }
+
+      .registration-panel .un-msg.is-valid {
+        color: #1f6b3f;
+      }
+
+      .registration-panel .un-msg.is-invalid {
+        color: #8f1d24;
+        display: block;
+      }
+
+      .registration-panel .invalid-feedback.d-block,
+      .registration-panel .invalid-feedback.is-invalid {
+        color: #8f1d24;
       }
 
       body.registration-concept #footer {
@@ -429,6 +618,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .registration-panel {
+          padding: 22px;
+        }
+
+        .registration-shell {
           padding: 22px;
         }
       }
@@ -469,6 +662,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           padding: 18px;
         }
 
+        .registration-shell {
+          padding: 18px;
+        }
+
         .registration-panel .progress-step::after {
           font-size: 0.68rem;
         }
@@ -498,7 +695,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 		<main class="registration-shell">
       <section class="registration-stage" aria-label="Hendy's Hunches registration">
-        <img class="registration-stage__logo" src="img/hh-logo-2026-purple.png" alt="Hendy's Hunches football predictions logo">
+        <img class="registration-stage__logo" src="img/hh-logo-2026-main.png" alt="Hendy's Hunches football predictions logo">
         <p>Join the World Cup 2026 predictions game and get your squad ready before kick-off.</p>
         <div class="registration-hosts" aria-label="World Cup 2026 host nations">
           <span><img src="img/flags/ca.svg" alt=""> Canada</span>
@@ -568,14 +765,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           </div>
           <div class="form-step">
             <label for="username" class="form-label">Username <span class="text-warning">*</span></label>
-            <input type="text" class="form-control" id="username" name="username" required autocomplete="username">
-            <span class="un-msg"></span>
-            <div class="invalid-feedback">
-              Please provide a username.
-            </div>
+            <input type="text" class="form-control" id="username" name="username" required minlength="3" autocomplete="username">
+            <span class="un-msg" id="usernameStatus">Choose something short and memorable for logins.</span>
             <label for="pwd1" class="form-label">Password <span class="text-warning">*</span></label>
             <div class="input-group">
-              <input type="password" class="form-control" id="pwd1" name="pwd1" onBlur="return validatePassword();" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" onchange="form.pwd2.pattern = this.value;" autocomplete="new-password" />
+              <input type="password" class="form-control" id="pwd1" name="pwd1" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" onchange="form.pwd2.pattern = this.value;" autocomplete="new-password" />
               <button class="btn btn-outline-secondary" type="button" id="togglePwd1" aria-label="Show password">
                 <i class="bi bi-eye-slash-fill"></i>
               </button>
@@ -705,15 +899,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <datalist id="datalistOptions3">
           <option value="Prefer Not To Say"></option>        
             <?php
-              $file = 'text/select-countryteams-input.txt';
-              $handle = @fopen($file, 'r');
-              if ($handle) {
-                while (!feof($handle)) {
-                  $line = fgets($handle, 4096);
-                  $item = explode('\n', $line);
-                  echo '<option value="' . trim($item[0]) . '">' . trim($item[0]) . '</option>' . "\n";
-                }
-                fclose($handle);
+              foreach ($tournamentWinnerOptions as $winnerOption) {
+                echo '<option value="' . htmlspecialchars($winnerOption, ENT_QUOTES) . '">' . htmlspecialchars($winnerOption) . '</option>' . "\n";
               }
             ?>
           </datalist>
@@ -730,18 +917,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
           <div class="form-step">             
             <div class="row">
-            <div class="terms-panel text-start" id="terms-panel">
-              <h5 class="text-center">Hendy's Hunches: Terms &amp; Conditions</h5>
-              <p>By registering to play Hendy's Hunches, you acknowledge that:</p>
-              <ul>
-                <li>your involvement in this game, and the game itself, is intended only for entertainment</li>
-                <li>the game is based on <?=$competition?></li>
-                <li>only one registration per person is permitted although family and friends are welcome to participate</li>
-                <li>an entry fee of £<?=$signup_fee_formatted?> is to be paid prior to <?=$signup_close_date?>; split for charity donation and prize funds</li>
-                <li>an unpaid entry fee results in removal from the game</li>
-                <li>the number of prize funds, and their amounts, are revealed in due course, awarded to winners after the final tournament fixture and, in the event of a shared winning spot, divided accordingly.</li>
-              </ul>
-            </div>
+            <?php hh_render_terms_inline_panel(); ?>
               <div class="col-auto d-flex align-items-center my-4 mx-auto">                        
                 <input class="form-check-input" type="checkbox" id="disclaimer" name="disclaimer" value="disclaimer" required>
                 <label class="form-check-label m-3" for="disclaimer">
@@ -817,17 +993,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           const inputs = form.querySelectorAll('input, select, textarea');
           inputs.forEach(input => {
             input.addEventListener('input', () => {
-              const feedback = findInvalidFeedback(input);
-              if (input.checkValidity()) {
-                input.classList.remove('is-invalid');
-                if (feedback) {
-                  feedback.classList.remove('d-block');
-                }
-              } else {
-                input.classList.add('is-invalid');
-                if (feedback) {
-                  feedback.classList.add('d-block');
-                }
+              if (typeof syncFieldState === 'function') {
+                syncFieldState(input, {
+                  showValidation: input.classList.contains('hh-touched'),
+                  showActive: document.activeElement === input
+                });
+              }
+            });
+            input.addEventListener('focus', () => {
+              if (typeof syncFieldState === 'function') {
+                syncFieldState(input, {
+                  showValidation: input.classList.contains('hh-touched'),
+                  showActive: true
+                });
+              }
+            });
+            input.addEventListener('blur', () => {
+              input.classList.add('hh-touched');
+              if (typeof syncFieldState === 'function') {
+                syncFieldState(input, { showValidation: true });
               }
             });
           });
@@ -849,6 +1033,142 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       const emailConfirm = document.querySelector('#emailConfirm');
       const passwordStrengthBar = document.querySelector('#passwordStrengthBar');
       const passwordStrengthText = document.querySelector('#passwordStrengthText');
+      const usernameInput = document.querySelector('#username');
+      const usernameStatus = document.querySelector('#usernameStatus');
+
+      const findInvalidFeedback = (element) => {
+        if (!element) {
+          return null;
+        }
+
+        if (element.parentElement?.classList.contains('input-group')) {
+          let sibling = element.parentElement.nextElementSibling;
+          while (sibling) {
+            if (sibling.classList?.contains('invalid-feedback')) {
+              return sibling;
+            }
+            sibling = sibling.nextElementSibling;
+          }
+          return null;
+        }
+
+        let sibling = element.nextElementSibling;
+        while (sibling) {
+          if (sibling.classList?.contains('invalid-feedback')) {
+            return sibling;
+          }
+          sibling = sibling.nextElementSibling;
+        }
+
+        return null;
+      };
+
+      const findValidationHelp = (element) => {
+        if (!element) {
+          return null;
+        }
+
+        let sibling = element.nextElementSibling;
+        while (sibling) {
+          if (sibling.classList?.contains('validation-help') || sibling.classList?.contains('un-msg')) {
+            return sibling;
+          }
+          if (sibling.classList?.contains('invalid-feedback')) {
+            return null;
+          }
+          sibling = sibling.nextElementSibling;
+        }
+
+        if (element.parentElement?.classList.contains('input-group')) {
+          let groupSibling = element.parentElement.nextElementSibling;
+          while (groupSibling) {
+            if (groupSibling.classList?.contains('validation-help') || groupSibling.classList?.contains('un-msg')) {
+              return groupSibling;
+            }
+            if (groupSibling.classList?.contains('invalid-feedback')) {
+              return null;
+            }
+            groupSibling = groupSibling.nextElementSibling;
+          }
+        }
+
+        return null;
+      };
+
+      const updateGroupState = (input, stateClass) => {
+        const group = input?.parentElement?.classList.contains('input-group') ? input.parentElement : null;
+        if (!group) {
+          return;
+        }
+        group.classList.remove('is-valid', 'is-invalid');
+        if (stateClass) {
+          group.classList.add(stateClass);
+        }
+      };
+
+      const syncFieldState = (input, options = {}) => {
+        if (!input || input.type === 'hidden') {
+          return true;
+        }
+
+        const showValidation = !!options.showValidation;
+        const showActive = !!options.showActive;
+        const feedback = findInvalidFeedback(input);
+        const help = findValidationHelp(input);
+        const isValid = input.checkValidity();
+        const isOptionalBlank = !input.required && input.value.trim() === '';
+
+        input.classList.remove('is-valid', 'is-invalid');
+        updateGroupState(input, '');
+
+        if (isOptionalBlank) {
+          if (feedback) {
+            feedback.classList.remove('d-block', 'is-active');
+          }
+          if (help) {
+            help.classList.remove('is-valid', 'is-invalid', 'is-active');
+          }
+          return true;
+        }
+
+        if (isValid && input.value.trim() !== '') {
+          input.classList.add('is-valid');
+          updateGroupState(input, 'is-valid');
+          if (feedback) {
+            feedback.classList.remove('d-block', 'is-active');
+          }
+          if (help) {
+            help.classList.remove('is-invalid', 'is-active');
+            help.classList.add('is-valid');
+          }
+        } else if (showValidation) {
+          input.classList.add('is-invalid');
+          updateGroupState(input, 'is-invalid');
+          if (feedback) {
+            feedback.classList.add('d-block');
+          }
+          if (help) {
+            help.classList.remove('is-valid', 'is-active');
+            help.classList.add('is-invalid');
+          }
+        } else if (showActive) {
+          if (help) {
+            help.classList.remove('is-valid', 'is-invalid');
+            help.classList.add('is-active');
+          }
+        } else {
+          if (feedback) {
+            feedback.classList.remove('d-block', 'is-active');
+          }
+          if (help) {
+            help.classList.remove('is-valid', 'is-invalid', 'is-active');
+          }
+        }
+
+        return isValid;
+      };
+
+      window.syncFieldState = syncFieldState;
 
       const validateMatchingFields = (field, confirmField, message) => {
         if (!field || !confirmField) {
@@ -861,6 +1181,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           } else {
             confirmField.setCustomValidity('');
           }
+          syncFieldState(field, { showValidation: field.classList.contains('hh-touched') });
+          syncFieldState(confirmField, { showValidation: confirmField.classList.contains('hh-touched') });
         };
 
         field.addEventListener('input', checkMatch);
@@ -960,16 +1282,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           }
         }
       }
-/*
-      document.addEventListener('DOMContentLoaded', function () {
-        const usernameInput = document.getElementById('username');
-        const feedbackElement = document.querySelector('#username + .invalid-feedback');
 
-        usernameInput.addEventListener('keyup', function () {
-          const username = usernameInput.value;
+      let usernameLookupTimeout = null;
 
-          if (username.length >= 3) {
-            // Perform AJAX call to check username availability
+      if (usernameInput && usernameStatus) {
+        usernameInput.addEventListener('input', function () {
+          const username = usernameInput.value.trim();
+          usernameInput.setCustomValidity('');
+
+          if (usernameLookupTimeout) {
+            window.clearTimeout(usernameLookupTimeout);
+          }
+
+          if (username.length < 3) {
+            usernameInput.setCustomValidity('Please provide a username of at least 3 characters.');
+            usernameStatus.textContent = 'Use at least 3 characters for your username.';
+            usernameStatus.classList.remove('is-valid');
+            usernameStatus.classList.add('is-invalid');
+            syncFieldState(usernameInput, {
+              showValidation: usernameInput.classList.contains('hh-touched'),
+              showActive: document.activeElement === usernameInput
+            });
+            return;
+          }
+
+          usernameStatus.textContent = 'Checking username availability…';
+          usernameStatus.classList.remove('is-valid', 'is-invalid');
+
+          usernameLookupTimeout = window.setTimeout(() => {
             fetch('php/username-check.php', {
               method: 'POST',
               headers: {
@@ -977,30 +1317,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               },
               body: `username=${encodeURIComponent(username)}`
             })
-            .then(response => response.text())
-            .then(data => {
-              if (data === '1') {
-                // Username exists
-                usernameInput.classList.add('is-invalid');
-                feedbackElement.classList.add('d-block');
-                feedbackElement.textContent = 'Username is already taken.';
-              } else {
-                // Username is available
-                usernameInput.classList.remove('is-invalid');
-                feedbackElement.classList.remove('d-block');
-              }
-            })
-            .catch(error => {
-              console.error('Error:', error);
-            });
-          } else {
-            // Hide invalid feedback if less than 3 characters
-            usernameInput.classList.remove('is-invalid');
-            feedbackElement.classList.remove('d-block');
-          }
+              .then(response => response.text())
+              .then(data => {
+                const result = data.trim();
+                if (result === '1') {
+                  usernameInput.setCustomValidity('Username is already taken.');
+                  usernameStatus.textContent = 'That username is already taken.';
+                  usernameStatus.classList.remove('is-valid');
+                  usernameStatus.classList.add('is-invalid');
+                } else {
+                  usernameInput.setCustomValidity('');
+                  usernameStatus.textContent = 'Username available.';
+                  usernameStatus.classList.remove('is-invalid');
+                  usernameStatus.classList.add('is-valid');
+                }
+
+                syncFieldState(usernameInput, {
+                  showValidation: usernameInput.classList.contains('hh-touched') || result === '1',
+                  showActive: document.activeElement === usernameInput
+                });
+              })
+              .catch(() => {
+                usernameInput.setCustomValidity('We could not verify that username right now.');
+                usernameStatus.textContent = 'We could not check that username right now.';
+                usernameStatus.classList.remove('is-valid');
+                usernameStatus.classList.add('is-invalid');
+                syncFieldState(usernameInput, {
+                  showValidation: true,
+                  showActive: document.activeElement === usernameInput
+                });
+              });
+          }, 250);
         });
-      });
-      */
+      }
 	</script>
     </div>
     </div>

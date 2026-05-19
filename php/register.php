@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/terms.php';
 /*
 	// print_r($_POST); Print all POST variables
 
@@ -135,6 +137,8 @@
 		</footer>
 
     </div><!-- /.container -->
+
+    <?php hh_render_terms_modal('../'); ?>
 
   </body>
 </html>

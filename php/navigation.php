@@ -80,6 +80,7 @@ $brand_logo_path = $nav_href('img/hh-logo-2026-simple.png');
                   </a>
 		              <ul class="dropdown-menu">
 										<li><a class="dropdown-item" href="<?= htmlspecialchars($nav_href('overview.php'), ENT_QUOTES) ?>">Application overview</a></li>
+										<li><a class="dropdown-item" href="<?= htmlspecialchars($nav_href('account.php'), ENT_QUOTES) ?>">Edit my details</a></li>
 										<li><a class="dropdown-item" href="<?= htmlspecialchars($nav_href('change-password.php'), ENT_QUOTES) ?>">Change my password</a></li>
 										<li><a class="dropdown-item" href="<?= htmlspecialchars($nav_href('predictions.php'), ENT_QUOTES) ?>">Submit my predictions</a></li>
 										<li><a class="dropdown-item card-link" href="<?= htmlspecialchars($nav_href('user.php?id=' . $current_user_id), ENT_QUOTES) ?>">View my predictions</a></li>

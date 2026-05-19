@@ -39,11 +39,24 @@ document.addEventListener("DOMContentLoaded", () => {
       let valid = true;
 
       inputs.forEach(input => {
+          if (input.type === "hidden") {
+              return;
+          }
+
+          input.classList.add("hh-touched");
           if (!input.checkValidity()) {
               valid = false;
               input.classList.add("is-invalid");
+              input.classList.remove("is-valid");
           } else {
               input.classList.remove("is-invalid");
+              if (input.value.trim() !== "") {
+                  input.classList.add("is-valid");
+              }
+          }
+
+          if (typeof window.syncFieldState === "function") {
+              window.syncFieldState(input, { showValidation: true });
           }
       });
 

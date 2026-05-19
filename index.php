@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once __DIR__ . '/php/auth.php';
+require_once __DIR__ . '/php/terms.php';
 hh_handle_dev_bypass_request();
 ?>
 <!DOCTYPE html>
@@ -261,13 +262,13 @@ hh_handle_dev_bypass_request();
 
       .login-panel__mascot {
         filter: drop-shadow(0 16px 20px rgba(0, 0, 0, 0.24));
-        height: 250px;
+        height: 235px;
         object-fit: contain;
         object-position: center bottom;
         pointer-events: none;
         position: absolute;
         right: -12px;
-        top: -132px;
+        top: -113px;
         width: 280px;
         z-index: 30;
       }
@@ -640,7 +641,7 @@ hh_handle_dev_bypass_request();
       <main class="login-main">
         <section class="brand-stage" aria-label="Hendy's Hunches brand">
           <div>
-            <img class="brand-stage__logo" src="img/hh-logo-2026-purple.png" alt="Hendy's Hunches football predictions logo">
+            <img class="brand-stage__logo" src="img/hh-logo-2026-main.png" alt="Hendy's Hunches football predictions logo">
             <div class="brand-stage__copy">
               <div class="countdown-card" aria-label="Countdown to World Cup 2026 opening day">
                 <span class="countdown-card__value" id="countdownDays">--</span>
@@ -699,30 +700,7 @@ hh_handle_dev_bypass_request();
       </footer>
     </div>
 
-    <div class="modal fade" id="terms" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="termsTitle" aria-hidden="true">
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="termsTitle">Hendy's Hunches: Terms &amp; Conditions</h1>
-          </div>
-          <div class="modal-body">
-            <img src="img/hh-logo-2026-purple.png" class="img-fluid d-block mx-auto mb-3" alt="Hendy's Hunches logo" style="max-width: 180px;">
-            <p>By registering to play Hendy's Hunches, you acknowledge that:</p>
-            <ul>
-              <li>your involvement in this game, and the game itself, is intended only for entertainment</li>
-              <li>the game is based on <?= htmlspecialchars($competition) ?></li>
-              <li>only one registration per person is permitted although family and friends are welcome to participate</li>
-              <li>an entry fee of £<?= htmlspecialchars($signup_fee_formatted) ?> is to be paid prior to <?= htmlspecialchars($signup_close_date) ?>; split for charity donation and prize funds</li>
-              <li>an unpaid entry fee results in removal from the game</li>
-              <li>the number of prize funds and their amounts are revealed in due course, then awarded after the final tournament fixture</li>
-            </ul>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-hh-primary" data-bs-dismiss="modal">Understood</button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <?php hh_render_terms_modal(); ?>
 
     <script>
       const toggleLoginPwd = document.querySelector('#toggleLoginPwd');

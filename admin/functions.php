@@ -188,6 +188,286 @@ function hh_admin_prediction_integrity_audit(mysqli $con, array $users): array
     return $audit;
 }
 
+function hh_admin_stage_badge_class(string $stageKey): string
+{
+    return match ($stageKey) {
+        'groups' => 'bg-success-subtle text-success-emphasis',
+        'ro32' => 'bg-primary-subtle text-primary-emphasis',
+        'ro16' => 'bg-info-subtle text-info-emphasis',
+        'qf' => 'bg-warning-subtle text-warning-emphasis',
+        'sf' => 'bg-danger-subtle text-danger-emphasis',
+        'final' => 'bg-dark-subtle text-dark-emphasis',
+        default => 'bg-secondary-subtle text-secondary-emphasis',
+    };
+}
+
+function hh_admin_scoring_audit(mysqli $con, int $matchNumber): array
+{
+    $context = hh_prediction_stage_context_for_match_number($matchNumber);
+    $audit = [
+        'status' => 'unavailable',
+        'match_number' => $matchNumber,
+        'context' => $context,
+        'fixture' => null,
+        'actual_home' => null,
+        'actual_away' => null,
+        'rows' => [],
+        'summary' => [
+            'players' => 0,
+            'submitted' => 0,
+            'perfect' => 0,
+            'strong' => 0,
+            'outcome' => 0,
+            'single' => 0,
+            'miss' => 0,
+        ],
+        'message' => '',
+    ];
+
+    if (!$context || empty($context['table'])) {
+        $audit['message'] = 'This fixture does not map to a prediction stage.';
+        return $audit;
+    }
+
+    $fixtureStatement = mysqli_prepare(
+        $con,
+        "SELECT match_number, stage, round_number, date, kotime, venue, hometeam, awayteam, hometeamimg, awayteamimg, homescore, awayscore
+         FROM live_match_schedule
+         WHERE match_number = ?
+         LIMIT 1"
+    );
+
+    if (!$fixtureStatement) {
+        $audit['message'] = 'The fixture could not be loaded.';
+        return $audit;
+    }
+
+    mysqli_stmt_bind_param($fixtureStatement, 'i', $matchNumber);
+    mysqli_stmt_execute($fixtureStatement);
+    $fixtureResult = mysqli_stmt_get_result($fixtureStatement);
+    $fixture = $fixtureResult instanceof mysqli_result ? mysqli_fetch_assoc($fixtureResult) : null;
+    if ($fixtureResult instanceof mysqli_result) {
+        mysqli_free_result($fixtureResult);
+    }
+    mysqli_stmt_close($fixtureStatement);
+
+    if (!$fixture) {
+        $audit['message'] = 'That fixture could not be found in the schedule.';
+        return $audit;
+    }
+
+    $audit['fixture'] = $fixture;
+    $indexes = hh_fixture_score_indexes($matchNumber);
+    $scoreFields = [
+        'home' => 'score' . $indexes['home'] . '_r',
+        'away' => 'score' . $indexes['away'] . '_r',
+    ];
+
+    $latestResult = mysqli_query(
+        $con,
+        "SELECT {$scoreFields['home']} AS actual_home, {$scoreFields['away']} AS actual_away
+         FROM live_match_results
+         ORDER BY match_id DESC
+         LIMIT 1"
+    );
+
+    if ($latestResult instanceof mysqli_result) {
+        $snapshot = mysqli_fetch_assoc($latestResult) ?: [];
+        mysqli_free_result($latestResult);
+        $audit['actual_home'] = $snapshot['actual_home'] ?? null;
+        $audit['actual_away'] = $snapshot['actual_away'] ?? null;
+    }
+
+    if ($audit['actual_home'] === null || $audit['actual_away'] === null) {
+        $audit['actual_home'] = $fixture['homescore'] ?? null;
+        $audit['actual_away'] = $fixture['awayscore'] ?? null;
+    }
+
+    $table = (string) $context['table'];
+    if (!hh_admin_table_exists($con, $table)) {
+        $audit['message'] = 'The stage table for this fixture has not been created yet.';
+        return $audit;
+    }
+
+    $predictionSql = "
+        SELECT lui.id, lui.username, lui.firstname, lui.surname,
+               stage.score{$indexes['home']}_p AS pred_home,
+               stage.score{$indexes['away']}_p AS pred_away
+        FROM live_user_information lui
+        LEFT JOIN {$table} stage ON stage.id = lui.id
+        ORDER BY lui.surname ASC, lui.firstname ASC
+    ";
+    $predictionRows = hh_admin_fetch_all($con, $predictionSql);
+
+    foreach ($predictionRows as $row) {
+        $detail = hh_prediction_fixture_score_detail(
+            $row['pred_home'] ?? null,
+            $row['pred_away'] ?? null,
+            $audit['actual_home'],
+            $audit['actual_away']
+        );
+
+        $audit['rows'][] = [
+            'id' => (int) ($row['id'] ?? 0),
+            'username' => (string) ($row['username'] ?? ''),
+            'firstname' => (string) ($row['firstname'] ?? ''),
+            'surname' => (string) ($row['surname'] ?? ''),
+            'pred_home' => $row['pred_home'] ?? null,
+            'pred_away' => $row['pred_away'] ?? null,
+            'detail' => $detail,
+        ];
+
+        $audit['summary']['players']++;
+        if (!empty($detail['submitted'])) {
+            $audit['summary']['submitted']++;
+        }
+
+        switch ($detail['category']) {
+            case 'perfect':
+                $audit['summary']['perfect']++;
+                break;
+            case 'strong':
+                $audit['summary']['strong']++;
+                break;
+            case 'outcome':
+                $audit['summary']['outcome']++;
+                break;
+            case 'single':
+                $audit['summary']['single']++;
+                break;
+            case 'miss':
+            case 'missing':
+                $audit['summary']['miss']++;
+                break;
+        }
+    }
+
+    $audit['status'] = is_numeric($audit['actual_home']) && is_numeric($audit['actual_away']) ? 'ready' : 'awaiting-result';
+    $audit['message'] = $audit['status'] === 'ready'
+        ? 'This view follows the latest saved result snapshot, so it should match the live scoring engine.'
+        : 'No saved result exists for this fixture yet, so the audit is waiting for a score.';
+
+    return $audit;
+}
+
+function hh_admin_table_editor_config(): array
+{
+    return [
+        'live_user_information' => [
+            'primary_key' => 'id',
+            'label' => 'Player profile',
+            'row_sql' => "SELECT id AS row_id, CONCAT(firstname, ' ', surname, ' (@', username, ')') AS row_label
+                          FROM live_user_information
+                          ORDER BY surname ASC, firstname ASC",
+            'columns' => [
+                'firstname' => ['label' => 'First name', 'type' => 'text'],
+                'surname' => ['label' => 'Surname', 'type' => 'text'],
+                'email' => ['label' => 'Email', 'type' => 'email'],
+                'avatar' => ['label' => 'Avatar path', 'type' => 'text'],
+                'fieldofwork' => ['label' => 'Field of expertise', 'type' => 'text'],
+                'location' => ['label' => 'Location', 'type' => 'text'],
+                'faveteam' => ['label' => 'Favourite team', 'type' => 'text'],
+                'tournwinner' => ['label' => 'Tournament winner pick', 'type' => 'text'],
+                'haspaid' => ['label' => 'Entry paid', 'type' => 'select', 'options' => ['Yes', 'No']],
+            ],
+        ],
+        'live_match_schedule' => [
+            'primary_key' => 'id',
+            'label' => 'Fixture record',
+            'row_sql' => "SELECT id AS row_id, CONCAT('Match ', COALESCE(match_number, id), ' · ', hometeam, ' v ', awayteam) AS row_label
+                          FROM live_match_schedule
+                          ORDER BY COALESCE(match_number, id) ASC",
+            'columns' => [
+                'date' => ['label' => 'Date', 'type' => 'date', 'nullable' => true],
+                'kotime' => ['label' => 'Kick-off', 'type' => 'time'],
+                'stage' => ['label' => 'Stage', 'type' => 'text'],
+                'round_number' => ['label' => 'Round number', 'type' => 'number', 'nullable' => true],
+                'match_number' => ['label' => 'Match number', 'type' => 'number', 'nullable' => true],
+                'venue' => ['label' => 'Venue', 'type' => 'text'],
+                'hometeam' => ['label' => 'Home team', 'type' => 'text'],
+                'hometeamimg' => ['label' => 'Home flag path', 'type' => 'text'],
+                'awayteam' => ['label' => 'Away team', 'type' => 'text'],
+                'awayteamimg' => ['label' => 'Away flag path', 'type' => 'text'],
+                'homescore' => ['label' => 'Home score', 'type' => 'number', 'nullable' => true],
+                'awayscore' => ['label' => 'Away score', 'type' => 'number', 'nullable' => true],
+            ],
+        ],
+        'live_fanzone_posts' => [
+            'primary_key' => 'id',
+            'label' => 'Fan Zone post',
+            'row_sql' => "SELECT id AS row_id,
+                                 CONCAT('#', id, ' · ', display_name, ' · ', LEFT(REPLACE(message_body, '\n', ' '), 60)) AS row_label
+                          FROM live_fanzone_posts
+                          ORDER BY created_at DESC, id DESC
+                          LIMIT 200",
+            'columns' => [
+                'display_name' => ['label' => 'Display name', 'type' => 'text'],
+                'message_body' => ['label' => 'Message', 'type' => 'textarea'],
+                'is_deleted' => ['label' => 'Deleted', 'type' => 'select', 'options' => ['0', '1']],
+                'is_pinned' => ['label' => 'Pinned', 'type' => 'select', 'options' => ['0', '1']],
+                'is_announcement' => ['label' => 'Announcement', 'type' => 'select', 'options' => ['0', '1']],
+            ],
+        ],
+    ];
+}
+
+function hh_admin_editor_row_options(mysqli $con, array $config): array
+{
+    if (empty($config['row_sql'])) {
+        return [];
+    }
+
+    return hh_admin_fetch_all($con, (string) $config['row_sql']);
+}
+
+function hh_admin_editor_fetch_row(mysqli $con, string $table, array $config, int $rowId): ?array
+{
+    if ($rowId <= 0 || empty($config['primary_key'])) {
+        return null;
+    }
+
+    $primaryKey = (string) $config['primary_key'];
+    $statement = mysqli_prepare($con, "SELECT * FROM {$table} WHERE {$primaryKey} = ? LIMIT 1");
+    if (!$statement) {
+        return null;
+    }
+
+    mysqli_stmt_bind_param($statement, 'i', $rowId);
+    mysqli_stmt_execute($statement);
+    $result = mysqli_stmt_get_result($statement);
+    $row = $result instanceof mysqli_result ? (mysqli_fetch_assoc($result) ?: null) : null;
+    if ($result instanceof mysqli_result) {
+        mysqli_free_result($result);
+    }
+    mysqli_stmt_close($statement);
+
+    return $row;
+}
+
+function hh_admin_editor_normalize_value(string $rawValue, array $meta)
+{
+    $type = (string) ($meta['type'] ?? 'text');
+    $nullable = !empty($meta['nullable']);
+    $value = trim($rawValue);
+
+    if ($value === '' && $nullable) {
+        return null;
+    }
+
+    return $type === 'number'
+        ? ($value === '' ? 0 : (int) $value)
+        : $value;
+}
+
+function hh_admin_bind_dynamic(mysqli_stmt $statement, string $types, array $values): void
+{
+    $params = [$types];
+    foreach ($values as $index => $value) {
+        $params[] = &$values[$index];
+    }
+    call_user_func_array([$statement, 'bind_param'], $params);
+}
+
 $messages = [];
 $errors = [];
 
@@ -203,6 +483,8 @@ $tableOptions = [
     'live_user_predictions_final' => 'Final predictions',
     'live_fanzone_posts' => 'Fan Zone posts',
 ];
+
+$tableEditorConfig = hh_admin_table_editor_config();
 
 $stageOptions = [
     'live_user_predictions_groups' => 'Group stage points',
@@ -309,10 +591,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $errors[] = 'The Fan Zone board could not be cleared.';
         }
+    } elseif ($action === 'save_table_row') {
+        $tableName = (string) ($_POST['table_name'] ?? '');
+        $rowId = (int) ($_POST['row_id'] ?? 0);
+        $isUnlocked = (string) ($_POST['editor_unlock'] ?? '') === '1';
+        $config = $tableEditorConfig[$tableName] ?? null;
+
+        if (!$config) {
+            $errors[] = 'That table is not enabled for direct editing.';
+        } elseif (!$isUnlocked) {
+            $errors[] = 'Please unlock the editor before saving changes.';
+        } elseif ($rowId <= 0) {
+            $errors[] = 'Please choose a valid row to update.';
+        } else {
+            $assignments = [];
+            $types = '';
+            $values = [];
+
+            foreach (($config['columns'] ?? []) as $columnName => $meta) {
+                $rawValue = (string) ($_POST['editor'][$columnName] ?? '');
+                $normalized = hh_admin_editor_normalize_value($rawValue, $meta);
+
+                if ($normalized === null) {
+                    $assignments[] = "{$columnName} = NULL";
+                    continue;
+                }
+
+                $assignments[] = "{$columnName} = ?";
+                $types .= (string) ($meta['type'] ?? '') === 'number' ? 'i' : 's';
+                $values[] = $normalized;
+            }
+
+            $primaryKey = (string) ($config['primary_key'] ?? 'id');
+            $sql = "UPDATE {$tableName} SET " . implode(', ', $assignments) . " WHERE {$primaryKey} = ? LIMIT 1";
+            $types .= 'i';
+            $values[] = $rowId;
+
+            $statement = mysqli_prepare($con, $sql);
+            if (!$statement) {
+                $errors[] = 'The editor could not prepare that update.';
+            } else {
+                hh_admin_bind_dynamic($statement, $types, $values);
+                mysqli_stmt_execute($statement);
+                mysqli_stmt_close($statement);
+                $messages[] = 'The selected row has been updated.';
+            }
+        }
     }
 }
 
-$selectedTable = (string) ($_GET['table'] ?? 'live_user_information');
+$selectedTable = (string) (($_REQUEST['table'] ?? $_POST['table_name'] ?? 'live_user_information'));
 if (!isset($tableOptions[$selectedTable])) {
     $selectedTable = 'live_user_information';
 }
@@ -360,9 +688,41 @@ $fixturePreview = hh_admin_fetch_all(
     "SELECT id, hometeam, awayteam, homescore, awayscore, date, kotime, stage FROM live_match_schedule ORDER BY date ASC, kotime ASC LIMIT 8"
 );
 
+$auditFixtures = hh_admin_fetch_all(
+    $con,
+    "SELECT match_number, stage, date, kotime, hometeam, awayteam, homescore, awayscore
+     FROM live_match_schedule
+     ORDER BY match_number ASC"
+);
+
+$selectedAuditMatch = 0;
+foreach ($auditFixtures as $fixture) {
+    if (($fixture['homescore'] ?? null) !== null && ($fixture['awayscore'] ?? null) !== null) {
+        $selectedAuditMatch = (int) ($fixture['match_number'] ?? 0);
+    }
+}
+if ($selectedAuditMatch <= 0 && !empty($auditFixtures)) {
+    $selectedAuditMatch = (int) ($auditFixtures[0]['match_number'] ?? 0);
+}
+
+$requestedAuditMatch = (int) ($_GET['audit_match'] ?? 0);
+if ($requestedAuditMatch > 0) {
+    $selectedAuditMatch = $requestedAuditMatch;
+}
+
 $predictionIntegrityAudit = hh_admin_prediction_integrity_audit($con, $users);
+$scoringAudit = hh_admin_scoring_audit($con, $selectedAuditMatch);
 
 $tablePreview = hh_admin_preview_table($con, $selectedTable, 30);
+$editableTable = $tableEditorConfig[$selectedTable] ?? null;
+$editorRowOptions = $editableTable ? hh_admin_editor_row_options($con, $editableTable) : [];
+$selectedEditRowId = (int) ($_REQUEST['edit_row'] ?? $_POST['row_id'] ?? 0);
+if ($selectedEditRowId <= 0 && !empty($editorRowOptions)) {
+    $selectedEditRowId = (int) ($editorRowOptions[0]['row_id'] ?? 0);
+}
+$editableRow = ($editableTable && $selectedEditRowId > 0)
+    ? hh_admin_editor_fetch_row($con, $selectedTable, $editableTable, $selectedEditRowId)
+    : null;
 
 mysqli_close($con);
 
@@ -446,6 +806,52 @@ include '../php/navigation.php';
       .admin-table-preview table {
         margin-bottom: 0;
         white-space: nowrap;
+      }
+      .admin-editor-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 800;
+      }
+      .admin-editor-toggle input[type="checkbox"] {
+        width: 46px;
+        height: 26px;
+        appearance: none;
+        border-radius: 999px;
+        background: #d6d8d1;
+        position: relative;
+        border: 1px solid var(--hh-line);
+        transition: background 0.2s ease;
+      }
+      .admin-editor-toggle input[type="checkbox"]::after {
+        content: '';
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #ffffff;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+        transition: transform 0.2s ease;
+      }
+      .admin-editor-toggle input[type="checkbox"]:checked {
+        background: rgba(143, 102, 216, 0.6);
+      }
+      .admin-editor-toggle input[type="checkbox"]:checked::after {
+        transform: translateX(20px);
+      }
+      .admin-editor-grid {
+        display: grid;
+        gap: 14px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .admin-editor-grid .is-changed {
+        border-color: rgba(143, 102, 216, 0.5);
+        background: rgba(143, 102, 216, 0.08);
+      }
+      .admin-editor-grid textarea.form-control {
+        min-height: 110px;
       }
       .admin-audit-grid {
         display: grid;
@@ -541,11 +947,103 @@ include '../php/navigation.php';
       .admin-audit-list li + li {
         margin-top: 4px;
       }
+      .admin-score-summary {
+        display: grid;
+        gap: 10px;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+      }
+      .admin-score-summary div {
+        padding: 12px;
+        border: 1px solid var(--hh-line);
+        border-radius: 8px;
+        background: #ffffff;
+      }
+      .admin-score-summary strong,
+      .admin-score-summary span {
+        display: block;
+      }
+      .admin-score-summary strong {
+        font-size: 1.2rem;
+        line-height: 1;
+      }
+      .admin-score-summary span {
+        margin-top: 6px;
+        color: var(--hh-muted);
+        font-size: 0.78rem;
+        font-weight: 700;
+      }
+      .admin-score-result {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: rgba(12, 90, 67, 0.08);
+        color: var(--hh-green-dark);
+        font-size: 0.86rem;
+        font-weight: 800;
+      }
+      .admin-score-table td,
+      .admin-score-table th {
+        vertical-align: middle;
+      }
+      .admin-score-player strong,
+      .admin-score-player span {
+        display: block;
+      }
+      .admin-score-player span {
+        color: var(--hh-muted);
+        font-size: 0.8rem;
+      }
+      .admin-score-pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 44px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 0.78rem;
+        font-weight: 900;
+      }
+      .admin-score-pill--perfect {
+        background: rgba(25, 135, 84, 0.14);
+        color: #146c43;
+      }
+      .admin-score-pill--strong {
+        background: rgba(143, 102, 216, 0.14);
+        color: #5a2db1;
+      }
+      .admin-score-pill--outcome {
+        background: rgba(13, 110, 253, 0.12);
+        color: #0a58ca;
+      }
+      .admin-score-pill--single {
+        background: rgba(255, 193, 7, 0.16);
+        color: #8a6d03;
+      }
+      .admin-score-pill--miss,
+      .admin-score-pill--missing {
+        background: rgba(214, 64, 69, 0.12);
+        color: #a52f33;
+      }
+      .admin-score-pill--pending {
+        background: rgba(108, 117, 125, 0.12);
+        color: #5c636a;
+      }
+      .admin-score-meta {
+        color: var(--hh-muted);
+        font-size: 0.84rem;
+      }
+      .admin-score-meta strong {
+        color: var(--hh-green-dark);
+      }
       @media (max-width: 991px) {
         .admin-grid--two,
         .admin-grid--three,
         .admin-kpi,
-        .admin-audit-metrics {
+        .admin-audit-metrics,
+        .admin-score-summary,
+        .admin-editor-grid {
           grid-template-columns: 1fr;
         }
       }
@@ -610,6 +1108,117 @@ include '../php/navigation.php';
                     <button type="submit" class="btn btn-outline-danger"><i class="bi bi-exclamation-triangle"></i> Reset game data</button>
                 </form>
             </div>
+        </div>
+
+        <div class="admin-card">
+            <div class="d-flex flex-wrap align-items-start justify-content-between gap-3">
+                <div>
+                    <h3>Scoring Audit</h3>
+                    <p class="admin-note">Pick one fixture and we’ll show the exact result, every player prediction, and why the scoring engine awarded those points.</p>
+                </div>
+                <form method="get" class="d-flex flex-wrap align-items-end gap-2">
+                    <div>
+                        <label class="form-label" for="audit_match">Fixture</label>
+                        <select class="form-select" id="audit_match" name="audit_match">
+                            <?php foreach ($auditFixtures as $fixture) : ?>
+                                <?php
+                                $matchNumber = (int) ($fixture['match_number'] ?? 0);
+                                $fixtureLabel = 'Match ' . $matchNumber . ' · ' . trim((string) ($fixture['stage'] ?? ''));
+                                $fixtureLabel .= ' · ' . trim((string) ($fixture['hometeam'] ?? '')) . ' v ' . trim((string) ($fixture['awayteam'] ?? ''));
+                                ?>
+                                <option value="<?= $matchNumber ?>"<?= $selectedAuditMatch === $matchNumber ? ' selected' : '' ?>>
+                                    <?= htmlspecialchars($fixtureLabel, ENT_QUOTES) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <input type="hidden" name="table" value="<?= htmlspecialchars($selectedTable, ENT_QUOTES) ?>">
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Inspect fixture</button>
+                </form>
+            </div>
+
+            <?php if ($scoringAudit['fixture']) : ?>
+                <?php
+                $fixture = $scoringAudit['fixture'];
+                $stageKey = (string) ($scoringAudit['context']['key'] ?? '');
+                $stageBadgeClass = hh_admin_stage_badge_class($stageKey);
+                $actualHome = $scoringAudit['actual_home'];
+                $actualAway = $scoringAudit['actual_away'];
+                $hasActual = is_numeric($actualHome) && is_numeric($actualAway);
+                ?>
+                <div class="d-flex flex-wrap align-items-center gap-2 mt-3">
+                    <span class="badge rounded-pill <?= htmlspecialchars($stageBadgeClass, ENT_QUOTES) ?>">
+                        <?= htmlspecialchars((string) ($scoringAudit['context']['label'] ?? ''), ENT_QUOTES) ?>
+                    </span>
+                    <span class="admin-score-result">
+                        <strong><?= htmlspecialchars((string) ($fixture['hometeam'] ?? ''), ENT_QUOTES) ?></strong>
+                        <span><?= $hasActual ? (int) $actualHome . ' - ' . (int) $actualAway : 'vs' ?></span>
+                        <strong><?= htmlspecialchars((string) ($fixture['awayteam'] ?? ''), ENT_QUOTES) ?></strong>
+                    </span>
+                    <span class="admin-score-meta">
+                        <strong>Match <?= (int) ($fixture['match_number'] ?? 0) ?></strong>
+                        · <?= htmlspecialchars((string) ($fixture['date'] ?? ''), ENT_QUOTES) ?>
+                        <?= htmlspecialchars((string) ($fixture['kotime'] ?? ''), ENT_QUOTES) ?>
+                    </span>
+                </div>
+
+                <p class="admin-note mt-3"><?= htmlspecialchars((string) ($scoringAudit['message'] ?? ''), ENT_QUOTES) ?></p>
+
+                <div class="admin-score-summary mt-3">
+                    <div><strong><?= (int) ($scoringAudit['summary']['players'] ?? 0) ?></strong><span>players checked</span></div>
+                    <div><strong><?= (int) ($scoringAudit['summary']['submitted'] ?? 0) ?></strong><span>predictions submitted</span></div>
+                    <div><strong><?= (int) ($scoringAudit['summary']['perfect'] ?? 0) ?></strong><span>7-point perfects</span></div>
+                    <div><strong><?= (int) ($scoringAudit['summary']['strong'] ?? 0) ?></strong><span>3-point reads</span></div>
+                    <div><strong><?= (int) ($scoringAudit['summary']['outcome'] ?? 0) ?></strong><span>2-point outcomes</span></div>
+                    <div><strong><?= (int) ($scoringAudit['summary']['single'] ?? 0) ?></strong><span>1-point hits</span></div>
+                    <div><strong><?= (int) ($scoringAudit['summary']['miss'] ?? 0) ?></strong><span>0-point misses</span></div>
+                </div>
+
+                <div class="admin-table-preview mt-3">
+                    <table class="table table-sm table-striped align-middle admin-score-table">
+                        <thead>
+                            <tr>
+                                <th>Player</th>
+                                <th>Prediction</th>
+                                <th>Actual</th>
+                                <th>Points</th>
+                                <th>Why</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($scoringAudit['rows'] as $row) : ?>
+                                <?php
+                                $detail = $row['detail'] ?? [];
+                                $category = (string) ($detail['category'] ?? 'pending');
+                                $points = $detail['points'];
+                                $predictionLabel = is_numeric($row['pred_home']) && is_numeric($row['pred_away'])
+                                    ? (int) $row['pred_home'] . ' - ' . (int) $row['pred_away']
+                                    : '—';
+                                $actualLabel = $hasActual ? (int) $actualHome . ' - ' . (int) $actualAway : '—';
+                                ?>
+                                <tr>
+                                    <td>
+                                        <div class="admin-score-player">
+                                            <strong><?= htmlspecialchars(trim(($row['firstname'] ?? '') . ' ' . ($row['surname'] ?? '')), ENT_QUOTES) ?></strong>
+                                            <span>@<?= htmlspecialchars((string) ($row['username'] ?? ''), ENT_QUOTES) ?></span>
+                                        </div>
+                                    </td>
+                                    <td><?= htmlspecialchars($predictionLabel, ENT_QUOTES) ?></td>
+                                    <td><?= htmlspecialchars($actualLabel, ENT_QUOTES) ?></td>
+                                    <td>
+                                        <span class="admin-score-pill admin-score-pill--<?= htmlspecialchars($category, ENT_QUOTES) ?>">
+                                            <?= $points === null ? '—' : (int) $points ?>
+                                        </span>
+                                    </td>
+                                    <td><?= htmlspecialchars((string) ($detail['label'] ?? ''), ENT_QUOTES) ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            <?php else : ?>
+                <p class="admin-note mt-3">No fixture is available to audit yet.</p>
+            <?php endif; ?>
         </div>
 
         <div class="admin-grid admin-grid--two">
@@ -712,16 +1321,83 @@ include '../php/navigation.php';
                 </div>
             </div>
 
-            <div class="admin-card admin-danger">
-                <h3>Other High-Risk Actions</h3>
-                <p class="admin-note">These are the sort of controls that belong in this hub, but they’re best kept explicit and deliberate.</p>
-                <ul class="mb-3">
-                    <li>Clear the Fan Zone board</li>
-                    <li>Blank prediction tables for a fresh tournament setup</li>
-                    <li>Edit schedule details or rescore a specific match</li>
-                    <li>Open a fuller table editor for key datasets</li>
-                </ul>
-                <form method="post" onsubmit="return confirm('Clear every Fan Zone post?');">
+            <div class="admin-card">
+                <div class="d-flex flex-wrap align-items-start justify-content-between gap-3">
+                    <div>
+                        <h3>Direct Row Editor</h3>
+                        <p class="admin-note">A deliberately narrow editor for quick, admin-only fixes. Choose a row, unlock the fields, and save one record at a time.</p>
+                    </div>
+                    <?php if ($editableTable) : ?>
+                        <span class="badge rounded-pill bg-primary-subtle text-primary-emphasis"><?= htmlspecialchars((string) ($editableTable['label'] ?? 'Editable'), ENT_QUOTES) ?></span>
+                    <?php else : ?>
+                        <span class="badge rounded-pill bg-secondary-subtle text-secondary-emphasis">Read-only table</span>
+                    <?php endif; ?>
+                </div>
+
+                <?php if (!$editableTable) : ?>
+                    <p class="admin-note mt-3">The currently selected table can still be previewed, but it is not enabled for direct editing here. That keeps the sharper edges away from the emergency tool.</p>
+                <?php elseif (empty($editorRowOptions)) : ?>
+                    <p class="admin-note mt-3">There are no rows available to edit in this table yet.</p>
+                <?php else : ?>
+                    <form method="get" class="mt-3">
+                        <input type="hidden" name="table" value="<?= htmlspecialchars($selectedTable, ENT_QUOTES) ?>">
+                        <div>
+                            <label class="form-label" for="edit_row">Row to edit</label>
+                            <select class="form-select" id="edit_row" name="edit_row" onchange="this.form.submit()">
+                                <?php foreach ($editorRowOptions as $rowOption) : ?>
+                                    <option value="<?= (int) ($rowOption['row_id'] ?? 0) ?>"<?= $selectedEditRowId === (int) ($rowOption['row_id'] ?? 0) ? ' selected' : '' ?>>
+                                        <?= htmlspecialchars((string) ($rowOption['row_label'] ?? ''), ENT_QUOTES) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </form>
+
+                    <?php if ($editableRow) : ?>
+                        <form method="post" class="mt-3" id="adminRowEditor">
+                            <input type="hidden" name="admin_action" value="save_table_row">
+                            <input type="hidden" name="table_name" value="<?= htmlspecialchars($selectedTable, ENT_QUOTES) ?>">
+                            <input type="hidden" name="row_id" value="<?= (int) $selectedEditRowId ?>">
+                            <input type="hidden" name="editor_unlock" id="editorUnlockValue" value="0">
+
+                            <label class="admin-editor-toggle">
+                                <input type="checkbox" id="editorUnlockToggle">
+                                <span>Unlock this row for editing</span>
+                            </label>
+
+                            <div class="admin-editor-grid mt-3">
+                                <?php foreach (($editableTable['columns'] ?? []) as $columnName => $meta) : ?>
+                                    <?php
+                                    $fieldId = 'editor_' . $columnName;
+                                    $fieldType = (string) ($meta['type'] ?? 'text');
+                                    $fieldValue = (string) ($editableRow[$columnName] ?? '');
+                                    ?>
+                                    <div>
+                                        <label class="form-label" for="<?= htmlspecialchars($fieldId, ENT_QUOTES) ?>"><?= htmlspecialchars((string) ($meta['label'] ?? $columnName), ENT_QUOTES) ?></label>
+                                        <?php if ($fieldType === 'textarea') : ?>
+                                            <textarea class="form-control admin-editor-field" id="<?= htmlspecialchars($fieldId, ENT_QUOTES) ?>" name="editor[<?= htmlspecialchars($columnName, ENT_QUOTES) ?>]" data-original="<?= htmlspecialchars($fieldValue, ENT_QUOTES) ?>" readonly><?= htmlspecialchars($fieldValue, ENT_QUOTES) ?></textarea>
+                                        <?php elseif ($fieldType === 'select') : ?>
+                                            <select class="form-select admin-editor-field" id="<?= htmlspecialchars($fieldId, ENT_QUOTES) ?>" name="editor[<?= htmlspecialchars($columnName, ENT_QUOTES) ?>]" data-original="<?= htmlspecialchars($fieldValue, ENT_QUOTES) ?>" disabled>
+                                                <?php foreach ((array) ($meta['options'] ?? []) as $optionValue) : ?>
+                                                    <option value="<?= htmlspecialchars((string) $optionValue, ENT_QUOTES) ?>"<?= $fieldValue === (string) $optionValue ? ' selected' : '' ?>><?= htmlspecialchars((string) $optionValue, ENT_QUOTES) ?></option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        <?php else : ?>
+                                            <input class="form-control admin-editor-field" type="<?= htmlspecialchars($fieldType === 'number' ? 'number' : ($fieldType === 'date' ? 'date' : ($fieldType === 'time' ? 'time' : $fieldType)), ENT_QUOTES) ?>" id="<?= htmlspecialchars($fieldId, ENT_QUOTES) ?>" name="editor[<?= htmlspecialchars($columnName, ENT_QUOTES) ?>]" value="<?= htmlspecialchars($fieldValue, ENT_QUOTES) ?>" data-original="<?= htmlspecialchars($fieldValue, ENT_QUOTES) ?>"<?= $fieldType === 'number' ? ' step="1"' : '' ?> readonly>
+                                        <?php endif; ?>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+
+                            <div class="d-flex flex-wrap gap-2 mt-3">
+                                <button type="submit" class="btn btn-primary" id="adminRowEditorSave" disabled><i class="bi bi-save"></i> Save row</button>
+                                <button type="button" class="btn btn-outline-dark" id="adminRowEditorReset" disabled><i class="bi bi-arrow-counterclockwise"></i> Reset edits</button>
+                            </div>
+                        </form>
+                    <?php endif; ?>
+                <?php endif; ?>
+
+                <form method="post" class="mt-4 pt-3 border-top" onsubmit="return confirm('Clear every Fan Zone post?');">
                     <input type="hidden" name="admin_action" value="clear_fanzone">
                     <button type="submit" class="btn btn-outline-danger"><i class="bi bi-trash3"></i> Clear Fan Zone board</button>
                 </form>
@@ -826,5 +1502,57 @@ include '../php/navigation.php';
         </div>
     </section>
 </div>
+
+<script>
+  (() => {
+    const unlockToggle = document.getElementById('editorUnlockToggle');
+    const unlockValue = document.getElementById('editorUnlockValue');
+    const saveButton = document.getElementById('adminRowEditorSave');
+    const resetButton = document.getElementById('adminRowEditorReset');
+    const fields = Array.from(document.querySelectorAll('.admin-editor-field'));
+
+    if (!unlockToggle || !unlockValue || fields.length === 0) {
+      return;
+    }
+
+    const syncUnlockState = () => {
+      const unlocked = unlockToggle.checked;
+      unlockValue.value = unlocked ? '1' : '0';
+      saveButton.disabled = !unlocked;
+      resetButton.disabled = !unlocked;
+
+      fields.forEach((field) => {
+        if (field.tagName === 'SELECT') {
+          field.disabled = !unlocked;
+        } else {
+          field.readOnly = !unlocked;
+        }
+      });
+    };
+
+    const refreshChangedState = () => {
+      fields.forEach((field) => {
+        const original = field.dataset.original ?? '';
+        field.classList.toggle('is-changed', (field.value ?? '') !== original);
+      });
+    };
+
+    unlockToggle.addEventListener('change', syncUnlockState);
+    resetButton.addEventListener('click', () => {
+      fields.forEach((field) => {
+        field.value = field.dataset.original ?? '';
+      });
+      refreshChangedState();
+    });
+
+    fields.forEach((field) => {
+      field.addEventListener('input', refreshChangedState);
+      field.addEventListener('change', refreshChangedState);
+    });
+
+    syncUnlockState();
+    refreshChangedState();
+  })();
+</script>
 
 <?php include "../php/footer.php"; ?>

@@ -10,13 +10,13 @@ define('IS_PREVIEW', true);
 
 $hh_site_config = array (
   'title' => 'Hendy\'s Hunches',
-  'version' => 'v3.1.4',
+  'version' => 'v3.2.0',
   'year' => '2026',
   'base_url' => 'https://www.hendyshunches.co.uk',
   'developer' => 'James Henderson',
   'admin_usernames' => 
   array (
-    0 => 'james',
+    0 => 'James',
   ),
 );
 
@@ -51,17 +51,17 @@ $hh_preview_config = array (
 );
 
 $hh_email_config = array (
-  'enabled' => false,
+  'enabled' => true,
   'transport' => 'smtp',
   'from_name' => 'Hendy\'s Hunches',
-  'from_email' => '',
+  'from_email' => 'no-reply@hendyshunches.co.uk',
   'reply_to_name' => 'James Henderson',
-  'reply_to_email' => '',
-  'smtp_host' => '',
+  'reply_to_email' => 'jameshenderson12@hotmail.com',
+  'smtp_host' => 'email-smtp.eu-west-2.amazonaws.com',
   'smtp_port' => 587,
   'smtp_secure' => 'tls',
-  'smtp_username' => '',
-  'smtp_password' => '',
+  'smtp_username' => 'AKIAZDEISCM3GUMZ6QGR',
+  'smtp_password' => 'BPBmrzCRi4bBtbahDZwYTQz9RIiMz2JcFrILLNXqrjFP',
 );
 
 $hh_path_config = array (

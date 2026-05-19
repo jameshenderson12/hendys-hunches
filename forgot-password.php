@@ -1,8 +1,8 @@
 <?php
-// Include necessary files for configuration and database connection
 include 'php/config.php';
 include 'php/db-connect.php';
 require_once 'php/email.php';
+require_once 'php/terms.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['e'])) {
     $e = mysqli_real_escape_string($con, $_POST['e']);
@@ -12,9 +12,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['e'])) {
 
     if ($numrows > 0) {
         while ($row = mysqli_fetch_array($query, MYSQLI_ASSOC)) {
-            $id = $row["id"];
-            $fn = $row["firstname"];
-            $u = $row["username"];            
+            $id = $row['id'];
+            $fn = $row['firstname'];
+            $u = $row['username'];
         }
         $emailcut = substr($e, 0, 4);
         $randNum = rand(10000, 99999);
@@ -26,17 +26,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['e'])) {
         mysqli_close($con);
 
         if ($mailSent) {
-            echo "success";
+            echo 'success';
         } elseif (hh_mail_is_enabled()) {
-            echo "email_send_failed";
+            echo 'email_send_failed';
         } else {
-            echo "success";
+            echo 'success';
         }
         exit();
     }
 
     mysqli_close($con);
-    echo "no_exist";
+    echo 'no_exist';
     exit();
 }
 
@@ -50,7 +50,7 @@ if (isset($_GET['u']) && isset($_GET['p'])) {
     $query = mysqli_query($con, $sql);
     $numrows = mysqli_num_rows($query);
     if ($numrows == 0) {
-        echo "There is no match for that username with that temporary password in the system. We cannot proceed.";
+        echo 'There is no match for that username with that temporary password in the system. We cannot proceed.';
         exit();
     } else {
         $row = mysqli_fetch_row($query);
@@ -59,7 +59,7 @@ if (isset($_GET['u']) && isset($_GET['p'])) {
         $query = mysqli_query($con, $sql);
         $sql = "UPDATE live_temp_information SET temp_pass='' WHERE username='$u' LIMIT 1";
         $query = mysqli_query($con, $sql);
-        header("location: index.php");
+        header('location: index.php');
         exit();
     }
 }
@@ -67,15 +67,13 @@ if (isset($_GET['u']) && isset($_GET['p'])) {
 mysqli_close($con);
 ?>
 <!DOCTYPE html>
-<html lang="en-GB" class="h-100">
+<html lang="en-GB">
   <head>
-    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-QN708QFJSD"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
       gtag('config', 'G-QN708QFJSD');
     </script>
     <meta charset="utf-8">
@@ -83,169 +81,542 @@ mysqli_close($con);
     <meta name="description" content="Hendy's Hunches: Predictions Game">
     <meta name="author" content="James Henderson">
     <meta name="keywords" content="football, predictions, game">
-		<title>Forgot Password - Hendy's Hunches</title>
-		<link rel="shortcut icon" href="ico/favicon.ico">
-		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <title>Forgot Password - Hendy's Hunches</title>
+    <link rel="shortcut icon" href="ico/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="css/registration.css">
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.1"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script type="text/javascript">
-      // Turn the email field red if not input correct (onBlur - focus leaving the field)
-      function validateEmail() {
-      var x = document.getElementById("email").value;
-      var y = document.getElementById("email");
-      var atpos = x.indexOf("@");
-      var dotpos = x.lastIndexOf(".");
-      if (atpos < 1 || dotpos < atpos + 2 || dotpos + 2 >= x.length) {
-        y.style.border="1px solid red";
-        return false;
-      }
-      else
-      {
-        y.style.border="1px solid green";
-      }
+    <style>
+      :root {
+        --hh-ink: #16231d;
+        --hh-cream: #fbfcf8;
+        --hh-green: #04331e;
+        --hh-green-mid: #0a5a38;
+        --hh-purple: #8f66d8;
+        --hh-purple-dark: #402064;
+        --hh-purple-deep: #28133f;
+        --hh-gold: #f0c556;
+        --hh-line: rgba(255, 255, 255, 0.22);
+        --hh-shadow: 0 24px 68px rgba(0, 0, 0, 0.32);
       }
 
-      // Reset all guidance borders to original colour
-      function resetBorders() {
-      var x = document.getElementById("registrationForm");
-      for (var i = 0; i < x.length; i++) {
-        x.elements[i].style.border="1px solid #CCC";
-      }
+      * {
+        box-sizing: border-box;
       }
 
-      function _(x){
-      return document.getElementById(x);
+      body {
+        min-height: 100vh;
+        margin: 0;
+        background:
+          linear-gradient(120deg, rgba(0, 31, 17, 0.94), rgba(0, 52, 28, 0.7) 46%, rgba(64, 32, 100, 0.92)),
+          url("img/football-stadium.jpg") center / cover fixed no-repeat;
+        color: #ffffff;
+        font-family: 'Lato', sans-serif;
+      }
+
+      a {
+        color: #ffffff;
+      }
+
+      .reset-shell {
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        min-height: 100vh;
+        padding: 24px;
+        position: relative;
+      }
+
+      .reset-shell::before {
+        background:
+          radial-gradient(circle at 20% 20%, rgba(240, 197, 86, 0.22), transparent 26%),
+          radial-gradient(circle at 78% 26%, rgba(143, 102, 216, 0.3), transparent 30%),
+          linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 44%);
+        content: "";
+        inset: 0;
+        pointer-events: none;
+        position: fixed;
+      }
+
+      .reset-topbar,
+      .reset-main,
+      .reset-footer {
+        position: relative;
+        z-index: 1;
+      }
+
+      .reset-topbar {
+        align-items: center;
+        display: flex;
+        gap: 16px;
+        justify-content: space-between;
+        margin: 0 auto;
+        max-width: 1180px;
+        width: 100%;
+      }
+
+      .reset-brand {
+        display: grid;
+        gap: 2px;
+        text-decoration: none;
+      }
+
+      .reset-brand strong,
+      .reset-brand span {
+        display: block;
+        letter-spacing: 0;
+      }
+
+      .reset-brand strong {
+        color: #ffffff;
+        font-size: 1.08rem;
+        font-weight: 900;
+        line-height: 1;
+      }
+
+      .reset-brand span {
+        color: rgba(255, 255, 255, 0.72);
+        font-size: 0.78rem;
+        font-weight: 900;
+        text-transform: uppercase;
+      }
+
+      .reset-nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: flex-end;
+      }
+
+      .reset-nav a {
+        border-bottom: 2px solid transparent;
+        font-weight: 900;
+        padding: 6px 0;
+        text-decoration: none;
+      }
+
+      .reset-nav a:hover,
+      .reset-nav a:focus {
+        border-bottom-color: var(--hh-gold);
+      }
+
+      .reset-main {
+        align-items: center;
+        display: grid;
+        justify-items: center;
+        margin: 0 auto;
+        max-width: 1180px;
+        padding: 48px 0 22px;
+        width: 100%;
+      }
+
+      .reset-panel-wrap {
+        max-width: 620px;
+        position: relative;
+        width: 100%;
+      }
+
+      .reset-panel {
+        background: rgba(251, 252, 248, 0.96);
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        border-radius: 8px;
+        box-shadow: var(--hh-shadow);
+        color: var(--hh-ink);
+        overflow: hidden;
+        position: relative;
+      }
+
+      .reset-panel__band {
+        background: linear-gradient(135deg, rgba(143, 102, 216, 0.96), rgba(64, 32, 100, 0.98));
+        color: #ffffff;
+        padding: 18px 24px;
+      }
+
+      .reset-panel__band p {
+        color: rgba(255, 255, 255, 0.74);
+        font-size: 0.74rem;
+        font-weight: 900;
+        letter-spacing: 0.08em;
+        margin: 0 0 6px;
+        text-transform: uppercase;
+      }
+
+      .reset-panel__band h2 {
+        font-size: 1.6rem;
+        font-weight: 900;
+        margin: 0;
+      }
+
+      .reset-panel__body {
+        display: grid;
+        gap: 18px;
+        padding: 24px;
+      }
+
+      .reset-copy {
+        color: #45524c;
+        margin: 0;
+      }
+
+      .reset-field {
+        display: grid;
+        gap: 8px;
+      }
+
+      .reset-field label {
+        color: var(--hh-green-dark, var(--hh-green));
+        font-size: 0.78rem;
+        font-weight: 900;
+        letter-spacing: 0.06em;
+        margin: 0;
+        text-transform: uppercase;
+      }
+
+      .reset-input {
+        background: #ffffff;
+        border: 1px solid rgba(4, 51, 30, 0.16);
+        border-radius: 8px;
+        color: var(--hh-ink);
+        font-size: 1rem;
+        min-height: 52px;
+        padding: 0 16px;
+        width: 100%;
+      }
+
+      .reset-input:focus {
+        border-color: rgba(143, 102, 216, 0.7);
+        box-shadow: 0 0 0 0.18rem rgba(143, 102, 216, 0.18);
+        outline: none;
+      }
+
+      .reset-status {
+        border-radius: 8px;
+        display: none;
+        font-size: 0.94rem;
+        font-weight: 700;
+        margin: 0;
+        padding: 12px 14px;
+      }
+
+      .reset-status.is-visible {
+        display: block;
+      }
+
+      .reset-status.is-loading {
+        align-items: center;
+        color: #4b5563;
+        display: inline-flex;
+        gap: 10px;
+      }
+
+      .reset-status.is-error {
+        background: rgba(214, 64, 69, 0.12);
+        color: #a52f33;
+      }
+
+      .reset-status.is-success {
+        background: rgba(25, 135, 84, 0.12);
+        color: #146c43;
+      }
+
+      .reset-spinner {
+        animation: reset-spin 0.9s linear infinite;
+        border: 2px solid rgba(22, 35, 29, 0.16);
+        border-radius: 50%;
+        border-top-color: var(--hh-purple);
+        height: 18px;
+        width: 18px;
+      }
+
+      @keyframes reset-spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .reset-actions {
+        display: grid;
+        gap: 10px;
+      }
+
+      .btn-hh-primary,
+      .btn-hh-secondary {
+        align-items: center;
+        border-radius: 8px;
+        display: inline-flex;
+        font-weight: 900;
+        gap: 10px;
+        justify-content: center;
+        min-height: 52px;
+        padding: 0 20px;
+        text-decoration: none;
+      }
+
+      .btn-hh-primary {
+        background: linear-gradient(135deg, var(--hh-purple), #7c59c3);
+        border: none;
+        color: #ffffff;
+      }
+
+      .btn-hh-primary:hover,
+      .btn-hh-primary:focus {
+        background: linear-gradient(135deg, #9b74e0, #6f47b9);
+        color: #ffffff;
+      }
+
+      .btn-hh-secondary {
+        background: transparent;
+        border: 1px solid rgba(4, 51, 30, 0.14);
+        color: var(--hh-green);
+      }
+
+      .btn-hh-secondary:hover,
+      .btn-hh-secondary:focus {
+        background: rgba(4, 51, 30, 0.06);
+        color: var(--hh-green);
+      }
+
+      .reset-help {
+        color: #5c6b64;
+        font-size: 0.92rem;
+        margin: 0;
+      }
+
+      .reset-confirm {
+        display: none;
+        gap: 16px;
+      }
+
+      .reset-confirm.is-visible {
+        display: grid;
+      }
+
+      .reset-confirm__card {
+        background: rgba(4, 51, 30, 0.04);
+        border: 1px solid rgba(4, 51, 30, 0.1);
+        border-radius: 8px;
+        display: grid;
+        gap: 12px;
+        padding: 20px;
+      }
+
+      .reset-confirm__card h3 {
+        color: var(--hh-green);
+        font-size: 1.18rem;
+        font-weight: 900;
+        margin: 0;
+      }
+
+      .reset-confirm__card p {
+        color: #4c5a53;
+        margin: 0;
+      }
+
+      .reset-footer {
+        color: rgba(255, 255, 255, 0.76);
+        font-size: 0.88rem;
+        margin: 0 auto;
+        max-width: 1180px;
+        text-align: center;
+        width: 100%;
+      }
+
+      .reset-footer p {
+        margin: 0;
+      }
+
+      .reset-footer a {
+        color: #ffffff;
+        text-decoration: underline;
+      }
+
+      .modal-content {
+        color: var(--hh-ink);
+      }
+
+      .modal-body,
+      .modal-body p,
+      .modal-body li {
+        color: var(--hh-ink);
+      }
+
+      @media (max-width: 767px) {
+        .reset-shell {
+          padding: 18px;
+        }
+
+        .reset-topbar {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .reset-nav {
+          gap: 10px 14px;
+          justify-content: flex-start;
+        }
+
+        .reset-main {
+          padding-top: 20px;
+        }
+
+        .reset-panel__band,
+        .reset-panel__body {
+          padding: 20px;
+        }
+      }
+
+      @media (max-width: 520px) {
+        .reset-shell {
+          padding: 14px;
+        }
+
+        .reset-nav a {
+          font-size: 0.95rem;
+        }
+
+        .reset-panel__band h2 {
+          font-size: 1.4rem;
+        }
+      }
+    </style>
+    <script>
+      function _(x) {
+        return document.getElementById(x);
       }
 
       function ajaxObj(meth, url) {
-      var x = new XMLHttpRequest();
-      x.open( meth, url, true );
-      x.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-      return x;
+        var x = new XMLHttpRequest();
+        x.open(meth, url, true);
+        x.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        return x;
       }
 
-      function ajaxReturn(x){
-      if(x.readyState == 4 && x.status == 200){
-        return true;
-      }
+      function ajaxReturn(x) {
+        if (x.readyState == 4 && x.status == 200) {
+          return true;
+        }
       }
 
-      function forgotPass(){
-      var e = _("email").value;
-      if (e == ""){
-        _("status").innerHTML = "Please type in your email address.";
+      function setStatus(message, state) {
+        var status = _("status");
+        if (!status) {
+          return;
+        }
+
+        status.className = "reset-status is-visible";
+        if (state) {
+          status.classList.add("is-" + state);
+        }
+
+        if (state === "loading") {
+          status.innerHTML = '<span class="reset-spinner" aria-hidden="true"></span><span>' + message + '</span>';
+        } else {
+          status.textContent = message;
+        }
       }
-      else {
-        //_("forgotpassbtn").style.display = "none";
-        //_("status").innerHTML = 'Please wait ...';
-        _("status").innerHTML = '<div class="spinner"></div>';
+
+      function forgotPass() {
+        var e = _("email").value.trim();
+        if (e === "") {
+          setStatus("Please type in your email address.", "error");
+          return;
+        }
+
+        setStatus("Checking your account and preparing your temporary password…", "loading");
+
         var ajax = ajaxObj("POST", "forgot-password.php");
         ajax.onreadystatechange = function() {
-          if(ajaxReturn(ajax) == true) {
+          if (ajaxReturn(ajax) == true) {
             var response = ajax.responseText;
-            //alert(response);
-            if(response == "success"){
-              //alert("Gotcha!");
-              //_("forgotPassForm").innerHTML = '<h3>Step 2. Check your email inbox in a few minutes</h3><p>You can close this window or tab if you like.</p>';
-              $("#forgotPassForm").hide();
-              $("#confirm-msg").show();
-            } else if (response == "no_exist"){
-              _("status").innerHTML = "Sorry, that email address has not been registered.";
-            } else if (response == "email_send_failed"){
-              _("status").innerHTML = "Mail function failed to execute.";
+            if (response == "success") {
+              _("forgotPassForm").style.display = "none";
+              _("confirm-msg").classList.add("is-visible");
+            } else if (response == "no_exist") {
+              setStatus("Sorry, that email address has not been registered.", "error");
+            } else if (response == "email_send_failed") {
+              setStatus("The email could not be sent. Please check the mail settings and try again.", "error");
             } else {
-              _("status").innerHTML = "An unknown error occurred.";
+              setStatus("An unknown error occurred. Please try again.", "error");
             }
           }
-        }
-        ajax.send("e="+e);
-      }
+        };
+        ajax.send("e=" + encodeURIComponent(e));
       }
 
       function windowClose() {
-      window.open('','_parent','');
-      window.close();
+        window.open('', '_parent', '');
+        window.close();
       }
     </script>
-	</head>
+  </head>
 
-	<body class="d-flex h-100 text-center text-bg-dark">
+  <body>
+    <div class="reset-shell">
+      <header class="reset-topbar">
+        <a class="reset-brand" href="index.php">
+          <strong>Hendy's Hunches</strong>
+          <span>Football Predictions Game</span>
+        </a>
+        <nav class="reset-nav" aria-label="Reset password links">
+          <a href="index.php">Login</a>
+          <a href="registration.php">Register</a>
+          <a href="#" data-bs-toggle="modal" data-bs-target="#terms">Terms</a>
+        </nav>
+      </header>
 
-  	<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-  		<header class="mb-auto">
-  			<div>
-  				<h3 class="float-md-start mb-0">Hendy's Hunches</h3>
-  				<nav class="nav nav-masthead justify-content-center float-md-end">
-            <a class="nav-link fw-bold py-1 px-0" href="index.php">Login</a>
-  					<a class="nav-link fw-bold py-1 px-0" href="registration.php">Register</a>
-            <a class="nav-link fw-bold py-1 px-0" href="#" data-bs-toggle="modal" data-bs-target="#terms">Terms</a>
-  				</nav>
-  			</div>
-  		</header>
+      <main class="reset-main">
+        <section class="reset-panel-wrap">
+          <div class="reset-panel">
+            <div class="reset-panel__band">
+              <p>Password help</p>
+              <h2>Forgotten Password</h2>
+            </div>
 
-  		<main class="px-3">
-        
-      <h1>Forgotten Password</h1>
-  			<!-- <img src="img/germany-2024-logo-md.png" alt="Germany 2024 edition of Hendy's Hunches" class="w-50 mb-3"> -->
-        
-        <p>Enter your email address for password reset.</p>
+            <div class="reset-panel__body">
+              <form id="forgotPassForm" name="forgotPassForm" onsubmit="return false;" class="reset-actions" novalidate>
+                <p class="reset-copy">Use the email address you registered with. We’ll send a temporary password and then you can choose something new once you’re back in.</p>
 
-        <form id="forgotPassForm" name="forgotPassForm" onSubmit="return false;" class="">
+                <div class="reset-field">
+                  <label for="email">Email address</label>
+                  <input type="email" class="reset-input" id="email" name="email" autocomplete="email" required>
+                </div>
 
-            <div class="mb-3 row d-flex justify-content-center">
-              <label for="email" class="col-sm-2 col-form-label">Email</label>
-              <div class="col-sm-8">
-                <input type="text" class="form-control" id="email" name="email" required>
-                <p id="status"></p>
+                <p id="status" class="reset-status" aria-live="polite"></p>
+
+                <button type="button" id="forgotpassbtn" class="btn-hh-primary" onclick="forgotPass();">
+                  <i class="bi bi-envelope-paper-heart"></i> Generate temporary password
+                </button>
+
+                <p class="reset-help">Check your junk or spam folder too once the email is on its way.</p>
+              </form>
+
+              <div id="confirm-msg" class="reset-confirm" aria-live="polite">
+                <div class="reset-confirm__card">
+                  <h3>Now check your inbox</h3>
+                  <p>Please check your email inbox, including junk or spam, for a message containing your temporary password. Follow the link in that email to get back into Hendy’s Hunches.</p>
+                  <p>You can close this window once you’ve opened the message.</p>
+                </div>
+                <div class="reset-actions">
+                  <button type="button" class="btn-hh-secondary" onclick="windowClose()">
+                    <i class="bi bi-x-circle"></i> Close window
+                  </button>
+                  <a class="btn-hh-primary" href="index.php">
+                    <i class="bi bi-arrow-left-circle"></i> Back to login
+                  </a>
+                </div>
               </div>
             </div>
-
-            <hr />
-            <input type="button" id="forgotpassbtn" class="btn btn-primary" value="Generate temporary password" onClick="forgotPass();" />
-        </form>
-
-        <div id="confirm-msg" style="display: none;">
-            <h3>Now check your email inbox (junk/spam folder)</h3>
-            <p>Please check your email inbox (including junk/spam folder) for an email containing a temporary password. Carefully follow the instructions within the email so you can log in to Hendy's Hunches again. You can then change your password should you wish to.</p><p>You can now close this window.</p>
-            <button type="button" class="btn btn-danger" onClick="windowClose()">Close Window</button>
-        </div>
-
-  		</main>
-
-      <!-- HH Terms Modal -->
-      <div class="modal fade" id="terms" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h1 class="modal-title fs-5" id="staticBackdropLabel">Hendy's Hunches: Terms &amp; Conditions</h1>
-              <!--<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
-            </div>
-            <div class="modal-body">
-              <img src="img/hh-logo-2018.jpg" class="img-responsive mt-auto" title="Hendy's Hunches Logo" alt="Hendy's Hunches Logo" style="width: 180px; margin-bottom: 10px;">
-              <p>By registering to play Hendy's Hunches, you acknowledge that:</p>
-              <ul>
-                <li>your involvement in this game, and the game itself, is intended only for entertainment; it is not a gambling site</li>
-                <li>the game is based on <?=$competition?></li>
-                <li>only one registration per person is permitted although family and friends are welcome to participate</li>
-                <li>an entry fee of £<?=$signup_fee_formatted?> is to be paid prior to <?=$signup_close_date?>; split for charity donation and prize funds</li>
-                <li>an unpaid entry fee results in removal from the game</li>
-                <li>the number of prize funds, and their amounts, are revealed in due course, awarded to winners after the final tournament fixture and, in the event of a shared winning spot, divided accordingly.</li>
-              </ul>
-            </div>
-            <div class="modal-footer">
-              <!--<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
-              <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Understood</button>
-            </div>
           </div>
-        </div>
-      </div>
+        </section>
+      </main>
 
-      <footer class="mt-auto">
-        <p class="small fw-light">Predictions game based on <a href="https://www.uefa.com/euro2024/" class="text-white"><?=$competition?></a><br><?=$title?> <?=$version?> &copy; <?=$year?> <?=$developer?>.</p>
+      <?php hh_render_terms_modal(); ?>
+
+      <footer class="reset-footer">
+        <p>Predictions game based on <a href="<?= htmlspecialchars($competition_url, ENT_QUOTES) ?>"><?= htmlspecialchars($competition, ENT_QUOTES) ?></a><br><?= htmlspecialchars($title, ENT_QUOTES) ?> <?= htmlspecialchars($version, ENT_QUOTES) ?> &copy; <?= htmlspecialchars($year, ENT_QUOTES) ?> <?= htmlspecialchars($developer, ENT_QUOTES) ?>.</p>
       </footer>
-
-	  </div>
+    </div>
   </body>
 </html>

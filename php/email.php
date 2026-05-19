@@ -90,7 +90,7 @@ if (!function_exists('hh_mail_logo_path')) {
     function hh_mail_logo_path(): ?string
     {
         $candidates = [
-            dirname(__DIR__) . '/img/hh-logo-2026-purple.png',
+            dirname(__DIR__) . '/img/hh-logo-2026-main.png',
             dirname(__DIR__) . '/img/hendys-hunches-football-predictions-logo.png',
             dirname(__DIR__) . '/img/hh-icon-2024.png',
         ];
