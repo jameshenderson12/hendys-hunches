@@ -8,12 +8,12 @@ if (!function_exists('hh_terms_items')) {
         global $competition, $signup_fee_formatted, $signup_close_date;
 
         return [
-            'your involvement in this game, and the game itself, is intended only for entertainment',
+            'your involvement in this game, and the game itself, are intended solely for entertainment',
             'the game is based on ' . (string) $competition,
-            'only one registration per person is permitted although family and friends are welcome to participate',
-            'an entry fee of £' . (string) $signup_fee_formatted . ' is to be paid prior to ' . (string) $signup_close_date . '; split for charity donation and prize funds',
-            'an unpaid entry fee results in removal from the game',
-            'the number of prize funds, and their amounts, are revealed in due course, awarded to winners after the final tournament fixture and, in the event of a shared winning spot, divided accordingly.',
+            'only one registration per person is permitted, although family and friends are welcome to take part',
+            'an entry fee of £' . (string) $signup_fee_formatted . ' must be paid before ' . (string) $signup_close_date . '; this is split between the charity donation and prize funds',
+            'failure to pay the entry fee will result in removal from the game',
+            'the number and value of prize funds will be confirmed in due course, awarded after the final tournament fixture and, in the event of a tied finishing position, divided accordingly.',
         ];
     }
 }
@@ -56,7 +56,7 @@ if (!function_exists('hh_render_terms_modal')) {
                 <?php hh_render_terms_content($assetPrefix, true); ?>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Understood</button>
+                <button type="button" class="btn" data-bs-dismiss="modal" style="background:#8f66d8;border-color:#8f66d8;color:#ffffff;font-weight:900;">Understood</button>
               </div>
             </div>
           </div>

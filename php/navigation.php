@@ -60,7 +60,7 @@ $brand_logo_path = $nav_href('img/hh-logo-2026-simple.png');
 		            </li>
 					<li class="nav-item dropdown">
 									<a id="tour-nav-competition" class="nav-link dropdown-toggle<?= in_array($current_page, ['tournament-groups.php', 'tournament-knockouts.php']) ? ' active' : '' ?>" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Competition</a>
-		              	<ul class="dropdown-menu">
+						<ul class="dropdown-menu">
 							<li><a id="tour-nav-groups" class="dropdown-item" href="<?= htmlspecialchars($nav_href('tournament-groups.php'), ENT_QUOTES) ?>">Group stage</a></li>
 							<li><a id="tour-nav-knockouts" class="dropdown-item" href="<?= htmlspecialchars($nav_href('tournament-knockouts.php'), ENT_QUOTES) ?>">Knockout stages</a></li>
 						</ul>
@@ -72,23 +72,36 @@ $brand_logo_path = $nav_href('img/hh-logo-2026-simple.png');
 		              <a id="tour-nav-guide" class="nav-link<?= $nav_active('how-it-works.php') ?>" href="<?= htmlspecialchars($nav_href('how-it-works.php'), ENT_QUOTES) ?>">How It Works</a>
 		            </li>
 					<li class="nav-item">
-						<a id="tour-nav-about" class="nav-link<?= $nav_active('about.php') ?>" href="<?= htmlspecialchars($nav_href('about.php'), ENT_QUOTES) ?>">About</a>
+		              <a id="tour-nav-about" class="nav-link<?= $nav_active('about.php') ?>" href="<?= htmlspecialchars($nav_href('about.php'), ENT_QUOTES) ?>">About</a>
 					</li>
+					<?php if ($is_admin_user): ?>
+					<li class="nav-item dropdown">
+						<a
+							id="tour-nav-admin"
+							class="nav-link dropdown-toggle<?= in_array($current_page, ['functions.php', 'results.php', 'configuration.php', 'setup-wizard.php']) ? ' active' : '' ?>"
+							href="#"
+							role="button"
+							data-bs-toggle="dropdown"
+							aria-expanded="false"
+						>Admin</a>
+						<ul class="dropdown-menu">
+							<li><a class="dropdown-item dropdown-item--admin" href="<?= htmlspecialchars($nav_href('overview.php'), ENT_QUOTES) ?>">Application overview</a></li>
+							<li><a class="dropdown-item dropdown-item--admin" href="<?= htmlspecialchars($nav_href('admin/functions.php'), ENT_QUOTES) ?>">Game functions</a></li>
+							<li><a class="dropdown-item dropdown-item--admin" href="<?= htmlspecialchars($nav_href('admin/results.php'), ENT_QUOTES) ?>">Record results</a></li>
+							<li><a class="dropdown-item dropdown-item--admin" href="<?= htmlspecialchars($nav_href('admin/configuration.php'), ENT_QUOTES) ?>">Site configuration</a></li>
+							<li><a class="dropdown-item dropdown-item--admin" href="<?= htmlspecialchars($nav_href('setup/setup-wizard.php'), ENT_QUOTES) ?>">Installation manager</a></li>
+						</ul>
+		            </li>
+					<?php endif; ?>
 		            <li class="nav-item dropdown">
 									<a id="tour-nav-account" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     <?php returnAvatar(); ?>
                   </a>
 		              <ul class="dropdown-menu">
-										<li><a class="dropdown-item" href="<?= htmlspecialchars($nav_href('overview.php'), ENT_QUOTES) ?>">Application overview</a></li>
 										<li><a class="dropdown-item" href="<?= htmlspecialchars($nav_href('account.php'), ENT_QUOTES) ?>">Edit my details</a></li>
 										<li><a class="dropdown-item" href="<?= htmlspecialchars($nav_href('change-password.php'), ENT_QUOTES) ?>">Change my password</a></li>
 										<li><a class="dropdown-item" href="<?= htmlspecialchars($nav_href('predictions.php'), ENT_QUOTES) ?>">Submit my predictions</a></li>
 										<li><a class="dropdown-item card-link" href="<?= htmlspecialchars($nav_href('user.php?id=' . $current_user_id), ENT_QUOTES) ?>">View my predictions</a></li>
-										<?php if ($is_admin_user): ?>
-										<li><a class="dropdown-item dropdown-item--admin" href="<?= htmlspecialchars($nav_href('admin/functions.php'), ENT_QUOTES) ?>">+ Admin functions</a></li>
-										<li><a class="dropdown-item dropdown-item--admin" href="<?= htmlspecialchars($nav_href('admin/configuration.php'), ENT_QUOTES) ?>">+ Site configuration</a></li>
-										<li><a class="dropdown-item dropdown-item--admin" href="<?= htmlspecialchars($nav_href('setup/setup-wizard.php'), ENT_QUOTES) ?>">+ Installation manager</a></li>
-										<?php endif; ?>
 		                <li>
 		                  <hr class="dropdown-divider">
 		                </li>

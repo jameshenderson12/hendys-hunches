@@ -113,6 +113,7 @@ if (!function_exists('hh_dashboard_layout_defaults')) {
     {
         return [
             'player_card' => ['label' => 'Player Card', 'width' => 'normal', 'visible' => 1],
+            'latest_signups' => ['label' => 'Latest Signups', 'width' => 'normal', 'visible' => 1],
             'todays_fixtures' => ['label' => "Today's Fixtures", 'width' => 'wide', 'visible' => 1],
             'form' => ['label' => 'Form', 'width' => 'wide', 'visible' => 1],
             'points_by_stage' => ['label' => 'Points by Stage', 'width' => 'normal', 'visible' => 1],
@@ -324,6 +325,7 @@ $stageWindows = hh_prediction_stage_windows($con);
 $hasRecordedResults = false;
 $dashboardReminder = null;
 $stagePoints = [];
+$latestSignups = [];
 $winnerPicks = [];
 $teamFlagMap = [];
 $miniLeagueSelectionIds = [];
@@ -583,6 +585,30 @@ if ($sessionUserId > 0) {
         }
         mysqli_free_result($availablePlayersResult);
     }
+}
+
+$latestSignupsResult = mysqli_query(
+    $con,
+    "SELECT id, firstname, surname, avatar, location, faveteam, signupdate
+     FROM live_user_information
+     ORDER BY signupdate DESC, id DESC
+     LIMIT 5"
+);
+if ($latestSignupsResult instanceof mysqli_result) {
+    while ($row = mysqli_fetch_assoc($latestSignupsResult)) {
+        $location = trim((string) ($row['location'] ?? ''));
+        $faveteam = trim((string) ($row['faveteam'] ?? ''));
+        $latestSignups[] = [
+            'id' => (int) ($row['id'] ?? 0),
+            'name' => trim(ucfirst((string) ($row['firstname'] ?? '')) . ' ' . ucfirst((string) ($row['surname'] ?? ''))),
+            'avatar' => (string) ($row['avatar'] ?? 'img/hh-icon-2024.png'),
+            'meta' => $location !== '' && strcasecmp($location, 'Prefer Not To Say') !== 0
+                ? $location
+                : ($faveteam !== '' && strcasecmp($faveteam, 'Prefer Not To Say') !== 0 ? $faveteam : 'New signup'),
+            'signed_up' => !empty($row['signupdate']) ? date('j M', strtotime((string) $row['signupdate'])) : '',
+        ];
+    }
+    mysqli_free_result($latestSignupsResult);
 }
 
 foreach ($stageContexts as $stageKey => $context) {
@@ -1026,10 +1052,36 @@ $dashboardLayoutCards = [
             </article>
         <?php }),
     ],
+    'latest_signups' => [
+        'label' => 'Latest Signups',
+        'markup' => hh_dashboard_capture(function () use ($latestSignups) { ?>
+            <article class="dashboard-panel">
+                <div class="dashboard-panel__header">
+                    <div><p class="eyebrow">Growing nicely</p><h2>Latest Signups</h2></div>
+                </div>
+                <?php if (!empty($latestSignups)) : ?>
+                    <div class="signup-list">
+                        <?php foreach ($latestSignups as $signup) : ?>
+                            <a class="signup-list__item" href="user.php?id=<?= (int) $signup['id'] ?>">
+                                <img class="signup-list__avatar" src="<?= htmlspecialchars((string) $signup['avatar']) ?>" alt="<?= htmlspecialchars((string) $signup['name']) ?> kit avatar">
+                                <span class="signup-list__body">
+                                    <strong><?= htmlspecialchars((string) $signup['name']) ?></strong>
+                                    <small><?= htmlspecialchars((string) $signup['meta']) ?></small>
+                                </span>
+                                <span class="signup-list__date"><?= htmlspecialchars((string) $signup['signed_up']) ?></span>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
+                <?php else : ?>
+                    <p class="dashboard-note mb-0">As players register, the newest five will show up here and help the game feel alive from day one.</p>
+                <?php endif; ?>
+            </article>
+        <?php }),
+    ],
     'todays_fixtures' => [
         'label' => "Today's Fixtures",
         'markup' => hh_dashboard_capture(function () use ($todayFixtures, $effectiveTodayLabel) { ?>
-            <article class="dashboard-panel">
+            <article class="dashboard-panel dashboard-panel--mini-league">
                 <div class="dashboard-panel__header">
                     <div>
                         <p class="eyebrow">Matchday card</p>
@@ -1173,7 +1225,7 @@ $dashboardLayoutCards = [
             <article class="dashboard-panel">
                 <div class="dashboard-panel__header">
                     <div><p class="eyebrow">Mini-league</p><h2><?= $miniLeagueIsConfigured ? 'Your Mini-League' : 'Set Up Your Mini-League' ?></h2></div>
-                    <button class="btn btn-sm btn-outline-success" type="button" data-bs-toggle="collapse" data-bs-target="#dashboardMiniLeagueManager" aria-expanded="false" aria-controls="dashboardMiniLeagueManager"><i class="bi bi-people"></i> <?= $miniLeagueIsConfigured ? 'Manage mini-league' : 'Choose players' ?></button>
+                    <button class="btn btn-sm btn-outline-success" type="button" data-bs-toggle="collapse" data-bs-target="#dashboardMiniLeagueManager" aria-expanded="false" aria-controls="dashboardMiniLeagueManager" data-mini-league-open="true"><i class="bi bi-people"></i> <?= $miniLeagueIsConfigured ? 'Manage mini-league' : 'Choose players' ?></button>
                 </div>
                 <?php if ($miniLeagueIsConfigured && !empty($miniLeagueRows)) : ?>
                     <div class="mini-league-table">
@@ -1191,7 +1243,7 @@ $dashboardLayoutCards = [
                 <?php else : ?>
                     <div class="mini-league-empty-state">
                         <p class="dashboard-note mb-0">Choose up to 8 other players and your personalised mini-league will appear here on the dashboard.</p>
-                        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#dashboardMiniLeagueManager" aria-expanded="false" aria-controls="dashboardMiniLeagueManager"><i class="bi bi-plus-circle"></i> Choose players</button>
+                        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#dashboardMiniLeagueManager" aria-expanded="false" aria-controls="dashboardMiniLeagueManager" data-mini-league-open="true"><i class="bi bi-plus-circle"></i> Choose players</button>
                     </div>
                 <?php endif; ?>
                 <div class="collapse mt-3<?= !empty($errors) ? ' show' : '' ?>" id="dashboardMiniLeagueManager">
@@ -1203,7 +1255,7 @@ $dashboardLayoutCards = [
                     <?php if ($miniLeagueTableExists) : ?>
                         <form method="post" class="mini-league-manager" id="dashboardMiniLeagueForm">
                             <input type="hidden" name="dashboard_action" value="save_mini_league">
-                            <div class="mini-league-manager__search">
+                            <div class="mini-league-manager__search" id="miniLeagueSearchAnchor">
                                 <label class="form-label" for="miniLeagueSearch">Find players</label>
                                 <input class="form-control" id="miniLeagueSearch" type="search" placeholder="Search by name">
                             </div>
@@ -1376,6 +1428,9 @@ $formChartJson = json_encode([
     const optionsWrap = document.getElementById('miniLeagueOptions');
     const countNode = document.getElementById('miniLeagueCount');
     const form = document.getElementById('dashboardMiniLeagueForm');
+    const manager = document.getElementById('dashboardMiniLeagueManager');
+    const searchAnchor = document.getElementById('miniLeagueSearchAnchor');
+    const openTriggers = Array.from(document.querySelectorAll('[data-mini-league-open="true"]'));
 
     if (!searchInput || !optionsWrap || !countNode || !form) {
       return;
@@ -1412,6 +1467,26 @@ $formChartJson = json_encode([
 
     searchInput.addEventListener('input', filterOptions);
     refreshCount();
+
+    if (manager && searchAnchor) {
+      const scrollToManager = function () {
+        window.setTimeout(() => {
+          searchAnchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          searchInput.focus({ preventScroll: true });
+        }, 120);
+      };
+
+      manager.addEventListener('shown.bs.collapse', scrollToManager);
+
+      openTriggers.forEach((trigger) => {
+        trigger.addEventListener('click', function (event) {
+          if (manager.classList.contains('show')) {
+            event.preventDefault();
+            scrollToManager();
+          }
+        });
+      });
+    }
   })();
 
   (function () {
@@ -1479,6 +1554,7 @@ $formChartJson = json_encode([
             borderWidth: 3,
             tension: 0.32,
             fill: false,
+            clip: false,
             pointRadius: 5,
             pointHoverRadius: 6,
             pointBorderWidth: 3,
@@ -1489,6 +1565,11 @@ $formChartJson = json_encode([
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          layout: {
+            padding: {
+              top: 10
+            }
+          },
           animation: {
             duration: 800,
             easing: 'easeOutQuart'
@@ -1539,7 +1620,7 @@ $formChartJson = json_encode([
             },
             y: {
               min: 0,
-              max: 8,
+              max: 7,
               ticks: {
                 stepSize: 1,
                 color: '#59635f',

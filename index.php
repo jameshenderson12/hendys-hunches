@@ -120,8 +120,11 @@ hh_handle_dev_bypass_request();
         justify-content: flex-end;
       }
 
-      .login-nav a {
+      .login-nav a,
+      .login-nav span {
         border-bottom: 2px solid transparent;
+        display: inline-flex;
+        align-items: center;
         font-weight: 900;
         padding: 6px 0;
         text-decoration: none;
@@ -334,6 +337,13 @@ hh_handle_dev_bypass_request();
         min-height: 48px;
       }
 
+      .form-control:disabled {
+        background: rgba(22, 35, 29, 0.08);
+        border-color: rgba(22, 35, 29, 0.12);
+        color: rgba(22, 35, 29, 0.58);
+        cursor: not-allowed;
+      }
+
       .form-control:focus {
         border-color: var(--hh-purple);
         box-shadow: 0 0 0 0.2rem rgba(143, 102, 216, 0.22);
@@ -389,6 +399,18 @@ hh_handle_dev_bypass_request();
         color: #ffffff;
       }
 
+      .btn-hh-primary:disabled,
+      .btn-hh-secondary.is-disabled,
+      .btn-hh-secondary.is-disabled:hover,
+      .btn-hh-secondary.is-disabled:focus {
+        background: #c6cbcf;
+        border-color: #c6cbcf;
+        box-shadow: none;
+        color: rgba(22, 35, 29, 0.58);
+        cursor: not-allowed;
+        pointer-events: none;
+      }
+
       .login-actions {
         display: grid;
         gap: 12px;
@@ -412,6 +434,19 @@ hh_handle_dev_bypass_request();
         color: var(--hh-green);
         font-weight: 900;
         text-align: center;
+      }
+
+      .login-nav .is-disabled,
+      .login-meta .is-disabled {
+        border-bottom-color: transparent !important;
+        color: rgba(255, 255, 255, 0.48);
+        cursor: not-allowed;
+        pointer-events: none;
+        user-select: none;
+      }
+
+      .login-meta .is-disabled {
+        color: rgba(4, 51, 30, 0.46);
       }
 
       .login-footer {
@@ -472,98 +507,82 @@ hh_handle_dev_bypass_request();
 
       @media (max-width: 576px) {
         .login-shell {
-          padding: 12px 12px 16px;
+          padding: 10px 12px 14px;
         }
 
         .login-topbar {
-          align-items: flex-start;
-          flex-direction: column;
-          gap: 10px;
+          display: block;
+          text-align: center;
+        }
+
+        .login-brand {
+          justify-items: center;
+          margin: 0 auto;
+        }
+
+        .login-brand strong {
+          font-size: 1.16rem;
+        }
+
+        .login-brand span {
+          font-size: 0.72rem;
+          opacity: 0.84;
         }
 
         .login-nav {
-          justify-content: flex-start;
-          gap: 10px;
-        }
-
-        .login-nav a {
-          font-size: 0.92rem;
-          padding: 2px 0;
+          display: none;
         }
 
         .login-main {
-          gap: 10px;
-          grid-template-areas:
-            "brandcopy brandlogo"
-            "login login";
-          grid-template-columns: minmax(0, 1fr) 92px;
-          padding: 10px 0 20px;
+          gap: 14px;
+          grid-template-columns: 1fr;
+          padding: 12px 0 10px;
         }
 
         .brand-stage {
-          display: contents;
+          min-height: 0;
+          padding: 0;
         }
 
         .brand-stage > div {
-          display: contents;
+          align-items: center;
+          display: grid;
+          gap: 10px;
+          justify-items: center;
         }
 
         .brand-stage__logo {
-          align-self: start;
-          grid-area: brandlogo;
-          justify-self: end;
-          max-width: 86px;
+          max-width: 112px;
         }
 
         .brand-stage__copy {
-          align-self: center;
-          gap: 6px;
-          grid-area: brandcopy;
-          justify-items: start;
-          margin-top: 0;
-          text-align: left;
+          gap: 8px;
+          justify-items: center;
+          text-align: center;
         }
 
         .brand-stage__copy p {
-          font-size: 0.88rem;
-          margin: 0;
-          max-width: 220px;
+          display: none;
         }
 
         .countdown-card {
-          justify-content: flex-start;
-          margin-left: 0;
-          padding: 10px 12px;
-        }
-
-        .countdown-card__value {
-          font-size: 1.45rem;
+          gap: 10px;
+          justify-content: center;
+          margin: 0 auto;
+          padding: 9px 12px;
         }
 
         .countdown-card__label {
           font-size: 0.72rem;
         }
 
-        .login-panel {
-          grid-area: login;
-          padding: 26px 18px 18px;
-        }
-
-        .login-panel::after {
-          display: none;
-        }
-
-        .login-panel h2 {
-          font-size: 2rem;
-        }
-
-        .login-panel__intro {
-          margin-bottom: 18px;
+        .countdown-card__value {
+          font-size: 1.3rem;
         }
 
         .host-flags {
-          gap: 7px;
-          justify-content: flex-start;
+          gap: 8px;
+          justify-content: center;
         }
 
         .host-flags span {
@@ -572,16 +591,46 @@ hh_handle_dev_bypass_request();
         }
 
         .host-flags img {
-          height: 18px;
-          width: 28px;
+          height: 16px;
+          width: 24px;
+        }
+
+        .login-panel-wrap {
+          margin-top: 2px;
+        }
+
+        .login-panel {
+          margin-top: 0;
+          padding: 22px 16px 16px;
+        }
+
+        .login-panel::after {
+          display: none;
+        }
+
+        .login-panel__eyebrow {
+          justify-content: center;
+          margin-bottom: 14px;
+          width: 100%;
+        }
+
+        .login-panel h2 {
+          font-size: 1.8rem;
         }
 
         .login-actions {
           grid-template-columns: 1fr;
+          gap: 10px;
+          margin-top: 18px;
+        }
+
+        .login-meta {
+          margin-top: 18px;
+          padding-top: 14px;
         }
 
         .login-footer {
-          font-size: 0.82rem;
+          display: none;
         }
       }
 
@@ -590,35 +639,20 @@ hh_handle_dev_bypass_request();
           font-size: 1rem;
         }
 
-        .login-brand span,
-        .login-nav a {
+        .login-brand span {
           font-size: 0.76rem;
         }
 
-        .login-main {
-          grid-template-columns: minmax(0, 1fr) 76px;
-        }
-
         .brand-stage__logo {
-          max-width: 74px;
-        }
-
-        .brand-stage__copy p {
-          font-size: 0.84rem;
-          max-width: 205px;
+          max-width: 96px;
         }
 
         .countdown-card {
-          gap: 10px;
           padding: 8px 10px;
         }
 
         .login-panel {
-          padding: 24px 14px 16px;
-        }
-
-        .login-footer {
-          font-size: 0.76rem;
+          padding: 20px 14px 14px;
         }
       }
     </style>
@@ -632,8 +666,8 @@ hh_handle_dev_bypass_request();
           <span>Football prediction game</span>
         </a>
         <nav class="login-nav" aria-label="Login links">
-          <a href="registration.php">Register</a>
-          <a href="forgot-password.php">Reset Password</a>
+          <span class="is-disabled" aria-disabled="true">Register</span>
+          <span class="is-disabled" aria-disabled="true">Reset Password</span>
           <a href="#" data-bs-toggle="modal" data-bs-target="#terms">Terms</a>
         </nav>
       </header>
@@ -665,31 +699,33 @@ hh_handle_dev_bypass_request();
             <p class="login-panel__eyebrow"><i class="bi bi-trophy-fill"></i> Matchday sign in</p>
 
             <form id="loginForm" class="needs-validation" method="POST" action="php/login.php" novalidate>
-              <div class="mb-3">
-                <label for="username" class="form-label">Username</label>
-                <input type="text" class="form-control" id="username" name="username" required autocomplete="username" autofocus>
-                <div class="invalid-feedback">Please provide your username.</div>
-              </div>
-
-              <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
-                <div class="password-control">
-                  <input type="password" class="form-control" id="password" name="password" required autocomplete="current-password">
-                  <button class="btn btn-outline-dark" type="button" id="toggleLoginPwd" aria-label="Show password">
-                    <i class="bi bi-eye-slash-fill"></i>
-                  </button>
+              <fieldset disabled>
+                <div class="mb-3">
+                  <label for="username" class="form-label">Username</label>
+                  <input type="text" class="form-control" id="username" name="username" required autocomplete="username" autofocus>
+                  <div class="invalid-feedback">Please provide your username.</div>
                 </div>
-                <div class="invalid-feedback">Please provide your password.</div>
-              </div>
 
-              <div class="login-actions">
-                <button type="submit" class="btn btn-hh-primary w-100"><i class="bi bi-box-arrow-in-right"></i> Log in</button>
-                <a class="btn btn-hh-secondary w-100" href="registration.php"><i class="bi bi-person-fill-add"></i> Register</a>
-              </div>
+                <div class="mb-3">
+                  <label for="password" class="form-label">Password</label>
+                  <div class="password-control">
+                    <input type="password" class="form-control" id="password" name="password" required autocomplete="current-password">
+                    <button class="btn btn-outline-dark" type="button" id="toggleLoginPwd" aria-label="Show password">
+                      <i class="bi bi-eye-slash-fill"></i>
+                    </button>
+                  </div>
+                  <div class="invalid-feedback">Please provide your password.</div>
+                </div>
 
-              <div class="login-meta">
-                <a href="forgot-password.php">Forgot your password?</a>
-              </div>
+                <div class="login-actions">
+                  <button type="submit" class="btn btn-hh-primary w-100" disabled><i class="bi bi-box-arrow-in-right"></i> Log in</button>
+                  <span class="btn btn-hh-secondary w-100 is-disabled" aria-disabled="true"><i class="bi bi-person-fill-add"></i> Register</span>
+                </div>
+
+                <div class="login-meta">
+                  <span class="is-disabled" aria-disabled="true">Forgot your password?</span>
+                </div>
+              </fieldset>
             </form>
           </section>
         </div>

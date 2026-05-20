@@ -3,7 +3,7 @@ session_start();
 $page_title = 'Overview';
 
 require_once __DIR__ . '/php/auth.php';
-hh_require_login('index.php');
+hh_require_admin('dashboard.php');
 
 include "php/header.php";
 include "php/navigation.php";
