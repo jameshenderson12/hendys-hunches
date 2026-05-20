@@ -604,8 +604,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
       body.registration-concept #footer {
         color: rgba(255, 255, 255, 0.72);
+        margin-left: auto;
+        margin-right: auto;
         position: relative;
+        text-align: center;
+        width: min(1220px, calc(100% - 48px));
         z-index: 1;
+      }
+
+      body.registration-concept #footer .copyright {
+        text-align: center;
       }
 
       @media (max-width: 991px) {
@@ -666,6 +674,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           padding: 18px;
         }
 
+        body.registration-concept #footer {
+          width: calc(100% - 24px);
+        }
+
         .registration-panel .progress-step::after {
           font-size: 0.68rem;
         }
@@ -687,7 +699,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <span>Football prediction game</span>
   			</div>
   				<nav class="nav nav-masthead justify-content-center">
-  					<a class="nav-link fw-bold py-1 px-0" href="index-new.html">Login</a>
+            <a class="nav-link fw-bold py-1 px-0" href="index.php">Login</a>
   					<a class="nav-link fw-bold py-1 px-0" href="forgot-password.php">Reset Password</a>
             <a class="nav-link fw-bold py-1 px-0" href="#terms-panel">Terms</a>
   				</nav>
