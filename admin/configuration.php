@@ -519,6 +519,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $errors[] = 'The config file could not be written.';
             $currentConfig = $draftConfig;
         } else {
+            clearstatcache(true, $configPath);
+            if (function_exists('opcache_invalidate')) {
+                @opcache_invalidate($configPath, true);
+            }
             header('Location: configuration.php?saved=1');
             exit();
         }
