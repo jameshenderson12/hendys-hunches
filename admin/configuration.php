@@ -18,12 +18,15 @@ function hh_config_editor_state(): array
 {
     global $hh_site_config, $hh_competition_config, $hh_finance_config, $hh_runtime_config, $hh_preview_config, $hh_email_config, $hh_path_config, $hh_asset_config;
 
+    $previewConfig = (array) $hh_preview_config;
+    $previewConfig['enabled'] = defined('IS_PREVIEW') && IS_PREVIEW;
+
     return [
         'site' => $hh_site_config,
         'competition' => $hh_competition_config,
         'finance' => $hh_finance_config,
         'runtime' => $hh_runtime_config,
-        'preview' => $hh_preview_config,
+        'preview' => $previewConfig,
         'email' => $hh_email_config,
         'paths' => $hh_path_config,
         'assets' => $hh_asset_config,
@@ -91,6 +94,7 @@ function hh_config_editor_normalize(array $source, array $current): array
             'no_of_total_fixtures' => $groupFixtures + $ro32Fixtures + $ro16Fixtures + $qfFixtures + $sfFixtures + $finalFixtures,
         ],
         'preview' => [
+            'enabled' => !empty($source['preview_enabled']),
             'today_override' => trim((string) ($source['today_override'] ?? '')),
         ],
         'email' => [
@@ -127,6 +131,7 @@ function hh_config_editor_export(array $config): string
     $email = var_export($config['email'], true);
     $paths = var_export($config['paths'], true);
     $assets = var_export($config['assets'], true);
+    $previewEnabled = !empty($config['preview']['enabled']) ? 'true' : 'false';
 
     return "<?php\n\n"
         . "/***********************************\n"
@@ -134,7 +139,7 @@ function hh_config_editor_export(array $config): string
         . "* File: config.php\n"
         . "* Created By: James Henderson\n"
         . "***********************************/\n\n"
-        . "define('IS_PREVIEW', true);\n\n"
+        . "define('IS_PREVIEW', {$previewEnabled});\n\n"
         . '$hh_site_config = ' . $site . ";\n\n"
         . '$hh_competition_config = ' . $competition . ";\n\n"
         . '$hh_finance_config = ' . $finance . ";\n\n"
@@ -631,8 +636,12 @@ include '../php/navigation.php';
                     <span>Total fixtures tracked at runtime</span>
                 </div>
                 <div class="config-summary__item">
+                    <strong><?= !empty($currentConfig['preview']['enabled']) ? 'Enabled' : 'Disabled' ?></strong>
+                    <span>Preview mode</span>
+                </div>
+                <div class="config-summary__item">
                     <strong><?= htmlspecialchars((string) (($currentConfig['preview']['today_override'] ?? '') !== '' ? $currentConfig['preview']['today_override'] : 'Live system date'), ENT_QUOTES) ?></strong>
-                    <span>Preview day used as “today”</span>
+                    <span>Effective day used as “today”</span>
                 </div>
                 <div class="config-summary__item">
                     <strong><?= count((array) $currentConfig['site']['admin_usernames']) ?></strong>
@@ -767,11 +776,15 @@ include '../php/navigation.php';
                 </div>
 
                 <div>
-                    <h3>Preview Date</h3>
+                    <h3>Preview Controls</h3>
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" id="preview_enabled" name="preview_enabled" type="checkbox" value="1" <?= !empty($currentConfig['preview']['enabled']) ? 'checked' : '' ?>>
+                        <label class="form-check-label" for="preview_enabled">Enable preview mode</label>
+                    </div>
                     <div class="mb-3">
                         <label class="form-label" for="today_override">Preview today override</label>
                         <input class="form-control" id="today_override" name="today_override" type="date" value="<?= htmlspecialchars((string) ($currentConfig['preview']['today_override'] ?? ''), ENT_QUOTES) ?>">
-                        <p class="admin-note mt-2">Leave blank to use the real current day. Set a tournament date such as <code>2026-06-11</code> or <code>2026-06-12</code> to preview what the dashboard treats as today.</p>
+                        <p class="admin-note mt-2">Leave blank to use the real current day. Set a tournament date such as <code>2026-06-11</code> or <code>2026-06-12</code> to preview what the dashboard treats as today. This override only applies when preview mode is enabled.</p>
                     </div>
 
                     <h3>Email Comms</h3>

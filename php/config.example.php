@@ -47,6 +47,7 @@ $hh_runtime_config = array (
 );
 
 $hh_preview_config = array (
+  'enabled' => true,
   'today_override' => '',
 );
 
