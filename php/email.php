@@ -60,6 +60,17 @@ if (!function_exists('hh_mail_require_phpmailer')) {
 }
 
 if (!function_exists('hh_mail_render_template')) {
+    function hh_mail_render_markup(string $contents, array $replacements): string
+    {
+        foreach ($replacements as $key => $value) {
+            $contents = str_replace('{{' . $key . '}}', (string) $value, $contents);
+        }
+
+        return $contents;
+    }
+}
+
+if (!function_exists('hh_mail_render_template')) {
     function hh_mail_render_template(string $templatePath, array $replacements): string
     {
         if (!file_exists($templatePath)) {
@@ -67,11 +78,7 @@ if (!function_exists('hh_mail_render_template')) {
         }
 
         $contents = (string) file_get_contents($templatePath);
-        foreach ($replacements as $key => $value) {
-            $contents = str_replace('{{' . $key . '}}', (string) $value, $contents);
-        }
-
-        return $contents;
+        return hh_mail_render_markup($contents, $replacements);
     }
 }
 

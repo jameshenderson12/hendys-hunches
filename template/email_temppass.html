@@ -1,49 +1,44 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-GB">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Password Reset for {{gamename}}</title>
-    <style>
-        .container {
-            font-family: Arial, sans-serif;            
-            border-radius: 10px;
-            background-color: #f9f9f9;
-            padding: 20px;
-            border: 1px solid #ddd;
-            margin: auto;            
-            max-width: 600px;
-        }
-        .header img {
-            max-width: 100%;
-            height: auto;
-        }
-        h1, h2, h3 {
-            color: #333;
-        }
-        p {
-            color: #111;
-        }
-        a {
-            color: #0066cc;
-        }
-    </style>
 </head>
-<body>
-    <div class="container">
-        <div class="header">
-            <img src="cid:logo" alt="{{gamename}} Logo">
-        </div>
-        <h1>We&#x27;ve got you, {{firstname}}!</h1>
-        <p>This is a message from {{gamename}}. Use the temporary password and link below to get logged in again. You can then change your password to one of your own choice using the 'Change Password' link (under the drop-down menu of your name).</p>
-        <ol>
-            <li>Note your username: <b>{{username}}</b></li>
-            <li>Note your temporary password: <b>{{temp_password}}</b></li>
-            <li><a href="{{temp_password_link}}">Apply this temporary password and use this to log in</a></li>
-        </ol>
-        <p>If you do not click the link in this email, no changes will be made to your account. In order to set your login password to the temporary password you must click the link above.</p>
-        <p>Best Regards</p>
-        <p>{{developer}}<br>Developer of Hendy's Hunches</p>
-    </div>
+<body style="margin:0;padding:0;background-color:#f4f6f1;font-family:Arial,Helvetica,sans-serif;color:#16231d;">
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color:#f4f6f1;">
+        <tr>
+            <td style="padding:24px 12px;">
+                <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:640px;margin:0 auto;background-color:#ffffff;border:1px solid #dfe5df;border-radius:8px;">
+                    <tr>
+                        <td bgcolor="#073629" style="padding:28px 28px 18px;text-align:center;border-bottom:1px solid #eef1ee;background-color:#073629;background-image:linear-gradient(90deg,#073629,#8f66d8);border-radius:8px 8px 0 0;">
+                            <img src="cid:logo" alt="{{gamename}} logo" width="140" style="display:block;margin:0 auto;max-width:140px;width:100%;height:auto;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:28px;">
+                            <p style="margin:0 0 10px;font-size:22px;line-height:1.3;font-weight:700;color:#16231d;">Password reset</p>
+                            <p style="margin:0 0 18px;font-size:16px;line-height:1.6;">Hi {{firstname}},</p>
+                            <p style="margin:0 0 18px;font-size:16px;line-height:1.6;">This is a message from {{gamename}}. Use the temporary password and link below to get logged in again. You can then change your password to one of your own choice using the <strong>Change Password</strong> link under your account menu.</p>
+
+                            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:0 0 20px;border:1px solid #e6ebe6;border-radius:8px;background-color:#f8faf8;">
+                                <tr>
+                                    <td style="padding:16px 18px;">
+                                        <p style="margin:0 0 12px;font-size:15px;line-height:1.6;"><strong>Username:</strong> {{username}}</p>
+                                        <p style="margin:0 0 12px;font-size:15px;line-height:1.6;"><strong>Temporary password:</strong> {{temp_password}}</p>
+                                        <p style="margin:0;font-size:15px;line-height:1.6;"><a href="{{temp_password_link}}" style="color:#8f66d8;font-weight:700;text-decoration:none;">Apply this temporary password and log in</a></p>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <p style="margin:0 0 18px;font-size:16px;line-height:1.6;">If you do not click the link in this email, no changes will be made to your account. In order to set your login password to the temporary password, you must use the link above.</p>
+                            <p style="margin:0 0 6px;font-size:16px;line-height:1.6;">Best regards,</p>
+                            <p style="margin:0;font-size:16px;line-height:1.6;">{{developer}}<br>Developer of Hendy's Hunches</p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
 </body>
 </html>

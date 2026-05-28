@@ -144,7 +144,7 @@ include __DIR__ . '/php/navigation.php';
 
 <style>
   .account-editor-shell {
-    width: min(1120px, calc(100% - 32px));
+    width: min(1320px, calc(100% - 32px));
     margin: 20px auto 32px;
   }
   .account-editor-grid {

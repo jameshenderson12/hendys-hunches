@@ -9,10 +9,14 @@ require_once dirname(__DIR__) . '/php/email.php';
 hh_require_admin('../dashboard.php');
 
 $configPath = dirname(__DIR__) . '/php/config.php';
+$welcomeTemplatePath = dirname(__DIR__) . '/template/email_welcome.html';
+$resetTemplatePath = dirname(__DIR__) . '/template/email_temppass.html';
 $messages = [];
 $errors = [];
 $testEmailAddress = trim((string) ($_POST['test_email_to'] ?? ''));
 $testEmailName = trim((string) ($_POST['test_email_name'] ?? ''));
+$welcomeTemplateMarkup = file_exists($welcomeTemplatePath) ? (string) file_get_contents($welcomeTemplatePath) : '';
+$resetTemplateMarkup = file_exists($resetTemplatePath) ? (string) file_get_contents($resetTemplatePath) : '';
 
 function hh_config_editor_state(): array
 {
@@ -489,10 +493,36 @@ $currentConfig = hh_config_editor_state();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $draftConfig = hh_config_editor_normalize($_POST, $currentConfig);
     $action = trim((string) ($_POST['configuration_action'] ?? 'save'));
+    $welcomeTemplateMarkup = (string) ($_POST['email_template_welcome'] ?? $welcomeTemplateMarkup);
+    $resetTemplateMarkup = (string) ($_POST['email_template_reset'] ?? $resetTemplateMarkup);
 
-    if ($draftConfig['site']['title'] === '' || $draftConfig['competition']['competition'] === '') {
+    if (in_array($action, ['save', 'send_test_email', 'test_registration_email', 'test_forgot_password_email'], true)
+        && ($draftConfig['site']['title'] === '' || $draftConfig['competition']['competition'] === '')
+    ) {
         $errors[] = 'Site title and competition name are required.';
         $currentConfig = $draftConfig;
+    } elseif ($action === 'save_email_templates') {
+        $currentConfig = $draftConfig;
+        $templateTargets = [
+            ['path' => $welcomeTemplatePath, 'contents' => $welcomeTemplateMarkup, 'label' => 'welcome template'],
+            ['path' => $resetTemplatePath, 'contents' => $resetTemplateMarkup, 'label' => 'forgot password template'],
+        ];
+
+        foreach ($templateTargets as $target) {
+            $directory = dirname($target['path']);
+            if ((!file_exists($target['path']) && !is_writable($directory)) || (file_exists($target['path']) && !is_writable($target['path']))) {
+                $errors[] = 'The ' . $target['label'] . ' is not writable.';
+            }
+        }
+
+        if (empty($errors)) {
+            if (file_put_contents($welcomeTemplatePath, $welcomeTemplateMarkup, LOCK_EX) === false
+                || file_put_contents($resetTemplatePath, $resetTemplateMarkup, LOCK_EX) === false) {
+                $errors[] = 'One or more email templates could not be written.';
+            } else {
+                $messages[] = 'Email templates saved.';
+            }
+        }
     } elseif ($action === 'send_test_email') {
         $currentConfig = $draftConfig;
         $hh_email_config = $draftConfig['email'];
@@ -507,6 +537,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $errors[] = 'The test email could not be sent. Check the SMTP details and try again.';
         } else {
             $messages[] = 'Test email sent to ' . $testEmailAddress . '.';
+        }
+    } elseif ($action === 'test_registration_email' || $action === 'test_forgot_password_email') {
+        $currentConfig = $draftConfig;
+        $hh_email_config = $draftConfig['email'];
+
+        if ($testEmailAddress === '') {
+            $errors[] = 'Enter an email address to receive the test message.';
+        } elseif (!filter_var($testEmailAddress, FILTER_VALIDATE_EMAIL)) {
+            $errors[] = 'Enter a valid recipient email address for the test message.';
+        } elseif (!hh_mail_is_enabled()) {
+            $errors[] = 'Enable outbound email before sending a test message.';
+        } else {
+            $recipientName = $testEmailName !== '' ? $testEmailName : 'James';
+            $dummyUsername = 'WorldCupTester';
+
+            if ($action === 'test_registration_email') {
+                $html = hh_mail_render_markup($welcomeTemplateMarkup, [
+                    'gamename' => $draftConfig['site']['title'],
+                    'firstname' => $recipientName,
+                    'username' => $dummyUsername,
+                    'signup_url' => rtrim((string) $draftConfig['competition']['signup_url'], '/'),
+                    'login_url' => rtrim((string) $draftConfig['site']['base_url'], '/') . '/index.php',
+                    'forgot_password_url' => rtrim((string) $draftConfig['site']['base_url'], '/') . '/forgot-password.php',
+                    'developer' => $draftConfig['site']['developer'],
+                ]);
+
+                if ($html === '' || !hh_send_email($testEmailAddress, $recipientName, 'Welcome to ' . $draftConfig['site']['title'], $html)) {
+                    $errors[] = 'The registration test email could not be sent.';
+                } else {
+                    $messages[] = 'Registration test email sent to ' . $testEmailAddress . '.';
+                }
+            } else {
+                $html = hh_mail_render_markup($resetTemplateMarkup, [
+                    'gamename' => $draftConfig['site']['title'],
+                    'firstname' => $recipientName,
+                    'username' => $dummyUsername,
+                    'temp_password' => 'TEMP-2026',
+                    'temp_password_link' => rtrim((string) $draftConfig['site']['base_url'], '/') . '/forgot-password.php?u=' . rawurlencode($dummyUsername) . '&p=test-reset-link',
+                    'developer' => $draftConfig['site']['developer'],
+                ]);
+
+                if ($html === '' || !hh_send_email($testEmailAddress, $recipientName, $draftConfig['site']['title'] . ' password reset', $html)) {
+                    $errors[] = 'The forgot password test email could not be sent.';
+                } else {
+                    $messages[] = 'Forgot password test email sent to ' . $testEmailAddress . '.';
+                }
+            }
         }
     } elseif (!is_writable($configPath)) {
         $errors[] = 'The config file is not writable, so the changes could not be saved.';
@@ -575,6 +652,10 @@ include '../php/navigation.php';
         margin: 0;
         color: var(--hh-muted);
         font-size: 0.92rem;
+      }
+      .admin-card textarea.font-monospace {
+        font-size: 0.85rem;
+        line-height: 1.45;
       }
       .config-summary {
         display: grid;
@@ -859,8 +940,28 @@ include '../php/navigation.php';
                                 <input class="form-control" id="test_email_name" name="test_email_name" type="text" value="<?= htmlspecialchars($testEmailName, ENT_QUOTES) ?>" placeholder="Optional">
                             </div>
                         </div>
-                        <div class="mt-3">
+                        <div class="d-flex flex-wrap gap-2 mt-3">
                             <button class="btn btn-outline-dark" type="submit" name="configuration_action" value="send_test_email"><i class="bi bi-envelope-check"></i> Send test email</button>
+                            <button class="btn btn-outline-dark" type="submit" name="configuration_action" value="test_registration_email"><i class="bi bi-person-check"></i> Test registration</button>
+                            <button class="btn btn-outline-dark" type="submit" name="configuration_action" value="test_forgot_password_email"><i class="bi bi-key"></i> Test forgot password</button>
+                        </div>
+                    </div>
+
+                    <div class="admin-card" style="padding:16px 18px;">
+                        <h3 class="mb-2">Email Templates</h3>
+                        <p class="admin-note mb-3">Edit the HTML used for registration and forgot password emails. Use the test buttons above to road-test the current drafts before saving them.</p>
+                        <div class="mb-3">
+                            <label class="form-label" for="email_template_welcome">Registration email template</label>
+                            <textarea class="form-control font-monospace" id="email_template_welcome" name="email_template_welcome" rows="16"><?= htmlspecialchars($welcomeTemplateMarkup, ENT_QUOTES) ?></textarea>
+                            <p class="admin-note mt-2">Available placeholders: <code>{{firstname}}</code>, <code>{{username}}</code>, <code>{{signup_url}}</code>, <code>{{login_url}}</code>, <code>{{forgot_password_url}}</code>, <code>{{developer}}</code>, <code>{{gamename}}</code>.</p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="email_template_reset">Forgot password email template</label>
+                            <textarea class="form-control font-monospace" id="email_template_reset" name="email_template_reset" rows="16"><?= htmlspecialchars($resetTemplateMarkup, ENT_QUOTES) ?></textarea>
+                            <p class="admin-note mt-2">Available placeholders: <code>{{firstname}}</code>, <code>{{username}}</code>, <code>{{temp_password}}</code>, <code>{{temp_password_link}}</code>, <code>{{developer}}</code>, <code>{{gamename}}</code>.</p>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2">
+                            <button class="btn btn-outline-dark" type="submit" name="configuration_action" value="save_email_templates"><i class="bi bi-save2"></i> Save email templates</button>
                         </div>
                     </div>
 

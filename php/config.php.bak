@@ -47,6 +47,7 @@ $hh_runtime_config = array (
 );
 
 $hh_preview_config = array (
+  'enabled' => true,
   'today_override' => '',
 );
 
@@ -78,16 +79,16 @@ $hh_asset_config = array (
     2 => 'img/football-kits/red-white.png',
     3 => 'img/football-kits/purple-mint.png',
     4 => 'img/football-kits/charcoal-skyblue.png',
-    5 => 'img/football-kits/yellow-black.png',
-    6 => 'img/football-kits/pink-black.png',
+    5 => 'img/football-kits/yellow-green.png',
+    6 => 'img/football-kits/black-white.png',
     7 => 'img/football-kits/white-purple.png',
     8 => 'img/football-kits/orange-black.png',
     9 => 'img/football-kits/grey-mint.png',
-    10 => 'img/football-kits/charcoal-gold.png',
-    11 => 'img/football-kits/green-lightgreen.png',
-    12 => 'img/football-kits/claret-lightblue.png',
+    10 => 'img/football-kits/pink-charcoal.png',
+    11 => 'img/football-kits/lightblue-blue.png',
+    12 => 'img/football-kits/gold-black.png',
     13 => 'img/football-kits/lightred-lightyellow.png',
-    14 => 'img/football-kits/navy-blue-red.png',
+    14 => 'img/football-kits/purple-tartan.png',
     15 => 'img/football-kits/white-green.png',
     16 => 'img/football-kits/red-black.png',
     17 => 'img/football-kits/pink-white.png',
