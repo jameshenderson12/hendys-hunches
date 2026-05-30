@@ -7,6 +7,82 @@ include 'php/process.php';
 require_once 'php/email.php';
 require_once 'php/terms.php';
 
+function hh_registration_client_ip(): string
+{
+    foreach (['HTTP_CF_CONNECTING_IP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR'] as $key) {
+        $value = trim((string) ($_SERVER[$key] ?? ''));
+        if ($value === '') {
+            continue;
+        }
+
+        if ($key === 'HTTP_X_FORWARDED_FOR') {
+            $parts = array_filter(array_map('trim', explode(',', $value)));
+            $value = (string) ($parts[0] ?? '');
+        }
+
+        if ($value !== '') {
+            return $value;
+        }
+    }
+
+    return 'unknown';
+}
+
+function hh_registration_rate_limit_file(string $scope, string $identifier): string
+{
+    return rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'hh_reg_' . $scope . '_' . sha1($identifier) . '.json';
+}
+
+function hh_registration_read_attempts(string $filePath, int $windowSeconds, int $now): array
+{
+    if (!is_file($filePath)) {
+        return [];
+    }
+
+    $payload = @file_get_contents($filePath);
+    if ($payload === false || trim($payload) === '') {
+        return [];
+    }
+
+    $decoded = json_decode($payload, true);
+    if (!is_array($decoded)) {
+        return [];
+    }
+
+    return array_values(array_filter(array_map('intval', $decoded), static fn(int $timestamp): bool => $timestamp > ($now - $windowSeconds)));
+}
+
+function hh_registration_write_attempts(string $filePath, array $attempts): void
+{
+    @file_put_contents($filePath, json_encode(array_values($attempts)), LOCK_EX);
+}
+
+function hh_registration_apply_rate_limit(string $scope, string $identifier, int $windowSeconds, int $limit, int $now): array
+{
+    $filePath = hh_registration_rate_limit_file($scope, $identifier);
+    $attempts = hh_registration_read_attempts($filePath, $windowSeconds, $now);
+
+    if (count($attempts) >= $limit) {
+        $oldestAttempt = min($attempts);
+        $retryAfter = max(1, ($oldestAttempt + $windowSeconds) - $now);
+
+        return [
+            'blocked' => true,
+            'retry_after' => $retryAfter,
+            'attempts' => count($attempts),
+        ];
+    }
+
+    $attempts[] = $now;
+    hh_registration_write_attempts($filePath, $attempts);
+
+    return [
+        'blocked' => false,
+        'retry_after' => 0,
+        'attempts' => count($attempts),
+    ];
+}
+
 function hh_registration_fallback_file_options(string $filePath): array
 {
     $options = [];
@@ -78,62 +154,97 @@ if (empty($tournamentWinnerOptions)) {
 
 // Initialise variable for error messages
 $registrationSuccess = false;
+$registrationError = '';
+$registrationMinimumSeconds = 4;
+$registrationSessionWindow = 15 * 60;
+$registrationSessionLimit = 3;
+$registrationIpWindow = 30 * 60;
+$registrationIpLimit = 5;
+
+if (empty($_SESSION['registration_form_issued_at'])) {
+    $_SESSION['registration_form_issued_at'] = time();
+}
+
+$registrationFormIssuedAt = (int) $_SESSION['registration_form_issued_at'];
 
 // Check if the form has been submitted
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Sanitize and retrieve form data
-    $firstname = ucfirst($_POST['firstname']);
-    $surname = ucfirst($_POST['surname']);
-    $email = $_POST['email'];
-    $username = $_POST['username'];
-    $password = md5($_POST['pwd1']);
-    $avatar = $_POST['avatar'];
-    $fieldofwork = trim($_POST['fieldofwork'] ?? '');
-    $location = trim($_POST['location'] ?? '');
-    $faveteam = trim($_POST['faveteam'] ?? '');
-    $tournwinner = trim($_POST['tournwinner'] ?? '');
+    $now = time();
+    $honeypotValue = trim((string) ($_POST['website'] ?? ''));
+    $postedIssuedAt = (int) ($_POST['form_issued_at'] ?? 0);
+    $secondsSpent = $postedIssuedAt > 0 ? ($now - $postedIssuedAt) : 0;
 
-    $fieldofwork = $fieldofwork !== '' ? $fieldofwork : 'Prefer Not To Say';
-    $location = $location !== '' ? $location : 'Prefer Not To Say';
-    $faveteam = $faveteam !== '' ? $faveteam : 'Prefer Not To Say';
-    $tournwinner = $tournwinner !== '' ? $tournwinner : 'Prefer Not To Say';
+    if ($honeypotValue !== '') {
+        $registrationError = 'Registration could not be completed. Please try again shortly.';
+    } elseif ($postedIssuedAt <= 0 || $secondsSpent < $registrationMinimumSeconds) {
+        $registrationError = 'Please take a little more time to complete the form, then try again.';
+    } else {
+        $sessionRate = hh_registration_apply_rate_limit('session', session_id(), $registrationSessionWindow, $registrationSessionLimit, $now);
+        $ipRate = hh_registration_apply_rate_limit('ip', hh_registration_client_ip(), $registrationIpWindow, $registrationIpLimit, $now);
 
-    // Query to get the total number of users to set positional values
-    $sql1 = "SELECT count(*) AS totalusers FROM live_user_information";
-    $totalusers = mysqli_query($con, $sql1) or die(mysqli_error($con));
-    $row = mysqli_fetch_assoc($totalusers);
-    $signupPosition = ((int) ($row["totalusers"] ?? 0)) + 1;
-    $setdefstartpos = $signupPosition;
-    $setdefcurrpos = $signupPosition;
-    $setdeflastpos = $signupPosition;
+        if ($sessionRate['blocked']) {
+            $minutes = max(1, (int) ceil($sessionRate['retry_after'] / 60));
+            $registrationError = 'Too many registration attempts from this browser. Please wait about ' . $minutes . ' minute' . ($minutes === 1 ? '' : 's') . ' and try again.';
+        } elseif ($ipRate['blocked']) {
+            $minutes = max(1, (int) ceil($ipRate['retry_after'] / 60));
+            $registrationError = 'Too many registration attempts from this connection. Please wait about ' . $minutes . ' minute' . ($minutes === 1 ? '' : 's') . ' and try again.';
+        } else {
+            // Sanitize and retrieve form data
+            $firstname = ucfirst(trim((string) ($_POST['firstname'] ?? '')));
+            $surname = ucfirst(trim((string) ($_POST['surname'] ?? '')));
+            $email = trim((string) ($_POST['email'] ?? ''));
+            $username = trim((string) ($_POST['username'] ?? ''));
+            $password = md5((string) ($_POST['pwd1'] ?? ''));
+            $avatar = trim((string) ($_POST['avatar'] ?? ''));
+            $fieldofwork = trim((string) ($_POST['fieldofwork'] ?? ''));
+            $location = trim((string) ($_POST['location'] ?? ''));
+            $faveteam = trim((string) ($_POST['faveteam'] ?? ''));
+            $tournwinner = trim((string) ($_POST['tournwinner'] ?? ''));
 
-    // Prepare and bind SQL statements
-    $stmt1 = mysqli_prepare($con, "INSERT INTO live_user_information (username, password, firstname, surname, email, avatar, fieldofwork, location, faveteam, tournwinner, startpos, lastpos, currpos) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
-    $blankTempPassword = '';
-    $stmt2 = mysqli_prepare($con, "INSERT INTO live_temp_information (username, temp_pass) VALUES (?, ?)");
+            $fieldofwork = $fieldofwork !== '' ? $fieldofwork : 'Prefer Not To Say';
+            $location = $location !== '' ? $location : 'Prefer Not To Say';
+            $faveteam = $faveteam !== '' ? $faveteam : 'Prefer Not To Say';
+            $tournwinner = $tournwinner !== '' ? $tournwinner : 'Prefer Not To Say';
 
-    mysqli_stmt_bind_param($stmt1, "ssssssssssddd", $username, $password, $firstname, $surname, $email, $avatar, $fieldofwork, $location, $faveteam, $tournwinner, $setdefstartpos, $setdeflastpos, $setdefcurrpos);
-    mysqli_stmt_bind_param($stmt2, "ss", $username, $blankTempPassword);
+            // Query to get the total number of users to set positional values
+            $sql1 = "SELECT count(*) AS totalusers FROM live_user_information";
+            $totalusers = mysqli_query($con, $sql1) or die(mysqli_error($con));
+            $row = mysqli_fetch_assoc($totalusers);
+            $signupPosition = ((int) ($row["totalusers"] ?? 0)) + 1;
+            $setdefstartpos = $signupPosition;
+            $setdefcurrpos = $signupPosition;
+            $setdeflastpos = $signupPosition;
 
-    // Execute the queries
-    mysqli_stmt_execute($stmt1);
-    mysqli_stmt_execute($stmt2);
+            // Prepare and bind SQL statements
+            $stmt1 = mysqli_prepare($con, "INSERT INTO live_user_information (username, password, firstname, surname, email, avatar, fieldofwork, location, faveteam, tournwinner, startpos, lastpos, currpos) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
+            $blankTempPassword = '';
+            $stmt2 = mysqli_prepare($con, "INSERT INTO live_temp_information (username, temp_pass) VALUES (?, ?)");
 
-    // Close statement and connection
-    mysqli_stmt_close($stmt1);
-    mysqli_stmt_close($stmt2);
+            mysqli_stmt_bind_param($stmt1, "ssssssssssddd", $username, $password, $firstname, $surname, $email, $avatar, $fieldofwork, $location, $faveteam, $tournwinner, $setdefstartpos, $setdeflastpos, $setdefcurrpos);
+            mysqli_stmt_bind_param($stmt2, "ss", $username, $blankTempPassword);
 
-    mysqli_close($con);
+            // Execute the queries
+            mysqli_stmt_execute($stmt1);
+            mysqli_stmt_execute($stmt2);
 
-    // Set success flag
-    $registrationSuccess = true;
+            // Close statement and connection
+            mysqli_stmt_close($stmt1);
+            mysqli_stmt_close($stmt2);
 
-    // If registration is successful, send the welcome email
-    if ($registrationSuccess) {
-      // Set the URL for password change
-      //$changePasswordUrl = 'https://www.hendyshunches.co.uk/change-password.php'; // Replace with actual URL
-      sendWelcomeEmail($firstname, $username, $email);
-  }
+            mysqli_close($con);
+
+            // Set success flag
+            $registrationSuccess = true;
+
+            // If registration is successful, send the welcome email
+            if ($registrationSuccess) {
+              sendWelcomeEmail($firstname, $username, $email);
+            }
+        }
+    }
+
+    $_SESSION['registration_form_issued_at'] = time();
+    $registrationFormIssuedAt = (int) $_SESSION['registration_form_issued_at'];
 }
 ?>
 
@@ -602,6 +713,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         color: #8f1d24;
       }
 
+      .registration-honeypot {
+        position: absolute !important;
+        left: -10000px !important;
+        top: auto !important;
+        width: 1px !important;
+        height: 1px !important;
+        overflow: hidden !important;
+      }
+
       body.registration-concept #footer {
         color: rgba(255, 255, 255, 0.72);
         margin-left: auto;
@@ -734,6 +854,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   			<h1>Register</h1>
         <div class="text-start small text-white-50 mt-2" id="stepLabel">Step 1 of 5: Contact</div>
 
+        <?php if ($registrationError !== '') : ?>
+          <div class="alert alert-danger mt-3 mb-0" role="alert"><?= htmlspecialchars($registrationError, ENT_QUOTES) ?></div>
+        <?php endif; ?>
+
         <!-- Progress bar -->
         <div class="progressbar">
           <div class="progress" id="progress"></div>
@@ -746,6 +870,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="text-start small text-white-50 mt-1">Fields marked with <span class="text-warning">*</span> are required.</div>
 
       <form class="d-flex flex-column needs-validation" method="POST" action="" id="registrationForm" name="registrationForm" novalidate> <!--  onsubmit="validateAvatar()" onSubmit="return validateFullForm()" border border-white p-2 my-2 border-opacity-25   -->
+          <input type="hidden" name="form_issued_at" value="<?= (int) $registrationFormIssuedAt ?>">
+          <div class="registration-honeypot" aria-hidden="true">
+            <label for="website">Website</label>
+            <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+          </div>
           <!-- Steps -->
           <div class="form-step form-step-active">
             <label for="firstname" class="form-label">First Name <span class="text-warning">*</span></label>
