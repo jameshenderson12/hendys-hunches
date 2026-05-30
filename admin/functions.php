@@ -468,6 +468,167 @@ function hh_admin_bind_dynamic(mysqli_stmt $statement, string $types, array $val
     call_user_func_array([$statement, 'bind_param'], $params);
 }
 
+function hh_admin_quote_strings(array $values): array
+{
+    return array_map(static fn($value): string => "'" . str_replace("'", "\\'", (string) $value) . "'", $values);
+}
+
+function hh_admin_preserved_usernames(mysqli $con, array $userIds): array
+{
+    if (empty($userIds)) {
+        return [];
+    }
+
+    $ids = array_values(array_unique(array_map('intval', $userIds)));
+    $ids = array_filter($ids, static fn(int $id): bool => $id > 0);
+    if (empty($ids)) {
+        return [];
+    }
+
+    $idList = implode(',', $ids);
+    $rows = hh_admin_fetch_all(
+        $con,
+        "SELECT username
+         FROM live_user_information
+         WHERE id IN ({$idList})"
+    );
+
+    return array_values(array_filter(array_map(static fn(array $row): string => trim((string) ($row['username'] ?? '')), $rows)));
+}
+
+function hh_admin_reset_preserving_users_with_connection(mysqli $con, array $userIds): array
+{
+    $userIds = array_values(array_unique(array_map('intval', $userIds)));
+    $userIds = array_filter($userIds, static fn(int $id): bool => $id > 0);
+
+    if (empty($userIds)) {
+        throw new RuntimeException('Choose at least one registered user to preserve.');
+    }
+
+    $idList = implode(',', $userIds);
+    $preservedUsers = hh_admin_fetch_all(
+        $con,
+        "SELECT id, username, firstname, surname
+         FROM live_user_information
+         WHERE id IN ({$idList})
+         ORDER BY surname ASC, firstname ASC"
+    );
+
+    if (count($preservedUsers) !== count($userIds)) {
+        throw new RuntimeException('One or more selected users could not be found.');
+    }
+
+    $preservedUsernames = array_values(array_filter(array_map(static fn(array $row): string => trim((string) ($row['username'] ?? '')), $preservedUsers)));
+    if (empty($preservedUsernames)) {
+        throw new RuntimeException('The selected users do not have valid usernames.');
+    }
+
+    $quotedUsernames = implode(',', hh_admin_quote_strings($preservedUsernames));
+    $preservedSummary = implode(', ', array_map(
+        static fn(array $row): string => trim(((string) ($row['firstname'] ?? '')) . ' ' . ((string) ($row['surname'] ?? ''))) ?: (string) ($row['username'] ?? ''),
+        $preservedUsers
+    ));
+
+    $deleteQueries = [
+        "DELETE FROM live_match_results",
+        "UPDATE live_match_schedule SET homescore = NULL, awayscore = NULL",
+        "DELETE FROM live_group_standings",
+        "DELETE FROM live_user_predictions_groups",
+        "DELETE FROM live_user_predictions_ro32",
+        "DELETE FROM live_user_predictions_ro16",
+        "DELETE FROM live_user_predictions_qf",
+        "DELETE FROM live_user_predictions_sf",
+        "DELETE FROM live_user_predictions_final",
+        "DELETE FROM live_user_minileague",
+        "DELETE FROM live_poll_votes",
+        "DELETE FROM live_poll_options",
+        "DELETE FROM live_polls",
+        "DELETE FROM live_fanzone_posts",
+        "DELETE FROM live_temp_information WHERE username NOT IN ({$quotedUsernames})",
+        "UPDATE live_temp_information SET temp_pass = '' WHERE username IN ({$quotedUsernames})",
+        "DELETE FROM live_user_information WHERE id NOT IN ({$idList})",
+        "UPDATE live_user_information SET lastlogin = NULL",
+    ];
+
+    mysqli_begin_transaction($con);
+
+    try {
+        foreach ($deleteQueries as $query) {
+            if (!mysqli_query($con, $query)) {
+                throw new RuntimeException(mysqli_error($con));
+            }
+        }
+
+        hh_reset_initial_rankings_with_connection($con);
+        mysqli_commit($con);
+    } catch (Throwable $exception) {
+        mysqli_rollback($con);
+        throw $exception;
+    }
+
+    return [
+        'count' => count($preservedUsers),
+        'summary' => $preservedSummary,
+    ];
+}
+
+function hh_admin_execute_sql(mysqli $con, string $sql): array
+{
+    $trimmed = trim($sql);
+    if ($trimmed === '') {
+        throw new RuntimeException('Enter a SQL statement to run.');
+    }
+
+    $trimmed = rtrim($trimmed, " \t\n\r\0\x0B;");
+    if ($trimmed === '') {
+        throw new RuntimeException('Enter a SQL statement to run.');
+    }
+
+    if (strpos($trimmed, ';') !== false) {
+        throw new RuntimeException('Please run one SQL statement at a time.');
+    }
+
+    $keyword = strtoupper((string) strtok($trimmed, " \t\n\r("));
+    $allowed = ['SELECT', 'SHOW', 'DESCRIBE', 'EXPLAIN', 'UPDATE', 'DELETE', 'INSERT', 'REPLACE', 'TRUNCATE'];
+    if (!in_array($keyword, $allowed, true)) {
+        throw new RuntimeException('That SQL command is not enabled in the admin runner.');
+    }
+
+    $result = mysqli_query($con, $trimmed);
+    if ($result === false) {
+        throw new RuntimeException(mysqli_error($con));
+    }
+
+    if ($result instanceof mysqli_result) {
+        $columns = [];
+        foreach (mysqli_fetch_fields($result) as $field) {
+            $columns[] = $field->name;
+        }
+
+        $rows = [];
+        while ($row = mysqli_fetch_assoc($result)) {
+            $rows[] = $row;
+        }
+        mysqli_free_result($result);
+
+        return [
+            'type' => 'result-set',
+            'message' => count($rows) . ' row(s) returned.',
+            'columns' => $columns,
+            'rows' => $rows,
+            'sql' => $trimmed,
+        ];
+    }
+
+    return [
+        'type' => 'write',
+        'message' => mysqli_affected_rows($con) . ' row(s) affected.',
+        'columns' => [],
+        'rows' => [],
+        'sql' => $trimmed,
+    ];
+}
+
 $messages = [];
 $errors = [];
 
@@ -494,6 +655,9 @@ $stageOptions = [
     'live_user_predictions_sf' => 'Semi-final points',
     'live_user_predictions_final' => 'Final points',
 ];
+
+$sqlRunnerOutput = null;
+$sqlRunnerStatement = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = (string) ($_POST['admin_action'] ?? '');
@@ -590,6 +754,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $messages[] = 'The Fan Zone board has been cleared.';
         } else {
             $errors[] = 'The Fan Zone board could not be cleared.';
+        }
+    } elseif ($action === 'reset_preserving_users') {
+        $preserveUserIds = array_map('intval', (array) ($_POST['preserve_user_ids'] ?? []));
+
+        try {
+            $summary = hh_admin_reset_preserving_users_with_connection($con, $preserveUserIds);
+            $messages[] = 'All live game activity was cleared while preserving ' . $summary['count'] . ' user registration(s): ' . $summary['summary'] . '.';
+        } catch (Throwable $exception) {
+            $errors[] = 'Preserve-users reset failed: ' . $exception->getMessage();
+        }
+    } elseif ($action === 'run_sql') {
+        $sqlRunnerStatement = (string) ($_POST['sql_statement'] ?? '');
+        $sqlUnlock = (string) ($_POST['sql_unlock'] ?? '') === '1';
+        $sqlConfirm = strtoupper(trim((string) ($_POST['sql_confirm'] ?? '')));
+
+        if (!$sqlUnlock || $sqlConfirm !== 'RUN') {
+            $errors[] = 'Unlock the SQL runner and type RUN before executing a statement.';
+        } else {
+            try {
+                $sqlRunnerOutput = hh_admin_execute_sql($con, $sqlRunnerStatement);
+                $messages[] = 'SQL statement executed successfully.';
+            } catch (Throwable $exception) {
+                $errors[] = 'SQL runner failed: ' . $exception->getMessage();
+            }
         }
     } elseif ($action === 'save_table_row') {
         $tableName = (string) ($_POST['table_name'] ?? '');
@@ -757,6 +945,38 @@ include '../php/navigation.php';
       .admin-card h3 {
         margin: 0 0 12px;
         font-weight: 900;
+      }
+      .admin-checkbox-list {
+        display: grid;
+        gap: 10px;
+        max-height: 220px;
+        overflow: auto;
+        padding: 12px;
+        border: 1px solid var(--hh-line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.72);
+      }
+      .admin-checkbox-list label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+      }
+      .admin-checkbox-list small {
+        color: var(--hh-muted);
+        font-weight: 600;
+      }
+      .admin-sql-result {
+        margin-top: 16px;
+        padding: 14px;
+        border: 1px solid var(--hh-line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.78);
+      }
+      .admin-sql-result code {
+        display: block;
+        white-space: pre-wrap;
+        word-break: break-word;
       }
       .admin-kpi {
         display: grid;
@@ -1107,6 +1327,90 @@ include '../php/navigation.php';
                     <input type="hidden" name="admin_action" value="reset_game_data">
                     <button type="submit" class="btn btn-outline-danger"><i class="bi bi-exclamation-triangle"></i> Reset game data</button>
                 </form>
+            </div>
+        </div>
+
+        <div class="admin-grid admin-grid--two">
+            <div class="admin-card admin-danger">
+                <h3>Reset But Keep Users</h3>
+                <p class="admin-note">Clear results, predictions, mini-leagues, polls, group standings, Fan Zone posts, and ranking movement while keeping selected registrations intact.</p>
+                <form method="post" class="mt-3" onsubmit="return confirm('Clear all live game activity and preserve only the selected user registrations?');">
+                    <input type="hidden" name="admin_action" value="reset_preserving_users">
+                    <div class="d-flex flex-wrap gap-2 mb-2">
+                        <button type="button" class="btn btn-outline-dark btn-sm" id="preserveUsersSelectAll">Select all</button>
+                        <button type="button" class="btn btn-outline-dark btn-sm" id="preserveUsersClearAll">Clear all</button>
+                    </div>
+                    <div class="admin-checkbox-list">
+                        <?php foreach ($users as $user) : ?>
+                            <?php
+                            $userId = (int) ($user['id'] ?? 0);
+                            $displayName = trim((string) ($user['firstname'] ?? '') . ' ' . (string) ($user['surname'] ?? ''));
+                            if ($displayName === '') {
+                                $displayName = (string) ($user['username'] ?? 'User ' . $userId);
+                            }
+                            ?>
+                            <label>
+                                <input class="form-check-input preserve-user-checkbox" type="checkbox" name="preserve_user_ids[]" value="<?= $userId ?>"<?= in_array((string) ($user['username'] ?? ''), ['James', 'Oliver'], true) ? ' checked' : '' ?>>
+                                <span><?= htmlspecialchars($displayName, ENT_QUOTES) ?> <small>@<?= htmlspecialchars((string) ($user['username'] ?? ''), ENT_QUOTES) ?></small></span>
+                            </label>
+                        <?php endforeach; ?>
+                    </div>
+                    <button type="submit" class="btn btn-outline-danger mt-3"><i class="bi bi-person-x"></i> Reset and preserve selected users</button>
+                </form>
+            </div>
+
+            <div class="admin-card">
+                <h3>Run SQL</h3>
+                <p class="admin-note">Run one SQL statement directly against the live database when you need a precise fix. This runner only allows one statement at a time and requires an explicit unlock.</p>
+                <form method="post" class="mt-3">
+                    <input type="hidden" name="admin_action" value="run_sql">
+                    <div class="mb-3">
+                        <label class="form-label" for="sql_statement">SQL statement</label>
+                        <textarea class="form-control" id="sql_statement" name="sql_statement" rows="8" placeholder="SELECT id, username FROM live_user_information ORDER BY id DESC LIMIT 10;"><?= htmlspecialchars($sqlRunnerStatement, ENT_QUOTES) ?></textarea>
+                    </div>
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-7">
+                            <label class="form-label" for="sql_confirm">Type RUN to confirm</label>
+                            <input class="form-control" type="text" id="sql_confirm" name="sql_confirm" placeholder="RUN">
+                        </div>
+                        <div class="col-md-5">
+                            <div class="form-check form-switch pt-md-4">
+                                <input class="form-check-input" type="checkbox" id="sql_unlock" name="sql_unlock" value="1">
+                                <label class="form-check-label" for="sql_unlock">Unlock SQL runner</label>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-3"><i class="bi bi-terminal"></i> Run SQL</button>
+                </form>
+
+                <?php if (is_array($sqlRunnerOutput)) : ?>
+                    <div class="admin-sql-result">
+                        <p class="mb-2"><strong><?= htmlspecialchars((string) ($sqlRunnerOutput['message'] ?? ''), ENT_QUOTES) ?></strong></p>
+                        <code><?= htmlspecialchars((string) ($sqlRunnerOutput['sql'] ?? ''), ENT_QUOTES) ?></code>
+                        <?php if (!empty($sqlRunnerOutput['columns']) && !empty($sqlRunnerOutput['rows'])) : ?>
+                            <div class="admin-table-preview mt-3">
+                                <table class="table table-sm table-striped align-middle">
+                                    <thead>
+                                        <tr>
+                                            <?php foreach ($sqlRunnerOutput['columns'] as $column) : ?>
+                                                <th><?= htmlspecialchars((string) $column, ENT_QUOTES) ?></th>
+                                            <?php endforeach; ?>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($sqlRunnerOutput['rows'] as $row) : ?>
+                                            <tr>
+                                                <?php foreach ($sqlRunnerOutput['columns'] as $column) : ?>
+                                                    <td><?= htmlspecialchars((string) ($row[$column] ?? ''), ENT_QUOTES) ?></td>
+                                                <?php endforeach; ?>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
 
@@ -1504,6 +1808,28 @@ include '../php/navigation.php';
 </div>
 
 <script>
+  (() => {
+    const selectAllButton = document.getElementById('preserveUsersSelectAll');
+    const clearAllButton = document.getElementById('preserveUsersClearAll');
+    const preserveCheckboxes = Array.from(document.querySelectorAll('.preserve-user-checkbox'));
+
+    if (!selectAllButton || !clearAllButton || preserveCheckboxes.length === 0) {
+      return;
+    }
+
+    selectAllButton.addEventListener('click', () => {
+      preserveCheckboxes.forEach((checkbox) => {
+        checkbox.checked = true;
+      });
+    });
+
+    clearAllButton.addEventListener('click', () => {
+      preserveCheckboxes.forEach((checkbox) => {
+        checkbox.checked = false;
+      });
+    });
+  })();
+
   (() => {
     const unlockToggle = document.getElementById('editorUnlockToggle');
     const unlockValue = document.getElementById('editorUnlockValue');
