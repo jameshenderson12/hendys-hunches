@@ -572,6 +572,85 @@ function hh_admin_reset_preserving_users_with_connection(mysqli $con, array $use
     ];
 }
 
+function hh_admin_delete_user_with_connection(mysqli $con, int $userId): array
+{
+    if ($userId <= 0) {
+        throw new RuntimeException('Choose a valid user to delete.');
+    }
+
+    $statement = mysqli_prepare(
+        $con,
+        "SELECT id, username, firstname, surname
+         FROM live_user_information
+         WHERE id = ?
+         LIMIT 1"
+    );
+
+    if (!$statement) {
+        throw new RuntimeException(mysqli_error($con));
+    }
+
+    mysqli_stmt_bind_param($statement, 'i', $userId);
+    mysqli_stmt_execute($statement);
+    $result = mysqli_stmt_get_result($statement);
+    $user = $result instanceof mysqli_result ? (mysqli_fetch_assoc($result) ?: null) : null;
+    if ($result instanceof mysqli_result) {
+        mysqli_free_result($result);
+    }
+    mysqli_stmt_close($statement);
+
+    if (!$user) {
+        throw new RuntimeException('That user could not be found.');
+    }
+
+    $username = trim((string) ($user['username'] ?? ''));
+    if ($username === '') {
+        throw new RuntimeException('That user record does not have a valid username.');
+    }
+
+    $displayName = trim((string) ($user['firstname'] ?? '') . ' ' . (string) ($user['surname'] ?? ''));
+    if ($displayName === '') {
+        $displayName = $username;
+    }
+
+    $quotedUsername = implode(',', hh_admin_quote_strings([$username]));
+    $quotedUserId = (int) ($user['id'] ?? 0);
+
+    $queries = [
+        "DELETE FROM live_temp_information WHERE username IN ({$quotedUsername})",
+        "DELETE FROM live_user_predictions_groups WHERE id = {$quotedUserId} OR username IN ({$quotedUsername})",
+        "DELETE FROM live_user_predictions_ro32 WHERE id = {$quotedUserId} OR username IN ({$quotedUsername})",
+        "DELETE FROM live_user_predictions_ro16 WHERE id = {$quotedUserId} OR username IN ({$quotedUsername})",
+        "DELETE FROM live_user_predictions_qf WHERE id = {$quotedUserId} OR username IN ({$quotedUsername})",
+        "DELETE FROM live_user_predictions_sf WHERE id = {$quotedUserId} OR username IN ({$quotedUsername})",
+        "DELETE FROM live_user_predictions_final WHERE id = {$quotedUserId} OR username IN ({$quotedUsername})",
+        "DELETE FROM live_fanzone_posts WHERE username IN ({$quotedUsername})",
+        "DELETE FROM live_user_information WHERE id = {$quotedUserId} LIMIT 1",
+    ];
+
+    mysqli_begin_transaction($con);
+
+    try {
+        foreach ($queries as $query) {
+            if (!mysqli_query($con, $query)) {
+                throw new RuntimeException(mysqli_error($con));
+            }
+        }
+
+        hh_reset_initial_rankings_with_connection($con);
+        mysqli_commit($con);
+    } catch (Throwable $exception) {
+        mysqli_rollback($con);
+        throw $exception;
+    }
+
+    return [
+        'id' => $quotedUserId,
+        'username' => $username,
+        'display_name' => $displayName,
+    ];
+}
+
 function hh_admin_execute_sql(mysqli $con, string $sql): array
 {
     $trimmed = trim($sql);
@@ -777,6 +856,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $messages[] = 'SQL statement executed successfully.';
             } catch (Throwable $exception) {
                 $errors[] = 'SQL runner failed: ' . $exception->getMessage();
+            }
+        }
+    } elseif ($action === 'delete_user') {
+        $deleteUserId = (int) ($_POST['delete_user_id'] ?? 0);
+
+        if ($deleteUserId <= 0) {
+            $errors[] = 'Choose a user to delete.';
+        } elseif ($deleteUserId === (int) ($_SESSION['id'] ?? 0)) {
+            $errors[] = 'You cannot delete the admin account you are currently using.';
+        } else {
+            try {
+                $deleted = hh_admin_delete_user_with_connection($con, $deleteUserId);
+                $messages[] = 'Deleted user ' . $deleted['display_name'] . ' (@' . $deleted['username'] . ') and their linked game data.';
+            } catch (Throwable $exception) {
+                $errors[] = 'User deletion failed: ' . $exception->getMessage();
             }
         }
     } elseif ($action === 'save_table_row') {
@@ -1412,6 +1506,42 @@ include '../php/navigation.php';
                     </div>
                 <?php endif; ?>
             </div>
+        </div>
+
+        <div class="admin-card admin-danger">
+            <h3>Delete User</h3>
+            <p class="admin-note">Remove one player entirely, including their predictions, temporary password row, Fan Zone posts, and any linked records that cascade from the user account. Useful for unpaid or withdrawn players after the opening window closes.</p>
+            <form method="post" class="mt-3" onsubmit="return confirm('Delete this user and all linked data? This cannot be undone easily.');">
+                <input type="hidden" name="admin_action" value="delete_user">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-8">
+                        <label class="form-label" for="delete_user_id">User to delete</label>
+                        <select class="form-select" id="delete_user_id" name="delete_user_id" required>
+                            <option value="">Choose a user…</option>
+                            <?php foreach ($users as $user) : ?>
+                                <?php
+                                $userId = (int) ($user['id'] ?? 0);
+                                $displayName = trim((string) ($user['firstname'] ?? '') . ' ' . (string) ($user['surname'] ?? ''));
+                                if ($displayName === '') {
+                                    $displayName = (string) ($user['username'] ?? 'User ' . $userId);
+                                }
+                                $label = $displayName . ' (@' . (string) ($user['username'] ?? '') . ')';
+                                if ((string) ($user['haspaid'] ?? '') === 'No') {
+                                    $label .= ' · unpaid';
+                                }
+                                if ($userId === (int) ($_SESSION['id'] ?? 0)) {
+                                    $label .= ' · current admin';
+                                }
+                                ?>
+                                <option value="<?= $userId ?>"<?= $userId === (int) ($_SESSION['id'] ?? 0) ? ' disabled' : '' ?>><?= htmlspecialchars($label, ENT_QUOTES) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <button type="submit" class="btn btn-outline-danger w-100"><i class="bi bi-trash3"></i> Delete user</button>
+                    </div>
+                </div>
+            </form>
         </div>
 
         <div class="admin-card">
