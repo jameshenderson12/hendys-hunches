@@ -122,6 +122,8 @@ function parse_fixture_datetime(?string $raw): array {
         return ['date' => null, 'time' => '', 'datetime' => null];
     }
 
+    $displayTimezone = new DateTimeZone('Europe/London');
+
     try {
         $dt = new DateTimeImmutable($raw);
     } catch (Throwable $exception) {
@@ -133,10 +135,11 @@ function parse_fixture_datetime(?string $raw): array {
     }
 
     $utc = $dt->setTimezone(new DateTimeZone('UTC'));
+    $local = $utc->setTimezone($displayTimezone);
 
     return [
-        'date' => $utc->format('Y-m-d'),
-        'time' => $utc->format('H:i'),
+        'date' => $local->format('Y-m-d'),
+        'time' => $local->format('H:i'),
         'datetime' => $utc->format(DateTimeInterface::ATOM),
     ];
 }

@@ -177,7 +177,7 @@ if ($userId > 0) {
         $con,
         "SELECT match_number, stage, round_number, date, kotime, venue, hometeam, awayteam, hometeamimg, awayteamimg, homescore, awayscore
          FROM live_match_schedule
-         ORDER BY match_number ASC"
+         ORDER BY date ASC, kotime ASC, match_number ASC"
     );
 
     if ($fixtureResult instanceof mysqli_result) {

@@ -86,7 +86,7 @@ if ($selectedStage) {
         "SELECT match_number, stage, round_number, date, kotime, venue, hometeam, awayteam, hometeamimg, awayteamimg
          FROM live_match_schedule
          WHERE match_number BETWEEN ? AND ?
-         ORDER BY match_number ASC"
+         ORDER BY date ASC, kotime ASC, match_number ASC"
     );
 
     if ($fixtureStatement) {

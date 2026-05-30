@@ -363,6 +363,7 @@ if (!function_exists('hh_prediction_stage_windows')) {
         $previousLastKickoff = null;
         $effectiveNowUtc = hh_effective_now(new DateTimeZone('UTC'));
         $upcomingThresholdUtc = $effectiveNowUtc->modify('+3 days');
+        $fixtureTimezone = new DateTimeZone('Europe/London');
 
         foreach ($contexts as $key => $context) {
             $kickoffs = [];
@@ -378,9 +379,9 @@ if (!function_exists('hh_prediction_stage_windows')) {
                     continue;
                 }
 
-                $kickoff = DateTimeImmutable::createFromFormat('Y-m-d H:i', $dateValue . ' ' . $timeValue, new DateTimeZone('UTC'));
-                if ($kickoff instanceof DateTimeImmutable) {
-                    $kickoffs[] = $kickoff;
+                $kickoffLocal = DateTimeImmutable::createFromFormat('Y-m-d H:i', $dateValue . ' ' . $timeValue, $fixtureTimezone);
+                if ($kickoffLocal instanceof DateTimeImmutable) {
+                    $kickoffs[] = $kickoffLocal->setTimezone(new DateTimeZone('UTC'));
                 }
             }
 
