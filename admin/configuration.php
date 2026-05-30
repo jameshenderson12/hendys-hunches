@@ -444,13 +444,13 @@ if (!function_exists('returnAvatar')) {
             : 'Preview User';
 
         if (!empty($_SESSION['is_dev_bypass'])) {
-            print("<img src='" . $assetPrefix . "img/hh-icon-2024.png' id='avatar' class='img-fluid rounded-circle mx-1' alt='Developer Preview' name='Developer Preview' width='25'> Local Developer");
+            print("<img src='" . $assetPrefix . "img/hh-icon-2024.png' id='avatar' class='img-fluid mx-1' alt='Developer Preview' name='Developer Preview' width='25'> Local Developer");
             return;
         }
 
         $dbPath = __DIR__ . '/db-connect.php';
         if (!file_exists($dbPath)) {
-            print("<img src='" . $assetPrefix . "img/hh-icon-2024.png' id='avatar' class='img-fluid rounded-circle mx-1' alt='User Avatar' name='User Avatar' width='25'> " . htmlspecialchars($fallbackLabel, ENT_QUOTES));
+            print("<img src='" . $assetPrefix . "img/hh-icon-2024.png' id='avatar' class='img-fluid mx-1' alt='User Avatar' name='User Avatar' width='25'> " . htmlspecialchars($fallbackLabel, ENT_QUOTES));
             return;
         }
 
@@ -464,12 +464,12 @@ if (!function_exists('returnAvatar')) {
                 mysqli_free_result($getavatar);
             }
         } catch (Throwable $exception) {
-            print("<img src='" . $assetPrefix . "img/hh-icon-2024.png' id='avatar' class='img-fluid rounded-circle mx-1' alt='User Avatar' name='User Avatar' width='25'> " . htmlspecialchars($fallbackLabel, ENT_QUOTES));
+            print("<img src='" . $assetPrefix . "img/hh-icon-2024.png' id='avatar' class='img-fluid mx-1' alt='User Avatar' name='User Avatar' width='25'> " . htmlspecialchars($fallbackLabel, ENT_QUOTES));
             return;
         }
 
         if (!$userid) {
-            print("<img src='" . $assetPrefix . "img/hh-icon-2024.png' id='avatar' class='img-fluid rounded-circle mx-1' alt='User Avatar' name='User Avatar' width='25'> " . htmlspecialchars($fallbackLabel, ENT_QUOTES));
+            print("<img src='" . $assetPrefix . "img/hh-icon-2024.png' id='avatar' class='img-fluid mx-1' alt='User Avatar' name='User Avatar' width='25'> " . htmlspecialchars($fallbackLabel, ENT_QUOTES));
             return;
         }
 
@@ -481,7 +481,7 @@ if (!function_exists('returnAvatar')) {
         } elseif (!preg_match('#^(?:[a-z]+:)?//#i', $avatar) && !str_starts_with($avatar, '/')) {
             $avatar = $assetPrefix . ltrim($avatar, './');
         }
-        print("<img src='$avatar' id='avatar' class='img-fluid rounded-circle mx-1' alt='User Avatar' name='User Avatar' width='25'> $firstname $surname");
+        print("<img src='$avatar' id='avatar' class='img-fluid mx-1' alt='User Avatar' name='User Avatar' width='25'> $firstname $surname");
     }
 }
 ?>
