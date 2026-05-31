@@ -6,6 +6,8 @@
 * Created By: James Henderson
 ***********************************/
 
+date_default_timezone_set('Europe/London');
+
 define('IS_PREVIEW', true);
 
 $hh_site_config = array (

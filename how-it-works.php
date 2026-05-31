@@ -127,13 +127,6 @@ include 'php/navigation.php';
                         </div>
                         <?= hh_status_badge($userGuideState['results_live'], 'Live now', 'Coming soon', 'Awaiting setup') ?>
                     </li>
-                    <li>
-                        <div>
-                            <strong>Jump into the Fan Zone</strong>
-                            <span>Chat, updates and mini community moments live there through the tournament.</span>
-                        </div>
-                        <span class="guide-status guide-status--neutral">Available</span>
-                    </li>
                 </ol>
             </div>
 
@@ -155,23 +148,23 @@ include 'php/navigation.php';
         </div>
 
         <div class="guide-panel mb-4">
-            <p class="eyebrow mb-2">How to play</p>
-            <h2>The basic flow</h2>
+            <p class="eyebrow mb-2">Prediction windows</p>
+            <h2>How stage submissions work</h2>
             <div class="guide-flow">
                 <div class="guide-flow__step">
                     <span class="guide-flow__number">1</span>
-                    <strong>Get registered and paid up</strong>
-                    <p class="mb-0">Once your account is in and the fee is sorted, you are properly in the race.</p>
+                    <strong>Each stage has its own window</strong>
+                    <p class="mb-0">Group stage, Round of 32, Round of 16 and beyond each open and close separately.</p>
                 </div>
                 <div class="guide-flow__step">
                     <span class="guide-flow__number">2</span>
-                    <strong>Enter your match predictions</strong>
-                    <p class="mb-0">Predict scorelines before the relevant matches lock. The earlier you do it, the calmer life feels.</p>
+                    <strong>Complete the whole stage before saving</strong>
+                    <p class="mb-0">A stage is only recorded when every fixture in that stage has a prediction entered and you press save.</p>
                 </div>
                 <div class="guide-flow__step">
                     <span class="guide-flow__number">3</span>
-                    <strong>Follow scores, rankings and the crowd</strong>
-                    <p class="mb-0">As results go in, the leaderboard moves, the dashboard fills out, and the Fan Zone gets busier.</p>
+                    <strong>Edit freely until the deadline</strong>
+                    <p class="mb-0">Once a stage has been saved, you can return and change individual predictions right up until that stage locks.</p>
                 </div>
             </div>
         </div>
