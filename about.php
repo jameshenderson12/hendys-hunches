@@ -131,7 +131,7 @@ $timeline = [
             'The 2026 edition is shaping up to be the biggest version yet, with more teams, more fixtures, and a stronger site underneath it. The aim now is simple: keep the fun, reduce the panic, and make the whole thing feel effortless for players from day one.',
         ],
         'pro' => 'The expanded format should create more drama and variety.',
-        'con' => 'There is still fine-tuning to do before the opening day.',
+        'con' => 'TBC - we\'ll find out together as the tournament unfolds!',
         'charity_name' => 'CALM (Campaign Against Living Miserably)',
         'charity_copy' => 'CALM is suicide prevention charity that provides life-saving services and practical mental health support to anyone who needs it.',
         'charity_logo' => 'img/charity-logos/In-Aid-Of-CALM.png',
@@ -185,10 +185,12 @@ $seasonCoverLabel = static function (string $tournament): string {
                 <img src="img/hh-about-james.png" alt="Cartoon character of James surrounded by footballs, laptops, and coffee cups">
             </div>
             <div class="about-intro__copy">
-                <p class="eyebrow">From James</p>
+                <p class="eyebrow">From James (Hendy's Hunches developer)</p>
                 <h2>A small football game that got a bit out of hand</h2>
                 <p>Hendy's Hunches began as a simple way to make tournament football more fun for friends, family, and colleagues, and it has somehow kept growing ever since. It is still a hobby project, still evolving, and still built around the same idea: make the big competitions feel even more memorable together.</p>
-                <p class="mb-0">I know the site is never truly finished, but that is part of the charm. If it adds a bit of tension, laughter, and conversation to a tournament, then it is doing its job.</p>
+                <p class="mb-0">I know the site is never truly finished, but that is part of the charm. If it adds a bit of tension, laughter, and conversation to a tournament, then hopefully it plays its part!</p>
+                <p>I hope you all enjoy this edition as much as I enjoyed working on it.</p>
+                <p>Good luck, and thanks for playing.</p>
             </div>
         </section>
 
