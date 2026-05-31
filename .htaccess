@@ -1,0 +1,13 @@
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    RewriteRule "(^|/)\.(?!well-known/)" - [F,L]
+    RewriteRule ^(?:bak|sql|setup|\.github|\.vscode)(?:/|$) - [F,L,NC]
+    RewriteRule ^(?:composer\.(?:json|lock)|package(?:-lock)?\.json|yarn\.lock|README\.md)$ - [F,L,NC]
+</IfModule>
+
+<FilesMatch "(?i)^(?:\.env|\.gitignore|\.htaccess|composer\.(?:json|lock)|package(?:-lock)?\.json|yarn\.lock|README\.md)$">
+    Require all denied
+</FilesMatch>

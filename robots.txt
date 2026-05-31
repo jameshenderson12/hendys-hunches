@@ -1,0 +1,17 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /setup/
+Disallow: /sql/
+Disallow: /bak/
+Disallow: /php/
+Disallow: /vendor/
+Disallow: /account.php
+Disallow: /change-password.php
+Disallow: /forgot-password.php
+Disallow: /predictions.php
+Disallow: /dashboard.php
+Disallow: /rankings.php
+Disallow: /registration.php
+Disallow: /user.php
+
+Sitemap: https://www.hendyshunches.co.uk/sitemap.xml
