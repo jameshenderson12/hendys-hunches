@@ -1,27 +1,35 @@
 Aberdeen
 Accrington Stanley
 AFC Bournemouth
+AFC Fylde
 AFC Wimbledon
 Airdrie United
 Albion Rovers
 Alloa Athletic
+Altrincham
 Annan Athletic
 Arbroath
 Arsenal
 Aston Villa
 Ayr United
+Bala Town
+Barrow
 Barnsley
 Berwick Rangers
 Birmingham City
 Blackburn Rovers
 Blackpool
+Bohemian
 Bolton Wanderers
+Bonnyrigg Rose
+Boreham Wood
 Bradford City
 Brechin City
 Brentford
 Brighton and Hove Albion
 Bristol City
 Bristol Rovers
+Bromley
 Burnley
 Burton Albion
 Bury
@@ -33,34 +41,51 @@ Charlton Athletic
 Chelsea
 Cheltenham Town
 Chesterfield
+Cliftonville
 Clyde
 Colchester United
+Coleraine
+Connah's Quay Nomads
+Cork City
+Cove Rangers
 Coventry City
 Cowdenbeath
 Crawley Town
 Crewe Alexandra
+Crusaders
 Crystal Palace
 Dagenham and Redbridge
 Derby County
+Derry City
+Drogheda United
 Doncaster Rovers
 Dumbarton
-Dumfermline Athletic
+Dundalk
 Dundee
 Dundee United
+Dunfermline Athletic
 East Fife
+East Kilbride
 East Stirling
 Edinburgh City
 Elgin City
 Everton
 Exeter City
 Falkirk
+Finn Harps
 Fleetwood Town
 Forfar
+Forest Green Rovers
 Fulham
+Galway United
+Gateshead
 Gillingham
+Glentoran
 Greenock Morton
 Grimsby Town
+Halifax Town
 Hamilton Academical
+Harrogate Town
 Hartlepool United
 Heart of Midlothian
 Hibernian
@@ -68,16 +93,21 @@ Huddersfield Town
 Hull City
 Inverness Caledonian Thistle
 Ipswich Town
+Kelty Hearts
 Kilmarnock
+Larne
 Leeds United
 Leicester City
 Leyton Orient
+Linfield
 Liverpool
 Livingston
 Luton Town
+Maidenhead United
 Manchester City
 Manchester United
 Mansfield Town
+Merthyr Town
 Middlesbrough
 Millwall
 Milton Keynes Dons
@@ -93,45 +123,60 @@ Notts County
 Oldham Athletic
 Oxford United
 Partick Thistle
+Penybont
 Peterborough United
 Peterhead
 Plymouth Argyle
 Port Vale
 Portsmouth
 Preston North End
-Queens Park Rangers
-Queen's Park
 Queen of the South
+Queen's Park
+Queens Park Rangers
 Raith Rovers
 Rangers
 Reading
 Rochdale
 Ross County
 Rotherham United
+Salford City
 Scunthorpe United
+Shamrock Rovers
 Sheffield United
 Sheffield Wednesday
+Shelbourne
 Shrewsbury Town
+Sligo Rovers
+Solihull Moors
+South Shields
 Southampton
 Southend United
+Spartans
 St Johnstone
 St Mirren
-Stevenage
+St Patrick's Athletic
 Stenhousemuir
+Stevenage
 Stirling Albion
 Stockport County
 Stoke City
 Stranraer
 Sunderland
+Sutton United
 Swansea City
 Swindon Town
+Tamworth
+The New Saints
 Torquay United
 Tottenham Hotspur
 Tranmere Rovers
 Walsall
+Waterford
 Watford
+Wealdstone
 West Bromwich Albion
 West Ham United
+Wexford
 Wigan Athletic
 Wolverhampton Wanderers
 Wrexham AFC
