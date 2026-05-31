@@ -691,12 +691,26 @@ function build_installable_table_definitions(array $context): array {
             'sql' => build_prediction_table_create_sql('live_user_predictions_groups', 1, $groupScoreCount),
             'description' => 'Prediction score slots for group fixtures 1-' . $groupCount . ' (' . $groupScoreCount . ' values).',
         ],
+        'backup_predictions_groups' => [
+            'label' => 'Backup Group Predictions',
+            'file' => '(generated)',
+            'table' => 'backup_user_predictions_groups',
+            'sql' => build_prediction_table_create_sql('backup_user_predictions_groups', 1, $groupScoreCount),
+            'description' => 'Preserves each player\'s original group-stage submission before later edits.',
+        ],
         'predictions_ro32' => [
             'label' => 'Round of 32 Predictions',
             'file' => 'sql/setup-user-predicitions-table-ro32.sql',
             'table' => 'live_user_predictions_ro32',
             'sql' => build_prediction_table_create_sql('live_user_predictions_ro32', $ro32Start, $ro32ScoreCount),
             'description' => 'Prediction score slots for Round of 32 match scores ' . $ro32Start . '-' . ($ro32Start + $ro32ScoreCount - 1) . '.',
+        ],
+        'backup_predictions_ro32' => [
+            'label' => 'Backup Round of 32 Predictions',
+            'file' => '(generated)',
+            'table' => 'backup_user_predictions_ro32',
+            'sql' => build_prediction_table_create_sql('backup_user_predictions_ro32', $ro32Start, $ro32ScoreCount),
+            'description' => 'Preserves each player\'s original Round of 32 submission before later edits.',
         ],
         'predictions_ro16' => [
             'label' => 'Round of 16 Predictions',
@@ -705,12 +719,26 @@ function build_installable_table_definitions(array $context): array {
             'sql' => build_prediction_table_create_sql('live_user_predictions_ro16', $ro16Start, $ro16ScoreCount),
             'description' => 'Prediction score slots for Round of 16 match scores ' . $ro16Start . '-' . ($ro16Start + $ro16ScoreCount - 1) . '.',
         ],
+        'backup_predictions_ro16' => [
+            'label' => 'Backup Round of 16 Predictions',
+            'file' => '(generated)',
+            'table' => 'backup_user_predictions_ro16',
+            'sql' => build_prediction_table_create_sql('backup_user_predictions_ro16', $ro16Start, $ro16ScoreCount),
+            'description' => 'Preserves each player\'s original Round of 16 submission before later edits.',
+        ],
         'predictions_qf' => [
             'label' => 'Quarter-Final Predictions',
             'file' => 'sql/setup-user-predicitions-table-qf.sql',
             'table' => 'live_user_predictions_qf',
             'sql' => build_prediction_table_create_sql('live_user_predictions_qf', $qfStart, $qfScoreCount),
             'description' => 'Prediction score slots for quarter-final match scores ' . $qfStart . '-' . ($qfStart + $qfScoreCount - 1) . '.',
+        ],
+        'backup_predictions_qf' => [
+            'label' => 'Backup Quarter-Final Predictions',
+            'file' => '(generated)',
+            'table' => 'backup_user_predictions_qf',
+            'sql' => build_prediction_table_create_sql('backup_user_predictions_qf', $qfStart, $qfScoreCount),
+            'description' => 'Preserves each player\'s original quarter-final submission before later edits.',
         ],
         'predictions_sf' => [
             'label' => 'Semi-Final Predictions',
@@ -719,12 +747,26 @@ function build_installable_table_definitions(array $context): array {
             'sql' => build_prediction_table_create_sql('live_user_predictions_sf', $sfStart, $sfScoreCount),
             'description' => 'Prediction score slots for semi-final match scores ' . $sfStart . '-' . ($sfStart + $sfScoreCount - 1) . '.',
         ],
+        'backup_predictions_sf' => [
+            'label' => 'Backup Semi-Final Predictions',
+            'file' => '(generated)',
+            'table' => 'backup_user_predictions_sf',
+            'sql' => build_prediction_table_create_sql('backup_user_predictions_sf', $sfStart, $sfScoreCount),
+            'description' => 'Preserves each player\'s original semi-final submission before later edits.',
+        ],
         'predictions_final' => [
             'label' => 'Final Stage Predictions',
             'file' => 'sql/setup-user-predicitions-table-final.sql',
             'table' => 'live_user_predictions_final',
             'sql' => build_prediction_table_create_sql('live_user_predictions_final', $finalStart, $finalScoreCount),
             'description' => 'Prediction score slots for final-stage match scores ' . $finalStart . '-' . ($finalStart + $finalScoreCount - 1) . '.',
+        ],
+        'backup_predictions_final' => [
+            'label' => 'Backup Final Stage Predictions',
+            'file' => '(generated)',
+            'table' => 'backup_user_predictions_final',
+            'sql' => build_prediction_table_create_sql('backup_user_predictions_final', $finalStart, $finalScoreCount),
+            'description' => 'Preserves each player\'s original final-stage submission before later edits.',
         ],
     ];
 }
@@ -1285,11 +1327,17 @@ function build_database_contents_snapshot(mysqli $connection, array $installable
         'live_poll_votes' => 'Poll Votes',
         'live_match_results' => 'Match Results',
         'live_user_predictions_groups' => 'Group Predictions',
+        'backup_user_predictions_groups' => 'Backup Group Predictions',
         'live_user_predictions_ro32' => 'Round of 32 Predictions',
+        'backup_user_predictions_ro32' => 'Backup Round of 32 Predictions',
         'live_user_predictions_ro16' => 'Round of 16 Predictions',
+        'backup_user_predictions_ro16' => 'Backup Round of 16 Predictions',
         'live_user_predictions_qf' => 'Quarter-Final Predictions',
+        'backup_user_predictions_qf' => 'Backup Quarter-Final Predictions',
         'live_user_predictions_sf' => 'Semi-Final Predictions',
+        'backup_user_predictions_sf' => 'Backup Semi-Final Predictions',
         'live_user_predictions_final' => 'Final Stage Predictions',
+        'backup_user_predictions_final' => 'Backup Final Stage Predictions',
     ];
 
     foreach ($installableTables as $definition) {
@@ -1335,11 +1383,17 @@ function clear_current_tournament_setup(mysqli $connection, array $installableTa
         'live_poll_votes',
         'live_match_results',
         'live_user_predictions_groups',
+        'backup_user_predictions_groups',
         'live_user_predictions_ro32',
+        'backup_user_predictions_ro32',
         'live_user_predictions_ro16',
+        'backup_user_predictions_ro16',
         'live_user_predictions_qf',
+        'backup_user_predictions_qf',
         'live_user_predictions_sf',
+        'backup_user_predictions_sf',
         'live_user_predictions_final',
+        'backup_user_predictions_final',
     ];
     foreach ($installableTables as $definition) {
         if (!empty($definition['table'])) {

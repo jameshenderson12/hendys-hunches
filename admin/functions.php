@@ -41,6 +41,118 @@ function hh_admin_fetch_all(mysqli $con, string $sql): array
     return $rows;
 }
 
+function hh_admin_existing_prediction_backup_tables(mysqli $con): array
+{
+    $tables = [
+        'backup_user_predictions_groups',
+        'backup_user_predictions_ro32',
+        'backup_user_predictions_ro16',
+        'backup_user_predictions_qf',
+        'backup_user_predictions_sf',
+        'backup_user_predictions_final',
+    ];
+
+    return array_values(array_filter(
+        $tables,
+        static fn(string $table): bool => hh_admin_table_exists($con, $table)
+    ));
+}
+
+function hh_admin_restore_prediction_backup_with_connection(mysqli $con, int $userId, string $stageKey): array
+{
+    if ($userId <= 0) {
+        throw new RuntimeException('Choose a valid user to restore.');
+    }
+
+    $contexts = hh_prediction_stage_contexts();
+    $context = $contexts[$stageKey] ?? null;
+    if (!$context) {
+        throw new RuntimeException('Choose a valid prediction stage to restore.');
+    }
+
+    $liveTable = (string) ($context['table'] ?? '');
+    if ($liveTable === '') {
+        throw new RuntimeException('That stage is not configured correctly.');
+    }
+
+    $backupTable = hh_prediction_backup_table_name($liveTable);
+    if (!hh_admin_table_exists($con, $backupTable)) {
+        throw new RuntimeException('No backup table exists for that stage yet.');
+    }
+
+    $userStatement = mysqli_prepare(
+        $con,
+        "SELECT id, username, firstname, surname
+         FROM live_user_information
+         WHERE id = ?
+         LIMIT 1"
+    );
+
+    if (!$userStatement) {
+        throw new RuntimeException(mysqli_error($con));
+    }
+
+    mysqli_stmt_bind_param($userStatement, 'i', $userId);
+    mysqli_stmt_execute($userStatement);
+    $userResult = mysqli_stmt_get_result($userStatement);
+    $user = $userResult instanceof mysqli_result ? (mysqli_fetch_assoc($userResult) ?: null) : null;
+    if ($userResult instanceof mysqli_result) {
+        mysqli_free_result($userResult);
+    }
+    mysqli_stmt_close($userStatement);
+
+    if (!$user) {
+        throw new RuntimeException('That user could not be found.');
+    }
+
+    $backupExists = hh_prediction_backup_row_exists($con, $backupTable, $userId);
+    if (!$backupExists) {
+        throw new RuntimeException('There is no preserved backup for that user and stage.');
+    }
+
+    mysqli_begin_transaction($con);
+
+    try {
+        if (!mysqli_query($con, "DELETE FROM {$liveTable} WHERE id = " . (int) $userId . " LIMIT 1")) {
+            throw new RuntimeException(mysqli_error($con));
+        }
+
+        $restoreStatement = mysqli_prepare(
+            $con,
+            "INSERT INTO {$liveTable} SELECT * FROM {$backupTable} WHERE id = ? LIMIT 1"
+        );
+
+        if (!$restoreStatement) {
+            throw new RuntimeException(mysqli_error($con));
+        }
+
+        mysqli_stmt_bind_param($restoreStatement, 'i', $userId);
+        if (!mysqli_stmt_execute($restoreStatement)) {
+            $error = mysqli_stmt_error($restoreStatement);
+            mysqli_stmt_close($restoreStatement);
+            throw new RuntimeException($error);
+        }
+        mysqli_stmt_close($restoreStatement);
+
+        hh_recalculate_all_prediction_points($con);
+        mysqli_commit($con);
+    } catch (Throwable $exception) {
+        mysqli_rollback($con);
+        throw $exception;
+    }
+
+    $displayName = trim((string) ($user['firstname'] ?? '') . ' ' . (string) ($user['surname'] ?? ''));
+    if ($displayName === '') {
+        $displayName = (string) ($user['username'] ?? 'Player');
+    }
+
+    return [
+        'display_name' => $displayName,
+        'username' => (string) ($user['username'] ?? ''),
+        'stage_label' => (string) ($context['label'] ?? $stageKey),
+    ];
+}
+
 function hh_admin_preview_table(mysqli $con, string $table, int $limit = 30): array
 {
     $rows = [];
@@ -550,6 +662,10 @@ function hh_admin_reset_preserving_users_with_connection(mysqli $con, array $use
         "UPDATE live_user_information SET lastlogin = NULL",
     ];
 
+    foreach (hh_admin_existing_prediction_backup_tables($con) as $backupTable) {
+        $deleteQueries[] = "DELETE FROM {$backupTable}";
+    }
+
     mysqli_begin_transaction($con);
 
     try {
@@ -627,6 +743,10 @@ function hh_admin_delete_user_with_connection(mysqli $con, int $userId): array
         "DELETE FROM live_fanzone_posts WHERE username IN ({$quotedUsername})",
         "DELETE FROM live_user_information WHERE id = {$quotedUserId} LIMIT 1",
     ];
+
+    foreach (hh_admin_existing_prediction_backup_tables($con) as $backupTable) {
+        $queries[] = "DELETE FROM {$backupTable} WHERE id = {$quotedUserId} OR username IN ({$quotedUsername})";
+    }
 
     mysqli_begin_transaction($con);
 
@@ -873,6 +993,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $errors[] = 'User deletion failed: ' . $exception->getMessage();
             }
         }
+    } elseif ($action === 'restore_prediction_backup') {
+        $restoreUserId = (int) ($_POST['restore_user_id'] ?? 0);
+        $restoreStageKey = trim((string) ($_POST['restore_stage_key'] ?? ''));
+
+        try {
+            $restored = hh_admin_restore_prediction_backup_with_connection($con, $restoreUserId, $restoreStageKey);
+            $messages[] = 'Restored the preserved ' . $restored['stage_label'] . ' snapshot for ' . $restored['display_name'] . ' (@' . $restored['username'] . ').';
+        } catch (Throwable $exception) {
+            $errors[] = 'Backup restore failed: ' . $exception->getMessage();
+        }
     } elseif ($action === 'save_table_row') {
         $tableName = (string) ($_POST['table_name'] ?? '');
         $rowId = (int) ($_POST['row_id'] ?? 0);
@@ -931,6 +1061,11 @@ $users = hh_admin_fetch_all(
     $con,
     "SELECT id, username, firstname, surname, haspaid FROM live_user_information ORDER BY surname ASC, firstname ASC"
 );
+
+$restoreStageOptions = [];
+foreach (hh_prediction_stage_contexts() as $stageKey => $context) {
+    $restoreStageOptions[$stageKey] = (string) ($context['label'] ?? $stageKey);
+}
 
 $snapshot = [
     'users' => 0,
@@ -1539,6 +1674,44 @@ include '../php/navigation.php';
                     </div>
                     <div class="col-md-4">
                         <button type="submit" class="btn btn-outline-danger w-100"><i class="bi bi-trash3"></i> Delete user</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="admin-card">
+            <h3>Restore Prediction Backup</h3>
+            <p class="admin-note">Restore a player’s preserved first-submission snapshot for one stage back into the live predictions table, then recalculate the points and rankings.</p>
+            <form method="post" class="mt-3" onsubmit="return confirm('Restore this preserved prediction snapshot back into the live stage table? This will overwrite the player\\'s current live predictions for that stage.');">
+                <input type="hidden" name="admin_action" value="restore_prediction_backup">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-5">
+                        <label class="form-label" for="restore_user_id">Player</label>
+                        <select class="form-select" id="restore_user_id" name="restore_user_id" required>
+                            <option value="">Choose a player…</option>
+                            <?php foreach ($users as $user) : ?>
+                                <?php
+                                $userId = (int) ($user['id'] ?? 0);
+                                $displayName = trim((string) ($user['firstname'] ?? '') . ' ' . (string) ($user['surname'] ?? ''));
+                                if ($displayName === '') {
+                                    $displayName = (string) ($user['username'] ?? 'User ' . $userId);
+                                }
+                                ?>
+                                <option value="<?= $userId ?>"><?= htmlspecialchars($displayName . ' (@' . (string) ($user['username'] ?? '') . ')', ENT_QUOTES) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="restore_stage_key">Stage</label>
+                        <select class="form-select" id="restore_stage_key" name="restore_stage_key" required>
+                            <option value="">Choose a stage…</option>
+                            <?php foreach ($restoreStageOptions as $stageKey => $stageLabel) : ?>
+                                <option value="<?= htmlspecialchars($stageKey, ENT_QUOTES) ?>"><?= htmlspecialchars($stageLabel, ENT_QUOTES) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-outline-dark w-100"><i class="bi bi-clock-history"></i> Restore backup</button>
                     </div>
                 </div>
             </form>

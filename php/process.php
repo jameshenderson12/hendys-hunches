@@ -33,6 +33,69 @@ function hh_prediction_stage_definitions(): array {
 	return $definitions;
 }
 
+function hh_prediction_backup_table_name(string $liveTable): string {
+	if (str_starts_with($liveTable, 'live_')) {
+		return 'backup_' . substr($liveTable, 5);
+	}
+
+	return 'backup_' . $liveTable;
+}
+
+function hh_prediction_backup_row_exists(mysqli $con, string $tableName, int $userId): bool {
+	$statement = mysqli_prepare($con, "SELECT id FROM {$tableName} WHERE id = ? LIMIT 1");
+	if (!$statement) {
+		throw new RuntimeException(mysqli_error($con));
+	}
+
+	mysqli_stmt_bind_param($statement, 'i', $userId);
+	mysqli_stmt_execute($statement);
+	$result = mysqli_stmt_get_result($statement);
+	$exists = $result instanceof mysqli_result && mysqli_num_rows($result) > 0;
+	if ($result instanceof mysqli_result) {
+		mysqli_free_result($result);
+	}
+	mysqli_stmt_close($statement);
+
+	return $exists;
+}
+
+function hh_ensure_prediction_backup_table_with_connection(mysqli $con, string $liveTable): string {
+	$backupTable = hh_prediction_backup_table_name($liveTable);
+	$escapedBackupTable = mysqli_real_escape_string($con, $backupTable);
+	$checkResult = mysqli_query($con, "SHOW TABLES LIKE '{$escapedBackupTable}'");
+	if ($checkResult === false) {
+		throw new RuntimeException(mysqli_error($con));
+	}
+
+	$tableExists = mysqli_num_rows($checkResult) > 0;
+	mysqli_free_result($checkResult);
+
+	if (!$tableExists) {
+		if (!mysqli_query($con, "CREATE TABLE {$backupTable} LIKE {$liveTable}")) {
+			throw new RuntimeException(mysqli_error($con));
+		}
+	}
+
+	return $backupTable;
+}
+
+function hh_copy_prediction_row_to_backup_with_connection(mysqli $con, string $liveTable, string $backupTable, int $userId): void {
+	$insertSql = "INSERT INTO {$backupTable} SELECT * FROM {$liveTable} WHERE id = ? LIMIT 1";
+	$statement = mysqli_prepare($con, $insertSql);
+	if (!$statement) {
+		throw new RuntimeException(mysqli_error($con));
+	}
+
+	mysqli_stmt_bind_param($statement, 'i', $userId);
+	if (!mysqli_stmt_execute($statement)) {
+		$error = mysqli_stmt_error($statement);
+		mysqli_stmt_close($statement);
+		throw new RuntimeException($error);
+	}
+
+	mysqli_stmt_close($statement);
+}
+
 function hh_prediction_stage_context_for_match_number(int $matchNumber): ?array {
 	foreach (hh_prediction_stage_contexts() as $context) {
 		$fixtureStart = (int) ($context['fixture_start'] ?? 0);
@@ -533,6 +596,7 @@ function hh_upsert_prediction_stage_row_with_connection(mysqli $con, string $sta
 	$username = (string) ($_SESSION['username'] ?? '');
 	$firstname = (string) ($_SESSION['firstname'] ?? '');
 	$surname = (string) ($_SESSION['surname'] ?? '');
+	$backupTable = hh_ensure_prediction_backup_table_with_connection($con, $definition['table']);
 
 	$scoreValues = [];
 	for ($scoreIndex = $definition['start']; $scoreIndex <= $definition['end']; $scoreIndex++) {
@@ -553,6 +617,13 @@ function hh_upsert_prediction_stage_row_with_connection(mysqli $con, string $sta
 		mysqli_free_result($existingResult);
 	}
 	mysqli_stmt_close($existsStatement);
+
+	$backupExists = hh_prediction_backup_row_exists($con, $backupTable, $userId);
+
+	if ($rowExists && !$backupExists) {
+		hh_copy_prediction_row_to_backup_with_connection($con, $definition['table'], $backupTable, $userId);
+		$backupExists = true;
+	}
 
 	if ($rowExists) {
 		$setClauses = ['username = ?', 'firstname = ?', 'surname = ?'];
@@ -610,6 +681,10 @@ function hh_upsert_prediction_stage_row_with_connection(mysqli $con, string $sta
 	}
 
 	mysqli_stmt_close($stmt);
+
+	if (!$backupExists) {
+		hh_copy_prediction_row_to_backup_with_connection($con, $definition['table'], $backupTable, $userId);
+	}
 }
 
 function compareValues() {
