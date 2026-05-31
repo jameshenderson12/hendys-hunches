@@ -381,7 +381,7 @@ include 'php/navigation.php';
                     </div>
                     <dl class="dashboard-player-details">
                         <div>
-                            <dt>Tournament winner</dt>
+                            <dt>Nation you're supporting</dt>
                             <dd>
                                 <?php if ($tournwinnerFlag !== '') : ?>
                                     <img src="<?= htmlspecialchars($tournwinnerFlag) ?>" alt="<?= htmlspecialchars($tournwinner) ?> flag" width="24" style="border: 1px solid lightgray; margin-right:4px;">

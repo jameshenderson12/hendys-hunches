@@ -238,7 +238,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // If registration is successful, send the welcome email
             if ($registrationSuccess) {
-              sendWelcomeEmail($firstname, $username, $email);
+              sendWelcomeEmail($firstname, $surname, $username, $email);
             }
         }
     }
@@ -1035,7 +1035,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               }
             ?>
           </datalist>
-          <label for="tournwinner" class="form-label">Who'll Win <?= $competition ?>? <span class="text-white-50">(Optional)</span></label>
+          <label for="tournwinner" class="form-label">Nation you'll be supporting <span class="text-white-50">(Optional)</span></label>
           <input id="tournwinner" name="tournwinner" class="form-select" list="datalistOptions3" placeholder="Start typing to filter">
           <datalist id="datalistOptions3">
           <option value="Prefer Not To Say"></option>        
@@ -1045,6 +1045,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               }
             ?>
           </datalist>
+          <div class="text-white-50 small mt-2">Just for fun/social - no points awarded for these choices!</div>
           <div class="row">
             <hr>
             <div class="col-6">
@@ -1063,6 +1064,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input class="form-check-input" type="checkbox" id="disclaimer" name="disclaimer" value="disclaimer" required>
                 <label class="form-check-label m-3" for="disclaimer">
                   I agree to the terms and conditions of Hendy's Hunches.
+                  <span class="text-danger">*</span>
                 </label>
               </div>
               <div class="invalid-feedback">

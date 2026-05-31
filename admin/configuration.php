@@ -554,11 +554,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $dummyUsername = 'WorldCupTester';
 
             if ($action === 'test_registration_email') {
+                $personalisedSignupUrl = hh_mail_signup_url(
+                    (string) $draftConfig['competition']['signup_url'],
+                    $recipientName,
+                    ''
+                );
                 $html = hh_mail_render_markup($welcomeTemplateMarkup, [
                     'gamename' => $draftConfig['site']['title'],
                     'firstname' => $recipientName,
+                    'fullname' => $recipientName,
                     'username' => $dummyUsername,
-                    'signup_url' => rtrim((string) $draftConfig['competition']['signup_url'], '/'),
+                    'signup_url' => $personalisedSignupUrl,
                     'login_url' => rtrim((string) $draftConfig['site']['base_url'], '/') . '/index.php',
                     'forgot_password_url' => rtrim((string) $draftConfig['site']['base_url'], '/') . '/forgot-password.php',
                     'developer' => $draftConfig['site']['developer'],
@@ -954,7 +960,7 @@ include '../php/navigation.php';
                         <div class="mb-3">
                             <label class="form-label" for="email_template_welcome">Registration email template</label>
                             <textarea class="form-control font-monospace" id="email_template_welcome" name="email_template_welcome" rows="16"><?= htmlspecialchars($welcomeTemplateMarkup, ENT_QUOTES) ?></textarea>
-                            <p class="admin-note mt-2">Available placeholders: <code>{{firstname}}</code>, <code>{{username}}</code>, <code>{{signup_url}}</code>, <code>{{login_url}}</code>, <code>{{forgot_password_url}}</code>, <code>{{developer}}</code>, <code>{{gamename}}</code>.</p>
+                            <p class="admin-note mt-2">Available placeholders: <code>{{firstname}}</code>, <code>{{fullname}}</code>, <code>{{username}}</code>, <code>{{signup_url}}</code>, <code>{{login_url}}</code>, <code>{{forgot_password_url}}</code>, <code>{{developer}}</code>, <code>{{gamename}}</code>. If your payment URL contains <code>[Insert Name]</code> or <code>[Insert Your Name]</code>, it will be replaced automatically.</p>
                         </div>
                         <div class="mb-3">
                             <label class="form-label" for="email_template_reset">Forgot password email template</label>

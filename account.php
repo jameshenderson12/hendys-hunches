@@ -277,7 +277,7 @@ include __DIR__ . '/php/navigation.php';
           <dd><?= htmlspecialchars((string) ($profile['faveteam'] ?? 'Prefer Not To Say'), ENT_QUOTES) ?></dd>
         </div>
         <div>
-          <dt>Winner pick</dt>
+          <dt>Nation you're supporting</dt>
           <dd><?= htmlspecialchars((string) ($profile['tournwinner'] ?? 'Prefer Not To Say'), ENT_QUOTES) ?></dd>
         </div>
       </dl>
@@ -347,7 +347,7 @@ include __DIR__ . '/php/navigation.php';
           </div>
 
           <div>
-            <label for="tournwinner" class="form-label">Who'll win <?= htmlspecialchars((string) ($competition ?? 'the tournament'), ENT_QUOTES) ?>?</label>
+            <label for="tournwinner" class="form-label">Nation you'll be supporting</label>
             <input id="tournwinner" name="tournwinner" class="form-control" list="accountWinnerOptions" value="<?= htmlspecialchars((string) (($profile['tournwinner'] ?? '') === 'Prefer Not To Say' ? '' : $profile['tournwinner']), ENT_QUOTES) ?>" placeholder="Start typing to filter">
             <datalist id="accountWinnerOptions">
               <option value="Prefer Not To Say"></option>
@@ -355,6 +355,7 @@ include __DIR__ . '/php/navigation.php';
                 <option value="<?= htmlspecialchars($option, ENT_QUOTES) ?>"></option>
               <?php endforeach; ?>
             </datalist>
+            <div class="form-text">Just for fun - no points awarded for this choice.</div>
           </div>
         </div>
 

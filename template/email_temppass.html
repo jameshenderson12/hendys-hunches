@@ -26,7 +26,13 @@
                                     <td style="padding:16px 18px;">
                                         <p style="margin:0 0 12px;font-size:15px;line-height:1.6;"><strong>Username:</strong> {{username}}</p>
                                         <p style="margin:0 0 12px;font-size:15px;line-height:1.6;"><strong>Temporary password:</strong> {{temp_password}}</p>
-                                        <p style="margin:0;font-size:15px;line-height:1.6;"><a href="{{temp_password_link}}" style="color:#8f66d8;font-weight:700;text-decoration:none;">Apply this temporary password and log in</a></p>
+                                        <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0;">
+                                            <tr>
+                                                <td>
+                                                    <a href="{{temp_password_link}}" style="display:inline-block;padding:12px 16px;border-radius:8px;background-color:#f1e8ff;border:1px solid #8f66d8;color:#4e2b8f;font-size:15px;font-weight:700;text-decoration:none;">Apply temporary password</a>
+                                                </td>
+                                            </tr>
+                                        </table>
                                     </td>
                                 </tr>
                             </table>

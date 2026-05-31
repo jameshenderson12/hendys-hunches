@@ -1044,7 +1044,7 @@ $dashboardLayoutCards = [
                     </div>
                     <dl class="dashboard-player-details">
                         <div><dt>Favourite club</dt><dd><?= htmlspecialchars((string) ($currentUser['faveteam'] ?? 'Not set')) ?></dd></div>
-                        <div><dt>Tournament winner</dt><dd><?= htmlspecialchars((string) ($currentUser['tournwinner'] ?? 'Not set')) ?></dd></div>
+                        <div><dt>Nation you're supporting</dt><dd><?= htmlspecialchars((string) ($currentUser['tournwinner'] ?? 'Not set')) ?></dd></div>
                         <div><dt>Location</dt><dd><?= htmlspecialchars((string) ($currentUser['location'] ?? 'Not set')) ?></dd></div>
                         <div><dt>Field</dt><dd><?= htmlspecialchars((string) ($currentUser['fieldofwork'] ?? 'Not set')) ?></dd></div>
                     </dl>

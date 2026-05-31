@@ -112,6 +112,41 @@ if (!function_exists('hh_mail_logo_path')) {
     }
 }
 
+if (!function_exists('hh_mail_signup_url')) {
+    function hh_mail_signup_url(string $signupUrl, string $firstname = '', string $surname = ''): string
+    {
+        $signupUrl = trim($signupUrl);
+        if ($signupUrl === '') {
+            return '';
+        }
+
+        $fullName = trim($firstname . ' ' . $surname);
+        if ($fullName === '') {
+            return $signupUrl;
+        }
+
+        $encodedName = rawurlencode($fullName);
+
+        return str_replace(
+            [
+                '[Insert Your Name]',
+                '[Insert Name]',
+                '%5BInsert%20Your%20Name%5D',
+                '%5BInsert%20Name%5D',
+                '{{fullname}}',
+            ],
+            [
+                $fullName,
+                $fullName,
+                $encodedName,
+                $encodedName,
+                $fullName,
+            ],
+            $signupUrl
+        );
+    }
+}
+
 if (!function_exists('hh_send_email')) {
     function hh_send_email(string $toEmail, string $toName, string $subject, string $htmlBody): bool
     {
@@ -193,7 +228,7 @@ if (!function_exists('hh_send_email')) {
 }
 
 if (!function_exists('sendWelcomeEmail')) {
-    function sendWelcomeEmail(string $firstname, string $username, string $email): bool
+    function sendWelcomeEmail(string $firstname, string $surname, string $username, string $email): bool
     {
         global $title, $base_url, $signup_url, $developer;
 
@@ -201,8 +236,9 @@ if (!function_exists('sendWelcomeEmail')) {
         $html = hh_mail_render_template($templatePath, [
             'gamename' => $title,
             'firstname' => $firstname,
+            'fullname' => trim($firstname . ' ' . $surname),
             'username' => $username,
-            'signup_url' => rtrim((string) $signup_url, '/'),
+            'signup_url' => hh_mail_signup_url((string) $signup_url, $firstname, $surname),
             'login_url' => rtrim((string) $base_url, '/') . '/index.php',
             'forgot_password_url' => rtrim((string) $base_url, '/') . '/forgot-password.php',
             'developer' => $developer,
