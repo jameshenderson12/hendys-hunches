@@ -6,7 +6,9 @@
 * Created By: James Henderson
 ***********************************/
 
-define('IS_PREVIEW', true);
+date_default_timezone_set('Europe/London');
+
+define('IS_PREVIEW', false);
 
 $hh_site_config = array (
   'title' => 'Hendy\'s Hunches',
@@ -47,8 +49,8 @@ $hh_runtime_config = array (
 );
 
 $hh_preview_config = array (
-  'enabled' => true,
-  'today_override' => '2026-06-29',
+  'enabled' => false,
+  'today_override' => '',
 );
 
 $hh_email_config = array (

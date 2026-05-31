@@ -305,6 +305,15 @@ include 'php/navigation.php';
   color: var(--hh-muted);
 }
 
+.predictions-stage-note {
+  margin-top: 12px;
+  max-width: 720px;
+  color: var(--hh-green-dark);
+  font-size: 0.92rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
 .predictions-stage-actions {
   position: sticky;
   top: 104px;
@@ -463,6 +472,7 @@ include 'php/navigation.php';
                                 Matches <?= htmlspecialchars((string) $selectedStage['fixture_start']) ?>-<?= htmlspecialchars((string) $selectedStage['fixture_end']) ?>
                                 <?php if ($stageLastUpdate !== '') : ?> · last saved <?= htmlspecialchars($stageLastUpdate) ?><?php endif; ?>
                             </p>
+                            <p class="predictions-stage-note">To get started, every prediction in this round must be filled in before your first save. After that, you can come back and update individual scores until the window closes.</p>
                         </div>
                         <div class="predictions-stage-actions">
                             <button type="button" class="btn btn-secondary populate-scores" <?= ($selectedWindow && !$selectedWindow['is_open']) ? 'disabled' : '' ?>><i class="bi bi-magic"></i> Populate for me</button>

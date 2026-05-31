@@ -182,7 +182,7 @@ $seasonCoverLabel = static function (string $tournament): string {
     <section class="section about-page">
         <section class="about-intro">
             <div class="about-intro__media">
-                <img src="img/james-cartoon-hobbies.png" alt="Cartoon character of James surrounded by footballs, laptops, and coffee cups">
+                <img src="img/hh-about-james.png" alt="Cartoon character of James surrounded by footballs, laptops, and coffee cups">
             </div>
             <div class="about-intro__copy">
                 <p class="eyebrow">From James</p>

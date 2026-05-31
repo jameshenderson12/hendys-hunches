@@ -118,7 +118,7 @@ if (!function_exists('hh_dashboard_layout_defaults')) {
             'form' => ['label' => 'Form', 'width' => 'wide', 'visible' => 1],
             'points_by_stage' => ['label' => 'Points by Stage', 'width' => 'normal', 'visible' => 1],
             'accuracy_breakdown' => ['label' => 'Accuracy Breakdown', 'width' => 'normal', 'visible' => 1],
-            'winner_picks' => ['label' => 'Who Everyone Backed', 'width' => 'normal', 'visible' => 1],
+            'winner_picks' => ['label' => 'Nations Supported by Players', 'width' => 'normal', 'visible' => 1],
             'biggest_movers' => ['label' => 'Biggest Movers', 'width' => 'normal', 'visible' => 1],
             'mini_league' => ['label' => 'Mini-League', 'width' => 'wide', 'visible' => 1],
             'game_pulse' => ['label' => 'Game Pulse', 'width' => 'wide', 'visible' => 1],
@@ -1113,7 +1113,6 @@ $dashboardLayoutCards = [
                         <p class="dashboard-note mb-0">No fixtures are scheduled for the selected day.</p>
                     <?php endif; ?>
                 </div>
-                <p class="dashboard-note mb-0">In preview mode, changing the configured preview day will change this card to show that date’s fixtures.</p>
             </article>
         <?php }),
     ],
@@ -1176,11 +1175,11 @@ $dashboardLayoutCards = [
         <?php }),
     ],
     'winner_picks' => [
-        'label' => 'Who Everyone Backed',
+        'label' => 'Nations being supported',
         'markup' => hh_dashboard_capture(function () use ($winnerPicks) { ?>
             <article class="dashboard-panel">
                 <div class="dashboard-panel__header">
-                    <div><p class="eyebrow">Crowd read</p><h2>Who Everyone Backed</h2></div>
+                    <div><p class="eyebrow">Crowd read</p><h2>Nations being supported</h2></div>
                 </div>
                 <div class="crowd-bars">
                     <?php if (!empty($winnerPicks)) : ?>

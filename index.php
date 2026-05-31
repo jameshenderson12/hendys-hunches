@@ -680,8 +680,8 @@ hh_handle_dev_bypass_request();
           <span>Football prediction game</span>
         </a>
         <nav class="login-nav" aria-label="Login links">
-          <span class="is-disabled" aria-disabled="true">Register</span>
-          <span class="is-disabled" aria-disabled="true">Reset Password</span>
+          <a href="registration.php">Register</a>
+          <a href="forgot-password.php">Reset Password</a>
           <a href="#" data-bs-toggle="modal" data-bs-target="#terms">Terms</a>
         </nav>
       </header>
@@ -699,9 +699,7 @@ hh_handle_dev_bypass_request();
                 </span>
               </div>
               <div class="host-flags" aria-label="World Cup 2026 host nations">
-                <button class="host-flags__trigger" type="button" id="loginRevealTrigger" aria-label="Canada">
-                  <img src="img/flags/ca.svg" alt=""> Canada
-                </button>
+                <span><img src="img/flags/ca.svg" alt=""> Canada</span>
                 <span><img src="img/flags/mx.svg" alt=""> Mexico</span>
                 <span><img src="img/flags/us.svg" alt=""> United States</span>
               </div>
@@ -715,7 +713,7 @@ hh_handle_dev_bypass_request();
             <p class="login-panel__eyebrow"><i class="bi bi-trophy-fill"></i> Matchday sign in</p>
 
             <form id="loginForm" class="needs-validation" method="POST" action="php/login.php" novalidate>
-              <fieldset disabled id="loginFieldset">
+              <fieldset id="loginFieldset">
                 <div class="mb-3">
                   <label for="username" class="form-label">Username</label>
                   <input type="text" class="form-control" id="username" name="username" required autocomplete="username" autofocus>
@@ -735,11 +733,11 @@ hh_handle_dev_bypass_request();
 
                 <div class="login-actions">
                   <button type="submit" class="btn btn-hh-primary w-100"><i class="bi bi-box-arrow-in-right"></i> Log in</button>
-                  <span class="btn btn-hh-secondary w-100 is-disabled" aria-disabled="true"><i class="bi bi-person-fill-add"></i> Register</span>
+                  <a class="btn btn-hh-secondary w-100" href="registration.php"><i class="bi bi-person-fill-add"></i> Register</a>
                 </div>
 
                 <div class="login-meta">
-                  <span class="is-disabled" aria-disabled="true">Forgot your password?</span>
+                  <a href="forgot-password.php">Forgot your password?</a>
                 </div>
               </fieldset>
             </form>
@@ -758,9 +756,6 @@ hh_handle_dev_bypass_request();
       const toggleLoginPwd = document.querySelector('#toggleLoginPwd');
       const loginPassword = document.querySelector('#password');
       const countdownDays = document.querySelector('#countdownDays');
-      const loginRevealTrigger = document.querySelector('#loginRevealTrigger');
-      const loginFieldset = document.querySelector('#loginFieldset');
-      const loginUsername = document.querySelector('#username');
 
       if (countdownDays) {
         const worldCupStart = new Date('2026-06-11T00:00:00');
@@ -770,17 +765,6 @@ hh_handle_dev_bypass_request();
         const target = new Date(worldCupStart.getFullYear(), worldCupStart.getMonth(), worldCupStart.getDate());
         const daysRemaining = Math.max(0, Math.ceil((target - today) / msPerDay));
         countdownDays.textContent = String(daysRemaining);
-      }
-
-      if (loginRevealTrigger && loginFieldset) {
-        loginRevealTrigger.addEventListener('click', () => {
-          if (loginFieldset.disabled) {
-            loginFieldset.disabled = false;
-            if (loginUsername) {
-              window.setTimeout(() => loginUsername.focus(), 40);
-            }
-          }
-        });
       }
 
       if (toggleLoginPwd && loginPassword) {
