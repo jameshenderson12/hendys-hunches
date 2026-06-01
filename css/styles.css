@@ -2945,6 +2945,12 @@ h6 {
   font-size: 1.15rem;
 }
 
+.guide-tour-mobile-note {
+  display: none;
+  color: var(--hh-muted);
+  font-weight: 700;
+}
+
 .guide-flow {
   display: grid;
   gap: 14px;
@@ -6521,6 +6527,14 @@ body.tour-active {
 
   .page-hero h1 {
     font-size: 2rem;
+  }
+
+  .guide-tour-launch {
+    display: none !important;
+  }
+
+  .guide-tour-mobile-note {
+    display: block;
   }
 
   .card-body {

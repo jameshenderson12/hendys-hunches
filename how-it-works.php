@@ -79,7 +79,7 @@ include 'php/navigation.php';
             <p class="lead mb-0">A clearer walkthrough of the game, the menu, and what your next step looks like right now.</p>
         </div>
         <div class="page-hero__actions">
-            <button class="btn btn-light" type="button" id="launch-site-tour"><i class="bi bi-signpost-split"></i> Start site tour</button>
+            <button class="btn btn-light guide-tour-launch" type="button" id="launch-site-tour"><i class="bi bi-signpost-split"></i> Start site tour</button>
             <a class="btn btn-outline-dark" href="predictions.php"><i class="bi bi-pencil-square"></i> Predictions</a>
         </div>
     </div>
@@ -141,8 +141,9 @@ include 'php/navigation.php';
                         <p class="mb-0">Dashboard, Fan Zone, Predictions, Rankings, Competition, About, and your account menu are all covered.</p>
                     </div>
                 </div>
+                <p class="guide-tour-mobile-note mb-0">Site tour is unavailable on this device.</p>
                 <div class="guide-panel__actions">
-                    <button class="btn btn-primary" type="button" id="launch-site-tour-secondary"><i class="bi bi-play-circle"></i> Launch guided tour</button>
+                    <button class="btn btn-primary guide-tour-launch" type="button" id="launch-site-tour-secondary"><i class="bi bi-play-circle"></i> Launch guided tour</button>
                 </div>
             </div>
         </div>
@@ -261,6 +262,10 @@ document.addEventListener('DOMContentLoaded', function () {
   var skipButton = document.getElementById('site-tour-skip');
 
   if (!tourRoot || !highlight || !card || !title || !body || !count || !nextButton || !backButton || !skipButton) {
+    return;
+  }
+
+  if (window.matchMedia('(max-width: 767.98px)').matches) {
     return;
   }
 
