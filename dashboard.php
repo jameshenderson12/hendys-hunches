@@ -1044,9 +1044,8 @@ $dashboardLayoutCards = [
                     </div>
                     <dl class="dashboard-player-details">
                         <div><dt>Favourite club</dt><dd><?= htmlspecialchars((string) ($currentUser['faveteam'] ?? 'Not set')) ?></dd></div>
-                        <div><dt>Nation you're supporting</dt><dd><?= htmlspecialchars((string) ($currentUser['tournwinner'] ?? 'Not set')) ?></dd></div>
+                        <div><dt>Supporting</dt><dd><?= htmlspecialchars((string) ($currentUser['tournwinner'] ?? 'Not set')) ?></dd></div>
                         <div><dt>Location</dt><dd><?= htmlspecialchars((string) ($currentUser['location'] ?? 'Not set')) ?></dd></div>
-                        <div><dt>Field</dt><dd><?= htmlspecialchars((string) ($currentUser['fieldofwork'] ?? 'Not set')) ?></dd></div>
                     </dl>
                 </div>
             </article>
@@ -1098,11 +1097,11 @@ $dashboardLayoutCards = [
                                 <div class="fixture-card-row__match">
                                     <div class="fixture-card-row__team">
                                         <img src="<?= htmlspecialchars($fixture['home_flag']) ?>" alt="<?= htmlspecialchars($fixture['home']) ?> flag">
-                                        <div><strong><?= htmlspecialchars($fixture['home']) ?></strong></div>
+                                        <div><strong><?= hh_render_team_name_responsive((string) $fixture['home']) ?></strong></div>
                                     </div>
                                     <div class="fixture-card-row__divider">vs</div>
                                     <div class="fixture-card-row__team fixture-card-row__team--away">
-                                        <div><strong><?= htmlspecialchars($fixture['away']) ?></strong></div>
+                                        <div><strong><?= hh_render_team_name_responsive((string) $fixture['away']) ?></strong></div>
                                         <img src="<?= htmlspecialchars($fixture['away_flag']) ?>" alt="<?= htmlspecialchars($fixture['away']) ?> flag">
                                     </div>
                                 </div>
@@ -1289,7 +1288,7 @@ $dashboardLayoutCards = [
                 <div class="pulse-list">
                     <p><strong><?= (int) $pulseStats['players'] ?></strong><span>players registered</span></p>
                     <p><strong><?= (int) $pulseStats['paid'] ?></strong><span>paid entries</span></p>
-                    <p><strong><?= htmlspecialchars((string) $pulseStats['top_pick']) ?></strong><span>most backed winner</span></p>
+                    <p><strong><?= htmlspecialchars((string) $pulseStats['top_pick']) ?></strong><span>nation most supported</span></p>
                     <p><strong>£<?= number_format((float) $pulseStats['prize_fund'], 2) ?></strong><span>prize fund</span></p>
                 </div>
                 <div class="dashboard-charity-card">

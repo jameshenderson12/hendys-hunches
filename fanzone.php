@@ -236,6 +236,9 @@ $previousPolls = [];
 $pollDraftQuestion = '';
 $pollDraftOptions = array_fill(0, 6, '');
 $sessionUserId = (int) ($_SESSION['id'] ?? 0);
+$sessionUsername = (string) ($_SESSION['username'] ?? '');
+$yourThreadCount = 0;
+$yourReplyCount = 0;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['fanzone_action'])) {
     $action = (string) $_POST['fanzone_action'];
@@ -506,6 +509,30 @@ if ($boardSchemaReady && isset($_GET['edit_post']) && $_GET['edit_post'] !== '')
 }
 
 if ($boardSchemaReady) {
+    if ($sessionUsername !== '') {
+        $playerTotalsStmt = mysqli_prepare(
+            $con,
+            "SELECT
+                COALESCE(SUM(CASE WHEN parent_id IS NULL THEN 1 ELSE 0 END), 0) AS thread_total,
+                COALESCE(SUM(CASE WHEN parent_id IS NOT NULL THEN 1 ELSE 0 END), 0) AS reply_total
+             FROM {$boardTable}
+             WHERE username = ? AND is_deleted = 0"
+        );
+
+        if ($playerTotalsStmt) {
+            mysqli_stmt_bind_param($playerTotalsStmt, 's', $sessionUsername);
+            mysqli_stmt_execute($playerTotalsStmt);
+            $playerTotalsResult = mysqli_stmt_get_result($playerTotalsStmt);
+            if ($playerTotalsResult instanceof mysqli_result) {
+                $playerTotals = mysqli_fetch_assoc($playerTotalsResult) ?: [];
+                $yourThreadCount = (int) ($playerTotals['thread_total'] ?? 0);
+                $yourReplyCount = (int) ($playerTotals['reply_total'] ?? 0);
+                mysqli_free_result($playerTotalsResult);
+            }
+            mysqli_stmt_close($playerTotalsStmt);
+        }
+    }
+
     $threadSql = "
         SELECT
             p.id,
@@ -738,9 +765,10 @@ include "php/navigation.php";
                 <div class="fanzone-snapshot">
                     <p><strong><?= count($threads) ?></strong><span>live threads</span></p>
                     <p><strong><?= array_sum(array_map(static fn(array $thread): int => (int) $thread['reply_total'], $threads)) ?></strong><span>replies so far</span></p>
-                    <p><strong>Simple</strong><span>single-page board</span></p>
+                    <p><strong><?= $yourThreadCount ?></strong><span>your threads</span></p>
+                    <p><strong><?= $yourReplyCount ?></strong><span>your replies</span></p>
                 </div>
-                <p class="concept-subtle mb-0">Kept deliberately lightweight so players can dip in, post, reply, and get back to the football.</p>
+                <p class="concept-subtle mb-0">Start a thread when you want to kick things off, or jump into an existing one when the football gets interesting.</p>
             </aside>
         </div>
 
@@ -778,7 +806,7 @@ include "php/navigation.php";
                         <h3>Start a new thread</h3>
                         <p class="mb-0">Ask a question, call your shot, or throw in a bit of banter.</p>
                     </div>
-                    <span class="fanzone-chip"><?= htmlspecialchars(hh_fanzone_display_name(), ENT_QUOTES) ?></span>
+                    <p class="fanzone-composer__identity mb-0">Posting as <?= htmlspecialchars(hh_fanzone_display_name(), ENT_QUOTES) ?></p>
                 </div>
                 <?php if (hh_fanzone_is_admin()) : ?>
                     <div class="fanzone-composer__toggles">

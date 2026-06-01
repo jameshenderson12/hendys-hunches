@@ -3,6 +3,7 @@ session_start();
 $page_title = 'Tournament Knockouts';
 
 require_once __DIR__ . '/php/auth.php';
+require_once __DIR__ . '/php/flags.php';
 hh_require_login('index.php');
 
 include 'php/header.php';
@@ -107,11 +108,11 @@ mysqli_close($con);
                                             <td class="small d-none d-sm-table-cell"><?= $kickoff ?></td>
                                             <td>
                                                 <img src="<?= $homeImage ?>" width="24" style="width: 36px; border-radius: 50%; margin-right: 10px;" alt="<?= $homeTeam ?> flag">
-                                                <?= $homeTeam ?>
+                                                <?= hh_render_team_name_responsive((string) ($fixture['hometeam'] ?? '')) ?>
                                             </td>
                                             <td class="text-center"><?= $match ?></td>
                                             <td class="text-end">
-                                                <?= $awayTeam ?>
+                                                <?= hh_render_team_name_responsive((string) ($fixture['awayteam'] ?? '')) ?>
                                                 <img src="<?= $awayImage ?>" width="24" style="width: 36px; border-radius: 50%;" alt="<?= $awayTeam ?> flag">
                                             </td>
                                             <td class="small d-none d-sm-table-cell"><?= $venue ?></td>

@@ -4,6 +4,7 @@ $page_title = 'Tournament Groups';
 
 require_once __DIR__ . '/php/auth.php';
 require_once __DIR__ . '/php/config.php';
+require_once __DIR__ . '/php/flags.php';
 hh_require_login('index.php');
 
 include 'php/db-connect.php';
@@ -303,7 +304,7 @@ mysqli_close($con);
                                         <tr class="<?= $rowClass ?>">
                                             <td>
                                                 <img class="competition-flag" src="<?= htmlspecialchars((string) $team['img']) ?>" alt="<?= htmlspecialchars((string) $team['name']) ?>">
-                                                <?= htmlspecialchars((string) $team['name']) ?>
+                                                <?= hh_render_team_name_responsive((string) $team['name']) ?>
                                             </td>
                                             <td><?= (int) $team['played'] ?></td>
                                             <td><?= (int) $team['won'] ?></td>

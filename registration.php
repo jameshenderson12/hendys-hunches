@@ -983,24 +983,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           </div>
         </div>
         <div class="form-step">
-          <label for="fieldofwork" class="form-label">Field of Expertise <span class="text-white-50">(Optional)</span></label>
-          <input id="fieldofwork" name="fieldofwork" class="form-select" list="datalistOptions1" placeholder="Start typing to filter">
-          <datalist id="datalistOptions1">
-            <option value="Prefer Not To Say"></option>        
-            <?php
-              $file = 'text/select-sectors-input.txt';
-              $handle = @fopen($file, 'r');
-              if ($handle) {
-                while (!feof($handle)) {
-                  $line = fgets($handle, 4096);
-                  $item = explode('\n', $line);
-                  echo '<option value="' . trim($item[0]) . '">' . trim($item[0]) . '</option>' . "\n";
-                }
-                fclose($handle);
-              }
-            ?>
-          </datalist>
-          <!-- Repeat similar structure for other input fields -->
           <label for="location" class="form-label">Location (Nearest Town/City) <span class="text-white-50">(Optional)</span></label>
           <input id="location" name="location" class="form-select" list="datalistOptions4" placeholder="Start typing to filter">
           <datalist id="datalistOptions4">

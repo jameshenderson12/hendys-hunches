@@ -483,13 +483,13 @@ include 'php/navigation.php';
                         <thead>
                             <tr>
                                 <th class="d-none d-lg-table-cell">Fixture</th>
-                                <th>Home</th>
+                                <th></th>
                                 <th></th>
                                 <th class="text-center">Pred.</th>
                                 <th class="text-center"></th>
                                 <th class="text-center">Pred.</th>
                                 <th></th>
-                                <th>Away</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -517,7 +517,7 @@ include 'php/navigation.php';
                                     <td>
                                         <div class="team-cell">
                                             <img src="<?= htmlspecialchars((string) $fixture['hometeamimg']) ?>" alt="<?= htmlspecialchars((string) $fixture['hometeam']) ?> flag">
-                                            <span><?= htmlspecialchars((string) $fixture['hometeam']) ?></span>
+                                            <span><?= hh_render_team_name_responsive((string) $fixture['hometeam']) ?></span>
                                         </div>
                                     </td>
                                     <td class="d-none d-md-table-cell"></td>
@@ -531,7 +531,7 @@ include 'php/navigation.php';
                                     <td class="d-none d-md-table-cell"></td>
                                     <td>
                                         <div class="team-cell team-cell--away">
-                                            <span><?= htmlspecialchars((string) $fixture['awayteam']) ?></span>
+                                            <span><?= hh_render_team_name_responsive((string) $fixture['awayteam']) ?></span>
                                             <img src="<?= htmlspecialchars((string) $fixture['awayteamimg']) ?>" alt="<?= htmlspecialchars((string) $fixture['awayteam']) ?> flag">
                                         </div>
                                     </td>

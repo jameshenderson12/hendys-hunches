@@ -119,6 +119,21 @@ function hh_stage_short_label(string $stageKey, string $fallbackLabel): string
     };
 }
 
+function hh_user_move_meta(int $lastPos, int $currentPos): array
+{
+    if ($lastPos > $currentPos) {
+        $diff = $lastPos - $currentPos;
+        return ['label' => '+' . $diff];
+    }
+
+    if ($lastPos < $currentPos) {
+        $diff = $currentPos - $lastPos;
+        return ['label' => '-' . $diff];
+    }
+
+    return ['label' => '0'];
+}
+
 $userId = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 $stageContexts = hh_prediction_stage_contexts_for_user();
 $selectedStageKey = isset($_GET['stage']) ? trim((string) $_GET['stage']) : '';
@@ -136,7 +151,7 @@ $hasRecordedResults = false;
 if ($userId > 0) {
     $profileStatement = mysqli_prepare(
         $con,
-        "SELECT id, username, firstname, surname, avatar, faveteam, fieldofwork, location, tournwinner, currpos, haspaid
+        "SELECT id, username, firstname, surname, avatar, faveteam, fieldofwork, location, tournwinner, currpos, lastpos, haspaid, signupdate
          FROM live_user_information
          WHERE id = ?
          LIMIT 1"
@@ -204,8 +219,8 @@ if (!$profile) {
 
 $fullName = ucfirst((string) $profile['firstname']) . ' ' . ucfirst((string) $profile['surname']);
 $tournwinner = (string) ($profile['tournwinner'] ?? '');
-$tournwinnerFlag = $tournwinner !== '' ? hh_get_team_flag_path($tournwinner) : '';
 $currentPosition = $hasRecordedResults ? hh_ordinal_position((int) ($profile['currpos'] ?? 0)) : '-';
+$moveMeta = hh_user_move_meta((int) ($profile['lastpos'] ?? 0), (int) ($profile['currpos'] ?? 0));
 $selectedStage = $stageContexts[$selectedStageKey] ?? null;
 $visibleFixtures = [];
 $selectedStagePoints = (int) (($predictionRows[$selectedStageKey]['points_total'] ?? 0));
@@ -263,6 +278,10 @@ include 'php/navigation.php';
   align-items: start;
   grid-template-columns: minmax(270px, 320px) minmax(0, 1fr);
   gap: 18px;
+}
+
+.user-layout > * {
+  min-width: 0;
 }
 
 .user-page .dashboard-player-card {
@@ -367,40 +386,23 @@ include 'php/navigation.php';
                     <img src="<?= htmlspecialchars((string) $profile['avatar']) ?>" alt="<?= htmlspecialchars($fullName) ?> football strip avatar">
                 </div>
                 <div class="dashboard-player-card__body">
-                    <div>
-                        <p class="eyebrow mb-2">Player card</p>
-                        <h2><?= htmlspecialchars($fullName) ?></h2>
-                        <p class="dashboard-note mb-0">
-                            <?= $hasRecordedResults ? htmlspecialchars($currentPosition) . ' in the rankings' : 'Ranking begins after the first recorded result' ?>
-                        </p>
-                    </div>
+                    <p class="eyebrow">Player card</p>
+                    <h2><?= htmlspecialchars($fullName) ?></h2>
+                    <p class="dashboard-note">
+                        <?= htmlspecialchars((string) (($profile['haspaid'] ?? 'No') === 'Yes' ? 'Entry fee paid' : 'Entry fee pending')) ?>
+                        <?php if (!empty($profile['signupdate'])) : ?>
+                            · signed up <?= htmlspecialchars(date('j F Y', strtotime((string) $profile['signupdate']))) ?>
+                        <?php endif; ?>
+                    </p>
                     <div class="dashboard-player-stats">
-                        <span><strong><?= htmlspecialchars((string) $totalPoints) ?></strong>Total points</span>
-                        <span><strong><?= htmlspecialchars((string) count($fixtures)) ?></strong>Fixtures tracked</span>
-                        <span><strong><?= htmlspecialchars((string) strtoupper((string) $profile['haspaid'])) ?></strong>Entry paid</span>
+                        <span><strong><?= htmlspecialchars((string) $currentPosition) ?></strong>Rank</span>
+                        <span><strong><?= htmlspecialchars((string) $totalPoints) ?></strong>Points</span>
+                        <span><strong><?= htmlspecialchars((string) ($moveMeta['label'] ?? '0')) ?></strong>Move</span>
                     </div>
                     <dl class="dashboard-player-details">
-                        <div>
-                            <dt>Nation you're supporting</dt>
-                            <dd>
-                                <?php if ($tournwinnerFlag !== '') : ?>
-                                    <img src="<?= htmlspecialchars($tournwinnerFlag) ?>" alt="<?= htmlspecialchars($tournwinner) ?> flag" width="24" style="border: 1px solid lightgray; margin-right:4px;">
-                                <?php endif; ?>
-                                <?= htmlspecialchars($tournwinner !== '' ? $tournwinner : 'Not chosen') ?>
-                            </dd>
-                        </div>
-                        <div>
-                            <dt>Favourite team</dt>
-                            <dd><?= htmlspecialchars((string) ($profile['faveteam'] ?? 'Not set')) ?></dd>
-                        </div>
-                        <div>
-                            <dt>Location</dt>
-                            <dd><?= htmlspecialchars((string) ($profile['location'] ?? 'Not set')) ?></dd>
-                        </div>
-                        <div>
-                            <dt>Field of expertise</dt>
-                            <dd><?= htmlspecialchars((string) ($profile['fieldofwork'] ?? 'Not set')) ?></dd>
-                        </div>
+                        <div><dt>Favourite club</dt><dd><?= htmlspecialchars((string) ($profile['faveteam'] ?? 'Not set')) ?></dd></div>
+                        <div><dt>Supporting</dt><dd><?= htmlspecialchars($tournwinner !== '' ? $tournwinner : 'Not chosen') ?></dd></div>
+                        <div><dt>Location</dt><dd><?= htmlspecialchars((string) ($profile['location'] ?? 'Not set')) ?></dd></div>
                     </dl>
                 </div>
             </article>
@@ -427,13 +429,13 @@ include 'php/navigation.php';
                         <thead>
                             <tr>
                                 <th class="d-none d-lg-table-cell">Fixture</th>
-                                <th>Home</th>
+                                <th></th>
                                 <th></th>
                                 <th class="text-center">Pred.</th>
                                 <th class="text-center">Res.</th>
                                 <th class="text-center">Pts</th>
                                 <th></th>
-                                <th class="text-end">Away</th>
+                                <th class="text-end"></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -475,7 +477,7 @@ include 'php/navigation.php';
                                     <td>
                                         <div class="team-line">
                                             <img src="<?= htmlspecialchars((string) $fixture['hometeamimg']) ?>" alt="<?= htmlspecialchars((string) $fixture['hometeam']) ?> flag">
-                                            <span><?= htmlspecialchars((string) $fixture['hometeam']) ?></span>
+                                            <span><?= hh_render_team_name_responsive((string) $fixture['hometeam']) ?></span>
                                         </div>
                                     </td>
                                     <td class="d-none d-md-table-cell"></td>
@@ -485,7 +487,7 @@ include 'php/navigation.php';
                                     <td class="d-none d-md-table-cell"></td>
                                     <td>
                                         <div class="team-line team-line--away">
-                                            <span><?= htmlspecialchars((string) $fixture['awayteam']) ?></span>
+                                            <span><?= hh_render_team_name_responsive((string) $fixture['awayteam']) ?></span>
                                             <img src="<?= htmlspecialchars((string) $fixture['awayteamimg']) ?>" alt="<?= htmlspecialchars((string) $fixture['awayteam']) ?> flag">
                                         </div>
                                     </td>

@@ -222,11 +222,23 @@
     font-size: 1.8rem;
   }
 
-  .about-intro__copy p:not(.eyebrow) {
-    margin-top: 14px;
-    color: var(--hh-ink);
-    line-height: 1.65;
-  }
+.about-intro__copy p:not(.eyebrow) {
+  margin-top: 14px;
+  color: var(--hh-ink);
+  line-height: 1.65;
+}
+
+.about-intro__signature {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 10px;
+}
+
+.about-intro__signature img {
+  width: min(180px, 30%);
+  max-width: 100%;
+  height: auto;
+}
 
   .about-section-heading {
     display: grid;
@@ -2821,6 +2833,14 @@ h6 {
   grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
 }
 
+.guide-grid > *,
+.guide-checklist li > *,
+.guide-tour-card > *,
+.guide-flow > *,
+.guide-score-grid > * {
+  min-width: 0;
+}
+
 .guide-panel {
   padding: 22px;
   border: 1px solid var(--hh-line);
@@ -3126,11 +3146,13 @@ body.tour-active {
 .fanzone-snapshot {
   display: grid;
   gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .fanzone-snapshot p {
   display: grid;
   gap: 4px;
+  min-width: 0;
   margin: 0;
   padding: 14px 16px;
   border: 1px solid var(--hh-line);
@@ -3172,6 +3194,18 @@ body.tour-active {
   margin: 0 0 4px;
   font-size: 1.05rem;
   font-weight: 900;
+}
+
+.fanzone-composer__identity {
+  align-self: flex-start;
+  margin: 0;
+  padding: 8px 12px;
+  border: 1px solid var(--hh-line);
+  border-radius: 8px;
+  background: rgba(89, 99, 95, 0.08);
+  color: var(--hh-muted);
+  font-size: 0.9rem;
+  font-weight: 800;
 }
 
 .fanzone-composer__toggles {
@@ -5453,6 +5487,10 @@ body.tour-active {
   text-align: right;
 }
 
+.dashboard-player-details dd img {
+  vertical-align: middle;
+}
+
 .dashboard-panel__header {
   display: flex;
   align-items: flex-start;
@@ -6250,6 +6288,10 @@ body.tour-active {
     grid-template-columns: 1fr;
   }
 
+  .fanzone-snapshot {
+    grid-template-columns: 1fr;
+  }
+
   .fanzone-composer__header,
   .fanzone-post__meta {
     grid-template-columns: 1fr;
@@ -6481,8 +6523,70 @@ body.tour-active {
     flex-direction: column;
   }
 
-  .rankings-you-badge {
+.rankings-you-badge {
     margin-left: 8px;
     margin-top: 4px;
+  }
+}
+
+.hh-team-name-short {
+  display: none;
+}
+
+@media (max-width: 575.98px) {
+  .dashboard-player-card__kit {
+    min-height: 170px;
+    padding: 18px 16px;
+  }
+
+  .dashboard-player-card__kit img {
+    width: min(150px, 68%);
+    max-height: 150px;
+  }
+
+  .dashboard-player-card__body {
+    gap: 12px;
+    padding: 18px 16px;
+  }
+
+  .dashboard-player-card__body h2 {
+    font-size: 1.28rem;
+    line-height: 1.12;
+  }
+
+  .dashboard-player-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-player-stats span {
+    gap: 2px;
+    padding: 10px 12px;
+  }
+
+  .dashboard-player-stats strong {
+    font-size: 1.15rem;
+  }
+
+  .dashboard-player-details {
+    gap: 8px;
+  }
+
+  .dashboard-player-details div {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+    padding-top: 8px;
+  }
+
+  .dashboard-player-details dd {
+    text-align: left;
+  }
+
+  .hh-team-name-full {
+    display: none;
+  }
+
+  .hh-team-name-short {
+    display: inline;
   }
 }

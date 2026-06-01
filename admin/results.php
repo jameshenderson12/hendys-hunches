@@ -4,6 +4,7 @@ $page_title = 'Results';
 
 require_once dirname(__DIR__) . '/php/auth.php';
 require_once dirname(__DIR__) . '/php/config.php';
+require_once dirname(__DIR__) . '/php/flags.php';
 require_once dirname(__DIR__) . '/php/process.php';
 
 hh_require_admin('../dashboard.php');
@@ -375,7 +376,7 @@ include '../php/navigation.php';
                                     <td>
                                         <div class="results-team">
                                             <img src="<?= htmlspecialchars($resolveAssetPath($fixture['hometeamimg'] ?? '')) ?>" alt="<?= htmlspecialchars((string) $fixture['hometeam']) ?> flag">
-                                            <span><?= htmlspecialchars((string) $fixture['hometeam']) ?></span>
+                                            <span><?= hh_render_team_name_responsive((string) $fixture['hometeam']) ?></span>
                                         </div>
                                     </td>
                                     <td class="d-none d-md-table-cell"></td>
@@ -389,7 +390,7 @@ include '../php/navigation.php';
                                     <td class="d-none d-md-table-cell"></td>
                                     <td>
                                         <div class="results-team results-team--away">
-                                            <span><?= htmlspecialchars((string) $fixture['awayteam']) ?></span>
+                                            <span><?= hh_render_team_name_responsive((string) $fixture['awayteam']) ?></span>
                                             <img src="<?= htmlspecialchars($resolveAssetPath($fixture['awayteamimg'] ?? '')) ?>" alt="<?= htmlspecialchars((string) $fixture['awayteam']) ?> flag">
                                         </div>
                                     </td>

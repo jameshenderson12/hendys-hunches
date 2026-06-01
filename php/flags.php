@@ -144,3 +144,100 @@ function hh_normalize_flag_src(string $path, string $relativePrefix = ''): strin
 
     return $relativePrefix . ltrim($path, '/');
 }
+
+function hh_get_team_abbreviation(string $team): string {
+    $team = trim($team);
+
+    if ($team === '') {
+        return '';
+    }
+
+    $map = [
+        'Algeria' => 'ALG',
+        'Argentina' => 'ARG',
+        'Australia' => 'AUS',
+        'Austria' => 'AUT',
+        'Belgium' => 'BEL',
+        'Bosnia-Herzegovina' => 'BIH',
+        'Bosnia and Herzegovina' => 'BIH',
+        'Brazil' => 'BRA',
+        'Cabo Verde' => 'CPV',
+        'Canada' => 'CAN',
+        'Colombia' => 'COL',
+        'Congo DR' => 'COD',
+        'Croatia' => 'CRO',
+        'Curaçao' => 'CUR',
+        'Curacao' => 'CUR',
+        'Czech Republic' => 'CZE',
+        'Czechia' => 'CZE',
+        'Côte d\'Ivoire' => 'CIV',
+        'Ivory Coast' => 'CIV',
+        'Ecuador' => 'ECU',
+        'Egypt' => 'EGY',
+        'England' => 'ENG',
+        'France' => 'FRA',
+        'Germany' => 'GER',
+        'Ghana' => 'GHA',
+        'Haiti' => 'HAI',
+        'IR Iran' => 'IRN',
+        'Iran' => 'IRN',
+        'Iraq' => 'IRQ',
+        'Japan' => 'JPN',
+        'Jordan' => 'JOR',
+        'Korea Republic' => 'KOR',
+        'South Korea' => 'KOR',
+        'Mexico' => 'MEX',
+        'Morocco' => 'MAR',
+        'Netherlands' => 'NED',
+        'New Zealand' => 'NZL',
+        'Norway' => 'NOR',
+        'Panama' => 'PAN',
+        'Paraguay' => 'PAR',
+        'Portugal' => 'POR',
+        'Qatar' => 'QAT',
+        'Saudi Arabia' => 'KSA',
+        'Scotland' => 'SCO',
+        'Senegal' => 'SEN',
+        'South Africa' => 'RSA',
+        'Spain' => 'ESP',
+        'Sweden' => 'SWE',
+        'Switzerland' => 'SUI',
+        'To be announced' => 'TBD',
+        'Tunisia' => 'TUN',
+        'Türkiye' => 'TUR',
+        'Turkey' => 'TUR',
+        'USA' => 'USA',
+        'United States' => 'USA',
+        'Uruguay' => 'URU',
+        'Uzbekistan' => 'UZB',
+    ];
+
+    if (isset($map[$team])) {
+        return $map[$team];
+    }
+
+    $sanitized = preg_replace('/[^A-Za-z0-9 ]+/u', '', $team) ?? '';
+    $parts = preg_split('/\s+/', trim($sanitized)) ?: [];
+    $parts = array_values(array_filter($parts, static fn(string $part): bool => $part !== ''));
+
+    if (count($parts) >= 2) {
+        $letters = '';
+        foreach ($parts as $part) {
+            $letters .= strtoupper(substr($part, 0, 1));
+            if (strlen($letters) >= 3) {
+                break;
+            }
+        }
+
+        return str_pad(substr($letters, 0, 3), 3, 'X');
+    }
+
+    return strtoupper(substr($sanitized, 0, 3));
+}
+
+function hh_render_team_name_responsive(string $team): string {
+    $full = htmlspecialchars($team, ENT_QUOTES);
+    $short = htmlspecialchars(hh_get_team_abbreviation($team), ENT_QUOTES);
+
+    return '<span class="hh-team-name-full">' . $full . '</span><span class="hh-team-name-short" aria-label="' . $full . '">' . $short . '</span>';
+}

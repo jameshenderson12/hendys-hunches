@@ -69,12 +69,11 @@ $userId = (int) ($_SESSION['id'] ?? 0);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && (string) ($_POST['account_action'] ?? '') === 'save_profile') {
     $avatar = trim((string) ($_POST['avatar'] ?? ''));
-    $fieldofwork = trim((string) ($_POST['fieldofwork'] ?? ''));
+    $fieldofwork = 'Prefer Not To Say';
     $location = trim((string) ($_POST['location'] ?? ''));
     $faveteam = trim((string) ($_POST['faveteam'] ?? ''));
     $tournwinner = trim((string) ($_POST['tournwinner'] ?? ''));
 
-    $fieldofwork = $fieldofwork !== '' ? $fieldofwork : 'Prefer Not To Say';
     $location = $location !== '' ? $location : 'Prefer Not To Say';
     $faveteam = $faveteam !== '' ? $faveteam : 'Prefer Not To Say';
     $tournwinner = $tournwinner !== '' ? $tournwinner : 'Prefer Not To Say';
@@ -277,7 +276,7 @@ include __DIR__ . '/php/navigation.php';
           <dd><?= htmlspecialchars((string) ($profile['faveteam'] ?? 'Prefer Not To Say'), ENT_QUOTES) ?></dd>
         </div>
         <div>
-          <dt>Nation you're supporting</dt>
+          <dt>Supporting</dt>
           <dd><?= htmlspecialchars((string) ($profile['tournwinner'] ?? 'Prefer Not To Say'), ENT_QUOTES) ?></dd>
         </div>
       </dl>
@@ -285,7 +284,7 @@ include __DIR__ . '/php/navigation.php';
 
     <section class="account-editor-card">
       <h3>Edit Optional Details</h3>
-      <p class="account-editor-note mb-3">This is intentionally lightweight: avatar plus the optional profile details that add a bit of personality around the game.</p>
+      <p class="account-editor-note mb-3">This is intentionally lightweight: avatar plus a few optional profile details that add a bit of personality around the game.</p>
 
       <form method="post" class="account-editor-form">
         <input type="hidden" name="account_action" value="save_profile">
@@ -313,17 +312,6 @@ include __DIR__ . '/php/navigation.php';
         </div>
 
         <div class="account-editor-fields">
-          <div>
-            <label for="fieldofwork" class="form-label">Field of expertise</label>
-            <input id="fieldofwork" name="fieldofwork" class="form-control" list="accountFieldOptions" value="<?= htmlspecialchars((string) (($profile['fieldofwork'] ?? '') === 'Prefer Not To Say' ? '' : $profile['fieldofwork']), ENT_QUOTES) ?>" placeholder="Start typing to filter">
-            <datalist id="accountFieldOptions">
-              <option value="Prefer Not To Say"></option>
-              <?php foreach ($sectorOptions as $option) : ?>
-                <option value="<?= htmlspecialchars($option, ENT_QUOTES) ?>"></option>
-              <?php endforeach; ?>
-            </datalist>
-          </div>
-
           <div>
             <label for="location" class="form-label">Location</label>
             <input id="location" name="location" class="form-control" list="accountLocationOptions" value="<?= htmlspecialchars((string) (($profile['location'] ?? '') === 'Prefer Not To Say' ? '' : $profile['location']), ENT_QUOTES) ?>" placeholder="Start typing to filter">

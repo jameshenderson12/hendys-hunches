@@ -191,6 +191,9 @@ $seasonCoverLabel = static function (string $tournament): string {
                 <p class="mb-0">I know the site is never truly finished, but that is part of the charm. If it adds a bit of tension, laughter, and conversation to a tournament, then hopefully it plays its part!</p>
                 <p>I hope you all enjoy this edition as much as I enjoyed working on it.</p>
                 <p>Good luck, and thanks for playing.</p>
+                <div class="about-intro__signature">
+                    <img src="img/jh-signature.png" alt="James Henderson signature">
+                </div>
             </div>
         </section>
 
