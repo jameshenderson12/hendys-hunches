@@ -763,12 +763,12 @@ include "php/navigation.php";
                     </div>
                 </div>
                 <div class="fanzone-snapshot">
-                    <p><strong><?= count($threads) ?></strong><span>live threads</span></p>
-                    <p><strong><?= array_sum(array_map(static fn(array $thread): int => (int) $thread['reply_total'], $threads)) ?></strong><span>replies so far</span></p>
+                    <p><strong><?= count($threads) ?></strong><span>total live threads</span></p>
+                    <p><strong><?= array_sum(array_map(static fn(array $thread): int => (int) $thread['reply_total'], $threads)) ?></strong><span>total replies</span></p>
                     <p><strong><?= $yourThreadCount ?></strong><span>your threads</span></p>
                     <p><strong><?= $yourReplyCount ?></strong><span>your replies</span></p>
                 </div>
-                <p class="concept-subtle mb-0">Start a thread when you want to kick things off, or jump into an existing one when the football gets interesting.</p>
+                <p class="concept-subtle mb-0">Start a thread when you want to kick things off, or jump into an existing one when the football gets interesting (or dull!).</p>
             </aside>
         </div>
 

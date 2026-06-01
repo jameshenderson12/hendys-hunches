@@ -2056,7 +2056,7 @@ h6 {
 .page-hero--user {
   background:
     linear-gradient(90deg, rgba(7, 54, 41, 0.93), rgba(7, 54, 41, 0.68) 52%, rgba(143, 102, 216, 0.5)),
-    url("../img/germany-518638_640.png") center 24% / cover no-repeat;
+    url("../img/hero-backgrounds/goalie-dive.jpg") center / cover no-repeat;
 }
 
 .page-hero--fanzone {
