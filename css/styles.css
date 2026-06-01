@@ -6047,6 +6047,37 @@ body.tour-active {
   font-weight: 700;
 }
 
+.pulse-list__top-pick strong {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.pulse-flags {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.pulse-flags__item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 24px;
+  border: 1px solid var(--hh-line);
+  border-radius: 8px;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.pulse-flags__item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .dashboard-charity-card {
   display: grid;
   grid-template-columns: 148px minmax(0, 1fr);

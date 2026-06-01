@@ -348,7 +348,8 @@ $prizeRace = null;
 $pulseStats = [
     'players' => 0,
     'paid' => 0,
-    'top_pick' => 'No picks yet',
+    'next_stage_value' => 'TBC',
+    'next_stage_label' => 'next stage',
     'prize_fund' => 0.0,
     'charity_total' => 0.0,
 ];
@@ -672,10 +673,6 @@ if ($winnerPicksResult instanceof mysqli_result) {
     mysqli_free_result($winnerPicksResult);
 }
 
-if (!empty($winnerPicks)) {
-    $pulseStats['top_pick'] = $winnerPicks[0]['team'] . ' (' . $winnerPicks[0]['count'] . ')';
-}
-
 $fixtureStatement = mysqli_prepare(
     $con,
     "SELECT match_number, stage, date, kotime, venue, hometeam, awayteam, hometeamimg, awayteamimg
@@ -754,6 +751,52 @@ foreach ($stageWindows as $window) {
             'cta' => $window['submitted'] ? 'Review predictions' : 'Submit predictions',
         ];
         break;
+    }
+}
+
+$pulseReferenceNow = hh_effective_now(new DateTimeZone(date_default_timezone_get()));
+$nextStageWindow = null;
+foreach ($stageWindows as $window) {
+    $opensAt = $window['opens_at'] ?? null;
+    if ($opensAt instanceof DateTimeImmutable) {
+        $opensAtLocal = $opensAt->setTimezone(new DateTimeZone(date_default_timezone_get()));
+        if ($opensAtLocal > $pulseReferenceNow) {
+            $nextStageWindow = $window + ['opens_at_local' => $opensAtLocal];
+            break;
+        }
+    }
+}
+
+if ($nextStageWindow !== null) {
+    $secondsUntilNextStage = max(0, $nextStageWindow['opens_at_local']->getTimestamp() - $pulseReferenceNow->getTimestamp());
+
+    if ($secondsUntilNextStage >= 86400) {
+        $daysUntilNextStage = (int) ceil($secondsUntilNextStage / 86400);
+        $pulseStats['next_stage_value'] = $daysUntilNextStage . ' day' . ($daysUntilNextStage === 1 ? '' : 's');
+    } elseif ($secondsUntilNextStage >= 3600) {
+        $hoursUntilNextStage = (int) ceil($secondsUntilNextStage / 3600);
+        $pulseStats['next_stage_value'] = $hoursUntilNextStage . ' hour' . ($hoursUntilNextStage === 1 ? '' : 's');
+    } else {
+        $minutesUntilNextStage = max(1, (int) ceil($secondsUntilNextStage / 60));
+        $pulseStats['next_stage_value'] = $minutesUntilNextStage . ' min' . ($minutesUntilNextStage === 1 ? '' : 's');
+    }
+
+    $pulseStats['next_stage_label'] = 'until ' . (string) ($nextStageWindow['label'] ?? 'the next stage');
+} else {
+    $openStageWindow = null;
+    foreach ($stageWindows as $window) {
+        if (($window['status'] ?? '') === 'open') {
+            $openStageWindow = $window;
+            break;
+        }
+    }
+
+    if ($openStageWindow !== null) {
+        $pulseStats['next_stage_value'] = 'Live now';
+        $pulseStats['next_stage_label'] = (string) ($openStageWindow['label'] ?? 'Current stage') . ' open';
+    } else {
+        $pulseStats['next_stage_value'] = 'Complete';
+        $pulseStats['next_stage_label'] = 'all stages closed';
     }
 }
 
@@ -1288,7 +1331,7 @@ $dashboardLayoutCards = [
                 <div class="pulse-list">
                     <p><strong><?= (int) $pulseStats['players'] ?></strong><span>players registered</span></p>
                     <p><strong><?= (int) $pulseStats['paid'] ?></strong><span>paid entries</span></p>
-                    <p><strong><?= htmlspecialchars((string) $pulseStats['top_pick']) ?></strong><span>nation most supported</span></p>
+                    <p><strong><?= htmlspecialchars((string) $pulseStats['next_stage_value']) ?></strong><span><?= htmlspecialchars((string) $pulseStats['next_stage_label']) ?></span></p>
                     <p><strong>£<?= number_format((float) $pulseStats['prize_fund'], 2) ?></strong><span>prize fund</span></p>
                 </div>
                 <div class="dashboard-charity-card">
