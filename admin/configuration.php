@@ -143,6 +143,7 @@ function hh_config_editor_export(array $config): string
         . "* File: config.php\n"
         . "* Created By: James Henderson\n"
         . "***********************************/\n\n"
+        . "date_default_timezone_set('Europe/London');\n\n"
         . "define('IS_PREVIEW', {$previewEnabled});\n\n"
         . '$hh_site_config = ' . $site . ";\n\n"
         . '$hh_competition_config = ' . $competition . ";\n\n"
