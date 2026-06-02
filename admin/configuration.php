@@ -89,6 +89,7 @@ function hh_config_editor_normalize(array $source, array $current): array
             'prize_fee' => round((float) ($source['prize_fee'] ?? 0), 2),
         ],
         'runtime' => [
+            'registrations_open' => !empty($source['registrations_open']),
             'no_of_group_fixtures' => $groupFixtures,
             'no_of_ro32_fixtures' => $ro32Fixtures,
             'no_of_ro16_fixtures' => $ro16Fixtures,
@@ -188,6 +189,7 @@ $no_of_qf_fixtures = (int) ($hh_runtime_config['no_of_qf_fixtures'] ?? 0);
 $no_of_sf_fixtures = (int) ($hh_runtime_config['no_of_sf_fixtures'] ?? 0);
 $no_of_final_fixtures = (int) ($hh_runtime_config['no_of_final_fixtures'] ?? 0);
 $no_of_total_fixtures = (int) ($hh_runtime_config['no_of_total_fixtures'] ?? 0);
+$registrations_open = !empty($hh_runtime_config['registrations_open']);
 $preview_today_override = trim((string) ($hh_preview_config['today_override'] ?? ''));
 
 $no_of_knockout_fixtures = $no_of_ro32_fixtures + $no_of_ro16_fixtures + $no_of_qf_fixtures + $no_of_sf_fixtures + $no_of_final_fixtures;
@@ -745,6 +747,10 @@ include '../php/navigation.php';
                     <span>Total fixtures tracked at runtime</span>
                 </div>
                 <div class="config-summary__item">
+                    <strong><?= !empty($currentConfig['runtime']['registrations_open']) ? 'Open' : 'Closed' ?></strong>
+                    <span>Registrations</span>
+                </div>
+                <div class="config-summary__item">
                     <strong><?= !empty($currentConfig['preview']['enabled']) ? 'Enabled' : 'Disabled' ?></strong>
                     <span>Preview mode</span>
                 </div>
@@ -852,6 +858,10 @@ include '../php/navigation.php';
                 <div>
                     <h3>Runtime Fixture Counts</h3>
                     <p class="admin-note mb-3">These values are still used by the live dashboard progress widgets, so they do belong in config for now.</p>
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" id="registrations_open" name="registrations_open" type="checkbox" value="1" <?= !empty($currentConfig['runtime']['registrations_open']) ? 'checked' : '' ?>>
+                        <label class="form-check-label" for="registrations_open">Allow new player registrations</label>
+                    </div>
                     <div class="admin-grid admin-grid--two">
                         <div>
                             <label class="form-label" for="no_of_group_fixtures">Group fixtures</label>

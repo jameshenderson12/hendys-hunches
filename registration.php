@@ -83,6 +83,48 @@ function hh_registration_apply_rate_limit(string $scope, string $identifier, int
     ];
 }
 
+function hh_registration_username_exists(mysqli $con, string $username): bool
+{
+    $statement = mysqli_prepare($con, "SELECT 1 FROM live_user_information WHERE username = ? LIMIT 1");
+    if (!$statement) {
+        return false;
+    }
+
+    mysqli_stmt_bind_param($statement, 's', $username);
+    mysqli_stmt_execute($statement);
+    $result = mysqli_stmt_get_result($statement);
+    $exists = $result instanceof mysqli_result && mysqli_num_rows($result) > 0;
+
+    if ($result instanceof mysqli_result) {
+        mysqli_free_result($result);
+    }
+
+    mysqli_stmt_close($statement);
+
+    return $exists;
+}
+
+function hh_registration_email_exists(mysqli $con, string $email): bool
+{
+    $statement = mysqli_prepare($con, "SELECT 1 FROM live_user_information WHERE LOWER(email) = LOWER(?) LIMIT 1");
+    if (!$statement) {
+        return false;
+    }
+
+    mysqli_stmt_bind_param($statement, 's', $email);
+    mysqli_stmt_execute($statement);
+    $result = mysqli_stmt_get_result($statement);
+    $exists = $result instanceof mysqli_result && mysqli_num_rows($result) > 0;
+
+    if ($result instanceof mysqli_result) {
+        mysqli_free_result($result);
+    }
+
+    mysqli_stmt_close($statement);
+
+    return $exists;
+}
+
 function hh_registration_fallback_file_options(string $filePath): array
 {
     $options = [];
@@ -160,6 +202,7 @@ $registrationSessionWindow = 15 * 60;
 $registrationSessionLimit = 3;
 $registrationIpWindow = 30 * 60;
 $registrationIpLimit = 5;
+$registrationsOpen = !empty($registrations_open);
 
 if (empty($_SESSION['registration_form_issued_at'])) {
     $_SESSION['registration_form_issued_at'] = time();
@@ -174,7 +217,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $postedIssuedAt = (int) ($_POST['form_issued_at'] ?? 0);
     $secondsSpent = $postedIssuedAt > 0 ? ($now - $postedIssuedAt) : 0;
 
-    if ($honeypotValue !== '') {
+    if (!$registrationsOpen) {
+        $registrationError = 'Registrations are now closed.';
+    } elseif ($honeypotValue !== '') {
         $registrationError = 'Registration could not be completed. Please try again shortly.';
     } elseif ($postedIssuedAt <= 0 || $secondsSpent < $registrationMinimumSeconds) {
         $registrationError = 'Please take a little more time to complete the form, then try again.';
@@ -193,52 +238,84 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $firstname = ucfirst(trim((string) ($_POST['firstname'] ?? '')));
             $surname = ucfirst(trim((string) ($_POST['surname'] ?? '')));
             $email = trim((string) ($_POST['email'] ?? ''));
+            $emailConfirm = trim((string) ($_POST['emailConfirm'] ?? ''));
             $username = trim((string) ($_POST['username'] ?? ''));
-            $password = md5((string) ($_POST['pwd1'] ?? ''));
+            $passwordPlain = (string) ($_POST['pwd1'] ?? '');
+            $passwordConfirm = (string) ($_POST['pwd2'] ?? '');
+            $password = md5($passwordPlain);
             $avatar = trim((string) ($_POST['avatar'] ?? ''));
-            $fieldofwork = trim((string) ($_POST['fieldofwork'] ?? ''));
+            $fieldofwork = 'Prefer Not To Say';
             $location = trim((string) ($_POST['location'] ?? ''));
             $faveteam = trim((string) ($_POST['faveteam'] ?? ''));
             $tournwinner = trim((string) ($_POST['tournwinner'] ?? ''));
+            $acceptedTerms = !empty($_POST['disclaimer']);
 
             $fieldofwork = $fieldofwork !== '' ? $fieldofwork : 'Prefer Not To Say';
             $location = $location !== '' ? $location : 'Prefer Not To Say';
             $faveteam = $faveteam !== '' ? $faveteam : 'Prefer Not To Say';
             $tournwinner = $tournwinner !== '' ? $tournwinner : 'Prefer Not To Say';
 
-            // Query to get the total number of users to set positional values
-            $sql1 = "SELECT count(*) AS totalusers FROM live_user_information";
-            $totalusers = mysqli_query($con, $sql1) or die(mysqli_error($con));
-            $row = mysqli_fetch_assoc($totalusers);
-            $signupPosition = ((int) ($row["totalusers"] ?? 0)) + 1;
-            $setdefstartpos = $signupPosition;
-            $setdefcurrpos = $signupPosition;
-            $setdeflastpos = $signupPosition;
+            if ($firstname === '' || $surname === '' || $email === '' || $emailConfirm === '' || $username === '' || $passwordPlain === '' || $passwordConfirm === '') {
+                $registrationError = 'Please complete every required field before signing up.';
+            } elseif (!$acceptedTerms) {
+                $registrationError = 'Please confirm that you agree to the terms and conditions before signing up.';
+            } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $registrationError = 'Please enter a valid email address.';
+            } elseif (strcasecmp($email, $emailConfirm) !== 0) {
+                $registrationError = 'Email addresses must match before you can sign up.';
+            } elseif (!preg_match('/^[A-Za-z0-9._-]{3,30}$/', $username)) {
+                $registrationError = 'Choose a username using 3 to 30 letters, numbers, dots, hyphens or underscores.';
+            } elseif (!preg_match('/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$/', $passwordPlain)) {
+                $registrationError = 'Your password must include at least 6 characters with upper case, lower case and a number.';
+            } elseif ($passwordPlain !== $passwordConfirm) {
+                $registrationError = 'Passwords must match before you can sign up.';
+            } elseif ($avatar === '' || !in_array($avatar, $football_kits, true)) {
+                $registrationError = 'Please choose a shirt for your player card.';
+            } elseif (hh_registration_username_exists($con, $username)) {
+                $registrationError = 'That username is already taken. Please choose another one.';
+            } elseif (hh_registration_email_exists($con, $email)) {
+                $registrationError = 'That email address is already registered. Try logging in or resetting the password instead.';
+            }
 
-            // Prepare and bind SQL statements
-            $stmt1 = mysqli_prepare($con, "INSERT INTO live_user_information (username, password, firstname, surname, email, avatar, fieldofwork, location, faveteam, tournwinner, startpos, lastpos, currpos) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
-            $blankTempPassword = '';
-            $stmt2 = mysqli_prepare($con, "INSERT INTO live_temp_information (username, temp_pass) VALUES (?, ?)");
+            if ($registrationError !== '') {
+                $_SESSION['registration_form_issued_at'] = time();
+                $registrationFormIssuedAt = (int) $_SESSION['registration_form_issued_at'];
+            } else {
 
-            mysqli_stmt_bind_param($stmt1, "ssssssssssddd", $username, $password, $firstname, $surname, $email, $avatar, $fieldofwork, $location, $faveteam, $tournwinner, $setdefstartpos, $setdeflastpos, $setdefcurrpos);
-            mysqli_stmt_bind_param($stmt2, "ss", $username, $blankTempPassword);
+                // Query to get the total number of users to set positional values
+                $sql1 = "SELECT count(*) AS totalusers FROM live_user_information";
+                $totalusers = mysqli_query($con, $sql1) or die(mysqli_error($con));
+                $row = mysqli_fetch_assoc($totalusers);
+                $signupPosition = ((int) ($row["totalusers"] ?? 0)) + 1;
+                $setdefstartpos = $signupPosition;
+                $setdefcurrpos = $signupPosition;
+                $setdeflastpos = $signupPosition;
 
-            // Execute the queries
-            mysqli_stmt_execute($stmt1);
-            mysqli_stmt_execute($stmt2);
+                // Prepare and bind SQL statements
+                $stmt1 = mysqli_prepare($con, "INSERT INTO live_user_information (username, password, firstname, surname, email, avatar, fieldofwork, location, faveteam, tournwinner, startpos, lastpos, currpos) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                $blankTempPassword = '';
+                $stmt2 = mysqli_prepare($con, "INSERT INTO live_temp_information (username, temp_pass) VALUES (?, ?)");
 
-            // Close statement and connection
-            mysqli_stmt_close($stmt1);
-            mysqli_stmt_close($stmt2);
+                mysqli_stmt_bind_param($stmt1, "ssssssssssddd", $username, $password, $firstname, $surname, $email, $avatar, $fieldofwork, $location, $faveteam, $tournwinner, $setdefstartpos, $setdeflastpos, $setdefcurrpos);
+                mysqli_stmt_bind_param($stmt2, "ss", $username, $blankTempPassword);
 
-            mysqli_close($con);
+                // Execute the queries
+                mysqli_stmt_execute($stmt1);
+                mysqli_stmt_execute($stmt2);
 
-            // Set success flag
-            $registrationSuccess = true;
+                // Close statement and connection
+                mysqli_stmt_close($stmt1);
+                mysqli_stmt_close($stmt2);
 
-            // If registration is successful, send the welcome email
-            if ($registrationSuccess) {
-              sendWelcomeEmail($firstname, $surname, $username, $email);
+                mysqli_close($con);
+
+                // Set success flag
+                $registrationSuccess = true;
+
+                // If registration is successful, send the welcome email
+                if ($registrationSuccess) {
+                  sendWelcomeEmail($firstname, $surname, $username, $email);
+                }
             }
         }
     }
@@ -848,6 +925,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               window.location.href = 'index.php';
             }, 5000); // Redirect after 5 seconds
           </script>
+        <?php elseif (!$registrationsOpen): ?>
+          <p class="registration-kicker"><i class="bi bi-slash-circle"></i> Registrations closed</p>
+          <h1>Entries are now closed</h1>
+          <p class="mb-3">Thanks for the interest in Hendy's Hunches. New player registrations are no longer being accepted.</p>
+          <p class="mb-0">If you already have an account, you can still <a href='index.php'>log in here</a>.</p>
         <?php else: ?>
 
         <p class="registration-kicker"><i class="bi bi-person-plus-fill"></i> New player signup</p>

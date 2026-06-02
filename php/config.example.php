@@ -39,6 +39,7 @@ $hh_finance_config = array (
 );
 
 $hh_runtime_config = array (
+  'registrations_open' => true,
   'no_of_group_fixtures' => 72,
   'no_of_ro32_fixtures' => 16,
   'no_of_ro16_fixtures' => 8,
@@ -131,6 +132,7 @@ $no_of_qf_fixtures = (int) ($hh_runtime_config['no_of_qf_fixtures'] ?? 0);
 $no_of_sf_fixtures = (int) ($hh_runtime_config['no_of_sf_fixtures'] ?? 0);
 $no_of_final_fixtures = (int) ($hh_runtime_config['no_of_final_fixtures'] ?? 0);
 $no_of_total_fixtures = (int) ($hh_runtime_config['no_of_total_fixtures'] ?? 0);
+$registrations_open = !empty($hh_runtime_config['registrations_open']);
 $preview_today_override = trim((string) ($hh_preview_config['today_override'] ?? ''));
 
 $no_of_knockout_fixtures = $no_of_ro32_fixtures + $no_of_ro16_fixtures + $no_of_qf_fixtures + $no_of_sf_fixtures + $no_of_final_fixtures;
