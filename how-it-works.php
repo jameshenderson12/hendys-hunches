@@ -4,6 +4,7 @@ $page_title = 'How It Works';
 
 require_once __DIR__ . '/php/auth.php';
 hh_require_login('index.php');
+require_once __DIR__ . '/php/email.php';
 
 $userGuideState = [
     'registered' => true,
@@ -12,6 +13,7 @@ $userGuideState = [
     'predictions_submitted' => null,
     'results_live' => null,
 ];
+$guidePaymentUrl = '';
 
 if (file_exists(__DIR__ . '/php/db-connect.php')) {
     include __DIR__ . '/php/db-connect.php';
@@ -54,6 +56,12 @@ if (file_exists(__DIR__ . '/php/db-connect.php')) {
     }
 }
 
+$guidePaymentUrl = hh_mail_signup_url(
+    (string) ($signup_url ?? ''),
+    (string) ($_SESSION['firstname'] ?? ''),
+    (string) ($_SESSION['surname'] ?? '')
+);
+
 function hh_status_badge(?bool $state, string $doneText = 'Done', string $pendingText = 'To do', string $neutralText = 'Waiting'): string
 {
     if ($state === true) {
@@ -95,37 +103,35 @@ include 'php/navigation.php';
                     <li>
                         <div>
                             <strong>Register to play</strong>
-                            <span>Your player account is in the game.</span>
+                            <span>Your account is all set and ready for the tournament.</span>
                         </div>
                         <?= hh_status_badge($userGuideState['registered']) ?>
                     </li>
                     <li>
                         <div>
-                            <strong>Login with your username and password</strong>
-                            <span>You are currently signed in.</span>
+                            <strong>Sign in and head to your dashboard</strong>
+                            <span>You are signed in right now, so you can move straight into predictions and rankings.</span>
                         </div>
                         <?= hh_status_badge($userGuideState['logged_in']) ?>
                     </li>
                     <li>
                         <div>
-                            <strong>Pay the entry fee</strong>
-                            <span>Checked from the live <code>haspaid</code> value on your player record.</span>
+                            <strong>Pay your £10 entry fee</strong>
+                            <span>
+                                This confirms your place in the game.
+                                <?php if ($guidePaymentUrl !== '' && $userGuideState['has_paid'] !== true) : ?>
+                                    <a href="<?= htmlspecialchars($guidePaymentUrl, ENT_QUOTES) ?>" target="_blank" rel="noopener noreferrer">Pay £10 entry fee</a>.
+                                <?php endif; ?>
+                            </span>
                         </div>
-                        <?= hh_status_badge($userGuideState['has_paid'], 'Paid', 'Needs action', 'Awaiting check') ?>
+                        <?= hh_status_badge($userGuideState['has_paid'], 'Done', 'Needs action', 'Awaiting check') ?>
                     </li>
                     <li>
                         <div>
-                            <strong>Submit your predictions</strong>
-                            <span>Based on whether your group-stage predictions have been saved yet.</span>
+                            <strong>Save your first round of predictions</strong>
+                            <span>Fill in every match in the round before your first save, then come back and tweak individual scores until the deadline.</span>
                         </div>
-                        <?= hh_status_badge($userGuideState['predictions_submitted'], 'Submitted', 'Not yet', 'Awaiting setup') ?>
-                    </li>
-                    <li>
-                        <div>
-                            <strong>Watch the rankings come alive</strong>
-                            <span>This switches on once recorded match scores start appearing in the schedule.</span>
-                        </div>
-                        <?= hh_status_badge($userGuideState['results_live'], 'Live now', 'Coming soon', 'Awaiting setup') ?>
+                        <?= hh_status_badge($userGuideState['predictions_submitted'], 'Done', 'Not yet', 'Awaiting') ?>
                     </li>
                 </ol>
             </div>

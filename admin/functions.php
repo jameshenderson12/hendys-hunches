@@ -1157,6 +1157,17 @@ include '../php/navigation.php';
         display: grid;
         gap: 18px;
       }
+      .admin-shell > *,
+      .admin-grid > *,
+      .admin-grid--two > *,
+      .admin-grid--three > *,
+      .admin-kpi > *,
+      .admin-audit-metrics > *,
+      .admin-score-summary > *,
+      .admin-editor-grid > *,
+      .page-hero > * {
+        min-width: 0;
+      }
       .admin-grid--two {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
@@ -1494,6 +1505,20 @@ include '../php/navigation.php';
         .admin-score-summary,
         .admin-editor-grid {
           grid-template-columns: 1fr;
+        }
+      }
+      @media (max-width: 575.98px) {
+        .admin-shell {
+          width: min(100%, calc(100% - 16px));
+          margin: 12px auto 22px;
+        }
+        .admin-card {
+          padding: 16px;
+        }
+        .admin-actions .btn,
+        .page-hero__actions .btn {
+          width: 100%;
+          justify-content: center;
         }
       }
     </style>

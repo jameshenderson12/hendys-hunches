@@ -121,6 +121,15 @@ include '../php/navigation.php';
   gap: 18px;
 }
 
+.results-shell > *,
+.results-panel > *,
+.results-toolbar > *,
+.results-toolbar__copy > *,
+.results-toolbar__actions > *,
+.page-hero > * {
+  min-width: 0;
+}
+
 .results-panel {
   padding: 18px;
   border: 1px solid var(--hh-line);
@@ -285,6 +294,25 @@ include '../php/navigation.php';
 
   .results-toolbar__actions {
     width: 100%;
+  }
+}
+@media (max-width: 575.98px) {
+  .results-shell.section {
+    padding-inline: 8px;
+  }
+
+  .results-panel {
+    padding: 16px;
+  }
+
+  .results-toolbar {
+    padding: 12px;
+  }
+
+  .results-toolbar__actions .btn,
+  .page-hero__actions .btn {
+    width: 100%;
+    justify-content: center;
   }
 }
 </style>

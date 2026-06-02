@@ -633,6 +633,13 @@ include '../php/navigation.php';
         display: grid;
         gap: 18px;
       }
+      .admin-grid > *,
+      .admin-grid--two > *,
+      .admin-shell > *,
+      .page-hero > *,
+      .config-summary > * {
+        min-width: 0;
+      }
       .admin-grid--two {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
@@ -685,6 +692,15 @@ include '../php/navigation.php';
       @media (max-width: 991px) {
         .admin-grid--two {
           grid-template-columns: 1fr;
+        }
+      }
+      @media (max-width: 575.98px) {
+        .admin-shell {
+          width: min(100%, calc(100% - 16px));
+          margin: 12px auto 22px;
+        }
+        .admin-card {
+          padding: 16px;
         }
       }
     </style>

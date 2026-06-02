@@ -4,6 +4,7 @@ $page_title = 'Dashboard';
 
 require_once __DIR__ . '/php/auth.php';
 require_once __DIR__ . '/php/config.php';
+require_once __DIR__ . '/php/email.php';
 require_once __DIR__ . '/php/flags.php';
 hh_require_login('index.php');
 
@@ -593,7 +594,7 @@ $latestSignupsResult = mysqli_query(
     "SELECT id, firstname, surname, avatar, location, faveteam, signupdate
      FROM live_user_information
      ORDER BY signupdate DESC, id DESC
-     LIMIT 5"
+     LIMIT 6"
 );
 if ($latestSignupsResult instanceof mysqli_result) {
     while ($row = mysqli_fetch_assoc($latestSignupsResult)) {
@@ -1066,7 +1067,16 @@ if (!empty($recentForm)) {
 $dashboardLayoutCards = [
     'player_card' => [
         'label' => 'Player Card',
-        'markup' => hh_dashboard_capture(function () use ($currentUser) { ?>
+        'markup' => hh_dashboard_capture(function () use ($currentUser, $signup_url) {
+            $dashboardPaymentUrl = '';
+            if (!empty($signup_url) && is_array($currentUser)) {
+                $dashboardPaymentUrl = hh_mail_signup_url(
+                    (string) $signup_url,
+                    (string) ($currentUser['firstname'] ?? ''),
+                    (string) ($currentUser['surname'] ?? '')
+                );
+            }
+        ?>
             <article class="dashboard-player-card">
                 <div class="dashboard-player-card__kit">
                     <img src="<?= htmlspecialchars((string) ($currentUser['avatar'] ?? 'img/hh-icon-2024.png')) ?>" alt="<?= htmlspecialchars((string) ($currentUser['name'] ?? 'Player')) ?> football strip avatar">
@@ -1080,6 +1090,11 @@ $dashboardLayoutCards = [
                             · signed up <?= htmlspecialchars(date('j F Y', strtotime((string) $currentUser['signupdate']))) ?>
                         <?php endif; ?>
                     </p>
+                    <?php if (($currentUser['haspaid'] ?? 'No') !== 'Yes' && $dashboardPaymentUrl !== '') : ?>
+                        <p class="dashboard-note mb-0">
+                            <a href="<?= htmlspecialchars($dashboardPaymentUrl, ENT_QUOTES) ?>" target="_blank" rel="noopener noreferrer">Pay £10 entry fee</a>
+                        </p>
+                    <?php endif; ?>
                     <div class="dashboard-player-stats">
                         <span><strong><?= htmlspecialchars((string) ($currentUser['rank_label'] ?? 'N/A')) ?></strong>Rank</span>
                         <span><strong><?= htmlspecialchars((string) ($currentUser['points_total'] ?? 0)) ?></strong>Points</span>

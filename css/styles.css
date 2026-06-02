@@ -5404,6 +5404,18 @@ body.tour-active {
   color: var(--hh-muted);
 }
 
+.dashboard-note a,
+.guide-checklist a {
+  color: var(--hh-purple-dark);
+  font-weight: 800;
+  text-decoration: underline;
+}
+
+.dashboard-note a:hover,
+.guide-checklist a:hover {
+  color: var(--hh-green-dark);
+}
+
 .dashboard-panel {
   min-height: 100%;
   padding: 22px;

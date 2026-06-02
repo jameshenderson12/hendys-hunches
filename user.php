@@ -221,6 +221,9 @@ $fullName = ucfirst((string) $profile['firstname']) . ' ' . ucfirst((string) $pr
 $tournwinner = (string) ($profile['tournwinner'] ?? '');
 $currentPosition = $hasRecordedResults ? hh_ordinal_position((int) ($profile['currpos'] ?? 0)) : '-';
 $moveMeta = hh_user_move_meta((int) ($profile['lastpos'] ?? 0), (int) ($profile['currpos'] ?? 0));
+if (!$hasRecordedResults) {
+    $moveMeta = ['label' => '-'];
+}
 $selectedStage = $stageContexts[$selectedStageKey] ?? null;
 $visibleFixtures = [];
 $selectedStagePoints = (int) (($predictionRows[$selectedStageKey]['points_total'] ?? 0));
