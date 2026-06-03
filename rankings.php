@@ -17,7 +17,7 @@ include "php/navigation.php";
       <div>
         <p class="eyebrow">Leaderboard</p>
         <h1>Rankings</h1>
-        <p class="lead mb-0">Check the table, chase the pack and see who made the final prize spots.</p>
+        <p class="lead mb-0">Check the table. Chase the pack.</p>
       </div>
       <div class="page-hero__actions page-hero__actions--search">
         <div id="rankingsSearchMount" class="rankings-hero-search"></div>
@@ -43,6 +43,7 @@ $(document).ready(function() {
     // Initialise DataTables
     const rankingsTable = $('#rankingsTable').DataTable({
         "responsive": true,
+        "autoWidth": false,
         "paging": false,  // Enable paging to use the lengthMenu
         "searching": true,
         "info": false,  // Disable the "Showing X to Y of Z entries" info
@@ -60,6 +61,8 @@ $(document).ready(function() {
     const searchNode = $('#rankingsTable').closest('.dt-container').find('.dt-search').first().detach();
     const searchLabel = searchNode.find('label').first();
     const searchInput = searchNode.find('input').first();
+    const tableHeadings = $('#rankingsTable thead th');
+    const tableContainer = $('#rankingsTable').closest('.dt-container');
 
     searchInput.attr('placeholder', 'Enter a player\'s name');
     searchInput.attr('aria-label', 'Enter a player\'s name');
@@ -72,6 +75,44 @@ $(document).ready(function() {
     }
 
     $('#rankingsSearchMount').append(searchNode);
+
+    tableContainer.children('.row').each(function() {
+      const row = $(this);
+      const hasControls = row.find('.dt-search, .dt-length, .dt-info, .dt-paging').length > 0;
+      const hasTable = row.find('table, .dt-layout-table, .table-responsive').length > 0;
+      const hasVisibleText = $.trim(row.text()).length > 0;
+
+      if (!hasControls && !hasTable && !hasVisibleText) {
+        row.addClass('rankings-layout-row--empty');
+      }
+    });
+
+    const syncRankingsHeadings = function() {
+      const compact = window.matchMedia('(max-width: 575.98px)').matches;
+      const labels = compact ? ['RK', 'MV', 'PLAYER', 'PTS'] : ['RANK', 'MOVE', 'PLAYER', 'POINTS'];
+
+      tableHeadings.each(function(index) {
+        if (labels[index]) {
+          $(this).text(labels[index]);
+        }
+      });
+    };
+
+    const refreshRankingsLayout = function() {
+      window.requestAnimationFrame(function() {
+        syncRankingsHeadings();
+        rankingsTable.columns.adjust();
+        if (rankingsTable.responsive) {
+          rankingsTable.responsive.recalc();
+        }
+      });
+    };
+
+    $(window).on('resize orientationchange pageshow', function() {
+      window.setTimeout(refreshRankingsLayout, 120);
+    });
+
+    refreshRankingsLayout();
 });
 
 </script>

@@ -109,20 +109,66 @@ if (!function_exists('hh_dashboard_capture')) {
     }
 }
 
+if (!function_exists('hh_dashboard_build_badges')) {
+    function hh_dashboard_build_badges(array $stats): array
+    {
+        return [
+            ['token' => 'IN', 'image' => 'img/badges/predictions-in.png', 'title' => 'Predictions In', 'description' => 'Save your first stage of predictions.', 'earned' => !empty($stats['has_predictions'])],
+            ['token' => 'PT', 'image' => 'img/badges/on-the-board.png', 'title' => 'On The Board', 'description' => 'Pick up your first points.', 'earned' => ((int) ($stats['points_total'] ?? 0)) > 0],
+            ['token' => '7', 'image' => 'img/badges/perfect-seven.png', 'title' => 'Perfect Seven', 'description' => 'Land your first exact 7-pointer.', 'earned' => ((int) ($stats['perfect_predictions'] ?? 0)) > 0],
+            ['token' => 'TH', 'image' => 'img/badges/thread-starter.png', 'title' => 'Thread Starter', 'description' => 'Post your first Fan Zone thread.', 'earned' => ((int) ($stats['thread_count'] ?? 0)) > 0],
+            ['token' => 'RP', 'image' => 'img/badges/in-the-replies.png', 'title' => 'In The Replies', 'description' => 'Reply to a Fan Zone thread.', 'earned' => ((int) ($stats['reply_count'] ?? 0)) > 0],
+            ['token' => 'PV', 'image' => 'img/badges/poll-voter.png', 'title' => 'Poll Voter', 'description' => 'Cast your first vote in a live poll.', 'earned' => ((int) ($stats['poll_votes'] ?? 0)) > 0],
+            ['token' => '50', 'image' => 'img/badges/50-club.png', 'title' => '50 Club', 'description' => 'Reach 50 total points.', 'earned' => ((int) ($stats['points_total'] ?? 0)) >= 50],
+            ['token' => '100', 'image' => 'img/badges/100-club.png', 'title' => '100 Club', 'description' => 'Reach 100 total points.', 'earned' => ((int) ($stats['points_total'] ?? 0)) >= 100],
+            ['token' => '150', 'image' => 'img/badges/150-club.png', 'title' => '150 Club', 'description' => 'Reach 150 total points.', 'earned' => ((int) ($stats['points_total'] ?? 0)) >= 150],
+            ['token' => '200', 'image' => 'img/badges/200-club.png', 'title' => '200 Club', 'description' => 'Reach 200 total points.', 'earned' => ((int) ($stats['points_total'] ?? 0)) >= 200],
+        ];
+    }
+}
+
+if (!function_exists('hh_dashboard_layout_width_options')) {
+    function hh_dashboard_layout_width_options(): array
+    {
+        return [
+            'small' => 'Small (25%)',
+            'normal' => 'Normal (33%)',
+            'half' => 'Half (50%)',
+            'large' => 'Large (67%)',
+            'full' => 'Full (100%)',
+        ];
+    }
+}
+
+if (!function_exists('hh_dashboard_normalize_layout_width')) {
+    function hh_dashboard_normalize_layout_width(?string $width, string $fallback = 'normal'): string
+    {
+        $width = strtolower(trim((string) $width));
+        if ($width === 'wide') {
+            $width = 'large';
+        }
+
+        $valid = hh_dashboard_layout_width_options();
+
+        return array_key_exists($width, $valid) ? $width : $fallback;
+    }
+}
+
 if (!function_exists('hh_dashboard_layout_defaults')) {
     function hh_dashboard_layout_defaults(): array
     {
         return [
             'player_card' => ['label' => 'Player Card', 'width' => 'normal', 'visible' => 1],
+            'badges_earned' => ['label' => 'Badges Earned', 'width' => 'normal', 'visible' => 1],
             'latest_signups' => ['label' => 'Latest Signups', 'width' => 'normal', 'visible' => 1],
-            'todays_fixtures' => ['label' => "Today's Fixtures", 'width' => 'wide', 'visible' => 1],
-            'form' => ['label' => 'Form', 'width' => 'wide', 'visible' => 1],
+            'todays_fixtures' => ['label' => "Today's Fixtures", 'width' => 'large', 'visible' => 1],
+            'form' => ['label' => 'Form', 'width' => 'large', 'visible' => 1],
             'points_by_stage' => ['label' => 'Points by Stage', 'width' => 'normal', 'visible' => 1],
             'accuracy_breakdown' => ['label' => 'Accuracy Breakdown', 'width' => 'normal', 'visible' => 1],
             'winner_picks' => ['label' => 'Nations Supported by Players', 'width' => 'normal', 'visible' => 1],
             'biggest_movers' => ['label' => 'Biggest Movers', 'width' => 'normal', 'visible' => 1],
-            'mini_league' => ['label' => 'Mini-League', 'width' => 'wide', 'visible' => 1],
-            'game_pulse' => ['label' => 'Game Pulse', 'width' => 'wide', 'visible' => 1],
+            'mini_league' => ['label' => 'Mini-League', 'width' => 'large', 'visible' => 1],
+            'game_pulse' => ['label' => 'Game Pulse', 'width' => 'large', 'visible' => 1],
         ];
     }
 }
@@ -179,7 +225,7 @@ if (!function_exists('hh_dashboard_load_layout')) {
                 continue;
             }
 
-            $layout[$cardKey]['width'] = in_array(($row['card_width'] ?? ''), ['normal', 'wide'], true) ? (string) $row['card_width'] : $layout[$cardKey]['width'];
+            $layout[$cardKey]['width'] = hh_dashboard_normalize_layout_width((string) ($row['card_width'] ?? ''), (string) $layout[$cardKey]['width']);
             $layout[$cardKey]['visible'] = (int) ($row['is_visible'] ?? 1) === 1 ? 1 : 0;
             $layout[$cardKey]['sort_order'] = max(1, (int) ($row['sort_order'] ?? $layout[$cardKey]['sort_order']));
         }
@@ -233,7 +279,7 @@ if (!function_exists('hh_dashboard_save_layout')) {
 
             foreach ($resolvedOrder as $index => $cardKey) {
                 $sortOrder = $index + 1;
-                $width = in_array(($widths[$cardKey] ?? ''), ['normal', 'wide'], true) ? (string) $widths[$cardKey] : (string) $defaults[$cardKey]['width'];
+                $width = hh_dashboard_normalize_layout_width((string) ($widths[$cardKey] ?? ''), (string) $defaults[$cardKey]['width']);
                 $isVisible = !empty($visibleMap[$cardKey]) ? 1 : 0;
                 mysqli_stmt_bind_param($statement, 'sisii', $cardKey, $sortOrder, $width, $isVisible, $updatedBy);
                 mysqli_stmt_execute($statement);
@@ -346,6 +392,15 @@ $currentUser = null;
 $miniLeagueRows = [];
 $momentumRows = [];
 $prizeRace = null;
+$badgeStats = [
+    'has_predictions' => false,
+    'points_total' => 0,
+    'perfect_predictions' => 0,
+    'thread_count' => 0,
+    'reply_count' => 0,
+    'poll_votes' => 0,
+];
+$dashboardBadges = [];
 $pulseStats = [
     'players' => 0,
     'paid' => 0,
@@ -734,6 +789,13 @@ foreach ($stageWindows as $stageKey => $window) {
 }
 
 foreach ($stageWindows as $window) {
+    if (!empty($window['submitted'])) {
+        $badgeStats['has_predictions'] = true;
+        break;
+    }
+}
+
+foreach ($stageWindows as $window) {
     if ($window['status'] === 'open') {
         $deadlineLabel = $window['closes_at'] instanceof DateTimeImmutable
             ? $window['closes_at']->setTimezone(new DateTimeZone(date_default_timezone_get()))->format('D j M H:i')
@@ -844,6 +906,54 @@ if ($currentUser) {
     }
 
     $closestRivalSummary['count'] = count($miniLeagueRows);
+}
+
+if ($currentUser) {
+    $badgeStats['points_total'] = (int) ($currentUser['points_total'] ?? 0);
+}
+
+if ($sessionUserId > 0 && hh_dashboard_table_exists($con, 'live_fanzone_posts')) {
+    $postCountStatement = mysqli_prepare(
+        $con,
+        "SELECT
+            SUM(CASE WHEN parent_id IS NULL THEN 1 ELSE 0 END) AS thread_total,
+            SUM(CASE WHEN parent_id IS NOT NULL THEN 1 ELSE 0 END) AS reply_total
+         FROM live_fanzone_posts
+         WHERE username = ? AND is_deleted = 0"
+    );
+
+    if ($postCountStatement) {
+        $sessionUsername = (string) ($_SESSION['username'] ?? '');
+        mysqli_stmt_bind_param($postCountStatement, 's', $sessionUsername);
+        mysqli_stmt_execute($postCountStatement);
+        $postCountResult = mysqli_stmt_get_result($postCountStatement);
+        if ($postCountResult instanceof mysqli_result) {
+            $postCountRow = mysqli_fetch_assoc($postCountResult) ?: [];
+            $badgeStats['thread_count'] = (int) ($postCountRow['thread_total'] ?? 0);
+            $badgeStats['reply_count'] = (int) ($postCountRow['reply_total'] ?? 0);
+            mysqli_free_result($postCountResult);
+        }
+        mysqli_stmt_close($postCountStatement);
+    }
+}
+
+if ($sessionUserId > 0 && hh_dashboard_table_exists($con, 'live_poll_votes')) {
+    $voteCountStatement = mysqli_prepare(
+        $con,
+        "SELECT COUNT(*) AS total_votes FROM live_poll_votes WHERE user_id = ?"
+    );
+
+    if ($voteCountStatement) {
+        mysqli_stmt_bind_param($voteCountStatement, 'i', $sessionUserId);
+        mysqli_stmt_execute($voteCountStatement);
+        $voteCountResult = mysqli_stmt_get_result($voteCountStatement);
+        if ($voteCountResult instanceof mysqli_result) {
+            $voteCountRow = mysqli_fetch_assoc($voteCountResult) ?: [];
+            $badgeStats['poll_votes'] = (int) ($voteCountRow['total_votes'] ?? 0);
+            mysqli_free_result($voteCountResult);
+        }
+        mysqli_stmt_close($voteCountStatement);
+    }
 }
 
 $momentumRows = $rankingRows;
@@ -1064,6 +1174,10 @@ if (!empty($recentForm)) {
     }
 }
 
+$badgeStats['perfect_predictions'] = (int) ($accuracy[0]['value'] ?? 0);
+$dashboardBadges = hh_dashboard_build_badges($badgeStats);
+$earnedBadgeCount = count(array_filter($dashboardBadges, static fn(array $badge): bool => !empty($badge['earned'])));
+
 $dashboardLayoutCards = [
     'player_card' => [
         'label' => 'Player Card',
@@ -1106,6 +1220,34 @@ $dashboardLayoutCards = [
                         <div><dt>Location</dt><dd><?= htmlspecialchars((string) ($currentUser['location'] ?? 'Not set')) ?></dd></div>
                     </dl>
                 </div>
+            </article>
+        <?php }),
+    ],
+    'badges_earned' => [
+        'label' => 'Badges Earned',
+        'markup' => hh_dashboard_capture(function () use ($dashboardBadges, $earnedBadgeCount) { ?>
+            <article class="dashboard-panel">
+                <div class="dashboard-panel__header">
+                    <div><p class="eyebrow">Achievements</p><h2>Badges Earned</h2></div>
+                    <span class="dashboard-pill"><?= (int) $earnedBadgeCount ?> / <?= count($dashboardBadges) ?></span>
+                </div>
+                <div class="badge-grid">
+                    <?php foreach ($dashboardBadges as $badge) : ?>
+                        <article class="badge-card<?= !empty($badge['earned']) ? ' is-earned' : ' is-locked' ?>">
+                            <div class="badge-card__token">
+                                <img src="<?= htmlspecialchars((string) ($badge['image'] ?? '')) ?>" alt="<?= htmlspecialchars((string) ($badge['title'] ?? 'Badge artwork')) ?>">
+                            </div>
+                            <div class="badge-card__body">
+                                <div class="badge-card__title-row">
+                                    <h3><?= htmlspecialchars((string) $badge['title']) ?></h3>
+                                    <span class="badge-card__state"><?= !empty($badge['earned']) ? 'Earned' : 'Locked' ?></span>
+                                </div>
+                                <p><?= htmlspecialchars((string) $badge['description']) ?></p>
+                            </div>
+                        </article>
+                    <?php endforeach; ?>
+                </div>
+                <p class="dashboard-note mb-0">These unlock from predictions, points and Fan Zone activity. More can join the set once the game starts moving.</p>
             </article>
         <?php }),
     ],
@@ -1363,6 +1505,7 @@ $dashboardLayoutCards = [
 ];
 
 $dashboardLayout = hh_dashboard_load_layout($con);
+$dashboardWidthOptions = hh_dashboard_layout_width_options();
 
 mysqli_close($con);
 
@@ -1439,14 +1582,14 @@ $formChartJson = json_encode([
                 if (!isset($dashboardLayoutCards[$cardKey])) {
                     continue;
                 }
-                $cardWidth = (string) ($layoutCard['width'] ?? 'normal');
+                $cardWidth = hh_dashboard_normalize_layout_width((string) ($layoutCard['width'] ?? 'normal'));
                 $cardVisible = (int) ($layoutCard['visible'] ?? 1) === 1;
                 if (!$dashboardEditMode && !$cardVisible) {
                     continue;
                 }
                 ?>
                 <section
-                    class="dashboard-layout-card<?= $cardWidth === 'wide' ? ' dashboard-layout-card--wide' : '' ?><?= !$cardVisible ? ' is-hidden-card' : '' ?><?= $dashboardEditMode ? ' is-editable' : '' ?>"
+                    class="dashboard-layout-card dashboard-layout-card--<?= htmlspecialchars($cardWidth, ENT_QUOTES) ?><?= !$cardVisible ? ' is-hidden-card' : '' ?><?= $dashboardEditMode ? ' is-editable' : '' ?>"
                     data-card-key="<?= htmlspecialchars($cardKey, ENT_QUOTES) ?>"
                     data-card-width="<?= htmlspecialchars($cardWidth, ENT_QUOTES) ?>"
                     data-card-visible="<?= $cardVisible ? '1' : '0' ?>"
@@ -1460,8 +1603,9 @@ $formChartJson = json_encode([
                             <label>
                                 <span>Width</span>
                                 <select data-layout-width>
-                                    <option value="normal"<?= $cardWidth === 'normal' ? ' selected' : '' ?>>Normal</option>
-                                    <option value="wide"<?= $cardWidth === 'wide' ? ' selected' : '' ?>>Wide</option>
+                                    <?php foreach ($dashboardWidthOptions as $widthValue => $widthLabel) : ?>
+                                        <option value="<?= htmlspecialchars($widthValue, ENT_QUOTES) ?>"<?= $cardWidth === $widthValue ? ' selected' : '' ?>><?= htmlspecialchars($widthLabel) ?></option>
+                                    <?php endforeach; ?>
                                 </select>
                             </label>
                             <label class="dashboard-layout-card__visibility">
@@ -1712,6 +1856,7 @@ $formChartJson = json_encode([
     const saveForm = document.getElementById('dashboardLayoutSaveForm');
     const inputsWrap = document.getElementById('dashboardLayoutInputs');
     const editMode = layout ? layout.getAttribute('data-edit-mode') === '1' : false;
+    const widthClasses = ['small', 'normal', 'half', 'large', 'full'].map((name) => `dashboard-layout-card--${name}`);
 
     if (!layout || !editMode) {
       return;
@@ -1760,7 +1905,8 @@ $formChartJson = json_encode([
       if (widthSelect) {
         widthSelect.addEventListener('change', () => {
           card.dataset.cardWidth = widthSelect.value;
-          card.classList.toggle('dashboard-layout-card--wide', widthSelect.value === 'wide');
+          card.classList.remove(...widthClasses);
+          card.classList.add(`dashboard-layout-card--${widthSelect.value}`);
         });
       }
 

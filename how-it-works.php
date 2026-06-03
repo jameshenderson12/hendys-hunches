@@ -84,7 +84,7 @@ include 'php/navigation.php';
         <div>
             <p class="eyebrow">Game guide</p>
             <h1>How it all works</h1>
-            <p class="lead mb-0">A clearer walkthrough of the game, the menu, and what your next step looks like right now.</p>
+            <p class="lead mb-0">A detailed walkthrough of the game and any initial actions to take.</p>
         </div>
         <div class="page-hero__actions">
             <button class="btn btn-light guide-tour-launch" type="button" id="launch-site-tour"><i class="bi bi-signpost-split"></i> Start site tour</button>

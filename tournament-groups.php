@@ -219,7 +219,7 @@ mysqli_close($con);
         <div>
             <p class="eyebrow">Competition</p>
             <h1>Tournament Groups</h1>
-            <p class="lead mb-0">Live group tables generated directly from the fixture schedule and recorded scores.</p>
+            <p class="lead mb-0">Live group tables generated from <?= htmlspecialchars($GLOBALS['competition']) ?> recorded results.</p>
         </div>
         <div class="page-hero__actions">
             <a class="btn btn-primary" href="tournament-knockouts.php"><i class="bi bi-diagram-3"></i> Knockouts</a>

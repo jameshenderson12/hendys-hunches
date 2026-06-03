@@ -618,7 +618,7 @@ include "php/navigation.php";
         <div>
             <p class="eyebrow">Supporters' corner</p>
             <h1>Fan Zone</h1>
-            <p class="lead mb-0">A place for matchday chatter, hot takes, and the little bits of tournament fun that make the game feel alive.</p>
+            <p class="lead mb-0">A place for matchday chatter, hot takes, and the little bits of tournament fun.</p>
         </div>
         <div class="page-hero__actions">
             <a class="btn btn-primary" href="#fanzoneBoard"><i class="bi bi-chat-dots"></i> Message board</a>
