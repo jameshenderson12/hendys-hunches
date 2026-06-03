@@ -1322,8 +1322,11 @@ function displayRankingsEq5() {
         echo "<td><span class=''>" . $displayRank . "</span></td>";
 		echo "<td><span class=''>" . $move . "</span></td>";		
         $playerMeta = trim((string) ($row["location"] ?? ''));
-        if ($playerMeta === '') {
+        if ($playerMeta === '' || strcasecmp($playerMeta, 'Prefer Not To Say') === 0) {
             $playerMeta = trim((string) ($row["faveteam"] ?? ''));
+        }
+        if ($playerMeta === '' || strcasecmp($playerMeta, 'Prefer Not To Say') === 0) {
+            $playerMeta = '-';
         }
 
         echo "<td>"
