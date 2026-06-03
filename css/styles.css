@@ -3754,6 +3754,16 @@ body.tour-active {
   gap: 18px;
 }
 
+.rankings-page > *,
+.rankings-panel > *,
+.rankings-panel .table-responsive > *,
+.rankings-panel .dt-container,
+.rankings-panel .dt-container > *,
+.rankings-hero-search,
+.rankings-hero-search > * {
+  min-width: 0;
+}
+
 .rankings-page__notice {
   display: flex;
   align-items: center;
@@ -6578,6 +6588,69 @@ body.tour-active {
   .rankings-panel .dt-search {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .rankings-panel .dt-search input {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .rankings-panel #rankingsTable {
+    width: 100% !important;
+    table-layout: fixed;
+  }
+
+  .rankings-panel #rankingsTable th,
+  .rankings-panel #rankingsTable td {
+    padding: 0.72rem 0.42rem;
+    font-size: 0.9rem;
+  }
+
+  .rankings-panel #rankingsTable th:nth-child(1),
+  .rankings-panel #rankingsTable td:nth-child(1) {
+    width: 48px;
+  }
+
+  .rankings-panel #rankingsTable th:nth-child(2),
+  .rankings-panel #rankingsTable td:nth-child(2) {
+    width: 58px;
+  }
+
+  .rankings-panel #rankingsTable th:nth-child(4),
+  .rankings-panel #rankingsTable td:nth-child(4) {
+    width: 74px;
+  }
+
+  .rankings-player-cell {
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .rankings-panel #rankingsTable img {
+    width: 24px;
+    margin-right: 0;
+    flex: 0 0 auto;
+  }
+
+  .rankings-player-cell__text > div {
+    gap: 4px;
+  }
+
+  .rankings-player-cell__text a {
+    overflow-wrap: anywhere;
+  }
+
+  .rankings-player-cell__text small {
+    font-size: 0.72rem;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+  }
+
+  .rankings-points-pill {
+    min-width: 48px;
+    min-height: 30px;
+    padding: 0.24rem 0.5rem;
+    font-size: 0.84rem;
   }
 
 .rankings-you-badge {
