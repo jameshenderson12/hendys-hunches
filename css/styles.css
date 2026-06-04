@@ -5768,8 +5768,8 @@ body.tour-active {
 .badge-card__token {
   display: grid;
   place-items: center;
-  width: 78px;
-  height: 78px;
+  width: 100px;
+  height: 100px;
   overflow: hidden;
   border: 1px solid rgba(143, 102, 216, 0.18);
   border-radius: 8px;
@@ -5789,7 +5789,7 @@ body.tour-active {
 
 .badge-card.is-locked .badge-card__token img {
   filter: grayscale(1) saturate(0.2);
-  opacity: 0.78;
+  opacity: 0.1;
 }
 
 .badge-card__body {
