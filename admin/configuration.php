@@ -342,6 +342,35 @@ if (!function_exists('hh_effective_today_label')) {
     }
 }
 
+if (!function_exists('hh_manual_stage_window_overrides')) {
+    function hh_manual_stage_window_overrides(): array
+    {
+        $timezone = new DateTimeZone('Europe/London');
+        $utc = new DateTimeZone('UTC');
+        $definitions = [
+            'ro32' => ['open' => '2026-06-25 09:00', 'close' => '2026-06-28 18:00'],
+            'ro16' => ['open' => '2026-06-30 08:00', 'close' => '2026-07-04 16:00'],
+            'qf' => ['open' => '2026-07-05 08:00', 'close' => '2026-07-09 19:00'],
+            'sf' => ['open' => '2026-07-11 08:00', 'close' => '2026-07-14 18:00'],
+            'final' => ['open' => '2026-07-16 08:00', 'close' => '2026-07-18 20:00'],
+        ];
+
+        $overrides = [];
+        foreach ($definitions as $key => $window) {
+            $open = DateTimeImmutable::createFromFormat('Y-m-d H:i', $window['open'], $timezone);
+            $close = DateTimeImmutable::createFromFormat('Y-m-d H:i', $window['close'], $timezone);
+            if ($open instanceof DateTimeImmutable && $close instanceof DateTimeImmutable) {
+                $overrides[$key] = [
+                    'opens_at' => $open->setTimezone($utc),
+                    'closes_at' => $close->setTimezone($utc),
+                ];
+            }
+        }
+
+        return $overrides;
+    }
+}
+
 if (!function_exists('hh_prediction_stage_windows')) {
     function hh_prediction_stage_windows(mysqli $con): array
     {
@@ -367,6 +396,7 @@ if (!function_exists('hh_prediction_stage_windows')) {
         $effectiveNowUtc = hh_effective_now(new DateTimeZone('UTC'));
         $upcomingThresholdUtc = $effectiveNowUtc->modify('+3 days');
         $fixtureTimezone = new DateTimeZone('Europe/London');
+        $manualOverrides = hh_manual_stage_window_overrides();
 
         foreach ($contexts as $key => $context) {
             $kickoffs = [];
@@ -394,6 +424,11 @@ if (!function_exists('hh_prediction_stage_windows')) {
             $lastKickoff = !empty($kickoffs) ? $kickoffs[count($kickoffs) - 1] : null;
             $opensAt = $key === 'groups' ? null : ($previousLastKickoff instanceof DateTimeImmutable ? $previousLastKickoff->modify('+5 hours') : null);
             $closesAt = $firstKickoff instanceof DateTimeImmutable ? $firstKickoff->modify('-2 hours') : null;
+            $override = $manualOverrides[$key] ?? null;
+            if (is_array($override)) {
+                $opensAt = $override['opens_at'] ?? $opensAt;
+                $closesAt = $override['closes_at'] ?? $closesAt;
+            }
 
             $status = 'pending';
             if ($firstKickoff instanceof DateTimeImmutable) {
