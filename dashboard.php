@@ -123,6 +123,7 @@ if (!function_exists('hh_dashboard_build_badges')) {
             ['token' => '100', 'image' => 'img/badges/100-club.png', 'title' => '100 Club', 'description' => 'Reach 100 total points.', 'earned' => ((int) ($stats['points_total'] ?? 0)) >= 100],
             ['token' => '150', 'image' => 'img/badges/150-club.png', 'title' => '150 Club', 'description' => 'Reach 150 total points.', 'earned' => ((int) ($stats['points_total'] ?? 0)) >= 150],
             ['token' => '200', 'image' => 'img/badges/200-club.png', 'title' => '200 Club', 'description' => 'Reach 200 total points.', 'earned' => ((int) ($stats['points_total'] ?? 0)) >= 200],
+            ['token' => '250', 'image' => 'img/badges/250-club.png', 'title' => '250 Club', 'description' => 'Reach 250 total points.', 'earned' => ((int) ($stats['points_total'] ?? 0)) >= 250],            
         ];
     }
 }

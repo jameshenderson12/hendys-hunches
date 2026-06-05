@@ -6726,7 +6726,10 @@ body.tour-active {
   }
 
   .page-hero {
-    padding: 24px 20px;
+    min-height: 196px;
+    margin-bottom: 15px;
+    gap: 16px;
+    padding: 20px 16px;
   }
 
   .setup-panel,
@@ -6739,7 +6742,37 @@ body.tour-active {
   }
 
   .page-hero h1 {
-    font-size: 2rem;
+    font-size: 1.82rem;
+    line-height: 1.08;
+  }
+
+  .page-hero .lead {
+    font-size: 0.98rem;
+    line-height: 1.36;
+    margin-bottom: 0;
+  }
+
+  .page-hero .eyebrow {
+    margin-bottom: 8px;
+    font-size: 0.72rem;
+  }
+
+  .page-hero__actions .btn {
+    font-size: 0.92rem;
+    padding: 0.58rem 0.82rem;
+  }
+
+  .card-body p,
+  .card-body li,
+  .content-panel p,
+  .content-panel li,
+  .competition-panel p,
+  .competition-panel li,
+  .guide-panel p,
+  .guide-panel li,
+  .overview-stat__meta,
+  .overview-stat__value-note {
+    font-size: 0.96rem;
   }
 
   .guide-tour-launch {
