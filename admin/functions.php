@@ -1531,6 +1531,7 @@ include '../php/navigation.php';
             <p class="lead mb-0">A central place to run the core admin actions that steer the game and keep the data in shape.</p>
         </div>
         <div class="page-hero__actions">
+            <a class="btn btn-primary" href="communications.php"><i class="bi bi-envelope-paper"></i> Communications</a>
             <a class="btn btn-primary" href="results.php"><i class="bi bi-trophy"></i> Record results</a>
             <a class="btn btn-outline-dark" href="../dashboard.php"><i class="bi bi-grid"></i> Back to dashboard</a>
         </div>

@@ -78,7 +78,7 @@ $brand_logo_path = $nav_href('img/hh-logo-2026-simple.png');
 					<li class="nav-item dropdown">
 						<a
 							id="tour-nav-admin"
-							class="nav-link dropdown-toggle<?= in_array($current_page, ['functions.php', 'results.php', 'configuration.php', 'setup-wizard.php']) ? ' active' : '' ?>"
+							class="nav-link dropdown-toggle<?= in_array($current_page, ['functions.php', 'results.php', 'configuration.php', 'communications.php', 'setup-wizard.php']) ? ' active' : '' ?>"
 							href="#"
 							role="button"
 							data-bs-toggle="dropdown"
@@ -88,6 +88,7 @@ $brand_logo_path = $nav_href('img/hh-logo-2026-simple.png');
 							<li><a class="dropdown-item dropdown-item--admin" href="<?= htmlspecialchars($nav_href('overview.php'), ENT_QUOTES) ?>">Application overview</a></li>
 							<li><a class="dropdown-item dropdown-item--admin" href="<?= htmlspecialchars($nav_href('admin/functions.php'), ENT_QUOTES) ?>">Game functions</a></li>
 							<li><a class="dropdown-item dropdown-item--admin" href="<?= htmlspecialchars($nav_href('admin/results.php'), ENT_QUOTES) ?>">Record results</a></li>
+							<li><a class="dropdown-item dropdown-item--admin" href="<?= htmlspecialchars($nav_href('admin/communications.php'), ENT_QUOTES) ?>">Communications</a></li>
 							<li><a class="dropdown-item dropdown-item--admin" href="<?= htmlspecialchars($nav_href('admin/configuration.php'), ENT_QUOTES) ?>">Site configuration</a></li>
 							<li><a class="dropdown-item dropdown-item--admin" href="<?= htmlspecialchars($nav_href('setup/setup-wizard.php'), ENT_QUOTES) ?>">Installation manager</a></li>
 						</ul>

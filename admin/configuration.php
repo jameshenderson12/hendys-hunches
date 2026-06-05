@@ -751,6 +751,7 @@ include '../php/navigation.php';
             <p class="lead mb-0">A place to keep the live runtime values, branding and admin usernames tidy.</p>
         </div>
         <div class="page-hero__actions">
+            <a class="btn btn-primary" href="communications.php"><i class="bi bi-envelope-paper"></i> Communications</a>
             <a class="btn btn-primary" href="functions.php"><i class="bi bi-sliders"></i> Admin functions</a>
             <a class="btn btn-outline-dark" href="../setup/setup-wizard.php"><i class="bi bi-magic"></i> Installation manager</a>
         </div>
