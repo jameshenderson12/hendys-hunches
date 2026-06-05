@@ -298,6 +298,16 @@ include 'php/navigation.php';
   align-items: center;
   gap: 10px;
   font-weight: 800;
+  min-width: 0;
+}
+
+.user-table td,
+.user-table th {
+  min-width: 0;
+}
+
+.user-table .team-line span {
+  min-width: 0;
 }
 
 .user-table .team-line--away {
@@ -353,6 +363,15 @@ include 'php/navigation.php';
   color: var(--hh-purple-dark);
 }
 
+.user-table__pts-head {
+  color: var(--hh-purple-dark);
+  /* background: rgba(143, 102, 216, 0.08); */
+}
+
+.user-table__pts-cell {
+  background: rgba(143, 102, 216, 0.10) !important;
+}
+
 .user-table tfoot td {
   border-top: 2px solid var(--hh-line);
   font-weight: 800;
@@ -365,6 +384,45 @@ include 'php/navigation.php';
 
   .user-page .dashboard-player-card {
     position: static;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .user-table .team-line {
+    gap: 4px;
+    font-size: 0.82rem;
+  }
+
+  .user-table .team-line img {
+    height: 20px;
+    margin-right: 4px;
+  }
+
+  .user-table .team-line--away img {
+    margin-left: 4px;
+    margin-right: 0;
+  }
+
+  .user-table .prediction,
+  .user-table .result {
+    min-width: 44px;
+    padding: 4px 6px;
+    font-size: 0.82rem;
+  }
+
+  .user-table .points {
+    min-width: 38px;
+    padding: 4px 6px;
+    font-size: 0.82rem;
+  }
+
+  .user-table__pts-head {
+    background: rgba(143, 102, 216, 0.1);
+  }
+
+  .user-table tfoot td {
+    padding-left: 0.35rem;
+    padding-right: 0.35rem;
   }
 }
 </style>
@@ -433,12 +491,12 @@ include 'php/navigation.php';
                             <tr>
                                 <th class="d-none d-lg-table-cell">Fixture</th>
                                 <th></th>
-                                <th></th>
+                                <th class="d-none d-lg-table-cell"></th>
                                 <th class="text-center">Pred.</th>
                                 <th class="text-center">Res.</th>
-                                <th class="text-center">Pts</th>
-                                <th></th>
+                                <th class="d-none d-lg-table-cell"></th>
                                 <th class="text-end"></th>
+                                <th class="text-center user-table__pts-head">Pts</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -486,7 +544,6 @@ include 'php/navigation.php';
                                     <td class="d-none d-md-table-cell"></td>
                                     <td class="text-center"><span class="prediction"><?= $predictedHome !== null && $predictedAway !== null ? htmlspecialchars($predictedHome . ' - ' . $predictedAway) : '&mdash;' ?></span></td>
                                     <td class="text-center"><span class="result"><?= $actualHome !== null && $actualAway !== null ? htmlspecialchars($actualHome . ' - ' . $actualAway) : '&mdash;' ?></span></td>
-                                    <td class="text-center"><span class="points"><?= $points !== null ? htmlspecialchars((string) $points) : '&mdash;' ?></span></td>
                                     <td class="d-none d-md-table-cell"></td>
                                     <td>
                                         <div class="team-line team-line--away">
@@ -494,14 +551,15 @@ include 'php/navigation.php';
                                             <img src="<?= htmlspecialchars((string) $fixture['awayteamimg']) ?>" alt="<?= htmlspecialchars((string) $fixture['awayteam']) ?> flag">
                                         </div>
                                     </td>
+                                    <td class="text-center user-table__pts-cell"><span class="points"><?= $points !== null ? htmlspecialchars((string) $points) : '&mdash;' ?></span></td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="5" class="text-end">Stage total</td>
-                                <td class="text-center"><span class="points"><?= htmlspecialchars((string) $selectedStagePoints) ?></span></td>
-                                <td colspan="2"></td>
+                                <td colspan="4" class="text-end d-table-cell d-md-none">Stage total</td>
+                                <td colspan="7" class="text-end d-none d-md-table-cell">Stage total</td>
+                                <td class="text-center user-table__pts-cell"><span class="points"><?= htmlspecialchars((string) $selectedStagePoints) ?></span></td>
                             </tr>
                         </tfoot>
                     </table>

@@ -245,11 +245,18 @@ include 'php/navigation.php';
   align-items: center;
   gap: 10px;
   font-weight: 800;
+  min-width: 0;
 }
 
 .predictions-page .team-cell--away {
   justify-content: flex-end;
   text-align: right;
+}
+
+.predictions-page .table td,
+.predictions-page .table th,
+.predictions-page .team-cell span {
+  min-width: 0;
 }
 
 .predictions-page .team-cell img {
@@ -328,7 +335,7 @@ include 'php/navigation.php';
 }
 
 .predictions-stage-actions .btn {
-  min-width: 180px;
+  min-width: 160px;
 }
 
 @media (max-width: 991.98px) {
@@ -354,6 +361,46 @@ include 'php/navigation.php';
 @media (max-width: 575.98px) {
   .predictions-stage-grid {
     grid-template-columns: 1fr;
+  }
+
+  .predictions-page .table {
+    width: 100%;
+    table-layout: fixed;
+  }
+
+  .predictions-page .table th,
+  .predictions-page .table td {
+    padding: 0.62rem 0.28rem;
+    font-size: 0.86rem;
+  }
+
+  .predictions-page .team-cell {
+    gap: 4px;
+    font-size: 0.82rem;
+  }
+
+  .predictions-page .team-cell img {
+    height: 20px;
+    margin-right: 4px;
+  }
+
+  .predictions-page .team-cell--away img {
+    margin-left: 4px;
+    margin-right: 0;
+  }
+
+  .predictions-page .score-field {
+    max-width: 48px;
+    min-height: 40px;
+    font-size: 0.96rem;
+    padding-left: 0.3rem;
+    padding-right: 0.3rem;
+  }
+
+  .predictions-page .versus-pill {
+    min-width: 34px;
+    min-height: 32px;
+    font-size: 0.82rem;
   }
 }
 </style>
@@ -472,11 +519,11 @@ include 'php/navigation.php';
                                 Matches <?= htmlspecialchars((string) $selectedStage['fixture_start']) ?>-<?= htmlspecialchars((string) $selectedStage['fixture_end']) ?>
                                 <?php if ($stageLastUpdate !== '') : ?> · last saved <?= htmlspecialchars($stageLastUpdate) ?><?php endif; ?>
                             </p>
-                            <p class="predictions-stage-note">To get started, every prediction in this round must be filled in before your first save. After that, you can come back and update individual scores until the window closes.</p>
+                            <p class="predictions-stage-note">Every prediction in this round must be filled in before your first save. After that, you can come back and update individual scores until the stage window closes.</p>
                         </div>
                         <div class="predictions-stage-actions">
                             <button type="button" class="btn btn-secondary populate-scores" <?= ($selectedWindow && !$selectedWindow['is_open']) ? 'disabled' : '' ?>><i class="bi bi-magic"></i> Populate for me</button>
-                            <button type="submit" class="btn btn-primary" name="predictionsSubmitted" <?= ($selectedWindow && !$selectedWindow['is_open']) ? 'disabled' : '' ?>><i class="bi bi-floppy-fill"></i> Save my predictions</button>
+                            <button type="submit" class="btn btn-primary" name="predictionsSubmitted" <?= ($selectedWindow && !$selectedWindow['is_open']) ? 'disabled' : '' ?>><i class="bi bi-floppy-fill"></i> Save</button>
                         </div>
                     </div>
                     <table id="table" class="table table-sm table-striped">
@@ -484,11 +531,11 @@ include 'php/navigation.php';
                             <tr>
                                 <th class="d-none d-lg-table-cell">Fixture</th>
                                 <th></th>
-                                <th></th>
+                                <th class="d-none d-md-table-cell"></th>
                                 <th class="text-center">Pred.</th>
                                 <th class="text-center"></th>
                                 <th class="text-center">Pred.</th>
-                                <th></th>
+                                <th class="d-none d-md-table-cell"></th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -539,6 +586,10 @@ include 'php/navigation.php';
                             <?php endforeach; ?>
                         </tbody>
                     </table>
+                    <div class="predictions-stage-actions" style="margin-top: 12px;">
+                        <button type="button" class="btn btn-secondary populate-scores" <?= ($selectedWindow && !$selectedWindow['is_open']) ? 'disabled' : '' ?>><i class="bi bi-magic"></i> Populate for me</button>
+                        <button type="submit" class="btn btn-primary" name="predictionsSubmitted" <?= ($selectedWindow && !$selectedWindow['is_open']) ? 'disabled' : '' ?>><i class="bi bi-floppy-fill"></i> Save</button>
+                    </div>
                 </div>
             </form>
         <?php endif; ?>

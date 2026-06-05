@@ -239,11 +239,18 @@ include '../php/navigation.php';
   align-items: center;
   gap: 10px;
   font-weight: 800;
+  min-width: 0;
 }
 
 .results-team--away {
   justify-content: flex-end;
   text-align: right;
+}
+
+.results-table td,
+.results-table th,
+.results-team span {
+  min-width: 0;
 }
 
 .results-team img {
@@ -314,6 +321,46 @@ include '../php/navigation.php';
     width: 100%;
     justify-content: center;
   }
+
+  .results-table {
+    width: 100%;
+    table-layout: fixed;
+  }
+
+  .results-table th,
+  .results-table td {
+    padding: 0.62rem 0.28rem;
+    font-size: 0.86rem;
+  }
+
+  .results-team {
+    gap: 4px;
+    font-size: 0.82rem;
+  }
+
+  .results-team img {
+    height: 20px;
+    margin-right: 4px;
+  }
+
+  .results-team--away img {
+    margin-left: 4px;
+    margin-right: 0;
+  }
+
+  .results-score-input {
+    width: 48px;
+    min-height: 40px;
+    font-size: 0.96rem;
+    padding-left: 0.3rem;
+    padding-right: 0.3rem;
+  }
+
+  .results-locked {
+    min-width: 34px;
+    min-height: 32px;
+    font-size: 0.82rem;
+  }
 }
 </style>
 
@@ -365,11 +412,11 @@ include '../php/navigation.php';
                             <tr>
                                 <th class="d-none d-lg-table-cell">Fixture</th>
                                 <th>Home</th>
-                                <th></th>
+                                <th class="d-none d-md-table-cell"></th>
                                 <th class="text-center">Score</th>
                                 <th class="text-center"></th>
                                 <th class="text-center">Score</th>
-                                <th></th>
+                                <th class="d-none d-md-table-cell"></th>
                                 <th class="text-end">Away</th>
                             </tr>
                         </thead>

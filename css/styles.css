@@ -2834,6 +2834,11 @@ h6 {
   gap: 18px;
 }
 
+.guide-page > *,
+.guide-panel > * {
+  min-width: 0;
+}
+
 .guide-grid {
   display: grid;
   gap: 18px;
@@ -2988,6 +2993,18 @@ h6 {
   display: grid;
   gap: 14px;
   grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.guide-page .content-panel.table-responsive {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.guide-page .content-panel.table-responsive .table {
+  min-width: 640px;
 }
 
 .guide-score-card {
@@ -5733,15 +5750,15 @@ body.tour-active {
 }
 
 .dashboard-layout-card--half {
-  --badge-columns: 3;
-}
-
-.dashboard-layout-card--large {
   --badge-columns: 4;
 }
 
-.dashboard-layout-card--full {
+.dashboard-layout-card--large {
   --badge-columns: 5;
+}
+
+.dashboard-layout-card--full {
+  --badge-columns: 7;
 }
 
 .badge-card {
@@ -6741,6 +6758,10 @@ body.tour-active {
   .guide-score-card,
   .guide-flow__step {
     padding: 16px;
+  }
+
+  .guide-page .content-panel.table-responsive .table {
+    min-width: 560px;
   }
 
   .rankings-panel {
