@@ -6,8 +6,9 @@ Options -Indexes
     RewriteRule "(^|/)\.(?!well-known/)" - [F,L]
     RewriteRule ^(?:bak|sql|setup|\.github|\.vscode)(?:/|$) - [F,L,NC]
     RewriteRule ^(?:composer\.(?:json|lock)|package(?:-lock)?\.json|yarn\.lock|README\.md)$ - [F,L,NC]
+    RewriteRule (?i)\.bak$ - [F,L]
 </IfModule>
 
-<FilesMatch "(?i)^(?:\.env|\.gitignore|\.htaccess|composer\.(?:json|lock)|package(?:-lock)?\.json|yarn\.lock|README\.md)$">
+<FilesMatch "(?i)^(?:\.env|\.gitignore|\.htaccess|composer\.(?:json|lock)|package(?:-lock)?\.json|yarn\.lock|README\.md)$|(?i)\.bak$">
     Require all denied
 </FilesMatch>

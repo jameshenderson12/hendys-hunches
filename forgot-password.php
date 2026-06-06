@@ -4,8 +4,140 @@ include 'php/db-connect.php';
 require_once 'php/email.php';
 require_once 'php/terms.php';
 
+function hh_forgot_client_ip(): string
+{
+    foreach (['HTTP_CF_CONNECTING_IP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR'] as $key) {
+        $value = trim((string) ($_SERVER[$key] ?? ''));
+        if ($value === '') {
+            continue;
+        }
+
+        if ($key === 'HTTP_X_FORWARDED_FOR') {
+            $parts = array_filter(array_map('trim', explode(',', $value)));
+            $value = (string) ($parts[0] ?? '');
+        }
+
+        if ($value !== '') {
+            return $value;
+        }
+    }
+
+    return 'unknown';
+}
+
+function hh_forgot_rate_limit_file(string $scope, string $identifier): string
+{
+    return rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'hh_forgot_' . $scope . '_' . sha1($identifier) . '.json';
+}
+
+function hh_forgot_read_attempts(string $filePath, int $windowSeconds, int $now): array
+{
+    if (!is_file($filePath)) {
+        return [];
+    }
+
+    $payload = @file_get_contents($filePath);
+    if ($payload === false || trim($payload) === '') {
+        return [];
+    }
+
+    $decoded = json_decode($payload, true);
+    if (!is_array($decoded)) {
+        return [];
+    }
+
+    return array_values(array_filter(array_map('intval', $decoded), static fn(int $timestamp): bool => $timestamp > ($now - $windowSeconds)));
+}
+
+function hh_forgot_write_attempts(string $filePath, array $attempts): void
+{
+    @file_put_contents($filePath, json_encode(array_values($attempts)), LOCK_EX);
+}
+
+function hh_forgot_apply_rate_limit(string $scope, string $identifier, int $windowSeconds, int $limit, int $now): array
+{
+    $filePath = hh_forgot_rate_limit_file($scope, $identifier);
+    $attempts = hh_forgot_read_attempts($filePath, $windowSeconds, $now);
+
+    if (count($attempts) >= $limit) {
+        $oldestAttempt = min($attempts);
+        $retryAfter = max(1, ($oldestAttempt + $windowSeconds) - $now);
+
+        return [
+            'blocked' => true,
+            'retry_after' => $retryAfter,
+            'attempts' => count($attempts),
+        ];
+    }
+
+    $attempts[] = $now;
+    hh_forgot_write_attempts($filePath, $attempts);
+
+    return [
+        'blocked' => false,
+        'retry_after' => 0,
+        'attempts' => count($attempts),
+    ];
+}
+
+function hh_forgot_generic_success(): void
+{
+    if (isset($GLOBALS['con']) && $GLOBALS['con'] instanceof mysqli) {
+        mysqli_close($GLOBALS['con']);
+    }
+
+    echo 'success';
+    exit();
+}
+
+function hh_forgot_reset_form_issued_at(): int
+{
+    $_SESSION['forgot_password_form_issued_at'] = time();
+    return (int) $_SESSION['forgot_password_form_issued_at'];
+}
+
+if (empty($_SESSION['forgot_password_form_issued_at'])) {
+    hh_forgot_reset_form_issued_at();
+}
+
+$forgotPasswordMinimumSeconds = 2;
+$forgotPasswordIpWindow = 30 * 60;
+$forgotPasswordIpLimit = 8;
+$forgotPasswordEmailWindow = 60 * 60;
+$forgotPasswordEmailLimit = 3;
+$forgotPasswordGlobalWindow = 60 * 60;
+$forgotPasswordGlobalLimit = 20;
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['e'])) {
-    $e = mysqli_real_escape_string($con, $_POST['e']);
+    $now = time();
+    $honeypot = trim((string) ($_POST['website'] ?? ''));
+    $postedIssuedAt = (int) ($_POST['form_issued_at'] ?? 0);
+    $secondsSpent = $postedIssuedAt > 0 ? ($now - $postedIssuedAt) : 0;
+    $rawEmail = trim((string) ($_POST['e'] ?? ''));
+    $emailKey = strtolower($rawEmail);
+
+    if ($honeypot !== '' || $postedIssuedAt <= 0 || $secondsSpent < $forgotPasswordMinimumSeconds) {
+        hh_forgot_reset_form_issued_at();
+        hh_forgot_generic_success();
+    }
+
+    $globalRate = hh_forgot_apply_rate_limit('global', 'all', $forgotPasswordGlobalWindow, $forgotPasswordGlobalLimit, $now);
+    $ipRate = hh_forgot_apply_rate_limit('ip', hh_forgot_client_ip(), $forgotPasswordIpWindow, $forgotPasswordIpLimit, $now);
+    $emailRate = $emailKey !== ''
+        ? hh_forgot_apply_rate_limit('email', $emailKey, $forgotPasswordEmailWindow, $forgotPasswordEmailLimit, $now)
+        : ['blocked' => false];
+
+    if ($globalRate['blocked'] || $ipRate['blocked'] || !empty($emailRate['blocked'])) {
+        hh_forgot_reset_form_issued_at();
+        hh_forgot_generic_success();
+    }
+
+    if ($rawEmail === '' || !filter_var($rawEmail, FILTER_VALIDATE_EMAIL)) {
+        hh_forgot_reset_form_issued_at();
+        hh_forgot_generic_success();
+    }
+
+    $e = mysqli_real_escape_string($con, $rawEmail);
     $sql = "SELECT id, firstname, username FROM live_user_information WHERE email='$e' LIMIT 1";
     $query = mysqli_query($con, $sql);
     $numrows = mysqli_num_rows($query);
@@ -35,9 +167,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['e'])) {
         exit();
     }
 
-    mysqli_close($con);
-    echo 'no_exist';
-    exit();
+    hh_forgot_reset_form_issued_at();
+    hh_forgot_generic_success();
 }
 
 if (isset($_GET['u']) && isset($_GET['p'])) {
@@ -533,8 +664,6 @@ mysqli_close($con);
             if (response == "success") {
               _("forgotPassForm").style.display = "none";
               _("confirm-msg").classList.add("is-visible");
-            } else if (response == "no_exist") {
-              setStatus("Sorry, that email address has not been registered.", "error");
             } else if (response == "email_send_failed") {
               setStatus("The email could not be sent. Please check the mail settings and try again.", "error");
             } else {
@@ -542,7 +671,13 @@ mysqli_close($con);
             }
           }
         };
-        ajax.send("e=" + encodeURIComponent(e));
+        var issuedAt = _("form_issued_at") ? _("form_issued_at").value : "";
+        var website = _("website") ? _("website").value : "";
+        ajax.send(
+          "e=" + encodeURIComponent(e) +
+          "&form_issued_at=" + encodeURIComponent(issuedAt) +
+          "&website=" + encodeURIComponent(website)
+        );
       }
 
       function windowClose() {
@@ -577,6 +712,12 @@ mysqli_close($con);
             <div class="reset-panel__body">
               <form id="forgotPassForm" name="forgotPassForm" onsubmit="return false;" class="reset-actions" novalidate>
                 <p class="reset-copy">Use the email address you registered with. We’ll send a temporary password and then you can choose something new once you’re back in.</p>
+
+                <input type="hidden" id="form_issued_at" name="form_issued_at" value="<?= (int) ($_SESSION['forgot_password_form_issued_at'] ?? time()) ?>">
+                <div style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;" aria-hidden="true">
+                  <label for="website">Website</label>
+                  <input type="text" id="website" name="website" autocomplete="off" tabindex="-1">
+                </div>
 
                 <div class="reset-field">
                   <label for="email">Email address</label>
