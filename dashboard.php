@@ -6,6 +6,7 @@ require_once __DIR__ . '/php/auth.php';
 require_once __DIR__ . '/php/config.php';
 require_once __DIR__ . '/php/email.php';
 require_once __DIR__ . '/php/flags.php';
+require_once __DIR__ . '/php/badges.php';
 hh_require_login('index.php');
 
 include 'php/db-connect.php';
@@ -38,6 +39,7 @@ if (!function_exists('hh_dashboard_move_meta')) {
             return [
                 'diff' => $diff,
                 'label' => '+' . $diff,
+                'value' => (string) $diff,
                 'class' => 'dashboard-up',
                 'icon' => 'bi bi-caret-up-fill',
             ];
@@ -48,6 +50,7 @@ if (!function_exists('hh_dashboard_move_meta')) {
             return [
                 'diff' => -$diff,
                 'label' => '-' . $diff,
+                'value' => (string) $diff,
                 'class' => 'dashboard-down',
                 'icon' => 'bi bi-caret-down-fill',
             ];
@@ -56,8 +59,9 @@ if (!function_exists('hh_dashboard_move_meta')) {
         return [
             'diff' => 0,
             'label' => '0',
+            'value' => '0',
             'class' => 'dashboard-neutral',
-            'icon' => 'bi bi-dash',
+            'icon' => 'bi bi-caret-right-fill',
         ];
     }
 }
@@ -110,21 +114,14 @@ if (!function_exists('hh_dashboard_capture')) {
 }
 
 if (!function_exists('hh_dashboard_build_badges')) {
-    function hh_dashboard_build_badges(array $stats): array
+    function hh_dashboard_build_badges(array $awardedTokens): array
     {
-        return [
-            ['token' => 'IN', 'image' => 'img/badges/predictions-in.png', 'title' => 'Predictions In', 'description' => 'Save your first stage of predictions.', 'earned' => !empty($stats['has_predictions'])],
-            ['token' => 'PT', 'image' => 'img/badges/on-the-move.png', 'title' => 'On The Move', 'description' => 'Pick up your first points.', 'earned' => ((int) ($stats['points_total'] ?? 0)) > 0],
-            ['token' => '7', 'image' => 'img/badges/perfect-seven.png', 'title' => 'Perfect Seven', 'description' => 'Land your first exact 7-pointer.', 'earned' => ((int) ($stats['perfect_predictions'] ?? 0)) > 0],
-            ['token' => 'TH', 'image' => 'img/badges/thread-starter.png', 'title' => 'Thread Starter', 'description' => 'Start a message thread in the Fan Zone.', 'earned' => ((int) ($stats['thread_count'] ?? 0)) > 0],
-            ['token' => 'RP', 'image' => 'img/badges/in-the-replies.png', 'title' => 'In The Replies', 'description' => 'Reply to a thread in the Fan Zone.', 'earned' => ((int) ($stats['reply_count'] ?? 0)) > 0],
-            ['token' => 'PV', 'image' => 'img/badges/poll-voter.png', 'title' => 'Poll Voter', 'description' => 'Cast your first vote in a live poll.', 'earned' => ((int) ($stats['poll_votes'] ?? 0)) > 0],
-            ['token' => '50', 'image' => 'img/badges/50-club.png', 'title' => '50 Club', 'description' => 'Reach 50 total points.', 'earned' => ((int) ($stats['points_total'] ?? 0)) >= 50],
-            ['token' => '100', 'image' => 'img/badges/100-club.png', 'title' => '100 Club', 'description' => 'Reach 100 total points.', 'earned' => ((int) ($stats['points_total'] ?? 0)) >= 100],
-            ['token' => '150', 'image' => 'img/badges/150-club.png', 'title' => '150 Club', 'description' => 'Reach 150 total points.', 'earned' => ((int) ($stats['points_total'] ?? 0)) >= 150],
-            ['token' => '200', 'image' => 'img/badges/200-club.png', 'title' => '200 Club', 'description' => 'Reach 200 total points.', 'earned' => ((int) ($stats['points_total'] ?? 0)) >= 200],
-            ['token' => '250', 'image' => 'img/badges/250-club.png', 'title' => '250 Club', 'description' => 'Reach 250 total points.', 'earned' => ((int) ($stats['points_total'] ?? 0)) >= 250],            
-        ];
+        $awardedMap = array_fill_keys(array_map('strval', $awardedTokens), true);
+
+        return array_values(array_map(
+            static fn(array $definition): array => $definition + ['earned' => isset($awardedMap[(string) ($definition['token'] ?? '')])],
+            hh_badge_definitions()
+        ));
     }
 }
 
@@ -402,6 +399,7 @@ $badgeStats = [
     'poll_votes' => 0,
 ];
 $dashboardBadges = [];
+$pendingBadgeNotifications = [];
 $pulseStats = [
     'players' => 0,
     'paid' => 0,
@@ -1176,7 +1174,16 @@ if (!empty($recentForm)) {
 }
 
 $badgeStats['perfect_predictions'] = (int) ($accuracy[0]['value'] ?? 0);
-$dashboardBadges = hh_dashboard_build_badges($badgeStats);
+if ($currentUser && !empty($currentUser['id'])) {
+    hh_sync_badges_for_user_with_connection($con, (int) $currentUser['id']);
+    $pendingBadgeNotifications = hh_badge_fetch_pending_notifications_with_connection($con, (int) $currentUser['id']);
+    if ($pendingBadgeNotifications !== []) {
+        hh_mark_badges_notified_with_connection($con, (int) $currentUser['id'], array_column($pendingBadgeNotifications, 'token'));
+    }
+    $dashboardBadges = hh_dashboard_build_badges(hh_badge_fetch_awarded_tokens_with_connection($con, (int) $currentUser['id']));
+} else {
+    $dashboardBadges = hh_dashboard_build_badges([]);
+}
 $earnedBadgeCount = count(array_filter($dashboardBadges, static fn(array $badge): bool => !empty($badge['earned'])));
 
 $dashboardLayoutCards = [
@@ -1199,7 +1206,7 @@ $dashboardLayoutCards = [
                 <div class="dashboard-player-card__body">
                     <p class="eyebrow">Player card</p>
                     <h2><?= htmlspecialchars((string) ($currentUser['name'] ?? 'Preview player')) ?></h2>
-                    <p class="dashboard-note">
+                        <p class="dashboard-note">
                         <?= htmlspecialchars((string) (($currentUser['haspaid'] ?? 'No') === 'Yes' ? 'Entry fee paid' : 'Entry fee pending')) ?>
                         <?php if (!empty($currentUser['signupdate'])) : ?>
                             · signed up <?= htmlspecialchars(date('j F Y', strtotime((string) $currentUser['signupdate']))) ?>
@@ -1213,7 +1220,13 @@ $dashboardLayoutCards = [
                     <div class="dashboard-player-stats">
                         <span><strong><?= htmlspecialchars((string) ($currentUser['rank_label'] ?? 'N/A')) ?></strong>Rank</span>
                         <span><strong><?= htmlspecialchars((string) ($currentUser['points_total'] ?? 0)) ?></strong>Points</span>
-                        <span><strong><?= htmlspecialchars((string) ($currentUser['move']['label'] ?? '0')) ?></strong>Move</span>
+                        <span>
+                            <strong class="dashboard-player-stats__move-value <?= htmlspecialchars((string) ($currentUser['move']['class'] ?? 'dashboard-neutral')) ?>">
+                                <i class="<?= htmlspecialchars((string) ($currentUser['move']['icon'] ?? 'bi bi-caret-right-fill')) ?>"></i>
+                                <span><?= htmlspecialchars((string) ($currentUser['move']['value'] ?? '0')) ?></span>
+                            </strong>
+                            Move
+                        </span>
                     </div>
                     <dl class="dashboard-player-details">
                         <div><dt>Favourite club</dt><dd><?= htmlspecialchars((string) ($currentUser['faveteam'] ?? 'Not set')) ?></dd></div>
@@ -1521,6 +1534,7 @@ $formChartJson = json_encode([
     'values' => $formChartValues,
     'classes' => array_map(static fn(array $point): string => (string) ($point['class'] ?? 'is-mid'), $formPointMeta),
 ], JSON_THROW_ON_ERROR | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+$badgeNotificationJson = json_encode($pendingBadgeNotifications, JSON_THROW_ON_ERROR | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
 
 ?>
 
@@ -1544,6 +1558,7 @@ $formChartJson = json_encode([
         <?php foreach ($errors as $error) : ?>
             <p class="alert alert-danger mb-0"><i class="bi bi-exclamation-octagon-fill"></i> <?= htmlspecialchars($error) ?></p>
         <?php endforeach; ?>
+        <div id="badgeToastContainer" class="badge-toast-container" aria-live="polite" aria-atomic="true"></div>
 
         <?php if ($dashboardReminder) : ?>
             <div class="alert alert-<?= htmlspecialchars($dashboardReminder['type']) ?> d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3" role="alert">
@@ -1624,6 +1639,65 @@ $formChartJson = json_encode([
 
 <script src="<?= $dashboardChartScriptPath ?>"></script>
 <script>
+  window.hhBadgeNotificationData = <?= $badgeNotificationJson ?>;
+
+  (function () {
+    const badgeData = Array.isArray(window.hhBadgeNotificationData) ? window.hhBadgeNotificationData : [];
+    let badgeToastsRendered = false;
+
+    function renderBadgeToasts() {
+      if (badgeToastsRendered || !badgeData.length || typeof bootstrap === 'undefined' || !bootstrap.Toast) {
+        return false;
+      }
+
+      const toastContainer = document.getElementById('badgeToastContainer');
+      if (!toastContainer) {
+        return false;
+      }
+
+      badgeToastsRendered = true;
+
+      badgeData.forEach((badge, index) => {
+        const toast = document.createElement('div');
+        toast.className = 'toast badge-toast';
+        toast.setAttribute('role', 'status');
+        toast.setAttribute('aria-live', 'polite');
+        toast.setAttribute('aria-atomic', 'true');
+        toast.setAttribute('data-bs-autohide', 'true');
+        toast.setAttribute('data-bs-delay', String(5200 + (index * 600)));
+
+        toast.innerHTML = `
+          <div class="toast-header badge-toast__header">
+            <img src="${badge.image}" class="badge-toast__img" alt="${badge.title}">
+            <strong class="me-auto">Badge earned</strong>
+            <small>Just now</small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+          <div class="toast-body badge-toast__body">
+            <strong>${badge.title}</strong>
+            <span>${badge.description}</span>
+          </div>
+        `;
+
+        toastContainer.appendChild(toast);
+        const toastInstance = new bootstrap.Toast(toast);
+        toastInstance.show();
+
+        toast.addEventListener('hidden.bs.toast', () => {
+          toast.remove();
+        }, { once: true });
+      });
+
+      return true;
+    }
+
+    if (!renderBadgeToasts()) {
+      window.addEventListener('load', function handleBadgeToastLoad() {
+        renderBadgeToasts();
+      }, { once: true });
+    }
+  })();
+
   (function () {
     const searchInput = document.getElementById('miniLeagueSearch');
     const optionsWrap = document.getElementById('miniLeagueOptions');

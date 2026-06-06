@@ -5534,6 +5534,25 @@ body.tour-active {
   line-height: 1;
 }
 
+.dashboard-player-stats__move-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.dashboard-player-stats__move-value i {
+  font-size: 0.9em;
+}
+
+.dashboard-player-stats__move-value span {
+  display: inline;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+
 .dashboard-player-details {
   display: grid;
   gap: 10px;
@@ -5854,6 +5873,53 @@ body.tour-active {
   font-size: 0.84rem;
   line-height: 1.35;
   max-width: 18ch;
+}
+
+.badge-toast-container {
+  position: fixed;
+  top: 92px;
+  right: 18px;
+  z-index: 1085;
+  display: grid;
+  gap: 10px;
+  width: min(360px, calc(100vw - 24px));
+  pointer-events: none;
+}
+
+.badge-toast {
+  pointer-events: auto;
+  border: 1px solid rgba(143, 102, 216, 0.18);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 16px 30px rgba(22, 35, 29, 0.16);
+}
+
+.badge-toast__header {
+  gap: 10px;
+  border-bottom: 1px solid rgba(22, 35, 29, 0.08);
+  background: rgba(12, 90, 67, 0.04);
+}
+
+.badge-toast__img {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex: 0 0 36px;
+}
+
+.badge-toast__body {
+  display: grid;
+  gap: 4px;
+}
+
+.badge-toast__body strong {
+  color: var(--hh-ink);
+}
+
+.badge-toast__body span {
+  color: var(--hh-muted);
+  font-size: 0.92rem;
 }
 
 .signup-list {
@@ -6898,6 +6964,12 @@ body.tour-active {
 }
 
 @media (max-width: 575.98px) {
+  .badge-toast-container {
+    top: 82px;
+    right: 12px;
+    width: calc(100vw - 24px);
+  }
+
   .rankings-you-badge {
     display: none;
   }

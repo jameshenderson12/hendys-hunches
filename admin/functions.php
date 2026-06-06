@@ -5,6 +5,7 @@ $page_title = 'Admin Functions';
 require_once dirname(__DIR__) . '/php/auth.php';
 require_once dirname(__DIR__) . '/php/config.php';
 require_once dirname(__DIR__) . '/php/process.php';
+require_once dirname(__DIR__) . '/php/badges.php';
 
 hh_require_admin('../dashboard.php');
 
@@ -666,6 +667,10 @@ function hh_admin_reset_preserving_users_with_connection(mysqli $con, array $use
         $deleteQueries[] = "DELETE FROM {$backupTable}";
     }
 
+    if (hh_badge_table_exists($con)) {
+        $deleteQueries[] = "DELETE FROM " . hh_badge_table_name();
+    }
+
     mysqli_begin_transaction($con);
 
     try {
@@ -746,6 +751,10 @@ function hh_admin_delete_user_with_connection(mysqli $con, int $userId): array
 
     foreach (hh_admin_existing_prediction_backup_tables($con) as $backupTable) {
         $queries[] = "DELETE FROM {$backupTable} WHERE id = {$quotedUserId} OR username IN ({$quotedUsername})";
+    }
+
+    if (hh_badge_table_exists($con)) {
+        $queries[] = "DELETE FROM " . hh_badge_table_name() . " WHERE user_id = {$quotedUserId}";
     }
 
     mysqli_begin_transaction($con);
@@ -841,6 +850,7 @@ $tableOptions = [
     'live_user_predictions_qf' => 'Quarter-final predictions',
     'live_user_predictions_sf' => 'Semi-final predictions',
     'live_user_predictions_final' => 'Final predictions',
+    'live_user_badges' => 'Badge awards',
     'live_fanzone_posts' => 'Fan Zone posts',
 ];
 
@@ -1003,6 +1013,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } catch (Throwable $exception) {
             $errors[] = 'Backup restore failed: ' . $exception->getMessage();
         }
+    } elseif ($action === 'refresh_badges') {
+        try {
+            $badgeRefresh = hh_sync_badges_for_all_with_connection($con);
+            $messages[] = 'Badge awards refreshed for ' . (int) ($badgeRefresh['users'] ?? 0) . ' player(s). Seeded ' . (int) ($badgeRefresh['seeded'] ?? 0) . ' existing badge(s) quietly and queued ' . (int) ($badgeRefresh['new'] ?? 0) . ' new badge notification(s).';
+        } catch (Throwable $exception) {
+            $errors[] = 'Badge refresh failed: ' . $exception->getMessage();
+        }
     } elseif ($action === 'save_table_row') {
         $tableName = (string) ($_POST['table_name'] ?? '');
         $rowId = (int) ($_POST['row_id'] ?? 0);
@@ -1073,6 +1090,7 @@ $snapshot = [
     'results' => 0,
     'result_snapshots' => 0,
     'fanzone' => 0,
+    'badges' => 0,
 ];
 
 $countQueries = [
@@ -1096,6 +1114,15 @@ if (hh_admin_table_exists($con, 'live_fanzone_posts')) {
     if ($result) {
         $row = mysqli_fetch_assoc($result);
         $snapshot['fanzone'] = (int) ($row['total'] ?? 0);
+        mysqli_free_result($result);
+    }
+}
+
+if (hh_badge_table_exists($con)) {
+    $result = mysqli_query($con, "SELECT COUNT(*) AS total FROM " . hh_badge_table_name());
+    if ($result) {
+        $row = mysqli_fetch_assoc($result);
+        $snapshot['badges'] = (int) ($row['total'] ?? 0);
         mysqli_free_result($result);
     }
 }
@@ -1129,6 +1156,7 @@ if ($requestedAuditMatch > 0) {
 
 $predictionIntegrityAudit = hh_admin_prediction_integrity_audit($con, $users);
 $scoringAudit = hh_admin_scoring_audit($con, $selectedAuditMatch);
+$badgeSummary = hh_badge_admin_summary($con);
 
 $tablePreview = hh_admin_preview_table($con, $selectedTable, 30);
 $editableTable = $tableEditorConfig[$selectedTable] ?? null;
@@ -1497,6 +1525,35 @@ include '../php/navigation.php';
       .admin-score-meta strong {
         color: var(--hh-green-dark);
       }
+      .admin-badge-list {
+        display: grid;
+        gap: 12px;
+      }
+      .admin-kpi--badge {
+        gap: 14px;
+        align-items: start;
+        grid-template-columns: minmax(150px, 180px) minmax(0, 1fr);
+      }
+      .admin-kpi--badge .admin-kpi__item {
+        height: 100%;
+      }
+      .admin-badge-summary__img {
+        width: 64px;
+        height: 64px;
+        border-radius: 8px;
+        object-fit: cover;
+        margin-bottom: 8px;
+      }
+      .admin-badge-summary__meta {
+        display: grid;
+        gap: 6px;
+        align-content: start;
+      }
+      .admin-badge-summary__meta small {
+        color: var(--hh-muted);
+        font-weight: 700;
+        line-height: 1.4;
+      }
       @media (max-width: 991px) {
         .admin-grid--two,
         .admin-grid--three,
@@ -1504,6 +1561,9 @@ include '../php/navigation.php';
         .admin-audit-metrics,
         .admin-score-summary,
         .admin-editor-grid {
+          grid-template-columns: 1fr;
+        }
+        .admin-kpi--badge {
           grid-template-columns: 1fr;
         }
       }
@@ -1554,6 +1614,46 @@ include '../php/navigation.php';
                 <div class="admin-kpi__item"><strong><?= $snapshot['results'] ?></strong><span>fixtures with results</span></div>
                 <div class="admin-kpi__item"><strong><?= $snapshot['result_snapshots'] ?></strong><span>result snapshots saved</span></div>
                 <div class="admin-kpi__item"><strong><?= $snapshot['fanzone'] ?></strong><span>live Fan Zone posts</span></div>
+                <div class="admin-kpi__item"><strong><?= $snapshot['badges'] ?></strong><span>badge awards stored</span></div>
+            </div>
+        </div>
+
+        <div class="admin-card">
+            <div class="d-flex flex-wrap align-items-start justify-content-between gap-3">
+                <div>
+                    <h2>Badge Awards</h2>
+                    <p class="admin-note mb-0">Refresh badge awards from the current game data, then review who has earned what across the whole player base.</p>
+                </div>
+                <form method="post">
+                    <input type="hidden" name="admin_action" value="refresh_badges">
+                    <button type="submit" class="btn btn-outline-dark"><i class="bi bi-award"></i> Refresh badge awards</button>
+                </form>
+            </div>
+            <div class="admin-badge-list mt-3">
+                <?php foreach ($badgeSummary as $badge) : ?>
+                    <?php
+                    $playerNames = array_slice((array) ($badge['players'] ?? []), 0, 8);
+                    $remainingPlayers = max(0, count((array) ($badge['players'] ?? [])) - count($playerNames));
+                    $latestAwarded = !empty($badge['latest_awarded']) ? date('j M Y H:i', strtotime((string) $badge['latest_awarded'])) : '—';
+                    ?>
+                    <article class="admin-kpi admin-kpi--badge">
+                        <div class="admin-kpi__item">
+                            <img class="admin-badge-summary__img" src="../<?= htmlspecialchars((string) ($badge['image'] ?? ''), ENT_QUOTES) ?>" alt="<?= htmlspecialchars((string) ($badge['title'] ?? 'Badge artwork'), ENT_QUOTES) ?>">
+                            <strong><?= (int) ($badge['count'] ?? 0) ?></strong>
+                            <span><?= htmlspecialchars((string) ($badge['title'] ?? 'Badge'), ENT_QUOTES) ?></span>
+                        </div>
+                        <div class="admin-badge-summary__meta">
+                            <small>Latest award: <?= htmlspecialchars($latestAwarded, ENT_QUOTES) ?></small>
+                            <small>
+                                <?php if ($playerNames !== []) : ?>
+                                    <?= htmlspecialchars(implode(', ', $playerNames), ENT_QUOTES) ?><?= $remainingPlayers > 0 ? ' +' . $remainingPlayers . ' more' : '' ?>
+                                <?php else : ?>
+                                    No players yet
+                                <?php endif; ?>
+                            </small>
+                        </div>
+                    </article>
+                <?php endforeach; ?>
             </div>
         </div>
 

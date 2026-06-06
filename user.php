@@ -123,15 +123,30 @@ function hh_user_move_meta(int $lastPos, int $currentPos): array
 {
     if ($lastPos > $currentPos) {
         $diff = $lastPos - $currentPos;
-        return ['label' => '+' . $diff];
+        return [
+            'label' => '+' . $diff,
+            'value' => (string) $diff,
+            'class' => 'dashboard-up',
+            'icon' => 'bi bi-caret-up-fill',
+        ];
     }
 
     if ($lastPos < $currentPos) {
         $diff = $currentPos - $lastPos;
-        return ['label' => '-' . $diff];
+        return [
+            'label' => '-' . $diff,
+            'value' => (string) $diff,
+            'class' => 'dashboard-down',
+            'icon' => 'bi bi-caret-down-fill',
+        ];
     }
 
-    return ['label' => '0'];
+    return [
+        'label' => '0',
+        'value' => '0',
+        'class' => 'dashboard-neutral',
+        'icon' => 'bi bi-caret-right-fill',
+    ];
 }
 
 $userId = isset($_GET['id']) ? (int) $_GET['id'] : 0;
@@ -222,7 +237,7 @@ $tournwinner = (string) ($profile['tournwinner'] ?? '');
 $currentPosition = $hasRecordedResults ? hh_ordinal_position((int) ($profile['currpos'] ?? 0)) : '-';
 $moveMeta = hh_user_move_meta((int) ($profile['lastpos'] ?? 0), (int) ($profile['currpos'] ?? 0));
 if (!$hasRecordedResults) {
-    $moveMeta = ['label' => '-'];
+    $moveMeta = ['label' => '-', 'value' => '-', 'class' => 'dashboard-neutral', 'icon' => 'bi bi-dash'];
 }
 $selectedStage = $stageContexts[$selectedStageKey] ?? null;
 $visibleFixtures = [];
@@ -458,7 +473,13 @@ include 'php/navigation.php';
                     <div class="dashboard-player-stats">
                         <span><strong><?= htmlspecialchars((string) $currentPosition) ?></strong>Rank</span>
                         <span><strong><?= htmlspecialchars((string) $totalPoints) ?></strong>Points</span>
-                        <span><strong><?= htmlspecialchars((string) ($moveMeta['label'] ?? '0')) ?></strong>Move</span>
+                        <span>
+                            <strong class="dashboard-player-stats__move-value <?= htmlspecialchars((string) ($moveMeta['class'] ?? 'dashboard-neutral')) ?>">
+                                <i class="<?= htmlspecialchars((string) ($moveMeta['icon'] ?? 'bi bi-caret-right-fill')) ?>"></i>
+                                <span><?= htmlspecialchars((string) ($moveMeta['value'] ?? '0')) ?></span>
+                            </strong>
+                            Move
+                        </span>
                     </div>
                     <dl class="dashboard-player-details">
                         <div><dt>Favourite club</dt><dd><?= htmlspecialchars((string) ($profile['faveteam'] ?? 'Not set')) ?></dd></div>
