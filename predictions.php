@@ -44,6 +44,22 @@ function hh_prediction_submission_state(array $row, array $context): array
     ];
 }
 
+function hh_prediction_has_any_values(array $row, array $context): bool
+{
+    for ($scoreIndex = (int) ($context['score_start'] ?? 0); $scoreIndex <= (int) ($context['score_end'] ?? -1); $scoreIndex++) {
+        if ($scoreIndex <= 0) {
+            continue;
+        }
+
+        $column = 'score' . $scoreIndex . '_p';
+        if (array_key_exists($column, $row) && $row[$column] !== null && $row[$column] !== '') {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 $stageContexts = hh_prediction_stage_contexts();
 $stageWindows = hh_prediction_stage_windows($con);
 $selectedStageKey = isset($_GET['stage']) ? trim((string) $_GET['stage']) : '';
@@ -284,6 +300,24 @@ include 'php/navigation.php';
   font-weight: 900;
 }
 
+.predictions-page .score-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  min-height: 40px;
+  padding: 0.35rem 0.55rem;
+  border-radius: 8px;
+  background: rgba(12, 90, 67, 0.08);
+  color: var(--hh-green-dark);
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.predictions-page .score-pill.is-empty {
+  color: var(--hh-muted);
+}
+
 .predictions-page .table td,
 .predictions-page .table th {
   vertical-align: middle;
@@ -486,6 +520,87 @@ include 'php/navigation.php';
             <div class="content-panel">
                 <p class="mb-0 text-muted">No fixtures were found for this stage yet.</p>
             </div>
+        <?php elseif ($selectedWindow && ($selectedWindow['status'] ?? '') === 'closed') : ?>
+            <div class="content-panel">
+                <div class="predictions-stage-heading">
+                    <div class="predictions-stage-heading__content">
+                        <p class="eyebrow mb-2">Selected stage</p>
+                        <h2><?= htmlspecialchars($selectedStage['label']) ?></h2>
+                        <p>
+                            <?php if (hh_prediction_has_any_values($predictionRow, $selectedStage)) : ?>
+                                This stage is now locked. Your submitted predictions are shown below.
+                            <?php else : ?>
+                                This stage is now locked and no predictions were saved for it.
+                            <?php endif; ?>
+                        </p>
+                        <?php if ($stageLastUpdate !== '') : ?>
+                            <p class="predictions-stage-note">Last saved <?= htmlspecialchars($stageLastUpdate) ?>.</p>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-sm table-striped">
+                        <thead>
+                            <tr>
+                                <th class="d-none d-lg-table-cell">Fixture</th>
+                                <th></th>
+                                <th class="d-none d-md-table-cell"></th>
+                                <th class="text-center">Pred.</th>
+                                <th class="text-center"></th>
+                                <th class="text-center">Pred.</th>
+                                <th class="d-none d-md-table-cell"></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($fixtures as $fixture) : ?>
+                                <?php
+                                $matchNumber = (int) ($fixture['match_number'] ?? 0);
+                                $homeScoreIndex = ($matchNumber * 2) - 1;
+                                $awayScoreIndex = $matchNumber * 2;
+                                $homeValue = hh_prediction_value($predictionRow, $homeScoreIndex);
+                                $awayValue = hh_prediction_value($predictionRow, $awayScoreIndex);
+                                $stageLabel = trim((string) ($fixture['stage'] ?? '')) ?: ($selectedStage['label'] ?? '');
+                                $kickoffDate = !empty($fixture['date']) ? date('D j M', strtotime((string) $fixture['date'])) : '';
+                                $kickoffTime = trim((string) ($fixture['kotime'] ?? ''));
+                                $fixtureDateTime = trim($kickoffDate . ($kickoffTime !== '' ? ' ' . $kickoffTime : ''));
+                                $fixtureVenue = trim((string) ($fixture['venue'] ?? ''));
+                                ?>
+                                <tr>
+                                    <td class="d-none d-lg-table-cell">
+                                        <div class="fixture-meta">
+                                            <strong>Match <?= htmlspecialchars((string) $matchNumber) ?> · <?= htmlspecialchars($stageLabel !== '' ? $stageLabel : 'Fixture') ?></strong>
+                                            <span><?= htmlspecialchars($fixtureDateTime !== '' ? $fixtureDateTime : 'Kick-off TBC') ?></span>
+                                            <span><?= htmlspecialchars($fixtureVenue !== '' ? $fixtureVenue : 'Venue TBC') ?></span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="team-cell">
+                                            <img src="<?= htmlspecialchars((string) $fixture['hometeamimg']) ?>" alt="<?= htmlspecialchars((string) $fixture['hometeam']) ?> flag">
+                                            <span><?= hh_render_team_name_responsive((string) $fixture['hometeam']) ?></span>
+                                        </div>
+                                    </td>
+                                    <td class="d-none d-md-table-cell"></td>
+                                    <td class="text-center">
+                                        <span class="score-pill <?= $homeValue === '' ? 'is-empty' : '' ?>"><?= htmlspecialchars($homeValue !== '' ? $homeValue : '—') ?></span>
+                                    </td>
+                                    <td class="text-center"><span class="versus-pill">v</span></td>
+                                    <td class="text-center">
+                                        <span class="score-pill <?= $awayValue === '' ? 'is-empty' : '' ?>"><?= htmlspecialchars($awayValue !== '' ? $awayValue : '—') ?></span>
+                                    </td>
+                                    <td class="d-none d-md-table-cell"></td>
+                                    <td>
+                                        <div class="team-cell team-cell--away">
+                                            <span><?= hh_render_team_name_responsive((string) $fixture['awayteam']) ?></span>
+                                            <img src="<?= htmlspecialchars((string) $fixture['awayteamimg']) ?>" alt="<?= htmlspecialchars((string) $fixture['awayteam']) ?> flag">
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         <?php elseif ($selectedWindow && !$selectedWindow['is_open']) : ?>
             <div class="content-panel">
                 <div class="predictions-stage-heading">
@@ -495,8 +610,6 @@ include 'php/navigation.php';
                         <p>
                             <?php if (($selectedWindow['status'] ?? '') === 'upcoming' && $selectedWindow['opens_at'] instanceof DateTimeImmutable) : ?>
                                 Not available yet. This stage opens <?= htmlspecialchars($selectedWindow['opens_at']->setTimezone(new DateTimeZone(date_default_timezone_get()))->format('D j M Y, g:ia')) ?>.
-                            <?php elseif (($selectedWindow['status'] ?? '') === 'closed') : ?>
-                                No longer available. This stage is now closed for changes.
                             <?php elseif (($selectedWindow['status'] ?? '') === 'na') : ?>
                                 Not available yet. This stage will appear here closer to its opening window.
                             <?php else : ?>

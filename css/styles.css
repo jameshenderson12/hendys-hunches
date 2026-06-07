@@ -5993,6 +5993,50 @@ body.tour-active {
   height: 100% !important;
 }
 
+.form-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.form-strip__box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 0.98rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.form-strip__box.is-strong {
+  background: var(--dashboard-primary-dark);
+}
+
+.form-strip__box.is-mid {
+  background: var(--dashboard-accent);
+}
+
+.form-strip__box.is-weak {
+  background: #b83f46;
+}
+
+@media (max-width: 575.98px) {
+  .form-strip {
+    gap: 6px;
+  }
+
+  .form-strip__box {
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    font-size: 0.92rem;
+  }
+}
+
 .dashboard-up {
   color: var(--dashboard-primary);
 }
@@ -6200,6 +6244,7 @@ body.tour-active {
 .fixture-card-row__meta {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   justify-content: flex-start;
   gap: 10px;
 }
@@ -6216,6 +6261,13 @@ body.tour-active {
   font-weight: 900;
 }
 
+.fixture-card-row__context {
+  color: var(--hh-muted);
+  font-size: 0.74rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
 .fixture-card-row__match {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
@@ -6230,12 +6282,16 @@ body.tour-active {
   min-width: 0;
 }
 
+.fixture-card-row__team-name {
+  min-width: 0;
+}
+
 .fixture-card-row__team--away {
   justify-content: flex-end;
   text-align: right;
 }
 
-.fixture-card-row__team img {
+/* .fixture-card-row__team img {
   width: 42px;
   height: 42px;
   object-fit: contain;
@@ -6244,22 +6300,27 @@ body.tour-active {
   border-radius: 8px;
   background: #ffffff;
   flex: 0 0 auto;
+} */
+.fixture-card-row__team img {
+	width: 42px;
+	/* height: 42px; */
+	object-fit: contain;
+	padding: 4px;
+	border: 1px solid var(--hh-line);
+	/* border-radius: 8px; */
+	background: #ffffff;
+	flex: 0 0 auto;
 }
 
-.fixture-card-row__team strong,
-.fixture-card-row__team span {
+.fixture-card-row__team-name .hh-team-name-full {
   display: block;
-}
-
-.fixture-card-row__team strong {
   color: var(--hh-ink);
   font-size: 0.98rem;
+  font-weight: 800;
 }
 
-.fixture-card-row__team span {
-  color: var(--hh-muted);
-  font-size: 0.8rem;
-  font-weight: 700;
+.fixture-card-row__team-name .hh-team-name-short {
+  display: none;
 }
 
 .fixture-card-row__divider {
@@ -6275,11 +6336,57 @@ body.tour-active {
   text-transform: uppercase;
 }
 
-.fixture-card-row__pick {
+.fixture-card-row__divider.is-result {
+  width: 58px;
+  height: 52px;
+  gap: 2px;
+  padding: 4px 6px;
+  background: rgba(143, 102, 216, 0.14);
+  color: var(--hh-purple-dark);
+}
+
+.fixture-card-row__divider strong,
+.fixture-card-row__divider span {
+  display: block;
+  line-height: 1;
+}
+
+.fixture-card-row__divider strong {
+  font-size: 0.95rem;
+}
+
+.fixture-card-row__divider span {
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+}
+
+.fixture-card-row__insights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+}
+
+.fixture-card-row__insights p {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: baseline;
+  gap: 6px;
   margin: 0;
   color: var(--hh-muted);
-  font-size: 0.84rem;
+  font-size: 0.8rem;
   font-weight: 700;
+}
+
+.fixture-card-row__insights strong {
+  color: var(--hh-green-dark);
+  font-size: 0.78rem;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.fixture-card-row__insights span {
+  color: var(--hh-ink);
+  font-weight: 800;
 }
 
 .pulse-list {
@@ -6590,9 +6697,57 @@ body.tour-active {
   }
 
   .accuracy-donut,
-  .fixture-stack,
-  .fixture-card-row__match {
+  .fixture-stack {
     grid-template-columns: 1fr;
+  }
+
+  .fixture-card-row__match {
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: 6px;
+  }
+
+  .fixture-card-row__team {
+    gap: 6px;
+  }
+
+  .fixture-card-row__team img {
+    width: 34px;
+    padding: 3px;
+  }
+
+  .fixture-card-row__divider.is-result {
+    width: 50px;
+    height: 46px;
+  }
+
+  .fixture-card-row__divider strong {
+    font-size: 0.82rem;
+  }
+
+  .fixture-card-row__divider span {
+    font-size: 0.58rem;
+  }
+
+  .fixture-card-row__context {
+    font-size: 0.68rem;
+  }
+
+  .fixture-card-row__team-name .hh-team-name-full {
+    display: none;
+  }
+
+  .fixture-card-row__team-name .hh-team-name-short {
+    display: block;
+    font-size: 0.82rem;
+  }
+
+  .fixture-card-row__insights {
+    display: grid;
+    gap: 6px;
+  }
+
+  .fixture-card-row__insights p {
+    flex-wrap: wrap;
   }
 
   .fanzone-grid {
@@ -6619,12 +6774,12 @@ body.tour-active {
   }
 
   .fixture-card-row__team--away {
-    justify-content: flex-start;
+    justify-content: flex-end;
     text-align: left;
   }
 
   .fixture-card-row__divider {
-    width: 100%;
+    /* width: 100%; */
     height: 40px;
   }
 

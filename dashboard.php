@@ -104,6 +104,67 @@ if (!function_exists('hh_dashboard_table_exists')) {
     }
 }
 
+if (!function_exists('hh_dashboard_stage_context_for_match')) {
+    function hh_dashboard_stage_context_for_match(int $matchNumber, array $stageContexts): ?array
+    {
+        foreach ($stageContexts as $context) {
+            $start = (int) ($context['fixture_start'] ?? 0);
+            $end = (int) ($context['fixture_end'] ?? -1);
+            if ($matchNumber >= $start && $matchNumber <= $end) {
+                return $context;
+            }
+        }
+
+        return null;
+    }
+}
+
+if (!function_exists('hh_dashboard_fixture_score_label')) {
+    function hh_dashboard_fixture_score_label($homeScore, $awayScore, string $fallback = '—'): string
+    {
+        if (!is_numeric($homeScore) || !is_numeric($awayScore)) {
+            return $fallback;
+        }
+
+        return (string) ((int) $homeScore) . '-' . (string) ((int) $awayScore);
+    }
+}
+
+if (!function_exists('hh_dashboard_popular_prediction_for_match')) {
+    function hh_dashboard_popular_prediction_for_match(mysqli $con, string $tableName, int $homeScoreIndex, int $awayScoreIndex): ?array
+    {
+        $homeColumn = 'score' . $homeScoreIndex . '_p';
+        $awayColumn = 'score' . $awayScoreIndex . '_p';
+
+        $result = mysqli_query(
+            $con,
+            "SELECT {$homeColumn} AS home_score, {$awayColumn} AS away_score, COUNT(*) AS prediction_count
+             FROM {$tableName}
+             WHERE {$homeColumn} IS NOT NULL AND {$homeColumn} <> ''
+               AND {$awayColumn} IS NOT NULL AND {$awayColumn} <> ''
+             GROUP BY {$homeColumn}, {$awayColumn}
+             ORDER BY prediction_count DESC, home_score ASC, away_score ASC
+             LIMIT 1"
+        );
+
+        if (!($result instanceof mysqli_result)) {
+            return null;
+        }
+
+        $row = mysqli_fetch_assoc($result) ?: null;
+        mysqli_free_result($result);
+
+        if (!is_array($row) || !is_numeric($row['home_score'] ?? null) || !is_numeric($row['away_score'] ?? null)) {
+            return null;
+        }
+
+        return [
+            'label' => hh_dashboard_fixture_score_label($row['home_score'], $row['away_score']),
+            'count' => (int) ($row['prediction_count'] ?? 0),
+        ];
+    }
+}
+
 if (!function_exists('hh_dashboard_capture')) {
     function hh_dashboard_capture(callable $renderer): string
     {
@@ -364,6 +425,7 @@ $dashboardEditMode = $isDashboardAdmin && (($_GET['dashboard_edit'] ?? '0') === 
 $messages = [];
 $errors = [];
 $todayFixtures = [];
+$stagePredictionSnapshots = [];
 $effectiveToday = hh_effective_today_sql();
 $effectiveTodayLabel = hh_effective_today_label('D j M Y');
 $stageWindows = hh_prediction_stage_windows($con);
@@ -668,6 +730,14 @@ if ($latestSignupsResult instanceof mysqli_result) {
 }
 
 foreach ($stageContexts as $stageKey => $context) {
+    if ($sessionUserId > 0) {
+        $stagePredictionQuery = mysqli_query($con, "SELECT * FROM {$context['table']} WHERE id = " . $sessionUserId . " LIMIT 1");
+        $stagePredictionSnapshots[$stageKey] = $stagePredictionQuery ? (mysqli_fetch_assoc($stagePredictionQuery) ?: []) : [];
+        if ($stagePredictionQuery instanceof mysqli_result) {
+            mysqli_free_result($stagePredictionQuery);
+        }
+    }
+
     $stagePoints[] = [
         'label' => $context['label'],
         'points' => (int) ($currentUser['stage_points'][$stageKey] ?? 0),
@@ -730,7 +800,7 @@ if ($winnerPicksResult instanceof mysqli_result) {
 
 $fixtureStatement = mysqli_prepare(
     $con,
-    "SELECT match_number, stage, date, kotime, venue, hometeam, awayteam, hometeamimg, awayteamimg
+    "SELECT match_number, stage, date, kotime, venue, hometeam, awayteam, hometeamimg, awayteamimg, homescore, awayscore
      FROM live_match_schedule
      WHERE date = ?
      ORDER BY kotime ASC, match_number ASC"
@@ -743,6 +813,33 @@ if ($fixtureStatement) {
 
     if ($fixtureResult instanceof mysqli_result) {
         while ($row = mysqli_fetch_assoc($fixtureResult)) {
+            $matchNumber = (int) ($row['match_number'] ?? 0);
+            $fixtureStageContext = hh_dashboard_stage_context_for_match($matchNumber, $stageContexts);
+            $homeScoreIndex = ($matchNumber * 2) - 1;
+            $awayScoreIndex = $matchNumber * 2;
+            $playerPrediction = 'No prediction';
+            $popularPrediction = null;
+
+            if ($fixtureStageContext !== null) {
+                $stageKey = (string) ($fixtureStageContext['key'] ?? '');
+                $playerRow = $stagePredictionSnapshots[$stageKey] ?? [];
+
+                if (is_array($playerRow) && $playerRow !== []) {
+                    $playerPrediction = hh_dashboard_fixture_score_label(
+                        $playerRow['score' . $homeScoreIndex . '_p'] ?? null,
+                        $playerRow['score' . $awayScoreIndex . '_p'] ?? null,
+                        'No prediction'
+                    );
+                }
+
+                $popularPrediction = hh_dashboard_popular_prediction_for_match(
+                    $con,
+                    (string) ($fixtureStageContext['table'] ?? ''),
+                    $homeScoreIndex,
+                    $awayScoreIndex
+                );
+            }
+
             $todayFixtures[] = [
                 'time' => (string) ($row['kotime'] ?? ''),
                 'home' => (string) ($row['hometeam'] ?? ''),
@@ -751,7 +848,12 @@ if ($fixtureStatement) {
                 'away' => (string) ($row['awayteam'] ?? ''),
                 'away_flag' => (string) ($row['awayteamimg'] ?? ''),
                 'away_avg' => (string) ($row['venue'] ?? ''),
-                'pick' => 'Match ' . (int) ($row['match_number'] ?? 0),
+                'pick' => 'Match ' . $matchNumber,
+                'pick_match_number' => $matchNumber,
+                'player_prediction' => $playerPrediction,
+                'popular_prediction' => $popularPrediction['label'] ?? 'No popular pick yet',
+                'popular_prediction_count' => (int) ($popularPrediction['count'] ?? 0),
+                'result_label' => hh_dashboard_fixture_score_label($row['homescore'] ?? null, $row['awayscore'] ?? null, ''),
             ];
         }
 
@@ -1307,19 +1409,32 @@ $dashboardLayoutCards = [
                     <?php if (!empty($todayFixtures)) : ?>
                         <?php foreach ($todayFixtures as $fixture) : ?>
                             <article class="fixture-card-row">
-                                <div class="fixture-card-row__meta"><span class="fixture-card-row__time"><?= htmlspecialchars($fixture['time']) ?></span></div>
+                                <div class="fixture-card-row__meta">
+                                    <span class="fixture-card-row__time"><?= htmlspecialchars($fixture['time']) ?></span>
+                                    <span class="fixture-card-row__context"><?= htmlspecialchars((string) ($fixture['away_avg'] ?? 'Venue TBC')) ?><?= !empty($fixture['pick_match_number']) ? ' (' . (int) $fixture['pick_match_number'] . ')' : '' ?></span>
+                                </div>
                                 <div class="fixture-card-row__match">
                                     <div class="fixture-card-row__team">
                                         <img src="<?= htmlspecialchars($fixture['home_flag']) ?>" alt="<?= htmlspecialchars($fixture['home']) ?> flag">
-                                        <div><strong><?= hh_render_team_name_responsive((string) $fixture['home']) ?></strong></div>
+                                        <div class="fixture-card-row__team-name"><?= hh_render_team_name_responsive((string) $fixture['home']) ?></div>
                                     </div>
-                                    <div class="fixture-card-row__divider">vs</div>
+                                    <div class="fixture-card-row__divider<?= !empty($fixture['result_label']) ? ' is-result' : '' ?>">
+                                        <?php if (!empty($fixture['result_label'])) : ?>
+                                            <strong><?= htmlspecialchars((string) $fixture['result_label']) ?></strong>
+                                            <span>FT</span>
+                                        <?php else : ?>
+                                            vs
+                                        <?php endif; ?>
+                                    </div>
                                     <div class="fixture-card-row__team fixture-card-row__team--away">
-                                        <div><strong><?= hh_render_team_name_responsive((string) $fixture['away']) ?></strong></div>
+                                        <div class="fixture-card-row__team-name"><?= hh_render_team_name_responsive((string) $fixture['away']) ?></div>
                                         <img src="<?= htmlspecialchars($fixture['away_flag']) ?>" alt="<?= htmlspecialchars($fixture['away']) ?> flag">
                                     </div>
                                 </div>
-                                <p class="fixture-card-row__pick"><?= htmlspecialchars($fixture['pick']) ?> · <?= htmlspecialchars($fixture['away_avg']) ?></p>
+                                <div class="fixture-card-row__insights">
+                                    <p><strong>Your prediction:</strong><span><?= htmlspecialchars((string) ($fixture['player_prediction'] ?? 'No prediction')) ?></span></p>
+                                    <p><strong>Popular prediction:</strong><span><?= htmlspecialchars((string) ($fixture['popular_prediction'] ?? 'No popular pick yet')) ?></span></p>
+                                </div>
                             </article>
                         <?php endforeach; ?>
                     <?php else : ?>
@@ -1340,6 +1455,13 @@ $dashboardLayoutCards = [
                     <div class="form-chart">
                         <div class="form-chart__canvas-wrap">
                             <canvas id="dashboardFormChart" aria-label="Last six scored fixtures form chart" role="img"></canvas>
+                        </div>
+                        <div class="form-strip" aria-label="Rolling six-match points form">
+                            <?php foreach ($formPointMeta as $point) : ?>
+                                <span class="form-strip__box <?= htmlspecialchars((string) ($point['class'] ?? 'is-mid')) ?>">
+                                    <?= (int) ($point['points'] ?? 0) ?>
+                                </span>
+                            <?php endforeach; ?>
                         </div>
                     </div>
                 <?php else : ?>
