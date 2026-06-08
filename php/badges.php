@@ -235,7 +235,7 @@ function hh_badge_stats_for_user(mysqli $con, int $userId): array
         $stats['avid_climber'] = true;
     }
 
-    if ($currentPosition > 0 && $currentPosition <= 3) {
+    if ($currentPosition > 0 && $currentPosition <= 3 && (int) ($stats['points_total'] ?? 0) > 0) {
         $stats['dizzy_heights'] = true;
     }
 
