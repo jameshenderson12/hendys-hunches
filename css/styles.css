@@ -5997,6 +5997,7 @@ body.tour-active {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  justify-content: center;
 }
 
 .form-strip__box {
@@ -6013,7 +6014,7 @@ body.tour-active {
 }
 
 .form-strip__box.is-strong {
-  background: var(--dashboard-primary-dark);
+  background: var(--dashboard-primary);
 }
 
 .form-strip__box.is-mid {
