@@ -14,6 +14,11 @@ function hh_badge_definitions(): array
         'IN' => ['token' => 'IN', 'image' => 'img/badges/predictions-in.png', 'title' => 'Predictions In', 'description' => 'Save your first stage of predictions.'],
         'PT' => ['token' => 'PT', 'image' => 'img/badges/on-the-move.png', 'title' => 'On The Move', 'description' => 'Pick up your first points.'],
         '7' => ['token' => '7', 'image' => 'img/badges/perfect-seven.png', 'title' => 'Perfect Seven', 'description' => 'Land your first exact 7-pointer.'],
+        'CR' => ['token' => 'CR', 'image' => 'img/badges/crowd-rebel.png', 'title' => 'Crowd Rebel', 'description' => 'Beat the crowd with a different scoreline and still score 2+ points.'],
+        'HS' => ['token' => 'HS', 'image' => 'img/badges/hot-streak.png', 'title' => 'Hot Streak', 'description' => 'Score points in three consecutive recorded fixtures.'],
+        'AC' => ['token' => 'AC', 'image' => 'img/badges/avid-climber.png', 'title' => 'Avid Climber', 'description' => 'Climb 5 or more places in a single results update.'],
+        'DH' => ['token' => 'DH', 'image' => 'img/badges/dizzy-heights.png', 'title' => 'Dizzy Heights', 'description' => 'Break into the top three of the rankings.'],
+        'TFT' => ['token' => 'TFT', 'image' => 'img/badges/top-form-turkey.png', 'title' => 'Top Form Turkey', 'description' => 'Hit three straight 7-pointers in consecutive scored fixtures.'],
         'TH' => ['token' => 'TH', 'image' => 'img/badges/thread-starter.png', 'title' => 'Thread Starter', 'description' => 'Start a message thread in the Fan Zone.'],
         'RP' => ['token' => 'RP', 'image' => 'img/badges/in-the-replies.png', 'title' => 'In The Replies', 'description' => 'Reply to a thread in the Fan Zone.'],
         'PV' => ['token' => 'PV', 'image' => 'img/badges/poll-voter.png', 'title' => 'Poll Voter', 'description' => 'Cast your first vote in a live poll.'],
@@ -69,7 +74,7 @@ function hh_badge_user_identity(mysqli $con, int $userId): ?array
 
     $statement = mysqli_prepare(
         $con,
-        "SELECT id, username
+        "SELECT id, username, lastpos, currpos
          FROM live_user_information
          WHERE id = ?
          LIMIT 1"
@@ -136,12 +141,79 @@ function hh_badge_is_exact_prediction(array $predictionRow, array $resultRow, in
         && (int) $predAway === (int) $actualAway;
 }
 
+function hh_badge_fixture_score_key($homeScore, $awayScore): string
+{
+    if (!is_numeric($homeScore) || !is_numeric($awayScore)) {
+        return '';
+    }
+
+    return (string) ((int) $homeScore) . ':' . (string) ((int) $awayScore);
+}
+
+function hh_badge_popular_prediction_keys_for_fixture(mysqli $con, string $tableName, int $homeIndex, int $awayIndex): array
+{
+    static $cache = [];
+
+    $cacheKey = $tableName . ':' . $homeIndex . ':' . $awayIndex;
+    if (isset($cache[$cacheKey])) {
+        return $cache[$cacheKey];
+    }
+
+    $homeColumn = 'score' . $homeIndex . '_p';
+    $awayColumn = 'score' . $awayIndex . '_p';
+    $result = mysqli_query(
+        $con,
+        "SELECT {$homeColumn} AS home_score, {$awayColumn} AS away_score, COUNT(*) AS prediction_count
+         FROM {$tableName}
+         WHERE {$homeColumn} IS NOT NULL AND {$homeColumn} <> ''
+           AND {$awayColumn} IS NOT NULL AND {$awayColumn} <> ''
+         GROUP BY {$homeColumn}, {$awayColumn}
+         ORDER BY prediction_count DESC, home_score ASC, away_score ASC"
+    );
+
+    if (!($result instanceof mysqli_result)) {
+        $cache[$cacheKey] = [];
+        return $cache[$cacheKey];
+    }
+
+    $popularKeys = [];
+    $topCount = null;
+
+    while ($row = mysqli_fetch_assoc($result)) {
+        $count = (int) ($row['prediction_count'] ?? 0);
+        $scoreKey = hh_badge_fixture_score_key($row['home_score'] ?? null, $row['away_score'] ?? null);
+        if ($scoreKey === '') {
+            continue;
+        }
+
+        if ($topCount === null) {
+            $topCount = $count;
+        }
+
+        if ($count !== $topCount) {
+            break;
+        }
+
+        $popularKeys[] = $scoreKey;
+    }
+
+    mysqli_free_result($result);
+    $cache[$cacheKey] = array_values(array_unique($popularKeys));
+
+    return $cache[$cacheKey];
+}
+
 function hh_badge_stats_for_user(mysqli $con, int $userId): array
 {
     $stats = [
         'has_predictions' => false,
         'points_total' => 0,
         'perfect_predictions' => 0,
+        'crowd_rebel' => false,
+        'hot_streak' => false,
+        'avid_climber' => false,
+        'dizzy_heights' => false,
+        'top_form_turkey' => false,
         'thread_count' => 0,
         'reply_count' => 0,
         'poll_votes' => 0,
@@ -154,6 +226,18 @@ function hh_badge_stats_for_user(mysqli $con, int $userId): array
 
     $latestResults = hh_badge_latest_result_row($con);
     $stageDefinitions = hh_prediction_stage_definitions();
+    $scoringStreak = 0;
+    $perfectStreak = 0;
+    $lastPosition = (int) ($identity['lastpos'] ?? 0);
+    $currentPosition = (int) ($identity['currpos'] ?? 0);
+
+    if ($lastPosition > 0 && $currentPosition > 0 && ($lastPosition - $currentPosition) >= 5) {
+        $stats['avid_climber'] = true;
+    }
+
+    if ($currentPosition > 0 && $currentPosition <= 3) {
+        $stats['dizzy_heights'] = true;
+    }
 
     foreach ($stageDefinitions as $stageKey => $definition) {
         $tableName = (string) ($definition['table'] ?? '');
@@ -177,6 +261,51 @@ function hh_badge_stats_for_user(mysqli $con, int $userId): array
         for ($homeIndex = $startIndex, $awayIndex = $startIndex + 1; $homeIndex <= $endIndex && $awayIndex <= $endIndex; $homeIndex += 2, $awayIndex += 2) {
             if (hh_badge_is_exact_prediction($predictionRow, $latestResults, $homeIndex, $awayIndex)) {
                 $stats['perfect_predictions']++;
+            }
+
+            $detail = hh_prediction_fixture_score_detail(
+                $predictionRow['score' . $homeIndex . '_p'] ?? null,
+                $predictionRow['score' . $awayIndex . '_p'] ?? null,
+                $latestResults['score' . $homeIndex . '_r'] ?? null,
+                $latestResults['score' . $awayIndex . '_r'] ?? null
+            );
+
+            if (!empty($detail['recorded'])) {
+                if ((int) ($detail['points'] ?? 0) > 0) {
+                    $scoringStreak++;
+                    if ($scoringStreak >= 3) {
+                        $stats['hot_streak'] = true;
+                    }
+                } else {
+                    $scoringStreak = 0;
+                }
+
+                if ((int) ($detail['points'] ?? 0) === 7) {
+                    $perfectStreak++;
+                    if ($perfectStreak >= 3) {
+                        $stats['top_form_turkey'] = true;
+                    }
+                } else {
+                    $perfectStreak = 0;
+                }
+            }
+
+            if ((int) ($detail['points'] ?? 0) < 2) {
+                continue;
+            }
+
+            $playerScoreKey = hh_badge_fixture_score_key(
+                $predictionRow['score' . $homeIndex . '_p'] ?? null,
+                $predictionRow['score' . $awayIndex . '_p'] ?? null
+            );
+
+            if ($playerScoreKey === '') {
+                continue;
+            }
+
+            $popularScoreKeys = hh_badge_popular_prediction_keys_for_fixture($con, $tableName, $homeIndex, $awayIndex);
+            if ($popularScoreKeys !== [] && !in_array($playerScoreKey, $popularScoreKeys, true)) {
+                $stats['crowd_rebel'] = true;
             }
         }
     }
@@ -252,6 +381,11 @@ function hh_badge_is_earned(string $token, array $stats): bool
         'IN' => !empty($stats['has_predictions']),
         'PT' => (int) ($stats['points_total'] ?? 0) > 0,
         '7' => (int) ($stats['perfect_predictions'] ?? 0) > 0,
+        'CR' => !empty($stats['crowd_rebel']),
+        'HS' => !empty($stats['hot_streak']),
+        'AC' => !empty($stats['avid_climber']),
+        'DH' => !empty($stats['dizzy_heights']),
+        'TFT' => !empty($stats['top_form_turkey']),
         'TH' => (int) ($stats['thread_count'] ?? 0) > 0,
         'RP' => (int) ($stats['reply_count'] ?? 0) > 0,
         'PV' => (int) ($stats['poll_votes'] ?? 0) > 0,

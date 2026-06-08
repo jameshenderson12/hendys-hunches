@@ -5777,7 +5777,7 @@ body.tour-active {
 }
 
 .dashboard-layout-card--full {
-  --badge-columns: 7;
+  --badge-columns: 8;
 }
 
 .badge-card {
