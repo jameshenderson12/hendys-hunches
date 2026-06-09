@@ -281,7 +281,7 @@ include 'php/navigation.php';
 }
 
 .predictions-page .score-field {
-  max-width: 68px;
+  max-width: 80px;
   margin: 0 auto;
   text-align: center;
   font-size: 1.1rem;
@@ -424,7 +424,7 @@ include 'php/navigation.php';
   }
 
   .predictions-page .score-field {
-    max-width: 48px;
+    max-width: 80px;
     min-height: 40px;
     font-size: 0.96rem;
     padding-left: 0.3rem;
