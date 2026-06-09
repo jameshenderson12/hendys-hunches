@@ -1169,6 +1169,32 @@ if ($requestedAuditMatch > 0) {
 $predictionIntegrityAudit = hh_admin_prediction_integrity_audit($con, $users);
 $scoringAudit = hh_admin_scoring_audit($con, $selectedAuditMatch);
 $badgeSummary = hh_badge_admin_summary($con);
+$selectedBadgeUserId = (int) ($_GET['badge_user_id'] ?? 0);
+$selectedBadgeTokens = [];
+$selectedBadgeUserLabel = '';
+
+if ($selectedBadgeUserId > 0) {
+    foreach ($users as $user) {
+        $userId = (int) ($user['id'] ?? 0);
+        if ($userId !== $selectedBadgeUserId) {
+            continue;
+        }
+
+        $displayName = trim((string) ($user['firstname'] ?? '') . ' ' . (string) ($user['surname'] ?? ''));
+        if ($displayName === '') {
+            $displayName = (string) ($user['username'] ?? 'Player ' . $userId);
+        }
+
+        $selectedBadgeUserLabel = $displayName . ' (@' . (string) ($user['username'] ?? '') . ')';
+        break;
+    }
+
+    if ($selectedBadgeUserLabel !== '' && hh_badge_table_exists($con)) {
+        $selectedBadgeTokens = hh_badge_fetch_awarded_tokens_with_connection($con, $selectedBadgeUserId);
+    } else {
+        $selectedBadgeUserId = 0;
+    }
+}
 
 $tablePreview = hh_admin_preview_table($con, $selectedTable, 30);
 $editableTable = $tableEditorConfig[$selectedTable] ?? null;
@@ -1539,32 +1565,80 @@ include '../php/navigation.php';
       }
       .admin-badge-list {
         display: grid;
-        gap: 12px;
-      }
-      .admin-kpi--badge {
         gap: 14px;
-        align-items: start;
-        grid-template-columns: minmax(150px, 180px) minmax(0, 1fr);
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
       }
-      .admin-kpi--badge .admin-kpi__item {
-        height: 100%;
+      .admin-badge-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 14px;
       }
-      .admin-badge-summary__img {
-        width: 64px;
-        height: 64px;
+      .admin-badge-filter {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        gap: 10px;
+      }
+      .admin-badge-tile {
+        display: grid;
+        gap: 10px;
+        padding: 16px;
+        border: 1px solid var(--hh-line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.84);
+      }
+      .admin-badge-tile.is-earned {
+        border-color: rgba(25, 135, 84, 0.26);
+        background: rgba(25, 135, 84, 0.06);
+      }
+      .admin-badge-tile__top {
+        display: grid;
+        gap: 10px;
+        justify-items: center;
+        text-align: center;
+      }
+      .admin-badge-tile__img {
+        width: 68px;
+        height: 68px;
         border-radius: 8px;
         object-fit: cover;
-        margin-bottom: 8px;
       }
-      .admin-badge-summary__meta {
-        display: grid;
-        gap: 6px;
-        align-content: start;
+      .admin-badge-tile__title {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 900;
       }
-      .admin-badge-summary__meta small {
+      .admin-badge-tile__desc {
+        margin: 0;
         color: var(--hh-muted);
-        font-weight: 700;
-        line-height: 1.4;
+        font-size: 0.86rem;
+        line-height: 1.35;
+      }
+      .admin-badge-tile__footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+      .admin-badge-tile__count {
+        font-size: 0.95rem;
+        font-weight: 900;
+      }
+      .admin-badge-tile__status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.88rem;
+        font-weight: 800;
+        color: var(--hh-muted);
+      }
+      .admin-badge-tile__status.is-earned {
+        color: #198754;
+      }
+      .admin-badge-tile__status .bi {
+        font-size: 1rem;
       }
       @media (max-width: 991px) {
         .admin-grid--two,
@@ -1573,9 +1647,6 @@ include '../php/navigation.php';
         .admin-audit-metrics,
         .admin-score-summary,
         .admin-editor-grid {
-          grid-template-columns: 1fr;
-        }
-        .admin-kpi--badge {
           grid-template-columns: 1fr;
         }
       }
@@ -1632,38 +1703,71 @@ include '../php/navigation.php';
         </div>
 
         <div class="admin-card">
-            <div class="d-flex flex-wrap align-items-start justify-content-between gap-3">
+            <div class="admin-badge-toolbar">
                 <div>
                     <h2>Badge Awards</h2>
-                    <p class="admin-note mb-0">Refresh badge awards from the current game data, then review who has earned what across the whole player base.</p>
+                    <p class="admin-note mb-0">
+                        <?php if ($selectedBadgeUserId > 0 && $selectedBadgeUserLabel !== '') : ?>
+                            Viewing badge progress for <?= htmlspecialchars($selectedBadgeUserLabel, ENT_QUOTES) ?>. Green ticks mark the badges they currently hold.
+                        <?php else : ?>
+                            Refresh badge awards from the current game data, then review how many players have earned each badge across the whole player base.
+                        <?php endif; ?>
+                    </p>
                 </div>
-                <form method="post">
-                    <input type="hidden" name="admin_action" value="refresh_badges">
-                    <button type="submit" class="btn btn-outline-dark"><i class="bi bi-award"></i> Refresh badge awards</button>
-                </form>
+                <div class="d-flex flex-wrap align-items-end gap-2">
+                    <form method="get" class="admin-badge-filter">
+                        <div>
+                            <label class="form-label" for="badge_user_id">Player view</label>
+                            <select class="form-select" id="badge_user_id" name="badge_user_id">
+                                <option value="">All players</option>
+                                <?php foreach ($users as $user) : ?>
+                                    <?php
+                                    $userId = (int) ($user['id'] ?? 0);
+                                    $displayName = trim((string) ($user['firstname'] ?? '') . ' ' . (string) ($user['surname'] ?? ''));
+                                    if ($displayName === '') {
+                                        $displayName = (string) ($user['username'] ?? 'Player ' . $userId);
+                                    }
+                                    ?>
+                                    <option value="<?= $userId ?>"<?= $selectedBadgeUserId === $userId ? ' selected' : '' ?>>
+                                        <?= htmlspecialchars($displayName . ' (@' . (string) ($user['username'] ?? '') . ')', ENT_QUOTES) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <input type="hidden" name="table" value="<?= htmlspecialchars($selectedTable, ENT_QUOTES) ?>">
+                        <input type="hidden" name="audit_match" value="<?= (int) $selectedAuditMatch ?>">
+                        <button type="submit" class="btn btn-outline-secondary"><i class="bi bi-person-check"></i> View badges</button>
+                    </form>
+                    <form method="post">
+                        <input type="hidden" name="admin_action" value="refresh_badges">
+                        <button type="submit" class="btn btn-outline-dark"><i class="bi bi-award"></i> Refresh badge awards</button>
+                    </form>
+                </div>
             </div>
             <div class="admin-badge-list mt-3">
                 <?php foreach ($badgeSummary as $badge) : ?>
                     <?php
-                    $playerNames = array_slice((array) ($badge['players'] ?? []), 0, 8);
-                    $remainingPlayers = max(0, count((array) ($badge['players'] ?? [])) - count($playerNames));
-                    $latestAwarded = !empty($badge['latest_awarded']) ? date('j M Y H:i', strtotime((string) $badge['latest_awarded'])) : '—';
+                    $badgeToken = (string) ($badge['token'] ?? '');
+                    $isEarnedForSelectedUser = $selectedBadgeUserId > 0 && in_array($badgeToken, $selectedBadgeTokens, true);
                     ?>
-                    <article class="admin-kpi admin-kpi--badge">
-                        <div class="admin-kpi__item">
-                            <img class="admin-badge-summary__img" src="../<?= htmlspecialchars((string) ($badge['image'] ?? ''), ENT_QUOTES) ?>" alt="<?= htmlspecialchars((string) ($badge['title'] ?? 'Badge artwork'), ENT_QUOTES) ?>">
-                            <strong><?= (int) ($badge['count'] ?? 0) ?></strong>
-                            <span><?= htmlspecialchars((string) ($badge['title'] ?? 'Badge'), ENT_QUOTES) ?></span>
+                    <article class="admin-badge-tile<?= $isEarnedForSelectedUser ? ' is-earned' : '' ?>">
+                        <div class="admin-badge-tile__top">
+                            <img class="admin-badge-tile__img" src="../<?= htmlspecialchars((string) ($badge['image'] ?? ''), ENT_QUOTES) ?>" alt="<?= htmlspecialchars((string) ($badge['title'] ?? 'Badge artwork'), ENT_QUOTES) ?>">
+                            <div>
+                                <h3 class="admin-badge-tile__title"><?= htmlspecialchars((string) ($badge['title'] ?? 'Badge'), ENT_QUOTES) ?></h3>
+                                <p class="admin-badge-tile__desc"><?= htmlspecialchars((string) ($badge['description'] ?? ''), ENT_QUOTES) ?></p>
+                            </div>
                         </div>
-                        <div class="admin-badge-summary__meta">
-                            <small>Latest award: <?= htmlspecialchars($latestAwarded, ENT_QUOTES) ?></small>
-                            <small>
-                                <?php if ($playerNames !== []) : ?>
-                                    <?= htmlspecialchars(implode(', ', $playerNames), ENT_QUOTES) ?><?= $remainingPlayers > 0 ? ' +' . $remainingPlayers . ' more' : '' ?>
-                                <?php else : ?>
-                                    No players yet
-                                <?php endif; ?>
-                            </small>
+                        <div class="admin-badge-tile__footer">
+                            <?php if ($selectedBadgeUserId > 0) : ?>
+                                <span class="admin-badge-tile__status<?= $isEarnedForSelectedUser ? ' is-earned' : '' ?>">
+                                    <i class="bi <?= $isEarnedForSelectedUser ? 'bi-check-circle-fill' : 'bi-circle' ?>"></i>
+                                    <?= $isEarnedForSelectedUser ? 'Earned' : 'Locked' ?>
+                                </span>
+                            <?php else : ?>
+                                <span class="admin-badge-tile__count"><?= (int) ($badge['count'] ?? 0) ?> total</span>
+                            <?php endif; ?>
+                            <span class="admin-note"><?= (int) ($badge['count'] ?? 0) ?> player<?= (int) ($badge['count'] ?? 0) === 1 ? '' : 's' ?></span>
                         </div>
                     </article>
                 <?php endforeach; ?>
