@@ -1622,9 +1622,13 @@ include '../php/navigation.php';
         justify-content: space-between;
         gap: 10px;
       }
+      .admin-badge-tile__footer.is-summary {
+        justify-content: center;
+      }
       .admin-badge-tile__count {
         font-size: 0.95rem;
         font-weight: 900;
+        text-align: center;
       }
       .admin-badge-tile__status {
         display: inline-flex;
@@ -1758,16 +1762,18 @@ include '../php/navigation.php';
                                 <p class="admin-badge-tile__desc"><?= htmlspecialchars((string) ($badge['description'] ?? ''), ENT_QUOTES) ?></p>
                             </div>
                         </div>
-                        <div class="admin-badge-tile__footer">
+                        <div class="admin-badge-tile__footer<?= $selectedBadgeUserId > 0 ? '' : ' is-summary' ?>">
                             <?php if ($selectedBadgeUserId > 0) : ?>
                                 <span class="admin-badge-tile__status<?= $isEarnedForSelectedUser ? ' is-earned' : '' ?>">
                                     <i class="bi <?= $isEarnedForSelectedUser ? 'bi-check-circle-fill' : 'bi-circle' ?>"></i>
                                     <?= $isEarnedForSelectedUser ? 'Earned' : 'Locked' ?>
                                 </span>
                             <?php else : ?>
-                                <span class="admin-badge-tile__count"><?= (int) ($badge['count'] ?? 0) ?> total</span>
+                                <span class="admin-badge-tile__count"><?= (int) ($badge['count'] ?? 0) ?> player<?= (int) ($badge['count'] ?? 0) === 1 ? '' : 's' ?></span>
                             <?php endif; ?>
-                            <span class="admin-note"><?= (int) ($badge['count'] ?? 0) ?> player<?= (int) ($badge['count'] ?? 0) === 1 ? '' : 's' ?></span>
+                            <?php if ($selectedBadgeUserId > 0) : ?>
+                                <span class="admin-note"><?= (int) ($badge['count'] ?? 0) ?> player<?= (int) ($badge['count'] ?? 0) === 1 ? '' : 's' ?></span>
+                            <?php endif; ?>
                         </div>
                     </article>
                 <?php endforeach; ?>
