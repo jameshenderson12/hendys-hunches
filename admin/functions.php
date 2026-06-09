@@ -657,10 +657,11 @@ function hh_admin_reset_preserving_users_with_connection(mysqli $con, array $use
         "DELETE FROM live_poll_options",
         "DELETE FROM live_polls",
         "DELETE FROM live_fanzone_posts",
+        "DELETE FROM live_user_logins",
         "DELETE FROM live_temp_information WHERE username NOT IN ({$quotedUsernames})",
         "UPDATE live_temp_information SET temp_pass = '' WHERE username IN ({$quotedUsernames})",
         "DELETE FROM live_user_information WHERE id NOT IN ({$idList})",
-        "UPDATE live_user_information SET lastlogin = NULL",
+        "UPDATE live_user_information SET lastlogin = NULL, login_count = 0",
     ];
 
     foreach (hh_admin_existing_prediction_backup_tables($con) as $backupTable) {
@@ -842,6 +843,7 @@ $errors = [];
 
 $tableOptions = [
     'live_user_information' => 'User information',
+    'live_user_logins' => 'Login events',
     'live_match_schedule' => 'Match schedule',
     'live_match_results' => 'Match results',
     'live_user_predictions_groups' => 'Group predictions',
@@ -1091,6 +1093,7 @@ $snapshot = [
     'result_snapshots' => 0,
     'fanzone' => 0,
     'badges' => 0,
+    'logins' => 0,
 ];
 
 $countQueries = [
@@ -1123,6 +1126,15 @@ if (hh_badge_table_exists($con)) {
     if ($result) {
         $row = mysqli_fetch_assoc($result);
         $snapshot['badges'] = (int) ($row['total'] ?? 0);
+        mysqli_free_result($result);
+    }
+}
+
+if (hh_admin_table_exists($con, 'live_user_logins')) {
+    $result = mysqli_query($con, "SELECT COUNT(*) AS total FROM live_user_logins");
+    if ($result) {
+        $row = mysqli_fetch_assoc($result);
+        $snapshot['logins'] = (int) ($row['total'] ?? 0);
         mysqli_free_result($result);
     }
 }
@@ -1615,6 +1627,7 @@ include '../php/navigation.php';
                 <div class="admin-kpi__item"><strong><?= $snapshot['result_snapshots'] ?></strong><span>result snapshots saved</span></div>
                 <div class="admin-kpi__item"><strong><?= $snapshot['fanzone'] ?></strong><span>live Fan Zone posts</span></div>
                 <div class="admin-kpi__item"><strong><?= $snapshot['badges'] ?></strong><span>badge awards stored</span></div>
+                <div class="admin-kpi__item"><strong><?= $snapshot['logins'] ?></strong><span>successful logins recorded</span></div>
             </div>
         </div>
 

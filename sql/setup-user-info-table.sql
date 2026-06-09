@@ -15,5 +15,6 @@ CREATE TABLE IF NOT EXISTS live_user_information (
     currpos SMALLINT(6) NOT NULL,
     signupdate TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     lastlogin TIMESTAMP NULL,
+    login_count INT NOT NULL DEFAULT 0,
     haspaid CHAR(5) DEFAULT 'No' NOT NULL
 );
