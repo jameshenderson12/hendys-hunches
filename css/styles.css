@@ -5761,11 +5761,11 @@ body.tour-active {
 }
 
 .dashboard-layout-card--small {
-  --badge-columns: 1;
+  --badge-columns: 2;
 }
 
 .dashboard-layout-card--normal {
-  --badge-columns: 2;
+  --badge-columns: 3;
 }
 
 .dashboard-layout-card--half {
@@ -5773,7 +5773,7 @@ body.tour-active {
 }
 
 .dashboard-layout-card--large {
-  --badge-columns: 5;
+  --badge-columns: 6;
 }
 
 .dashboard-layout-card--full {
@@ -5785,20 +5785,21 @@ body.tour-active {
   justify-items: center;
   align-content: start;
   gap: 10px;
-  padding: 14px;
+  padding: 5px;
   border: 1px solid var(--hh-line);
   border-radius: 8px;
-  background: rgba(12, 90, 67, 0.04);
+  /* background: rgba(12, 90, 67, 0.04); */
   text-align: center;
 }
 
 .badge-card.is-earned {
   border-color: rgba(12, 90, 67, 0.18);
-  background: rgba(12, 90, 67, 0.08);
+  /* background: rgba(12, 90, 67, 0.08); */
 }
 
 .badge-card.is-locked {
   opacity: 0.82;
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .badge-card__token {
@@ -5807,9 +5808,9 @@ body.tour-active {
   width: 100px;
   height: 100px;
   overflow: hidden;
-  border: 1px solid rgba(143, 102, 216, 0.18);
+  /* border: 1px solid rgba(143, 102, 216, 0.18); */
   border-radius: 8px;
-  background: linear-gradient(135deg, rgba(12, 90, 67, 0.12), rgba(143, 102, 216, 0.18));
+  /* background: linear-gradient(135deg, rgba(12, 90, 67, 0.12), rgba(143, 102, 216, 0.18)); */
 }
 
 .badge-card__token img {
