@@ -3717,7 +3717,7 @@ body.tour-active {
 }
 
 .predictions-page input.form-control {
-  width: 58px !important;
+  /* width: 58px !important; */
   min-height: 46px;
   border-color: var(--hh-line) !important;
   border-radius: 8px;

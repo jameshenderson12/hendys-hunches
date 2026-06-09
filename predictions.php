@@ -424,7 +424,7 @@ include 'php/navigation.php';
   }
 
   .predictions-page .score-field {
-    max-width: 80px;
+    max-width: 60px;
     min-height: 40px;
     font-size: 0.96rem;
     padding-left: 0.3rem;
