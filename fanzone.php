@@ -287,6 +287,8 @@ $sessionUserId = (int) ($_SESSION['id'] ?? 0);
 $sessionUsername = (string) ($_SESSION['username'] ?? '');
 $yourThreadCount = 0;
 $yourReplyCount = 0;
+$activePollCount = 0;
+$yourPollVoteCount = 0;
 $teamFlagMap = [];
 $quickFireQuiz = [
     [
@@ -693,6 +695,35 @@ if ($boardSchemaReady) {
 
 if ($pollSchemaReady) {
     $teamFlagMap = hh_fanzone_build_team_flag_map($con);
+
+    $activePollCountResult = mysqli_query($con, "SELECT COUNT(*) AS total FROM live_polls WHERE is_active = 1");
+    if ($activePollCountResult instanceof mysqli_result) {
+        $activePollCountRow = mysqli_fetch_assoc($activePollCountResult) ?: [];
+        $activePollCount = (int) ($activePollCountRow['total'] ?? 0);
+        mysqli_free_result($activePollCountResult);
+    }
+
+    if ($sessionUserId > 0) {
+        $voteCountStmt = mysqli_prepare(
+            $con,
+            "SELECT COUNT(*) AS total_votes
+             FROM live_poll_votes
+             WHERE user_id = ?"
+        );
+
+        if ($voteCountStmt) {
+            mysqli_stmt_bind_param($voteCountStmt, 'i', $sessionUserId);
+            mysqli_stmt_execute($voteCountStmt);
+            $voteCountResult = mysqli_stmt_get_result($voteCountStmt);
+            if ($voteCountResult instanceof mysqli_result) {
+                $voteCountRow = mysqli_fetch_assoc($voteCountResult) ?: [];
+                $yourPollVoteCount = (int) ($voteCountRow['total_votes'] ?? 0);
+                mysqli_free_result($voteCountResult);
+            }
+            mysqli_stmt_close($voteCountStmt);
+        }
+    }
+
     $activePollResult = mysqli_query($con, "SELECT id FROM live_polls WHERE is_active = 1 ORDER BY created_at DESC, id DESC LIMIT 1");
     if ($activePollResult instanceof mysqli_result) {
         $activePollRow = mysqli_fetch_assoc($activePollResult) ?: null;
@@ -886,10 +917,12 @@ include "php/navigation.php";
                 <div class="fanzone-snapshot">
                     <p><strong><?= count($threads) ?></strong><span>total live threads</span></p>
                     <p><strong><?= array_sum(array_map(static fn(array $thread): int => (int) $thread['reply_total'], $threads)) ?></strong><span>total replies</span></p>
+                    <p><strong><?= $activePollCount ?></strong><span>active polls</span></p>
+                    <p><strong><?= $yourPollVoteCount ?></strong><span>your poll votes</span></p>
                     <p><strong><?= $yourThreadCount ?></strong><span>your threads</span></p>
                     <p><strong><?= $yourReplyCount ?></strong><span>your replies</span></p>
                 </div>
-                <p class="concept-subtle mb-0">Start a thread when you want to kick things off, or jump into an existing one when the football gets interesting (or dull!).</p>
+                <p class="concept-subtle mb-0">A quick read on how lively the Fan Zone is feeling, whether that’s message-board chatter or poll action.</p>
             </aside>
         </div>
 
