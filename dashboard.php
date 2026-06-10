@@ -1403,7 +1403,8 @@ $dashboardLayoutCards = [
                         <h2>Today's Fixtures</h2>
                         <p class="dashboard-subtle mb-0"><?= htmlspecialchars($effectiveTodayLabel) ?></p>
                     </div>
-                    <span class="dashboard-pill"><?= count($todayFixtures) ?> games</span>
+                    <?php $todayFixtureCount = count($todayFixtures); ?>
+                    <span class="dashboard-pill"><?= $todayFixtureCount ?> <?= $todayFixtureCount === 1 ? 'game' : 'games' ?></span>
                 </div>
                 <div class="fixture-stack">
                     <?php if (!empty($todayFixtures)) : ?>
