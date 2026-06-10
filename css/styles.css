@@ -3112,7 +3112,11 @@ body.tour-active {
 
 .fanzone-grid--feature-row {
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-items: start;
+  align-items: stretch;
+}
+
+.fanzone-grid--feature-row > .fanzone-panel {
+  height: 100%;
 }
 
 .fanzone-panel {
@@ -3208,6 +3212,7 @@ body.tour-active {
 .fanzone-quiz-card {
   display: grid;
   gap: 14px;
+  height: 100%;
 }
 
 .fanzone-quiz {
@@ -3268,7 +3273,7 @@ body.tour-active {
 }
 
 .fanzone-quiz__card h3 {
-  margin: 0;
+  margin-bottom: 20px;
   font-size: 1.08rem;
   font-weight: 900;
   line-height: 1.35;
@@ -3325,6 +3330,7 @@ body.tour-active {
 .fanzone-spot-card {
   display: grid;
   gap: 14px;
+  height: 100%;
 }
 
 .fanzone-spot {
@@ -3340,7 +3346,7 @@ body.tour-active {
 .fanzone-spot__card {
   display: grid;
   gap: 14px;
-  padding: 18px;
+  /* padding: 18px; */
   border: 1px solid var(--hh-line);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.92);
@@ -3377,7 +3383,7 @@ body.tour-active {
 }
 
 .fanzone-spot__meta {
-  display: flex;
+  display: none; /*flex*/
   align-items: baseline;
   justify-content: space-between;
   gap: 12px;
@@ -3736,6 +3742,15 @@ body.tour-active {
   margin: 0;
 }
 
+.fanzone-poll-option__flag {
+  width: 28px;
+  /* height: 24px; */
+  object-fit: cover;
+  /* border-radius: 4px; */
+  border: 1px solid var(--hh-line);
+  flex: 0 0 24px;
+}
+
 .fanzone-poll-results {
   display: grid;
   gap: 12px;
@@ -3764,6 +3779,12 @@ body.tour-active {
 .fanzone-poll-result__meta strong,
 .fanzone-poll-history__header h4 {
   font-size: 1rem;
+}
+
+.fanzone-poll-result__meta strong {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .fanzone-poll-result__meta span,
@@ -3847,7 +3868,10 @@ body.tour-active {
     align-items: flex-start;
   }
 
-  .fanzone-spot__meta,
+  .fanzone-spot__meta {
+    display: none;
+  }
+
   .fanzone-spot__footer {
     display: grid;
     grid-template-columns: 1fr;

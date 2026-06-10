@@ -74,6 +74,54 @@ function hh_fanzone_format_datetime(string $value): string
     return date('j M Y \a\t H:i', $timestamp);
 }
 
+function hh_fanzone_team_key(string $value): string
+{
+    return strtolower(trim($value));
+}
+
+function hh_fanzone_build_team_flag_map(mysqli $con): array
+{
+    if (!hh_fanzone_table_exists($con, 'live_match_schedule')) {
+        return [];
+    }
+
+    $map = [];
+    $result = mysqli_query(
+        $con,
+        "SELECT hometeam, hometeamimg, awayteam, awayteamimg
+         FROM live_match_schedule"
+    );
+
+    if (!($result instanceof mysqli_result)) {
+        return [];
+    }
+
+    while ($row = mysqli_fetch_assoc($result)) {
+        $homeTeam = trim((string) ($row['hometeam'] ?? ''));
+        $homeFlag = trim((string) ($row['hometeamimg'] ?? ''));
+        $awayTeam = trim((string) ($row['awayteam'] ?? ''));
+        $awayFlag = trim((string) ($row['awayteamimg'] ?? ''));
+
+        if ($homeTeam !== '' && $homeFlag !== '') {
+            $map[hh_fanzone_team_key($homeTeam)] = $homeFlag;
+        }
+
+        if ($awayTeam !== '' && $awayFlag !== '') {
+            $map[hh_fanzone_team_key($awayTeam)] = $awayFlag;
+        }
+    }
+
+    mysqli_free_result($result);
+
+    return $map;
+}
+
+function hh_fanzone_option_flag(array $teamFlagMap, string $label): string
+{
+    $teamKey = hh_fanzone_team_key($label);
+    return (string) ($teamFlagMap[$teamKey] ?? '');
+}
+
 function hh_fanzone_schema_ready(mysqli $con, string $table): array
 {
     $requiredColumns = [
@@ -239,6 +287,7 @@ $sessionUserId = (int) ($_SESSION['id'] ?? 0);
 $sessionUsername = (string) ($_SESSION['username'] ?? '');
 $yourThreadCount = 0;
 $yourReplyCount = 0;
+$teamFlagMap = [];
 $quickFireQuiz = [
     [
         'question' => 'Who captains Portugal at the 2026 World Cup?',
@@ -643,6 +692,7 @@ if ($boardSchemaReady) {
 }
 
 if ($pollSchemaReady) {
+    $teamFlagMap = hh_fanzone_build_team_flag_map($con);
     $activePollResult = mysqli_query($con, "SELECT id FROM live_polls WHERE is_active = 1 ORDER BY created_at DESC, id DESC LIMIT 1");
     if ($activePollResult instanceof mysqli_result) {
         $activePollRow = mysqli_fetch_assoc($activePollResult) ?: null;
@@ -720,8 +770,12 @@ include "php/navigation.php";
                                 <input type="hidden" name="poll_id" value="<?= (int) $currentPoll['id'] ?>">
                                 <div class="fanzone-poll-options">
                                     <?php foreach ($currentPoll['options'] as $option) : ?>
+                                        <?php $optionFlag = hh_fanzone_option_flag($teamFlagMap, (string) ($option['label'] ?? '')); ?>
                                         <label class="fanzone-poll-option">
                                             <input type="radio" name="option_id" value="<?= (int) $option['id'] ?>" required>
+                                            <?php if ($optionFlag !== '') : ?>
+                                                <img class="fanzone-poll-option__flag" src="<?= htmlspecialchars($optionFlag, ENT_QUOTES) ?>" alt="">
+                                            <?php endif; ?>
                                             <span><?= htmlspecialchars($option['label'], ENT_QUOTES) ?></span>
                                         </label>
                                     <?php endforeach; ?>
@@ -734,9 +788,15 @@ include "php/navigation.php";
                         <?php else : ?>
                             <div class="fanzone-poll-results">
                                 <?php foreach ($currentPoll['options'] as $option) : ?>
+                                    <?php $optionFlag = hh_fanzone_option_flag($teamFlagMap, (string) ($option['label'] ?? '')); ?>
                                     <div class="fanzone-poll-result<?= $option['selected_by_user'] ? ' is-selected' : '' ?>">
                                         <div class="fanzone-poll-result__meta">
-                                            <strong><?= htmlspecialchars($option['label'], ENT_QUOTES) ?></strong>
+                                            <strong>
+                                                <?php if ($optionFlag !== '') : ?>
+                                                    <img class="fanzone-poll-option__flag" src="<?= htmlspecialchars($optionFlag, ENT_QUOTES) ?>" alt="">
+                                                <?php endif; ?>
+                                                <?= htmlspecialchars($option['label'], ENT_QUOTES) ?>
+                                            </strong>
                                             <span><?= (int) $option['votes'] ?> vote<?= (int) $option['votes'] === 1 ? '' : 's' ?> · <?= (int) $option['percent'] ?>%</span>
                                         </div>
                                         <div class="fanzone-poll-result__bar">
@@ -759,9 +819,15 @@ include "php/navigation.php";
                                             </div>
                                             <div class="fanzone-poll-results">
                                                 <?php foreach ($previousPoll['options'] as $option) : ?>
+                                                    <?php $optionFlag = hh_fanzone_option_flag($teamFlagMap, (string) ($option['label'] ?? '')); ?>
                                                     <div class="fanzone-poll-result">
                                                         <div class="fanzone-poll-result__meta">
-                                                            <strong><?= htmlspecialchars($option['label'], ENT_QUOTES) ?></strong>
+                                                            <strong>
+                                                                <?php if ($optionFlag !== '') : ?>
+                                                                    <img class="fanzone-poll-option__flag" src="<?= htmlspecialchars($optionFlag, ENT_QUOTES) ?>" alt="">
+                                                                <?php endif; ?>
+                                                                <?= htmlspecialchars($option['label'], ENT_QUOTES) ?>
+                                                            </strong>
                                                             <span><?= (int) $option['votes'] ?> · <?= (int) $option['percent'] ?>%</span>
                                                         </div>
                                                         <div class="fanzone-poll-result__bar">
@@ -836,7 +902,7 @@ include "php/navigation.php";
                     </div>
                     <span class="fanzone-chip fanzone-chip--soft"><span data-quiz-progress>1</span>/<?= count($quickFireQuiz) ?></span>
                 </div>
-                <p class="concept-subtle">Tap an answer and we’ll tell you instantly, then slide the next question into place.</p>
+                <p class="concept-subtle">Tap an answer, see if your correct, then onto the next question.</p>
                 <div class="fanzone-quiz" data-fanzone-quiz>
                     <div class="fanzone-quiz__stage" data-quiz-stage></div>
                     <div class="fanzone-quiz__footer">
@@ -853,7 +919,7 @@ include "php/navigation.php";
                     </div>
                     <span class="fanzone-chip fanzone-chip--soft"><span data-spot-progress>1</span>/<?= count($spotTheBallRounds) ?></span>
                 </div>
-                <p class="concept-subtle">Tap squares until you find the ball. Misses stay marked, and each solved image slides the next one into place.</p>
+                <p class="concept-subtle">Tap squares until you find the ball. Misses stay marked.</p>
                 <div class="fanzone-spot" data-fanzone-spot>
                     <div class="fanzone-spot__stage" data-spot-stage></div>
                     <div class="fanzone-spot__footer">
@@ -1231,7 +1297,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     isLocked = true;
                     solvedCount += 1;
                     button.classList.add('is-correct');
-                    status.textContent = 'Found it — onto the next image.';
+                    status.textContent = 'Great, you found it — onto the next one.';
 
                     window.setTimeout(() => {
                         card.classList.add('is-leaving');
@@ -1243,7 +1309,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     }, 900);
                 } else {
                     button.classList.add('is-tried');
-                    status.textContent = `Not there — keep hunting on ${round.title}.`;
+                    status.textContent = `Not there I'm afraid — keep hunting!`;
                 }
             });
 
@@ -1288,7 +1354,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (progress) {
             progress.textContent = String(currentIndex + 1);
         }
-        status.textContent = `${round.title} · Round ${currentIndex + 1} of ${rounds.length}`;
+        status.textContent = `Round ${currentIndex + 1} of ${rounds.length}`;
         restartButton.hidden = true;
     }
 
