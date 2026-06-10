@@ -242,23 +242,28 @@ $yourReplyCount = 0;
 $quickFireQuiz = [
     [
         'question' => 'Who captains Portugal at the 2026 World Cup?',
-        'options' => ['Ronaldo', 'Leao', 'Fernandes', 'Dias'],
-        'answer' => 'Ronaldo',
+        'options' => ['Cristiano Ronaldo', 'Rafael Leao', 'Bruno Fernandes', 'Ruben Dias'],
+        'answer' => 'Cristiano Ronaldo',
     ],
     [
-        'question' => 'Which nation hosts the opening match in Mexico City?',
-        'options' => ['Canada', 'Mexico', 'United States', 'Costa Rica'],
-        'answer' => 'Mexico',
+        'question' => 'Which of these opponents were not in Scotland\'s group for the 1998 World Cup?',
+        'options' => ['Brazil', 'Haiti', 'Morocco'],
+        'answer' => 'Haiti',
     ],
     [
-        'question' => 'How many points does an exact prediction score in Hendy\'s Hunches?',
-        'options' => ['5', '6', '7', '10'],
-        'answer' => '7',
+        'question' => 'How many times have Uruguay won the World Cup?',
+        'options' => ['0', '1', '2', '3'],
+        'answer' => '2',
     ],
     [
-        'question' => 'What does the Crowd Rebel badge reward?',
-        'options' => ['Posting first on the board', 'Backing a different score and still scoring 2+ points', 'Voting in every poll', 'Climbing five places at once'],
-        'answer' => 'Backing a different score and still scoring 2+ points',
+        'question' => 'Who captains Croatia at the 2026 World Cup?',
+        'options' => ['Kevin De Bruyne', 'Virgil van Dijk', 'Lionel Messi', 'Luka Modric'],
+        'answer' => 'Luka Modric',
+    ],
+    [
+        'question' => 'England have won the World Cup once. In which year did they win?',
+        'options' => ['1950', '1954', '1966', '1990'],
+        'answer' => '1966',
     ],
     [
         'question' => 'Which city hosts the final of the 2026 World Cup?',
@@ -268,26 +273,26 @@ $quickFireQuiz = [
 ];
 $spotTheBallRounds = [
     [
-        'title' => 'Opening night',
-        'image' => 'img/fanzone-games/spot-the-ball-1.jpg',
-        'rows' => 5,
-        'cols' => 5,
-        'answer' => 13,
-    ],
-    [
         'title' => 'Penalty-box scramble',
-        'image' => 'img/fanzone-games/spot-the-ball-2.jpg',
-        'rows' => 6,
-        'cols' => 6,
-        'answer' => 22,
-    ],
-    [
-        'title' => 'Late drama',
-        'image' => 'img/fanzone-games/spot-the-ball-3.jpg',
+        'image' => 'img/fanzone-games/spot-the-ball-1.png',
         'rows' => 5,
         'cols' => 6,
-        'answer' => 24,
+        'answer' => 4,
     ],
+    [
+        'title' => 'Passing play',
+        'image' => 'img/fanzone-games/spot-the-ball-2.png',
+        'rows' => 5,
+        'cols' => 6,
+        'answer' => 19,
+    ],
+    // [
+    //     'title' => 'Calming things down',
+    //     'image' => 'img/fanzone-games/spot-the-ball-3.png',
+    //     'rows' => 5,
+    //     'cols' => 6,
+    //     'answer' => 24,
+    // ],
 ];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['fanzone_action'])) {
@@ -1261,7 +1266,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (progress) {
             progress.textContent = String(rounds.length);
         }
-        status.textContent = 'All images cleared. Swap the artwork any time you want a fresh challenge.';
+        status.textContent = 'All images cleared.';
         restartButton.hidden = false;
     }
 
