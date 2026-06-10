@@ -208,6 +208,7 @@ function hh_badge_stats_for_user(mysqli $con, int $userId): array
     $stats = [
         'has_predictions' => false,
         'points_total' => 0,
+        'recorded_fixtures' => 0,
         'perfect_predictions' => 0,
         'crowd_rebel' => false,
         'hot_streak' => false,
@@ -230,10 +231,6 @@ function hh_badge_stats_for_user(mysqli $con, int $userId): array
     $perfectStreak = 0;
     $lastPosition = (int) ($identity['lastpos'] ?? 0);
     $currentPosition = (int) ($identity['currpos'] ?? 0);
-
-    if ($lastPosition > 0 && $currentPosition > 0 && ($lastPosition - $currentPosition) >= 5) {
-        $stats['avid_climber'] = true;
-    }
 
     if ($currentPosition > 0 && $currentPosition <= 3 && (int) ($stats['points_total'] ?? 0) > 0) {
         $stats['dizzy_heights'] = true;
@@ -271,6 +268,8 @@ function hh_badge_stats_for_user(mysqli $con, int $userId): array
             );
 
             if (!empty($detail['recorded'])) {
+                $stats['recorded_fixtures']++;
+
                 if ((int) ($detail['points'] ?? 0) > 0) {
                     $scoringStreak++;
                     if ($scoringStreak >= 3) {
@@ -308,6 +307,10 @@ function hh_badge_stats_for_user(mysqli $con, int $userId): array
                 $stats['crowd_rebel'] = true;
             }
         }
+    }
+
+    if ((int) ($stats['recorded_fixtures'] ?? 0) > 0 && $lastPosition > 0 && $currentPosition > 0 && ($lastPosition - $currentPosition) >= 5) {
+        $stats['avid_climber'] = true;
     }
 
     $username = trim((string) ($identity['username'] ?? ''));
@@ -445,7 +448,7 @@ function hh_badge_fetch_awarded_tokens_with_connection(mysqli $con, int $userId)
     return array_values(array_unique($tokens));
 }
 
-function hh_sync_badges_for_user_with_connection(mysqli $con, int $userId): array
+function hh_sync_badges_for_user_with_connection(mysqli $con, int $userId, bool $seedSilentlyOnFirstSync = false): array
 {
     if ($userId <= 0 || !hh_ensure_badge_table($con)) {
         return ['seeded' => 0, 'new' => 0];
@@ -460,7 +463,7 @@ function hh_sync_badges_for_user_with_connection(mysqli $con, int $userId): arra
         }
     }
 
-    $seedSilently = !empty($existingTokens) ? false : true;
+    $seedSilently = empty($existingTokens) && $seedSilentlyOnFirstSync;
     $stats = hh_badge_stats_for_user($con, $userId);
     $seeded = 0;
     $new = 0;
@@ -589,7 +592,7 @@ function hh_sync_badges_for_all_with_connection(mysqli $con): array
             continue;
         }
 
-        $sync = hh_sync_badges_for_user_with_connection($con, $userId);
+        $sync = hh_sync_badges_for_user_with_connection($con, $userId, true);
         $summary['users']++;
         $summary['seeded'] += (int) ($sync['seeded'] ?? 0);
         $summary['new'] += (int) ($sync['new'] ?? 0);

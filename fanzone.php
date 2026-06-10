@@ -239,6 +239,56 @@ $sessionUserId = (int) ($_SESSION['id'] ?? 0);
 $sessionUsername = (string) ($_SESSION['username'] ?? '');
 $yourThreadCount = 0;
 $yourReplyCount = 0;
+$quickFireQuiz = [
+    [
+        'question' => 'Who captains Portugal at the 2026 World Cup?',
+        'options' => ['Ronaldo', 'Leao', 'Fernandes', 'Dias'],
+        'answer' => 'Ronaldo',
+    ],
+    [
+        'question' => 'Which nation hosts the opening match in Mexico City?',
+        'options' => ['Canada', 'Mexico', 'United States', 'Costa Rica'],
+        'answer' => 'Mexico',
+    ],
+    [
+        'question' => 'How many points does an exact prediction score in Hendy\'s Hunches?',
+        'options' => ['5', '6', '7', '10'],
+        'answer' => '7',
+    ],
+    [
+        'question' => 'What does the Crowd Rebel badge reward?',
+        'options' => ['Posting first on the board', 'Backing a different score and still scoring 2+ points', 'Voting in every poll', 'Climbing five places at once'],
+        'answer' => 'Backing a different score and still scoring 2+ points',
+    ],
+    [
+        'question' => 'Which city hosts the final of the 2026 World Cup?',
+        'options' => ['New York / New Jersey', 'Los Angeles', 'Dallas', 'Miami'],
+        'answer' => 'New York / New Jersey',
+    ],
+];
+$spotTheBallRounds = [
+    [
+        'title' => 'Opening night',
+        'image' => 'img/fanzone-games/spot-the-ball-1.jpg',
+        'rows' => 5,
+        'cols' => 5,
+        'answer' => 13,
+    ],
+    [
+        'title' => 'Penalty-box scramble',
+        'image' => 'img/fanzone-games/spot-the-ball-2.jpg',
+        'rows' => 6,
+        'cols' => 6,
+        'answer' => 22,
+    ],
+    [
+        'title' => 'Late drama',
+        'image' => 'img/fanzone-games/spot-the-ball-3.jpg',
+        'rows' => 5,
+        'cols' => 6,
+        'answer' => 24,
+    ],
+];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['fanzone_action'])) {
     $action = (string) $_POST['fanzone_action'];
@@ -772,6 +822,43 @@ include "php/navigation.php";
             </aside>
         </div>
 
+        <section class="fanzone-grid fanzone-grid--feature-row">
+            <div class="fanzone-panel fanzone-quiz-card" id="fanzoneQuiz">
+                <div class="fanzone-panel__header">
+                    <div>
+                        <p class="eyebrow">Quick fire</p>
+                        <h2>Fan Zone Quiz</h2>
+                    </div>
+                    <span class="fanzone-chip fanzone-chip--soft"><span data-quiz-progress>1</span>/<?= count($quickFireQuiz) ?></span>
+                </div>
+                <p class="concept-subtle">Tap an answer and we’ll tell you instantly, then slide the next question into place.</p>
+                <div class="fanzone-quiz" data-fanzone-quiz>
+                    <div class="fanzone-quiz__stage" data-quiz-stage></div>
+                    <div class="fanzone-quiz__footer">
+                        <span class="concept-subtle" data-quiz-status>Question 1 of <?= count($quickFireQuiz) ?></span>
+                        <button type="button" class="btn btn-outline-dark btn-sm" data-quiz-restart hidden><i class="bi bi-arrow-repeat"></i> Play again</button>
+                    </div>
+                </div>
+            </div>
+            <div class="fanzone-panel fanzone-spot-card" id="fanzoneSpotTheBall">
+                <div class="fanzone-panel__header">
+                    <div>
+                        <p class="eyebrow">Crowd game</p>
+                        <h2>Spot The Ball</h2>
+                    </div>
+                    <span class="fanzone-chip fanzone-chip--soft"><span data-spot-progress>1</span>/<?= count($spotTheBallRounds) ?></span>
+                </div>
+                <p class="concept-subtle">Tap squares until you find the ball. Misses stay marked, and each solved image slides the next one into place.</p>
+                <div class="fanzone-spot" data-fanzone-spot>
+                    <div class="fanzone-spot__stage" data-spot-stage></div>
+                    <div class="fanzone-spot__footer">
+                        <span class="concept-subtle" data-spot-status>Round 1 of <?= count($spotTheBallRounds) ?></span>
+                        <button type="button" class="btn btn-outline-dark btn-sm" data-spot-restart hidden><i class="bi bi-arrow-repeat"></i> Play again</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section class="fanzone-panel" id="fanzoneBoard">
             <div class="fanzone-panel__header">
                 <div>
@@ -962,5 +1049,254 @@ include "php/navigation.php";
 if (isset($con) && $con instanceof mysqli) {
     mysqli_close($con);
 }
+?>
+<script>
+window.hhFanzoneQuizQuestions = <?= json_encode($quickFireQuiz, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>;
+window.hhSpotTheBallRounds = <?= json_encode($spotTheBallRounds, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>;
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const quizRoot = document.querySelector('[data-fanzone-quiz]');
+    const questions = Array.isArray(window.hhFanzoneQuizQuestions) ? window.hhFanzoneQuizQuestions : [];
+
+    if (!quizRoot || questions.length === 0) {
+        return;
+    }
+
+    const stage = quizRoot.querySelector('[data-quiz-stage]');
+    const progress = document.querySelector('[data-quiz-progress]');
+    const status = quizRoot.querySelector('[data-quiz-status]');
+    const restartButton = quizRoot.querySelector('[data-quiz-restart]');
+
+    let currentIndex = 0;
+    let score = 0;
+    let isLocked = false;
+
+    function createQuestionCard(question, index) {
+        const card = document.createElement('article');
+        card.className = 'fanzone-quiz__card';
+        card.innerHTML = `
+            <div class="fanzone-quiz__meta">
+                <strong>Question ${index + 1}</strong>
+            </div>
+            <h3>${question.question}</h3>
+            <div class="fanzone-quiz__options"></div>
+        `;
+
+        const options = card.querySelector('.fanzone-quiz__options');
+        question.options.forEach((option) => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'fanzone-quiz__option';
+            button.textContent = option;
+            button.dataset.correct = option === question.answer ? 'true' : 'false';
+            button.addEventListener('click', function () {
+                if (isLocked) {
+                    return;
+                }
+
+                isLocked = true;
+                const isCorrect = button.dataset.correct === 'true';
+                if (isCorrect) {
+                    score += 1;
+                }
+
+                options.querySelectorAll('.fanzone-quiz__option').forEach((optionButton) => {
+                    optionButton.disabled = true;
+                    if (optionButton.dataset.correct === 'true') {
+                        optionButton.classList.add('is-correct');
+                    } else if (optionButton === button) {
+                        optionButton.classList.add('is-incorrect');
+                    }
+                });
+
+                status.textContent = isCorrect
+                    ? 'Correct — onto the next one.'
+                    : `Not this time — the right answer was ${question.answer}.`;
+
+                window.setTimeout(() => {
+                    card.classList.add('is-leaving');
+                    window.setTimeout(() => {
+                        currentIndex += 1;
+                        isLocked = false;
+                        renderCurrentCard();
+                    }, 280);
+                }, 900);
+            });
+            options.appendChild(button);
+        });
+
+        return card;
+    }
+
+    function renderSummaryCard() {
+        const card = document.createElement('article');
+        card.className = 'fanzone-quiz__card fanzone-quiz__card--summary';
+        card.innerHTML = `
+            <div class="fanzone-quiz__summary-icon"><i class="bi bi-patch-check-fill"></i></div>
+            <h3>Quiz complete</h3>
+            <p>You got <strong>${score}</strong> out of <strong>${questions.length}</strong>.</p>
+        `;
+        stage.replaceChildren(card);
+        if (progress) {
+            progress.textContent = questions.length;
+        }
+        status.textContent = 'All done. Give it another go whenever you fancy.';
+        restartButton.hidden = false;
+    }
+
+    function renderCurrentCard() {
+        if (currentIndex >= questions.length) {
+            renderSummaryCard();
+            return;
+        }
+
+        const card = createQuestionCard(questions[currentIndex], currentIndex);
+        card.classList.add('is-entering');
+        stage.replaceChildren(card);
+
+        requestAnimationFrame(() => {
+            card.classList.remove('is-entering');
+        });
+
+        if (progress) {
+            progress.textContent = String(currentIndex + 1);
+        }
+        status.textContent = `Question ${currentIndex + 1} of ${questions.length}`;
+        restartButton.hidden = true;
+    }
+
+    restartButton.addEventListener('click', function () {
+        currentIndex = 0;
+        score = 0;
+        isLocked = false;
+        renderCurrentCard();
+    });
+
+    renderCurrentCard();
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    const gameRoot = document.querySelector('[data-fanzone-spot]');
+    const rounds = Array.isArray(window.hhSpotTheBallRounds) ? window.hhSpotTheBallRounds : [];
+
+    if (!gameRoot || rounds.length === 0) {
+        return;
+    }
+
+    const stage = gameRoot.querySelector('[data-spot-stage]');
+    const progress = document.querySelector('[data-spot-progress]');
+    const status = gameRoot.querySelector('[data-spot-status]');
+    const restartButton = gameRoot.querySelector('[data-spot-restart]');
+
+    let currentIndex = 0;
+    let solvedCount = 0;
+    let isLocked = false;
+
+    function createRoundCard(round, index) {
+        const card = document.createElement('article');
+        card.className = 'fanzone-spot__card';
+        card.innerHTML = `
+            <div class="fanzone-spot__meta">
+                <strong>Round ${index + 1}</strong>
+                <span>${round.title}</span>
+            </div>
+            <div class="fanzone-spot__board" style="--spot-cols:${round.cols}; --spot-rows:${round.rows};">
+                <img src="${round.image}" alt="${round.title}">
+                <div class="fanzone-spot__grid"></div>
+            </div>
+        `;
+
+        const grid = card.querySelector('.fanzone-spot__grid');
+        const totalCells = Math.max(1, Number(round.rows) * Number(round.cols));
+
+        for (let cell = 1; cell <= totalCells; cell += 1) {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'fanzone-spot__cell';
+            button.setAttribute('aria-label', `Try square ${cell}`);
+
+            button.addEventListener('click', function () {
+                if (isLocked || button.classList.contains('is-tried')) {
+                    return;
+                }
+
+                const isCorrect = cell === Number(round.answer);
+                if (isCorrect) {
+                    isLocked = true;
+                    solvedCount += 1;
+                    button.classList.add('is-correct');
+                    status.textContent = 'Found it — onto the next image.';
+
+                    window.setTimeout(() => {
+                        card.classList.add('is-leaving');
+                        window.setTimeout(() => {
+                            currentIndex += 1;
+                            isLocked = false;
+                            renderCurrentRound();
+                        }, 280);
+                    }, 900);
+                } else {
+                    button.classList.add('is-tried');
+                    status.textContent = `Not there — keep hunting on ${round.title}.`;
+                }
+            });
+
+            grid.appendChild(button);
+        }
+
+        return card;
+    }
+
+    function renderSummaryCard() {
+        const card = document.createElement('article');
+        card.className = 'fanzone-spot__card fanzone-spot__card--summary';
+        card.innerHTML = `
+            <div class="fanzone-spot__summary-icon"><i class="bi bi-bullseye"></i></div>
+            <h3>Spot the Ball complete</h3>
+            <p>You found the ball in <strong>${solvedCount}</strong> out of <strong>${rounds.length}</strong> images.</p>
+        `;
+
+        stage.replaceChildren(card);
+        if (progress) {
+            progress.textContent = String(rounds.length);
+        }
+        status.textContent = 'All images cleared. Swap the artwork any time you want a fresh challenge.';
+        restartButton.hidden = false;
+    }
+
+    function renderCurrentRound() {
+        if (currentIndex >= rounds.length) {
+            renderSummaryCard();
+            return;
+        }
+
+        const round = rounds[currentIndex];
+        const card = createRoundCard(round, currentIndex);
+        card.classList.add('is-entering');
+        stage.replaceChildren(card);
+
+        requestAnimationFrame(() => {
+            card.classList.remove('is-entering');
+        });
+
+        if (progress) {
+            progress.textContent = String(currentIndex + 1);
+        }
+        status.textContent = `${round.title} · Round ${currentIndex + 1} of ${rounds.length}`;
+        restartButton.hidden = true;
+    }
+
+    restartButton.addEventListener('click', function () {
+        currentIndex = 0;
+        solvedCount = 0;
+        isLocked = false;
+        renderCurrentRound();
+    });
+
+    renderCurrentRound();
+});
+</script>
+<?php
 include "php/footer.php";
 ?>
