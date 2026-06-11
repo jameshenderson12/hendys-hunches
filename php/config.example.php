@@ -291,6 +291,7 @@ if (!function_exists('hh_manual_stage_window_overrides')) {
         $timezone = new DateTimeZone('Europe/London');
         $utc = new DateTimeZone('UTC');
         $definitions = [
+            'groups' => ['close' => '2026-06-11 20:00'],
             'ro32' => ['open' => '2026-06-25 09:00', 'close' => '2026-06-28 18:00'],
             'ro16' => ['open' => '2026-06-30 08:00', 'close' => '2026-07-04 16:00'],
             'qf' => ['open' => '2026-07-05 08:00', 'close' => '2026-07-09 19:00'],
@@ -300,13 +301,26 @@ if (!function_exists('hh_manual_stage_window_overrides')) {
 
         $overrides = [];
         foreach ($definitions as $key => $window) {
-            $open = DateTimeImmutable::createFromFormat('Y-m-d H:i', $window['open'], $timezone);
-            $close = DateTimeImmutable::createFromFormat('Y-m-d H:i', $window['close'], $timezone);
-            if ($open instanceof DateTimeImmutable && $close instanceof DateTimeImmutable) {
-                $overrides[$key] = [
-                    'opens_at' => $open->setTimezone($utc),
-                    'closes_at' => $close->setTimezone($utc),
-                ];
+            $override = [];
+
+            $openValue = trim((string) ($window['open'] ?? ''));
+            if ($openValue !== '') {
+                $open = DateTimeImmutable::createFromFormat('Y-m-d H:i', $openValue, $timezone);
+                if ($open instanceof DateTimeImmutable) {
+                    $override['opens_at'] = $open->setTimezone($utc);
+                }
+            }
+
+            $closeValue = trim((string) ($window['close'] ?? ''));
+            if ($closeValue !== '') {
+                $close = DateTimeImmutable::createFromFormat('Y-m-d H:i', $closeValue, $timezone);
+                if ($close instanceof DateTimeImmutable) {
+                    $override['closes_at'] = $close->setTimezone($utc);
+                }
+            }
+
+            if ($override !== []) {
+                $overrides[$key] = $override;
             }
         }
 
