@@ -138,11 +138,15 @@ if (!function_exists('hh_dashboard_popular_prediction_for_match')) {
 
         $result = mysqli_query(
             $con,
-            "SELECT {$homeColumn} AS home_score, {$awayColumn} AS away_score, COUNT(*) AS prediction_count
-             FROM {$tableName}
-             WHERE {$homeColumn} IS NOT NULL AND {$homeColumn} <> ''
-               AND {$awayColumn} IS NOT NULL AND {$awayColumn} <> ''
-             GROUP BY {$homeColumn}, {$awayColumn}
+            "SELECT
+                CAST(stage.{$homeColumn} AS SIGNED) AS home_score,
+                CAST(stage.{$awayColumn} AS SIGNED) AS away_score,
+                COUNT(*) AS prediction_count
+             FROM {$tableName} stage
+             INNER JOIN live_user_information users ON users.id = stage.id
+             WHERE stage.{$homeColumn} IS NOT NULL AND stage.{$homeColumn} <> ''
+               AND stage.{$awayColumn} IS NOT NULL AND stage.{$awayColumn} <> ''
+             GROUP BY stage.{$homeColumn}, stage.{$awayColumn}
              ORDER BY prediction_count DESC, home_score ASC, away_score ASC
              LIMIT 1"
         );
