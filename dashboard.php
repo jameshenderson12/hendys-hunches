@@ -139,26 +139,66 @@ if (!function_exists('hh_dashboard_popular_prediction_for_match')) {
         $result = mysqli_query(
             $con,
             "SELECT
-                CAST(stage.{$homeColumn} AS SIGNED) AS home_score,
-                CAST(stage.{$awayColumn} AS SIGNED) AS away_score,
-                COUNT(*) AS prediction_count
-             FROM {$tableName} stage
-             INNER JOIN live_user_information users ON users.id = stage.id
-             WHERE stage.{$homeColumn} IS NOT NULL AND stage.{$homeColumn} <> ''
-               AND stage.{$awayColumn} IS NOT NULL AND stage.{$awayColumn} <> ''
-             GROUP BY stage.{$homeColumn}, stage.{$awayColumn}
-             ORDER BY prediction_count DESC, home_score ASC, away_score ASC
-             LIMIT 1"
+                stage.{$homeColumn} AS predicted_home,
+                stage.{$awayColumn} AS predicted_away
+             FROM live_user_information users
+             LEFT JOIN {$tableName} stage ON stage.id = users.id
+             ORDER BY users.surname ASC, users.firstname ASC, users.id ASC"
         );
 
         if (!($result instanceof mysqli_result)) {
             return null;
         }
 
-        $row = mysqli_fetch_assoc($result) ?: null;
+        $counts = [];
+        while ($row = mysqli_fetch_assoc($result)) {
+            $predictedHome = $row['predicted_home'] ?? null;
+            $predictedAway = $row['predicted_away'] ?? null;
+
+            if (!is_numeric($predictedHome) || !is_numeric($predictedAway)) {
+                continue;
+            }
+
+            $homeScore = (int) $predictedHome;
+            $awayScore = (int) $predictedAway;
+            $key = $homeScore . ':' . $awayScore;
+
+            if (!isset($counts[$key])) {
+                $counts[$key] = [
+                    'home_score' => $homeScore,
+                    'away_score' => $awayScore,
+                    'prediction_count' => 0,
+                ];
+            }
+
+            $counts[$key]['prediction_count']++;
+        }
+
         mysqli_free_result($result);
 
-        if (!is_array($row) || !is_numeric($row['home_score'] ?? null) || !is_numeric($row['away_score'] ?? null)) {
+        if ($counts === []) {
+            return null;
+        }
+
+        uasort(
+            $counts,
+            static function (array $left, array $right): int {
+                $countComparison = ((int) ($right['prediction_count'] ?? 0)) <=> ((int) ($left['prediction_count'] ?? 0));
+                if ($countComparison !== 0) {
+                    return $countComparison;
+                }
+
+                $homeComparison = ((int) ($left['home_score'] ?? 0)) <=> ((int) ($right['home_score'] ?? 0));
+                if ($homeComparison !== 0) {
+                    return $homeComparison;
+                }
+
+                return ((int) ($left['away_score'] ?? 0)) <=> ((int) ($right['away_score'] ?? 0));
+            }
+        );
+
+        $row = reset($counts);
+        if (!is_array($row)) {
             return null;
         }
 
