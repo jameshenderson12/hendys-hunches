@@ -14,7 +14,7 @@ function hh_badge_definitions(): array
         'IN' => ['token' => 'IN', 'image' => 'img/badges/predictions-in.png', 'title' => 'Predictions In', 'description' => 'Save your first stage of predictions.'],
         'PT' => ['token' => 'PT', 'image' => 'img/badges/on-the-move.png', 'title' => 'On The Move', 'description' => 'Pick up your first points.'],
         '7' => ['token' => '7', 'image' => 'img/badges/perfect-seven.png', 'title' => 'Perfect Seven', 'description' => 'Land your first exact 7-pointer.'],
-        'CR' => ['token' => 'CR', 'image' => 'img/badges/crowd-rebel.png', 'title' => 'Crowd Rebel', 'description' => 'Beat the crowd with a different scoreline and still score 2+ points.'],
+        'CR' => ['token' => 'CR', 'image' => 'img/badges/crowd-rebel.png', 'title' => 'Crowd Rebel', 'description' => 'Beat the crowd with a different scoreline and still score 3+ points.'],
         'HS' => ['token' => 'HS', 'image' => 'img/badges/hot-streak.png', 'title' => 'Hot Streak', 'description' => 'Score points in three consecutive recorded fixtures.'],
         'AC' => ['token' => 'AC', 'image' => 'img/badges/avid-climber.png', 'title' => 'Avid Climber', 'description' => 'Climb 5 or more places in a single results update.'],
         'DH' => ['token' => 'DH', 'image' => 'img/badges/dizzy-heights.png', 'title' => 'Dizzy Heights', 'description' => 'Break into the top three of the rankings.'],
@@ -163,12 +163,12 @@ function hh_badge_popular_prediction_keys_for_fixture(mysqli $con, string $table
     $awayColumn = 'score' . $awayIndex . '_p';
     $result = mysqli_query(
         $con,
-        "SELECT {$homeColumn} AS home_score, {$awayColumn} AS away_score, COUNT(*) AS prediction_count
-         FROM {$tableName}
-         WHERE {$homeColumn} IS NOT NULL AND {$homeColumn} <> ''
-           AND {$awayColumn} IS NOT NULL AND {$awayColumn} <> ''
-         GROUP BY {$homeColumn}, {$awayColumn}
-         ORDER BY prediction_count DESC, home_score ASC, away_score ASC"
+        "SELECT
+            stage.{$homeColumn} AS predicted_home,
+            stage.{$awayColumn} AS predicted_away
+         FROM live_user_information users
+         LEFT JOIN {$tableName} stage ON stage.id = users.id
+         ORDER BY users.surname ASC, users.firstname ASC, users.id ASC"
     );
 
     if (!($result instanceof mysqli_result)) {
@@ -176,16 +176,53 @@ function hh_badge_popular_prediction_keys_for_fixture(mysqli $con, string $table
         return $cache[$cacheKey];
     }
 
-    $popularKeys = [];
-    $topCount = null;
-
+    $counts = [];
     while ($row = mysqli_fetch_assoc($result)) {
-        $count = (int) ($row['prediction_count'] ?? 0);
-        $scoreKey = hh_badge_fixture_score_key($row['home_score'] ?? null, $row['away_score'] ?? null);
+        $scoreKey = hh_badge_fixture_score_key($row['predicted_home'] ?? null, $row['predicted_away'] ?? null);
         if ($scoreKey === '') {
             continue;
         }
 
+        if (!isset($counts[$scoreKey])) {
+            [$homeScore, $awayScore] = array_map('intval', explode(':', $scoreKey, 2));
+            $counts[$scoreKey] = [
+                'score_key' => $scoreKey,
+                'home_score' => $homeScore,
+                'away_score' => $awayScore,
+                'prediction_count' => 0,
+            ];
+        }
+        $counts[$scoreKey]['prediction_count']++;
+    }
+
+    mysqli_free_result($result);
+
+    if ($counts === []) {
+        $cache[$cacheKey] = [];
+        return $cache[$cacheKey];
+    }
+
+    uasort(
+        $counts,
+        static function (array $left, array $right): int {
+            $countComparison = ((int) ($right['prediction_count'] ?? 0)) <=> ((int) ($left['prediction_count'] ?? 0));
+            if ($countComparison !== 0) {
+                return $countComparison;
+            }
+
+            $homeComparison = ((int) ($left['home_score'] ?? 0)) <=> ((int) ($right['home_score'] ?? 0));
+            if ($homeComparison !== 0) {
+                return $homeComparison;
+            }
+
+            return ((int) ($left['away_score'] ?? 0)) <=> ((int) ($right['away_score'] ?? 0));
+        }
+    );
+
+    $topCount = null;
+    $popularKeys = [];
+    foreach ($counts as $row) {
+        $count = (int) ($row['prediction_count'] ?? 0);
         if ($topCount === null) {
             $topCount = $count;
         }
@@ -194,11 +231,10 @@ function hh_badge_popular_prediction_keys_for_fixture(mysqli $con, string $table
             break;
         }
 
-        $popularKeys[] = $scoreKey;
+        $popularKeys[] = (string) ($row['score_key'] ?? '');
     }
 
-    mysqli_free_result($result);
-    $cache[$cacheKey] = array_values(array_unique($popularKeys));
+    $cache[$cacheKey] = array_values(array_filter(array_unique($popularKeys), static fn(string $key): bool => $key !== ''));
 
     return $cache[$cacheKey];
 }
@@ -289,7 +325,7 @@ function hh_badge_stats_for_user(mysqli $con, int $userId): array
                 }
             }
 
-            if ((int) ($detail['points'] ?? 0) < 2) {
+            if ((int) ($detail['points'] ?? 0) < 3) {
                 continue;
             }
 
