@@ -188,37 +188,6 @@ hh_handle_dev_bypass_request();
         max-width: 520px;
       }
 
-      .countdown-card {
-        align-items: center;
-        background: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.18);
-        border-radius: 8px;
-        display: inline-flex;
-        gap: 12px;
-        justify-content: center;
-        margin: 4px auto 0;
-        padding: 12px 16px;
-      }
-
-      .countdown-card__value {
-        color: #ffffff;
-        font-size: clamp(1.8rem, 5vw, 2.5rem);
-        font-weight: 900;
-        letter-spacing: 0;
-        line-height: 1;
-      }
-
-      .countdown-card__label {
-        color: rgba(255, 255, 255, 0.82);
-        display: grid;
-        font-size: 0.82rem;
-        font-weight: 900;
-        gap: 2px;
-        line-height: 1.1;
-        text-align: left;
-        text-transform: uppercase;
-      }
-
       .host-flags {
         align-items: center;
         display: flex;
@@ -579,21 +548,6 @@ hh_handle_dev_bypass_request();
           display: none;
         }
 
-        .countdown-card {
-          gap: 10px;
-          justify-content: center;
-          margin: 0 auto;
-          padding: 9px 12px;
-        }
-
-        .countdown-card__label {
-          font-size: 0.72rem;
-        }
-
-        .countdown-card__value {
-          font-size: 1.3rem;
-        }
-
         .host-flags {
           gap: 8px;
           justify-content: center;
@@ -661,10 +615,6 @@ hh_handle_dev_bypass_request();
           max-width: 96px;
         }
 
-        .countdown-card {
-          padding: 8px 10px;
-        }
-
         .login-panel {
           padding: 20px 14px 14px;
         }
@@ -691,13 +641,6 @@ hh_handle_dev_bypass_request();
           <div>
             <img class="brand-stage__logo" src="img/hh-logo-2026-main.png" alt="Hendy's Hunches football predictions logo">
             <div class="brand-stage__copy">
-              <div class="countdown-card" aria-label="Countdown to World Cup 2026 opening day">
-                <span class="countdown-card__value" id="countdownDays">--</span>
-                <span class="countdown-card__label">
-                  <span>Days until</span>
-                  <span>11 June 2026</span>
-                </span>
-              </div>
               <div class="host-flags" aria-label="World Cup 2026 host nations">
                 <span><img src="img/flags/ca.svg" alt=""> Canada</span>
                 <span><img src="img/flags/mx.svg" alt=""> Mexico</span>
@@ -755,17 +698,6 @@ hh_handle_dev_bypass_request();
     <script>
       const toggleLoginPwd = document.querySelector('#toggleLoginPwd');
       const loginPassword = document.querySelector('#password');
-      const countdownDays = document.querySelector('#countdownDays');
-
-      if (countdownDays) {
-        const worldCupStart = new Date('2026-06-11T00:00:00');
-        const now = new Date();
-        const msPerDay = 1000 * 60 * 60 * 24;
-        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        const target = new Date(worldCupStart.getFullYear(), worldCupStart.getMonth(), worldCupStart.getDate());
-        const daysRemaining = Math.max(0, Math.ceil((target - today) / msPerDay));
-        countdownDays.textContent = String(daysRemaining);
-      }
 
       if (toggleLoginPwd && loginPassword) {
         toggleLoginPwd.addEventListener('click', () => {
