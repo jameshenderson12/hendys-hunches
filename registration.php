@@ -203,6 +203,18 @@ $registrationSessionLimit = 3;
 $registrationIpWindow = 30 * 60;
 $registrationIpLimit = 5;
 $registrationsOpen = !empty($registrations_open);
+$registrationInviteToken = trim((string) ($_REQUEST['invite'] ?? $_POST['invite_token'] ?? ''));
+$registrationInviteAccess = ['valid' => false, 'message' => '', 'row' => null];
+$registrationInviteMessage = '';
+
+if ($registrationInviteToken !== '' && $con instanceof mysqli) {
+    $registrationInviteAccess = hh_registration_invite_access_with_connection($con, $registrationInviteToken);
+    if (!$registrationInviteAccess['valid'] && !$registrationsOpen) {
+        $registrationInviteMessage = (string) ($registrationInviteAccess['message'] ?? '');
+    }
+}
+
+$registrationAccessAllowed = $registrationsOpen || !empty($registrationInviteAccess['valid']);
 
 if (empty($_SESSION['registration_form_issued_at'])) {
     $_SESSION['registration_form_issued_at'] = time();
@@ -217,7 +229,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $postedIssuedAt = (int) ($_POST['form_issued_at'] ?? 0);
     $secondsSpent = $postedIssuedAt > 0 ? ($now - $postedIssuedAt) : 0;
 
-    if (!$registrationsOpen) {
+    if (!$registrationAccessAllowed) {
         $registrationError = 'Registrations are now closed.';
     } elseif ($honeypotValue !== '') {
         $registrationError = 'Registration could not be completed. Please try again shortly.';
@@ -282,39 +294,67 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $registrationFormIssuedAt = (int) $_SESSION['registration_form_issued_at'];
             } else {
 
-                // Query to get the total number of users to set positional values
-                $sql1 = "SELECT count(*) AS totalusers FROM live_user_information";
-                $totalusers = mysqli_query($con, $sql1) or die(mysqli_error($con));
-                $row = mysqli_fetch_assoc($totalusers);
-                $signupPosition = ((int) ($row["totalusers"] ?? 0)) + 1;
-                $setdefstartpos = $signupPosition;
-                $setdefcurrpos = $signupPosition;
-                $setdeflastpos = $signupPosition;
+                mysqli_begin_transaction($con);
 
-                // Prepare and bind SQL statements
-                $stmt1 = mysqli_prepare($con, "INSERT INTO live_user_information (username, password, firstname, surname, email, avatar, fieldofwork, location, faveteam, tournwinner, startpos, lastpos, currpos) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
-                $blankTempPassword = '';
-                $stmt2 = mysqli_prepare($con, "INSERT INTO live_temp_information (username, temp_pass) VALUES (?, ?)");
+                try {
+                    // Query to get the total number of users to set positional values
+                    $sql1 = "SELECT count(*) AS totalusers FROM live_user_information";
+                    $totalusers = mysqli_query($con, $sql1);
+                    if (!$totalusers) {
+                        throw new RuntimeException(mysqli_error($con));
+                    }
 
-                mysqli_stmt_bind_param($stmt1, "ssssssssssddd", $username, $password, $firstname, $surname, $email, $avatar, $fieldofwork, $location, $faveteam, $tournwinner, $setdefstartpos, $setdeflastpos, $setdefcurrpos);
-                mysqli_stmt_bind_param($stmt2, "ss", $username, $blankTempPassword);
+                    $row = mysqli_fetch_assoc($totalusers);
+                    mysqli_free_result($totalusers);
+                    $signupPosition = ((int) ($row["totalusers"] ?? 0)) + 1;
+                    $setdefstartpos = $signupPosition;
+                    $setdefcurrpos = $signupPosition;
+                    $setdeflastpos = $signupPosition;
 
-                // Execute the queries
-                mysqli_stmt_execute($stmt1);
-                mysqli_stmt_execute($stmt2);
+                    // Prepare and bind SQL statements
+                    $stmt1 = mysqli_prepare($con, "INSERT INTO live_user_information (username, password, firstname, surname, email, avatar, fieldofwork, location, faveteam, tournwinner, startpos, lastpos, currpos) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                    $blankTempPassword = '';
+                    $stmt2 = mysqli_prepare($con, "INSERT INTO live_temp_information (username, temp_pass) VALUES (?, ?)");
 
-                // Close statement and connection
-                mysqli_stmt_close($stmt1);
-                mysqli_stmt_close($stmt2);
+                    if (!$stmt1 || !$stmt2) {
+                        throw new RuntimeException(mysqli_error($con));
+                    }
+
+                    mysqli_stmt_bind_param($stmt1, "ssssssssssddd", $username, $password, $firstname, $surname, $email, $avatar, $fieldofwork, $location, $faveteam, $tournwinner, $setdefstartpos, $setdeflastpos, $setdefcurrpos);
+                    mysqli_stmt_bind_param($stmt2, "ss", $username, $blankTempPassword);
+
+                    if (!mysqli_stmt_execute($stmt1)) {
+                        throw new RuntimeException(mysqli_stmt_error($stmt1));
+                    }
+
+                    if (!mysqli_stmt_execute($stmt2)) {
+                        throw new RuntimeException(mysqli_stmt_error($stmt2));
+                    }
+
+                    $newUserId = (int) mysqli_insert_id($con);
+
+                    mysqli_stmt_close($stmt1);
+                    mysqli_stmt_close($stmt2);
+
+                    if (!empty($registrationInviteAccess['valid']) && is_array($registrationInviteAccess['row'])) {
+                        hh_mark_registration_invite_used_with_connection(
+                            $con,
+                            (int) ($registrationInviteAccess['row']['id'] ?? 0),
+                            $newUserId
+                        );
+                    }
+
+                    mysqli_commit($con);
+                    $registrationSuccess = true;
+                } catch (Throwable $exception) {
+                    mysqli_rollback($con);
+                    $registrationError = 'Registration could not be completed: ' . $exception->getMessage();
+                }
 
                 mysqli_close($con);
 
-                // Set success flag
-                $registrationSuccess = true;
-
-                // If registration is successful, send the welcome email
                 if ($registrationSuccess) {
-                  sendWelcomeEmail($firstname, $surname, $username, $email);
+                    sendWelcomeEmail($firstname, $surname, $username, $email);
                 }
             }
         }
@@ -925,16 +965,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               window.location.href = 'index.php';
             }, 5000); // Redirect after 5 seconds
           </script>
-        <?php elseif (!$registrationsOpen): ?>
+        <?php elseif (!$registrationAccessAllowed): ?>
           <p class="registration-kicker"><i class="bi bi-slash-circle"></i> Registrations closed</p>
           <h1>Entries are now closed</h1>
           <p class="mb-3">Thanks for the interest in Hendy's Hunches. New player registrations are no longer being accepted.</p>
+          <?php if ($registrationInviteMessage !== '') : ?>
+            <div class="alert alert-warning mt-3" role="alert"><?= htmlspecialchars($registrationInviteMessage, ENT_QUOTES) ?></div>
+          <?php endif; ?>
           <p class="mb-0">If you already have an account, you can still <a href='index.php'>log in here</a>.</p>
         <?php else: ?>
 
         <p class="registration-kicker"><i class="bi bi-person-plus-fill"></i> New player signup</p>
   			<h1>Register</h1>
         <div class="text-start small text-white-50 mt-2" id="stepLabel">Step 1 of 5: Contact</div>
+
+        <?php if (!empty($registrationInviteAccess['valid'])) : ?>
+          <div class="alert alert-info mt-3 mb-0" role="alert"><i class="bi bi-link-45deg"></i> This invite link is active for a one-time registration.</div>
+        <?php endif; ?>
 
         <?php if ($registrationError !== '') : ?>
           <div class="alert alert-danger mt-3 mb-0" role="alert"><?= htmlspecialchars($registrationError, ENT_QUOTES) ?></div>
@@ -953,6 +1000,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
       <form class="d-flex flex-column needs-validation" method="POST" action="" id="registrationForm" name="registrationForm" novalidate> <!--  onsubmit="validateAvatar()" onSubmit="return validateFullForm()" border border-white p-2 my-2 border-opacity-25   -->
           <input type="hidden" name="form_issued_at" value="<?= (int) $registrationFormIssuedAt ?>">
+          <input type="hidden" name="invite_token" value="<?= htmlspecialchars($registrationInviteToken, ENT_QUOTES) ?>">
           <div class="registration-honeypot" aria-hidden="true">
             <label for="website">Website</label>
             <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">

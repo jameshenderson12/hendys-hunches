@@ -691,6 +691,20 @@ function build_installable_table_definitions(array $context): array {
             'sql' => file_get_contents(__DIR__ . '/../sql/setup-user-logins-table.sql') ?: '',
             'description' => 'Stores one timestamped row per successful player login for engagement analysis.',
         ],
+        'registration_invites' => [
+            'label' => 'Registration Invites',
+            'file' => 'sql/setup-registration-invites-table.sql',
+            'table' => 'live_registration_invites',
+            'sql' => file_get_contents(__DIR__ . '/../sql/setup-registration-invites-table.sql') ?: '',
+            'description' => 'Stores one-time registration invite links for late joiners after the public signup window closes.',
+        ],
+        'prediction_access_overrides' => [
+            'label' => 'Prediction Access Overrides',
+            'file' => 'sql/setup-prediction-access-overrides-table.sql',
+            'table' => 'live_prediction_access_overrides',
+            'sql' => file_get_contents(__DIR__ . '/../sql/setup-prediction-access-overrides-table.sql') ?: '',
+            'description' => 'Stores per-player, per-stage access extensions for manual admin exceptions.',
+        ],
         'match_results' => [
             'label' => 'Match Results',
             'file' => 'sql/setup-match-results-table.sql',

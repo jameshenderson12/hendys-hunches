@@ -62,6 +62,11 @@ function hh_prediction_has_any_values(array $row, array $context): bool
 
 $stageContexts = hh_prediction_stage_contexts();
 $stageWindows = hh_prediction_stage_windows($con);
+$sessionUserId = (int) ($_SESSION['id'] ?? 0);
+$stageAccess = [];
+foreach ($stageContexts as $stageKey => $context) {
+    $stageAccess[$stageKey] = hh_prediction_stage_access_meta($con, $sessionUserId, $stageKey, $stageWindows[$stageKey] ?? null);
+}
 $selectedStageKey = isset($_GET['stage']) ? trim((string) $_GET['stage']) : '';
 if ($selectedStageKey === '' || !isset($stageContexts[$selectedStageKey])) {
     $selectedStageKey = array_key_first($stageContexts) ?: 'groups';
@@ -69,6 +74,7 @@ if ($selectedStageKey === '' || !isset($stageContexts[$selectedStageKey])) {
 
 $selectedStage = $stageContexts[$selectedStageKey] ?? null;
 $selectedWindow = $stageWindows[$selectedStageKey] ?? null;
+$selectedAccess = $stageAccess[$selectedStageKey] ?? ['can_edit' => !empty($selectedWindow['is_open']), 'override_active' => false, 'override' => null, 'display_status' => (string) ($selectedWindow['status'] ?? 'pending')];
 $fixtures = [];
 $predictionRow = [];
 $predictionRows = [];
@@ -464,7 +470,8 @@ include 'php/navigation.php';
             <?php foreach ($stageContexts as $stageContext) : ?>
                 <?php
                 $window = $stageWindows[$stageContext['key']] ?? null;
-                $status = (string) ($window['status'] ?? 'pending');
+                $access = $stageAccess[$stageContext['key']] ?? null;
+                $status = (string) (($access['display_status'] ?? null) ?: ($window['status'] ?? 'pending'));
                 $submission = hh_prediction_submission_state($predictionRows[$stageContext['key']] ?? [], $stageContext);
                 $stageUpdated = !empty($predictionRows[$stageContext['key']]['lastupdate'])
                     ? date('D j M H:i', strtotime((string) $predictionRows[$stageContext['key']]['lastupdate']))
@@ -506,7 +513,11 @@ include 'php/navigation.php';
                                 <?= $submission['submitted'] ? 'Predictions submitted' : 'Predictions not submitted' ?>
                             </span>
                             <span class="predictions-stage-card__updated">
-                                <?= $stageUpdated !== '' ? htmlspecialchars('Saved ' . $stageUpdated) : 'No saved set yet' ?>
+                                <?php if (!empty($access['override_active']) && !empty($access['override']['granted_until_utc']) && $access['override']['granted_until_utc'] instanceof DateTimeImmutable) : ?>
+                                    <?= htmlspecialchars('Override until ' . $access['override']['granted_until_utc']->setTimezone(new DateTimeZone(date_default_timezone_get()))->format('D j M, g:ia')) ?>
+                                <?php else : ?>
+                                    <?= $stageUpdated !== '' ? htmlspecialchars('Saved ' . $stageUpdated) : 'No saved set yet' ?>
+                                <?php endif; ?>
                             </span>
                         </div>
                     <?php endif; ?>
@@ -520,7 +531,7 @@ include 'php/navigation.php';
             <div class="content-panel">
                 <p class="mb-0 text-muted">No fixtures were found for this stage yet.</p>
             </div>
-        <?php elseif ($selectedWindow && ($selectedWindow['status'] ?? '') === 'closed') : ?>
+        <?php elseif ($selectedWindow && ($selectedWindow['status'] ?? '') === 'closed' && empty($selectedAccess['can_edit'])) : ?>
             <div class="content-panel">
                 <div class="predictions-stage-heading">
                     <div class="predictions-stage-heading__content">
@@ -601,7 +612,7 @@ include 'php/navigation.php';
                     </table>
                 </div>
             </div>
-        <?php elseif ($selectedWindow && !$selectedWindow['is_open']) : ?>
+        <?php elseif ((!$selectedWindow || !$selectedWindow['is_open']) && empty($selectedAccess['can_edit'])) : ?>
             <div class="content-panel">
                 <div class="predictions-stage-heading">
                     <div class="predictions-stage-heading__content">
@@ -632,11 +643,14 @@ include 'php/navigation.php';
                                 Matches <?= htmlspecialchars((string) $selectedStage['fixture_start']) ?>-<?= htmlspecialchars((string) $selectedStage['fixture_end']) ?>
                                 <?php if ($stageLastUpdate !== '') : ?> · last saved <?= htmlspecialchars($stageLastUpdate) ?><?php endif; ?>
                             </p>
+                            <?php if (!empty($selectedAccess['override_active']) && !empty($selectedAccess['override']['granted_until_utc']) && $selectedAccess['override']['granted_until_utc'] instanceof DateTimeImmutable) : ?>
+                                <p class="predictions-stage-note">Admin access override active until <?= htmlspecialchars($selectedAccess['override']['granted_until_utc']->setTimezone(new DateTimeZone(date_default_timezone_get()))->format('D j M Y, g:ia')) ?>.</p>
+                            <?php endif; ?>
                             <p class="predictions-stage-note">Every prediction in this round must be filled in before your first save. After that, you can come back and update individual scores until the stage window closes.</p>
                         </div>
                         <div class="predictions-stage-actions">
-                            <button type="button" class="btn btn-secondary populate-scores" <?= ($selectedWindow && !$selectedWindow['is_open']) ? 'disabled' : '' ?>><i class="bi bi-magic"></i> Populate for me</button>
-                            <button type="submit" class="btn btn-primary" name="predictionsSubmitted" <?= ($selectedWindow && !$selectedWindow['is_open']) ? 'disabled' : '' ?>><i class="bi bi-floppy-fill"></i> Save</button>
+                            <button type="button" class="btn btn-secondary populate-scores" <?= empty($selectedAccess['can_edit']) ? 'disabled' : '' ?>><i class="bi bi-magic"></i> Populate for me</button>
+                            <button type="submit" class="btn btn-primary" name="predictionsSubmitted" <?= empty($selectedAccess['can_edit']) ? 'disabled' : '' ?>><i class="bi bi-floppy-fill"></i> Save</button>
                         </div>
                     </div>
                     <table id="table" class="table table-sm table-striped">
@@ -682,11 +696,11 @@ include 'php/navigation.php';
                                     </td>
                                     <td class="d-none d-md-table-cell"></td>
                                     <td class="text-center">
-                                        <input type="number" min="0" max="20" inputmode="numeric" id="score<?= $homeScoreIndex ?>_p" name="score<?= $homeScoreIndex ?>_p" class="form-control score-field" value="<?= htmlspecialchars($homeValue) ?>" required <?= ($selectedWindow && !$selectedWindow['is_open']) ? 'disabled' : '' ?>>
+                                        <input type="number" min="0" max="20" inputmode="numeric" id="score<?= $homeScoreIndex ?>_p" name="score<?= $homeScoreIndex ?>_p" class="form-control score-field" value="<?= htmlspecialchars($homeValue) ?>" required <?= empty($selectedAccess['can_edit']) ? 'disabled' : '' ?>>
                                     </td>
                                     <td class="text-center"><span class="versus-pill">v</span></td>
                                     <td class="text-center">
-                                        <input type="number" min="0" max="20" inputmode="numeric" id="score<?= $awayScoreIndex ?>_p" name="score<?= $awayScoreIndex ?>_p" class="form-control score-field" value="<?= htmlspecialchars($awayValue) ?>" required <?= ($selectedWindow && !$selectedWindow['is_open']) ? 'disabled' : '' ?>>
+                                        <input type="number" min="0" max="20" inputmode="numeric" id="score<?= $awayScoreIndex ?>_p" name="score<?= $awayScoreIndex ?>_p" class="form-control score-field" value="<?= htmlspecialchars($awayValue) ?>" required <?= empty($selectedAccess['can_edit']) ? 'disabled' : '' ?>>
                                     </td>
                                     <td class="d-none d-md-table-cell"></td>
                                     <td>
@@ -700,8 +714,8 @@ include 'php/navigation.php';
                         </tbody>
                     </table>
                     <div class="predictions-stage-actions" style="margin-top: 12px;">
-                        <button type="button" class="btn btn-secondary populate-scores" <?= ($selectedWindow && !$selectedWindow['is_open']) ? 'disabled' : '' ?>><i class="bi bi-magic"></i> Populate for me</button>
-                        <button type="submit" class="btn btn-primary" name="predictionsSubmitted" <?= ($selectedWindow && !$selectedWindow['is_open']) ? 'disabled' : '' ?>><i class="bi bi-floppy-fill"></i> Save</button>
+                        <button type="button" class="btn btn-secondary populate-scores" <?= empty($selectedAccess['can_edit']) ? 'disabled' : '' ?>><i class="bi bi-magic"></i> Populate for me</button>
+                        <button type="submit" class="btn btn-primary" name="predictionsSubmitted" <?= empty($selectedAccess['can_edit']) ? 'disabled' : '' ?>><i class="bi bi-floppy-fill"></i> Save</button>
                     </div>
                 </div>
             </form>

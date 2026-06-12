@@ -664,6 +664,14 @@ function hh_admin_reset_preserving_users_with_connection(mysqli $con, array $use
         "UPDATE live_user_information SET lastlogin = NULL, login_count = 0",
     ];
 
+    if (hh_runtime_table_exists($con, hh_registration_invite_table_name())) {
+        $deleteQueries[] = "DELETE FROM " . hh_registration_invite_table_name();
+    }
+
+    if (hh_runtime_table_exists($con, hh_prediction_access_override_table_name())) {
+        $deleteQueries[] = "DELETE FROM " . hh_prediction_access_override_table_name();
+    }
+
     foreach (hh_admin_existing_prediction_backup_tables($con) as $backupTable) {
         $deleteQueries[] = "DELETE FROM {$backupTable}";
     }
@@ -750,6 +758,14 @@ function hh_admin_delete_user_with_connection(mysqli $con, int $userId): array
         "DELETE FROM live_user_information WHERE id = {$quotedUserId} LIMIT 1",
     ];
 
+    if (hh_runtime_table_exists($con, hh_prediction_access_override_table_name())) {
+        $queries[] = "DELETE FROM " . hh_prediction_access_override_table_name() . " WHERE user_id = {$quotedUserId}";
+    }
+
+    if (hh_runtime_table_exists($con, hh_registration_invite_table_name())) {
+        $queries[] = "DELETE FROM " . hh_registration_invite_table_name() . " WHERE used_by_user_id = {$quotedUserId}";
+    }
+
     foreach (hh_admin_existing_prediction_backup_tables($con) as $backupTable) {
         $queries[] = "DELETE FROM {$backupTable} WHERE id = {$quotedUserId} OR username IN ({$quotedUsername})";
     }
@@ -779,6 +795,234 @@ function hh_admin_delete_user_with_connection(mysqli $con, int $userId): array
         'username' => $username,
         'display_name' => $displayName,
     ];
+}
+
+function hh_admin_local_datetime_to_utc_string(string $value): ?string
+{
+    $value = trim($value);
+    if ($value === '') {
+        return null;
+    }
+
+    $local = DateTimeImmutable::createFromFormat('Y-m-d\TH:i', $value, new DateTimeZone('Europe/London'));
+    if (!($local instanceof DateTimeImmutable)) {
+        return null;
+    }
+
+    return $local->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s');
+}
+
+function hh_admin_format_utc_for_local_display(?string $value, string $fallback = 'No expiry'): string
+{
+    $value = trim((string) $value);
+    if ($value === '') {
+        return $fallback;
+    }
+
+    $utc = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $value, new DateTimeZone('UTC'));
+    if (!($utc instanceof DateTimeImmutable)) {
+        return $fallback;
+    }
+
+    return $utc->setTimezone(new DateTimeZone(date_default_timezone_get()))->format('D j M Y, g:ia');
+}
+
+function hh_admin_issue_registration_invite_with_connection(mysqli $con, string $baseUrl, int $adminId, string $emailHint, string $notes, ?string $expiresAtUtc): array
+{
+    if (!hh_ensure_registration_invite_table($con)) {
+        throw new RuntimeException('The registration invite table could not be prepared.');
+    }
+
+    $token = bin2hex(random_bytes(24));
+    $statement = mysqli_prepare(
+        $con,
+        "INSERT INTO " . hh_registration_invite_table_name() . " (invite_token, email_hint, notes, expires_at, created_by)
+         VALUES (?, ?, ?, ?, ?)"
+    );
+
+    if (!$statement) {
+        throw new RuntimeException(mysqli_error($con));
+    }
+
+    $emailHintValue = $emailHint !== '' ? $emailHint : null;
+    $notesValue = $notes !== '' ? $notes : null;
+    $expiresValue = $expiresAtUtc !== '' ? $expiresAtUtc : null;
+    mysqli_stmt_bind_param($statement, 'ssssi', $token, $emailHintValue, $notesValue, $expiresValue, $adminId);
+
+    if (!mysqli_stmt_execute($statement)) {
+        $error = mysqli_stmt_error($statement);
+        mysqli_stmt_close($statement);
+        throw new RuntimeException($error);
+    }
+
+    $inviteId = (int) mysqli_insert_id($con);
+    mysqli_stmt_close($statement);
+
+    $baseUrl = rtrim(trim($baseUrl), '/');
+    if ($baseUrl === '') {
+        $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $host = trim((string) ($_SERVER['HTTP_HOST'] ?? ''));
+        $baseUrl = $host !== '' ? $scheme . '://' . $host : '';
+    }
+
+    $registrationUrl = ($baseUrl !== '' ? $baseUrl : '') . '/registration.php?invite=' . urlencode($token);
+
+    return [
+        'id' => $inviteId,
+        'token' => $token,
+        'url' => $registrationUrl,
+    ];
+}
+
+function hh_admin_revoke_registration_invite_with_connection(mysqli $con, int $inviteId): void
+{
+    if ($inviteId <= 0 || !hh_runtime_table_exists($con, hh_registration_invite_table_name())) {
+        throw new RuntimeException('Choose a valid invite to revoke.');
+    }
+
+    $statement = mysqli_prepare($con, "DELETE FROM " . hh_registration_invite_table_name() . " WHERE id = ? LIMIT 1");
+    if (!$statement) {
+        throw new RuntimeException(mysqli_error($con));
+    }
+
+    mysqli_stmt_bind_param($statement, 'i', $inviteId);
+    mysqli_stmt_execute($statement);
+    $affected = mysqli_stmt_affected_rows($statement);
+    mysqli_stmt_close($statement);
+
+    if ($affected <= 0) {
+        throw new RuntimeException('That invite could not be found.');
+    }
+}
+
+function hh_admin_list_registration_invites(mysqli $con): array
+{
+    if (!hh_runtime_table_exists($con, hh_registration_invite_table_name())) {
+        return [];
+    }
+
+    return hh_admin_fetch_all(
+        $con,
+        "SELECT invite.id, invite.email_hint, invite.notes, invite.expires_at, invite.used_at, invite.created_at,
+                used.username AS used_username, used.firstname AS used_firstname, used.surname AS used_surname
+         FROM " . hh_registration_invite_table_name() . " invite
+         LEFT JOIN live_user_information used ON used.id = invite.used_by_user_id
+         ORDER BY invite.created_at DESC, invite.id DESC
+         LIMIT 20"
+    );
+}
+
+function hh_admin_save_prediction_override_with_connection(mysqli $con, int $userId, string $stageKey, string $grantedUntilUtc, int $adminId, string $reason): array
+{
+    if ($userId <= 0) {
+        throw new RuntimeException('Choose a valid player.');
+    }
+
+    $contexts = hh_prediction_stage_contexts();
+    if (!isset($contexts[$stageKey])) {
+        throw new RuntimeException('Choose a valid stage.');
+    }
+
+    if ($grantedUntilUtc === '') {
+        throw new RuntimeException('Choose when the override should end.');
+    }
+
+    if (!hh_ensure_prediction_access_override_table($con)) {
+        throw new RuntimeException('The prediction override table could not be prepared.');
+    }
+
+    $userStatement = mysqli_prepare(
+        $con,
+        "SELECT username, firstname, surname
+         FROM live_user_information
+         WHERE id = ?
+         LIMIT 1"
+    );
+
+    if (!$userStatement) {
+        throw new RuntimeException(mysqli_error($con));
+    }
+
+    mysqli_stmt_bind_param($userStatement, 'i', $userId);
+    mysqli_stmt_execute($userStatement);
+    $userResult = mysqli_stmt_get_result($userStatement);
+    $user = $userResult instanceof mysqli_result ? (mysqli_fetch_assoc($userResult) ?: null) : null;
+    if ($userResult instanceof mysqli_result) {
+        mysqli_free_result($userResult);
+    }
+    mysqli_stmt_close($userStatement);
+
+    if (!$user) {
+        throw new RuntimeException('That player could not be found.');
+    }
+
+    $reasonValue = $reason !== '' ? $reason : null;
+    $statement = mysqli_prepare(
+        $con,
+        "INSERT INTO " . hh_prediction_access_override_table_name() . " (user_id, stage_key, granted_until, reason, granted_by)
+         VALUES (?, ?, ?, ?, ?)
+         ON DUPLICATE KEY UPDATE granted_until = VALUES(granted_until), reason = VALUES(reason), granted_by = VALUES(granted_by), created_at = CURRENT_TIMESTAMP"
+    );
+
+    if (!$statement) {
+        throw new RuntimeException(mysqli_error($con));
+    }
+
+    mysqli_stmt_bind_param($statement, 'isssi', $userId, $stageKey, $grantedUntilUtc, $reasonValue, $adminId);
+    if (!mysqli_stmt_execute($statement)) {
+        $error = mysqli_stmt_error($statement);
+        mysqli_stmt_close($statement);
+        throw new RuntimeException($error);
+    }
+    mysqli_stmt_close($statement);
+
+    $displayName = trim((string) ($user['firstname'] ?? '') . ' ' . (string) ($user['surname'] ?? ''));
+    if ($displayName === '') {
+        $displayName = (string) ($user['username'] ?? 'Player');
+    }
+
+    return [
+        'display_name' => $displayName,
+        'username' => (string) ($user['username'] ?? ''),
+        'stage_label' => (string) ($contexts[$stageKey]['label'] ?? $stageKey),
+    ];
+}
+
+function hh_admin_remove_prediction_override_with_connection(mysqli $con, int $overrideId): void
+{
+    if ($overrideId <= 0 || !hh_runtime_table_exists($con, hh_prediction_access_override_table_name())) {
+        throw new RuntimeException('Choose a valid override to remove.');
+    }
+
+    $statement = mysqli_prepare($con, "DELETE FROM " . hh_prediction_access_override_table_name() . " WHERE id = ? LIMIT 1");
+    if (!$statement) {
+        throw new RuntimeException(mysqli_error($con));
+    }
+
+    mysqli_stmt_bind_param($statement, 'i', $overrideId);
+    mysqli_stmt_execute($statement);
+    $affected = mysqli_stmt_affected_rows($statement);
+    mysqli_stmt_close($statement);
+
+    if ($affected <= 0) {
+        throw new RuntimeException('That override could not be found.');
+    }
+}
+
+function hh_admin_list_prediction_overrides(mysqli $con): array
+{
+    if (!hh_runtime_table_exists($con, hh_prediction_access_override_table_name())) {
+        return [];
+    }
+
+    return hh_admin_fetch_all(
+        $con,
+        "SELECT override_row.id, override_row.stage_key, override_row.granted_until, override_row.reason, override_row.created_at,
+                player.id AS user_id, player.username, player.firstname, player.surname
+         FROM " . hh_prediction_access_override_table_name() . " override_row
+         INNER JOIN live_user_information player ON player.id = override_row.user_id
+         ORDER BY override_row.granted_until DESC, override_row.id DESC"
+    );
 }
 
 function hh_admin_execute_sql(mysqli $con, string $sql): array
@@ -844,6 +1088,8 @@ $errors = [];
 $tableOptions = [
     'live_user_information' => 'User information',
     'live_user_logins' => 'Login events',
+    'live_registration_invites' => 'Registration invites',
+    'live_prediction_access_overrides' => 'Prediction overrides',
     'live_match_schedule' => 'Match schedule',
     'live_match_results' => 'Match results',
     'live_user_predictions_groups' => 'Group predictions',
@@ -869,6 +1115,7 @@ $stageOptions = [
 
 $sqlRunnerOutput = null;
 $sqlRunnerStatement = '';
+$generatedInviteLink = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = (string) ($_POST['admin_action'] ?? '');
@@ -1022,6 +1269,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } catch (Throwable $exception) {
             $errors[] = 'Badge refresh failed: ' . $exception->getMessage();
         }
+    } elseif ($action === 'create_registration_invite') {
+        $emailHint = trim((string) ($_POST['invite_email_hint'] ?? ''));
+        $notes = trim((string) ($_POST['invite_notes'] ?? ''));
+        $expiresAtUtc = hh_admin_local_datetime_to_utc_string((string) ($_POST['invite_expires_at'] ?? ''));
+
+        if ((string) ($_POST['invite_expires_at'] ?? '') !== '' && $expiresAtUtc === null) {
+            $errors[] = 'Please choose a valid invite expiry time.';
+        } else {
+            try {
+                $invite = hh_admin_issue_registration_invite_with_connection($con, (string) ($base_url ?? ''), (int) ($_SESSION['id'] ?? 0), $emailHint, $notes, $expiresAtUtc);
+                $generatedInviteLink = (string) ($invite['url'] ?? '');
+                $messages[] = 'A one-time registration invite link has been created.';
+            } catch (Throwable $exception) {
+                $errors[] = 'Invite creation failed: ' . $exception->getMessage();
+            }
+        }
+    } elseif ($action === 'revoke_registration_invite') {
+        $inviteId = (int) ($_POST['invite_id'] ?? 0);
+
+        try {
+            hh_admin_revoke_registration_invite_with_connection($con, $inviteId);
+            $messages[] = 'The registration invite has been revoked.';
+        } catch (Throwable $exception) {
+            $errors[] = 'Invite revoke failed: ' . $exception->getMessage();
+        }
+    } elseif ($action === 'save_prediction_override') {
+        $overrideUserId = (int) ($_POST['override_user_id'] ?? 0);
+        $overrideStageKey = trim((string) ($_POST['override_stage_key'] ?? ''));
+        $overrideReason = trim((string) ($_POST['override_reason'] ?? ''));
+        $grantedUntilRaw = (string) ($_POST['override_granted_until'] ?? '');
+        $grantedUntilUtc = hh_admin_local_datetime_to_utc_string($grantedUntilRaw);
+
+        if ($grantedUntilUtc === null) {
+            $errors[] = 'Choose a valid override end time.';
+        } else {
+            try {
+                $override = hh_admin_save_prediction_override_with_connection($con, $overrideUserId, $overrideStageKey, $grantedUntilUtc, (int) ($_SESSION['id'] ?? 0), $overrideReason);
+                $messages[] = 'Prediction access override saved for ' . $override['display_name'] . ' (@' . $override['username'] . ') on ' . $override['stage_label'] . '.';
+            } catch (Throwable $exception) {
+                $errors[] = 'Prediction override failed: ' . $exception->getMessage();
+            }
+        }
+    } elseif ($action === 'remove_prediction_override') {
+        $overrideId = (int) ($_POST['override_id'] ?? 0);
+
+        try {
+            hh_admin_remove_prediction_override_with_connection($con, $overrideId);
+            $messages[] = 'The prediction access override has been removed.';
+        } catch (Throwable $exception) {
+            $errors[] = 'Override removal failed: ' . $exception->getMessage();
+        }
     } elseif ($action === 'save_table_row') {
         $tableName = (string) ($_POST['table_name'] ?? '');
         $rowId = (int) ($_POST['row_id'] ?? 0);
@@ -1085,6 +1383,8 @@ $restoreStageOptions = [];
 foreach (hh_prediction_stage_contexts() as $stageKey => $context) {
     $restoreStageOptions[$stageKey] = (string) ($context['label'] ?? $stageKey);
 }
+$registrationInvites = hh_admin_list_registration_invites($con);
+$predictionOverrides = hh_admin_list_prediction_overrides($con);
 
 $snapshot = [
     'users' => 0,
@@ -1644,6 +1944,80 @@ include '../php/navigation.php';
       .admin-badge-tile__status .bi {
         font-size: 1rem;
       }
+      .admin-inline-output {
+        margin-top: 12px;
+      }
+      .admin-inline-output .form-control {
+        font-weight: 700;
+      }
+      .admin-stack-list {
+        display: grid;
+        gap: 10px;
+        margin-top: 16px;
+      }
+      .admin-stack-item {
+        display: grid;
+        gap: 10px;
+        padding: 14px;
+        border: 1px solid var(--hh-line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.84);
+      }
+      .admin-stack-item__top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .admin-stack-item__top strong,
+      .admin-stack-item__top span {
+        display: block;
+      }
+      .admin-stack-item__top span {
+        color: var(--hh-muted);
+        font-size: 0.82rem;
+      }
+      .admin-status-pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 900;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+      .admin-status-pill--active {
+        background: rgba(25, 135, 84, 0.12);
+        color: #146c43;
+      }
+      .admin-status-pill--used {
+        background: rgba(13, 110, 253, 0.12);
+        color: #0a58ca;
+      }
+      .admin-status-pill--expired {
+        background: rgba(214, 64, 69, 0.12);
+        color: #a52f33;
+      }
+      .admin-status-pill--pending {
+        background: rgba(255, 193, 7, 0.18);
+        color: #8a6d03;
+      }
+      .admin-stack-item__meta {
+        display: grid;
+        gap: 4px;
+        color: var(--hh-muted);
+        font-size: 0.84rem;
+      }
+      .admin-stack-item__actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        justify-content: space-between;
+      }
       @media (max-width: 991px) {
         .admin-grid--two,
         .admin-grid--three,
@@ -1692,6 +2066,15 @@ include '../php/navigation.php';
         <div class="alert alert-danger" role="alert"><?= htmlspecialchars($error, ENT_QUOTES) ?></div>
     <?php endforeach; ?>
 
+    <?php if ($generatedInviteLink !== '') : ?>
+        <div class="alert alert-info" role="alert">
+            <strong>New invite link ready.</strong>
+            <div class="admin-inline-output">
+                <input class="form-control" type="text" value="<?= htmlspecialchars($generatedInviteLink, ENT_QUOTES) ?>" readonly onclick="this.select()">
+            </div>
+        </div>
+    <?php endif; ?>
+
     <section class="admin-grid">
         <div class="admin-card">
             <h2>System Snapshot</h2>
@@ -1703,6 +2086,166 @@ include '../php/navigation.php';
                 <div class="admin-kpi__item"><strong><?= $snapshot['fanzone'] ?></strong><span>live Fan Zone posts</span></div>
                 <div class="admin-kpi__item"><strong><?= $snapshot['badges'] ?></strong><span>badge awards stored</span></div>
                 <div class="admin-kpi__item"><strong><?= $snapshot['logins'] ?></strong><span>successful logins recorded</span></div>
+            </div>
+        </div>
+
+        <div class="admin-grid admin-grid--two">
+            <div class="admin-card">
+                <h2>Registration Invites</h2>
+                <p class="admin-note">Generate a one-time signup link for a late joiner without reopening registration globally. The link stays private, can expire, and is consumed after a successful registration.</p>
+                <form method="post" class="mt-3">
+                    <input type="hidden" name="admin_action" value="create_registration_invite">
+                    <div>
+                        <label class="form-label" for="invite_email_hint">Email hint</label>
+                        <input class="form-control" type="text" id="invite_email_hint" name="invite_email_hint" placeholder="Optional: player email or name">
+                    </div>
+                    <div>
+                        <label class="form-label" for="invite_notes">Notes</label>
+                        <input class="form-control" type="text" id="invite_notes" name="invite_notes" placeholder="Optional: why this invite was issued">
+                    </div>
+                    <div>
+                        <label class="form-label" for="invite_expires_at">Expires at</label>
+                        <input class="form-control" type="datetime-local" id="invite_expires_at" name="invite_expires_at">
+                    </div>
+                    <button type="submit" class="btn btn-outline-primary"><i class="bi bi-link-45deg"></i> Create one-time invite</button>
+                </form>
+
+                <div class="admin-stack-list">
+                    <?php if ($registrationInvites === []) : ?>
+                        <p class="admin-note mb-0">No registration invites have been created yet.</p>
+                    <?php else : ?>
+                        <?php foreach ($registrationInvites as $invite) : ?>
+                            <?php
+                            $inviteUsedAt = trim((string) ($invite['used_at'] ?? ''));
+                            $inviteExpiresAt = trim((string) ($invite['expires_at'] ?? ''));
+                            $inviteStatus = 'pending';
+                            $inviteStatusLabel = 'Unused';
+                            if ($inviteUsedAt !== '') {
+                                $inviteStatus = 'used';
+                                $inviteStatusLabel = 'Used';
+                            } elseif ($inviteExpiresAt !== '') {
+                                $expiryUtc = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $inviteExpiresAt, new DateTimeZone('UTC'));
+                                if ($expiryUtc instanceof DateTimeImmutable && $expiryUtc < hh_effective_now(new DateTimeZone('UTC'))) {
+                                    $inviteStatus = 'expired';
+                                    $inviteStatusLabel = 'Expired';
+                                } else {
+                                    $inviteStatus = 'active';
+                                    $inviteStatusLabel = 'Active';
+                                }
+                            } else {
+                                $inviteStatus = 'active';
+                                $inviteStatusLabel = 'Active';
+                            }
+                            $usedByName = trim((string) ($invite['used_firstname'] ?? '') . ' ' . (string) ($invite['used_surname'] ?? ''));
+                            if ($usedByName === '' && trim((string) ($invite['used_username'] ?? '')) !== '') {
+                                $usedByName = '@' . trim((string) ($invite['used_username'] ?? ''));
+                            }
+                            ?>
+                            <article class="admin-stack-item">
+                                <div class="admin-stack-item__top">
+                                    <div>
+                                        <strong><?= htmlspecialchars(trim((string) ($invite['email_hint'] ?? '')) !== '' ? (string) $invite['email_hint'] : 'Unnamed invite', ENT_QUOTES) ?></strong>
+                                        <span><?= htmlspecialchars(trim((string) ($invite['notes'] ?? '')) !== '' ? (string) $invite['notes'] : 'No notes added.', ENT_QUOTES) ?></span>
+                                    </div>
+                                    <span class="admin-status-pill admin-status-pill--<?= htmlspecialchars($inviteStatus, ENT_QUOTES) ?>"><?= htmlspecialchars($inviteStatusLabel, ENT_QUOTES) ?></span>
+                                </div>
+                                <div class="admin-stack-item__meta">
+                                    <span>Created <?= htmlspecialchars(hh_admin_format_utc_for_local_display((string) ($invite['created_at'] ?? ''), 'Unknown'), ENT_QUOTES) ?></span>
+                                    <span>Expires <?= htmlspecialchars(hh_admin_format_utc_for_local_display($inviteExpiresAt), ENT_QUOTES) ?></span>
+                                    <?php if ($inviteUsedAt !== '') : ?>
+                                        <span>Used <?= htmlspecialchars(hh_admin_format_utc_for_local_display($inviteUsedAt, 'Used'), ENT_QUOTES) ?><?= $usedByName !== '' ? ' by ' . htmlspecialchars($usedByName, ENT_QUOTES) : '' ?></span>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="admin-stack-item__actions">
+                                    <span class="admin-note">Invite #<?= (int) ($invite['id'] ?? 0) ?></span>
+                                    <form method="post" onsubmit="return confirm('Remove this registration invite?');">
+                                        <input type="hidden" name="admin_action" value="revoke_registration_invite">
+                                        <input type="hidden" name="invite_id" value="<?= (int) ($invite['id'] ?? 0) ?>">
+                                        <button type="submit" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i> Remove</button>
+                                    </form>
+                                </div>
+                            </article>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <div class="admin-card">
+                <h2>Prediction Access Overrides</h2>
+                <p class="admin-note">Grant a specific player extra time on one prediction stage without reopening that stage for everyone else. The override ends automatically at the time you set here.</p>
+                <form method="post" class="mt-3">
+                    <input type="hidden" name="admin_action" value="save_prediction_override">
+                    <div>
+                        <label class="form-label" for="override_user_id">Player</label>
+                        <select class="form-select" id="override_user_id" name="override_user_id" required>
+                            <option value="">Choose a player</option>
+                            <?php foreach ($users as $user) : ?>
+                                <option value="<?= (int) ($user['id'] ?? 0) ?>">
+                                    <?= htmlspecialchars(trim((string) ($user['firstname'] ?? '') . ' ' . (string) ($user['surname'] ?? '')) . ' (@' . (string) ($user['username'] ?? '') . ')', ENT_QUOTES) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label" for="override_stage_key">Stage</label>
+                        <select class="form-select" id="override_stage_key" name="override_stage_key" required>
+                            <option value="">Choose a stage</option>
+                            <?php foreach ($restoreStageOptions as $stageKey => $stageLabel) : ?>
+                                <option value="<?= htmlspecialchars($stageKey, ENT_QUOTES) ?>"><?= htmlspecialchars($stageLabel, ENT_QUOTES) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label" for="override_granted_until">Override ends at</label>
+                        <input class="form-control" type="datetime-local" id="override_granted_until" name="override_granted_until" required>
+                    </div>
+                    <div>
+                        <label class="form-label" for="override_reason">Reason</label>
+                        <input class="form-control" type="text" id="override_reason" name="override_reason" placeholder="Optional: late payer, known issue, manual exception">
+                    </div>
+                    <button type="submit" class="btn btn-outline-success"><i class="bi bi-unlock"></i> Save override</button>
+                </form>
+
+                <div class="admin-stack-list">
+                    <?php if ($predictionOverrides === []) : ?>
+                        <p class="admin-note mb-0">No prediction access overrides are currently stored.</p>
+                    <?php else : ?>
+                        <?php foreach ($predictionOverrides as $override) : ?>
+                            <?php
+                            $overrideName = trim((string) ($override['firstname'] ?? '') . ' ' . (string) ($override['surname'] ?? ''));
+                            if ($overrideName === '') {
+                                $overrideName = '@' . trim((string) ($override['username'] ?? 'player'));
+                            }
+                            $overrideIsActive = false;
+                            $overrideUtc = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', (string) ($override['granted_until'] ?? ''), new DateTimeZone('UTC'));
+                            if ($overrideUtc instanceof DateTimeImmutable) {
+                                $overrideIsActive = $overrideUtc >= hh_effective_now(new DateTimeZone('UTC'));
+                            }
+                            ?>
+                            <article class="admin-stack-item">
+                                <div class="admin-stack-item__top">
+                                    <div>
+                                        <strong><?= htmlspecialchars($overrideName, ENT_QUOTES) ?></strong>
+                                        <span><?= htmlspecialchars((string) ($restoreStageOptions[(string) ($override['stage_key'] ?? '')] ?? (string) ($override['stage_key'] ?? 'Stage')), ENT_QUOTES) ?></span>
+                                    </div>
+                                    <span class="admin-status-pill admin-status-pill--<?= $overrideIsActive ? 'active' : 'expired' ?>"><?= $overrideIsActive ? 'Active' : 'Expired' ?></span>
+                                </div>
+                                <div class="admin-stack-item__meta">
+                                    <span>Open until <?= htmlspecialchars(hh_admin_format_utc_for_local_display((string) ($override['granted_until'] ?? '')), ENT_QUOTES) ?></span>
+                                    <span><?= htmlspecialchars(trim((string) ($override['reason'] ?? '')) !== '' ? (string) $override['reason'] : 'No reason added.', ENT_QUOTES) ?></span>
+                                </div>
+                                <div class="admin-stack-item__actions">
+                                    <span class="admin-note">Override #<?= (int) ($override['id'] ?? 0) ?></span>
+                                    <form method="post" onsubmit="return confirm('Remove this prediction access override?');">
+                                        <input type="hidden" name="admin_action" value="remove_prediction_override">
+                                        <input type="hidden" name="override_id" value="<?= (int) ($override['id'] ?? 0) ?>">
+                                        <button type="submit" class="btn btn-outline-danger btn-sm"><i class="bi bi-lock"></i> Remove</button>
+                                    </form>
+                                </div>
+                            </article>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
             </div>
         </div>
 

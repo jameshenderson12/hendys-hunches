@@ -108,6 +108,218 @@ function hh_prediction_stage_context_for_match_number(int $matchNumber): ?array 
 	return null;
 }
 
+function hh_runtime_table_exists(mysqli $con, string $tableName): bool {
+	$escapedTable = mysqli_real_escape_string($con, $tableName);
+	$result = mysqli_query($con, "SHOW TABLES LIKE '{$escapedTable}'");
+	if (!($result instanceof mysqli_result)) {
+		return false;
+	}
+
+	$exists = mysqli_num_rows($result) > 0;
+	mysqli_free_result($result);
+
+	return $exists;
+}
+
+function hh_runtime_ensure_sql_table(mysqli $con, string $tableName, string $sqlFileName): bool {
+	if (hh_runtime_table_exists($con, $tableName)) {
+		return true;
+	}
+
+	$sqlPath = __DIR__ . '/../sql/' . $sqlFileName;
+	$sql = @file_get_contents($sqlPath);
+	if ($sql === false || trim($sql) === '') {
+		return false;
+	}
+
+	if (!mysqli_multi_query($con, $sql)) {
+		return false;
+	}
+
+	while (mysqli_more_results($con) && mysqli_next_result($con)) {
+		// consume remaining results
+	}
+
+	return hh_runtime_table_exists($con, $tableName);
+}
+
+function hh_registration_invite_table_name(): string {
+	return 'live_registration_invites';
+}
+
+function hh_prediction_access_override_table_name(): string {
+	return 'live_prediction_access_overrides';
+}
+
+function hh_ensure_registration_invite_table(mysqli $con): bool {
+	return hh_runtime_ensure_sql_table($con, hh_registration_invite_table_name(), 'setup-registration-invites-table.sql');
+}
+
+function hh_ensure_prediction_access_override_table(mysqli $con): bool {
+	return hh_runtime_ensure_sql_table($con, hh_prediction_access_override_table_name(), 'setup-prediction-access-overrides-table.sql');
+}
+
+function hh_registration_invite_access_with_connection(mysqli $con, string $token): array {
+	$token = trim($token);
+	if ($token === '' || !hh_ensure_registration_invite_table($con)) {
+		return [
+			'valid' => false,
+			'message' => '',
+			'row' => null,
+		];
+	}
+
+	$statement = mysqli_prepare(
+		$con,
+		"SELECT id, invite_token, email_hint, notes, expires_at, used_at, used_by_user_id, created_by, created_at
+		 FROM " . hh_registration_invite_table_name() . "
+		 WHERE invite_token = ?
+		 LIMIT 1"
+	);
+
+	if (!$statement) {
+		return [
+			'valid' => false,
+			'message' => '',
+			'row' => null,
+		];
+	}
+
+	mysqli_stmt_bind_param($statement, 's', $token);
+	mysqli_stmt_execute($statement);
+	$result = mysqli_stmt_get_result($statement);
+	$row = $result instanceof mysqli_result ? (mysqli_fetch_assoc($result) ?: null) : null;
+	if ($result instanceof mysqli_result) {
+		mysqli_free_result($result);
+	}
+	mysqli_stmt_close($statement);
+
+	if (!is_array($row)) {
+		return [
+			'valid' => false,
+			'message' => 'This invite link is not recognised.',
+			'row' => null,
+		];
+	}
+
+	if (!empty($row['used_at'])) {
+		return [
+			'valid' => false,
+			'message' => 'This invite link has already been used.',
+			'row' => $row,
+		];
+	}
+
+	$expiresAtRaw = trim((string) ($row['expires_at'] ?? ''));
+	if ($expiresAtRaw !== '') {
+		$expiresAt = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $expiresAtRaw, new DateTimeZone('UTC'));
+		if ($expiresAt instanceof DateTimeImmutable && hh_effective_now(new DateTimeZone('UTC')) > $expiresAt) {
+			return [
+				'valid' => false,
+				'message' => 'This invite link has expired.',
+				'row' => $row,
+			];
+		}
+	}
+
+	return [
+		'valid' => true,
+		'message' => '',
+		'row' => $row,
+	];
+}
+
+function hh_mark_registration_invite_used_with_connection(mysqli $con, int $inviteId, int $userId): void {
+	if ($inviteId <= 0 || $userId <= 0 || !hh_runtime_table_exists($con, hh_registration_invite_table_name())) {
+		return;
+	}
+
+	$usedAtUtc = gmdate('Y-m-d H:i:s');
+	$statement = mysqli_prepare(
+		$con,
+		"UPDATE " . hh_registration_invite_table_name() . "
+		 SET used_at = ?, used_by_user_id = ?
+		 WHERE id = ? AND used_at IS NULL
+		 LIMIT 1"
+	);
+
+	if (!$statement) {
+		throw new RuntimeException(mysqli_error($con));
+	}
+
+	mysqli_stmt_bind_param($statement, 'sii', $usedAtUtc, $userId, $inviteId);
+	if (!mysqli_stmt_execute($statement)) {
+		$error = mysqli_stmt_error($statement);
+		mysqli_stmt_close($statement);
+		throw new RuntimeException($error);
+	}
+
+	mysqli_stmt_close($statement);
+}
+
+function hh_prediction_access_override_with_connection(mysqli $con, int $userId, string $stageKey): ?array {
+	if ($userId <= 0 || $stageKey === '' || !hh_ensure_prediction_access_override_table($con)) {
+		return null;
+	}
+
+	$statement = mysqli_prepare(
+		$con,
+		"SELECT id, user_id, stage_key, granted_until, reason, granted_by, created_at
+		 FROM " . hh_prediction_access_override_table_name() . "
+		 WHERE user_id = ? AND stage_key = ?
+		 LIMIT 1"
+	);
+
+	if (!$statement) {
+		return null;
+	}
+
+	mysqli_stmt_bind_param($statement, 'is', $userId, $stageKey);
+	mysqli_stmt_execute($statement);
+	$result = mysqli_stmt_get_result($statement);
+	$row = $result instanceof mysqli_result ? (mysqli_fetch_assoc($result) ?: null) : null;
+	if ($result instanceof mysqli_result) {
+		mysqli_free_result($result);
+	}
+	mysqli_stmt_close($statement);
+
+	if (!is_array($row)) {
+		return null;
+	}
+
+	$grantedUntilRaw = trim((string) ($row['granted_until'] ?? ''));
+	if ($grantedUntilRaw === '') {
+		return null;
+	}
+
+	$grantedUntilUtc = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $grantedUntilRaw, new DateTimeZone('UTC'));
+	if (!($grantedUntilUtc instanceof DateTimeImmutable)) {
+		return null;
+	}
+
+	if ($grantedUntilUtc < hh_effective_now(new DateTimeZone('UTC'))) {
+		return null;
+	}
+
+	$row['granted_until_utc'] = $grantedUntilUtc;
+
+	return $row;
+}
+
+function hh_prediction_stage_access_meta(mysqli $con, int $userId, string $stageKey, ?array $window): array {
+	$windowIsOpen = !empty($window['is_open']);
+	$override = hh_prediction_access_override_with_connection($con, $userId, $stageKey);
+	$overrideActive = is_array($override);
+	$displayStatus = $windowIsOpen || $overrideActive ? 'open' : (string) ($window['status'] ?? 'pending');
+
+	return [
+		'can_edit' => $windowIsOpen || $overrideActive,
+		'override_active' => $overrideActive,
+		'override' => $override,
+		'display_status' => $displayStatus,
+	];
+}
+
 function hh_fixture_score_indexes(int $matchNumber): array {
 	$homeIndex = max(1, ($matchNumber * 2) - 1);
 
@@ -890,8 +1102,9 @@ function submitPredictions(): array {
 		$stageWindows = hh_prediction_stage_windows($con);
 		$selectedWindow = $stageWindows[$selectedStage] ?? null;
 		$selectedStats = hh_stage_posted_score_stats($stageDefinitions[$selectedStage]);
+		$selectedAccess = hh_prediction_stage_access_meta($con, (int) ($_SESSION['id'] ?? 0), $selectedStage, $selectedWindow);
 
-		if (!$selectedWindow || !$selectedWindow['is_open']) {
+		if (!$selectedAccess['can_edit']) {
 			mysqli_close($con);
 			return [
 				'ok' => false,
@@ -933,6 +1146,12 @@ function submitPredictions(): array {
 				$stats = hh_stage_posted_score_stats($definition);
 				if (!$stats['has_any']) {
 					continue;
+				}
+
+				$stageWindows = $stageWindows ?? hh_prediction_stage_windows($con);
+				$stageAccess = hh_prediction_stage_access_meta($con, (int) ($_SESSION['id'] ?? 0), $stageKey, $stageWindows[$stageKey] ?? null);
+				if (!$stageAccess['can_edit']) {
+					throw new RuntimeException('This prediction window is not currently open.');
 				}
 
 				if (!$stats['is_complete']) {
