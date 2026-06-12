@@ -1275,7 +1275,7 @@ function displayRankingsEq3() {
 
     echo "<div class='table-responsive'>";
     echo "<table id='rankingsTable' class='table table-striped'>";
-    echo "<thead><tr><th>Rank</th><th>Player</th><th>Points</th></tr></thead>";
+    echo "<thead><tr><th>Rank</th><th>Move</th><th>Player</th><th>Points</th></tr></thead>";
     echo "<tbody>";
 
     // Keep track of the previous rank to identify non-unique ranks
@@ -1514,19 +1514,7 @@ function displayRankingsEq5() {
             $displayRank = '<strong>'. $rank . '</strong>';
         }
 
-        // Determine if move is upwards, downwards or the same and calculate the difference between current and previous ranking
-        if (!$hasRecordedResults) {
-            $move = "<span class='text-secondary'>-</span>";
-        } elseif ($row["lastpos"] > $row["currpos"]) {
-            $diff = $row["lastpos"] - $row["currpos"];
-            $move = "<span class='text-success'><i class='bi bi-caret-up-fill'></i>" . $diff . "</span>";
-        } elseif ($row["lastpos"] < $row["currpos"]) {
-            $diff = $row["currpos"] - $row["lastpos"];
-            $move = "<span class='text-danger'><i class='bi bi-caret-down-fill'></i>" . $diff . "</span>";
-        } else {
-            $diff = 0;
-            $move = "<span class='text-secondary'><i class='bi bi-caret-right-fill'></i>" . $diff . "</span>";
-        }
+        $move = "&nbsp;";
 
         // Ensure both name variables begin with upper case letters
         $uppCaseFN = ucfirst($row["firstname"]);
@@ -1539,6 +1527,7 @@ function displayRankingsEq5() {
         // Display the table complete with all data variables
         echo "<tr" . $rowClass . ">";
         echo "<td><span class=''>" . $displayRank . "</span></td>";
+		echo "<td><span class=''>" . $move . "</span></td>";
         $playerMeta = trim((string) ($row["location"] ?? ''));
         if ($playerMeta === '' || strcasecmp($playerMeta, 'Prefer Not To Say') === 0) {
             $playerMeta = trim((string) ($row["faveteam"] ?? ''));

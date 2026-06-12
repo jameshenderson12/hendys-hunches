@@ -7363,8 +7363,13 @@ body.tour-active {
     width: 52px;
   }
 
-  .rankings-panel #rankingsTable th:nth-child(3),
-  .rankings-panel #rankingsTable td:nth-child(3) {
+  .rankings-panel #rankingsTable th:nth-child(2),
+  .rankings-panel #rankingsTable td:nth-child(2) {
+    width: 52px;
+  }
+
+  .rankings-panel #rankingsTable th:nth-child(4),
+  .rankings-panel #rankingsTable td:nth-child(4) {
     width: 68px;
   }
 

@@ -51,9 +51,10 @@ $(document).ready(function() {
         //"lengthMenu": [[3, 10, 20, 30, 40, -1], ["Top 3", "Top 10", "Top 20", "Top 30", "Top 40", "All"]],
         "ordering": false,  // Disable column sorting
         "columnDefs": [
-            { "width": "12%", "targets": 0 },
-            { "width": "68%", "targets": 1 },
-            { "width": "20%", "targets": 2 }
+            { "width": "10%", "targets": 0 },
+            { "width": "15%", "targets": 1 },
+            { "width": "60%", "targets": 2 },
+            { "width": "15%", "targets": 3 },
         ]   
     });
 
@@ -88,7 +89,7 @@ $(document).ready(function() {
 
     const syncRankingsHeadings = function() {
       const compact = window.matchMedia('(max-width: 575.98px)').matches;
-      const labels = compact ? ['RK', 'PLAYER', 'PTS'] : ['RANK', 'PLAYER', 'POINTS'];
+      const labels = compact ? ['RK', 'MV', 'PLAYER', 'PTS'] : ['RANK', 'MOVE', 'PLAYER', 'POINTS'];
 
       tableHeadings.each(function(index) {
         if (labels[index]) {
