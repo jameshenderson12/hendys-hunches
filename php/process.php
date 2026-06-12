@@ -826,28 +826,22 @@ function hh_stage_posted_score_stats(array $definition): array {
 	];
 }
 
-function hh_upsert_prediction_stage_row_with_connection(mysqli $con, string $stageKey): void {
-	if (session_status() !== PHP_SESSION_ACTIVE) {
-		session_start();
-	}
-
+function hh_upsert_prediction_stage_row_for_user_with_connection(
+	mysqli $con,
+	string $stageKey,
+	int $userId,
+	string $username,
+	string $firstname,
+	string $surname,
+	array $scoreValuesByIndex
+): void {
 	$definitions = hh_prediction_stage_definitions();
 	$definition = $definitions[$stageKey] ?? null;
-	if (!$definition || $definition['end'] < $definition['start']) {
+	if (!$definition || $definition['end'] < $definition['start'] || $userId <= 0) {
 		return;
 	}
 
-	$userId = (int) ($_SESSION['id'] ?? 0);
-	$username = (string) ($_SESSION['username'] ?? '');
-	$firstname = (string) ($_SESSION['firstname'] ?? '');
-	$surname = (string) ($_SESSION['surname'] ?? '');
 	$backupTable = hh_ensure_prediction_backup_table_with_connection($con, $definition['table']);
-
-	$scoreValues = [];
-	for ($scoreIndex = $definition['start']; $scoreIndex <= $definition['end']; $scoreIndex++) {
-		$value = trim((string) ($_POST["score{$scoreIndex}_p"] ?? ''));
-		$scoreValues[] = $value === '' ? null : (int) $value;
-	}
 
 	$existsStatement = mysqli_prepare($con, "SELECT id FROM {$definition['table']} WHERE id = ? LIMIT 1");
 	if (!$existsStatement) {
@@ -876,11 +870,17 @@ function hh_upsert_prediction_stage_row_with_connection(mysqli $con, string $sta
 		$values = [$username, $firstname, $surname];
 
 		for ($scoreIndex = $definition['start']; $scoreIndex <= $definition['end']; $scoreIndex++) {
+			$scoreValue = $scoreValuesByIndex[$scoreIndex] ?? null;
+			if ($scoreValue === null) {
+				$setClauses[] = "score{$scoreIndex}_p = NULL";
+				continue;
+			}
+
 			$setClauses[] = "score{$scoreIndex}_p = ?";
 			$types .= 'i';
+			$values[] = (int) $scoreValue;
 		}
 
-		$values = array_merge($values, $scoreValues);
 		$types .= 'i';
 		$values[] = $userId;
 
@@ -906,11 +906,17 @@ function hh_upsert_prediction_stage_row_with_connection(mysqli $con, string $sta
 
 	for ($scoreIndex = $definition['start']; $scoreIndex <= $definition['end']; $scoreIndex++) {
 		$columns[] = "score{$scoreIndex}_p";
+		$scoreValue = $scoreValuesByIndex[$scoreIndex] ?? null;
+		if ($scoreValue === null) {
+			$placeholders[] = 'NULL';
+			continue;
+		}
+
 		$placeholders[] = '?';
 		$types .= 'i';
+		$values[] = (int) $scoreValue;
 	}
 
-	$values = array_merge($values, $scoreValues);
 	$columns[] = 'lastupdate';
 	$placeholders[] = 'NOW()';
 
@@ -930,6 +936,39 @@ function hh_upsert_prediction_stage_row_with_connection(mysqli $con, string $sta
 	if (!$backupExists) {
 		hh_copy_prediction_row_to_backup_with_connection($con, $definition['table'], $backupTable, $userId);
 	}
+}
+
+function hh_upsert_prediction_stage_row_with_connection(mysqli $con, string $stageKey): void {
+	if (session_status() !== PHP_SESSION_ACTIVE) {
+		session_start();
+	}
+
+	$definitions = hh_prediction_stage_definitions();
+	$definition = $definitions[$stageKey] ?? null;
+	if (!$definition || $definition['end'] < $definition['start']) {
+		return;
+	}
+
+	$userId = (int) ($_SESSION['id'] ?? 0);
+	$username = (string) ($_SESSION['username'] ?? '');
+	$firstname = (string) ($_SESSION['firstname'] ?? '');
+	$surname = (string) ($_SESSION['surname'] ?? '');
+	$scoreValuesByIndex = [];
+
+	for ($scoreIndex = $definition['start']; $scoreIndex <= $definition['end']; $scoreIndex++) {
+		$value = trim((string) ($_POST["score{$scoreIndex}_p"] ?? ''));
+		$scoreValuesByIndex[$scoreIndex] = $value === '' ? null : (int) $value;
+	}
+
+	hh_upsert_prediction_stage_row_for_user_with_connection(
+		$con,
+		$stageKey,
+		$userId,
+		$username,
+		$firstname,
+		$surname,
+		$scoreValuesByIndex
+	);
 }
 
 function compareValues() {

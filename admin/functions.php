@@ -154,6 +154,128 @@ function hh_admin_restore_prediction_backup_with_connection(mysqli $con, int $us
     ];
 }
 
+function hh_admin_random_prediction_score(): int
+{
+    $rand = mt_rand(1, 1000) / 1000;
+
+    if ($rand < 0.37) {
+        return 0;
+    }
+    if ($rand < 0.67) {
+        return 1;
+    }
+    if ($rand < 0.88) {
+        return 2;
+    }
+    if ($rand < 0.95) {
+        return 3;
+    }
+    if ($rand < 0.99) {
+        return 4;
+    }
+
+    return 5;
+}
+
+function hh_admin_populate_prediction_stage_for_user_with_connection(mysqli $con, int $userId, string $stageKey): array
+{
+    if ($userId <= 0) {
+        throw new RuntimeException('Choose a valid player to populate.');
+    }
+
+    $contexts = hh_prediction_stage_contexts();
+    $context = $contexts[$stageKey] ?? null;
+    if (!$context) {
+        throw new RuntimeException('Choose a valid prediction stage.');
+    }
+
+    $userStatement = mysqli_prepare(
+        $con,
+        "SELECT id, username, firstname, surname
+         FROM live_user_information
+         WHERE id = ?
+         LIMIT 1"
+    );
+
+    if (!$userStatement) {
+        throw new RuntimeException(mysqli_error($con));
+    }
+
+    mysqli_stmt_bind_param($userStatement, 'i', $userId);
+    mysqli_stmt_execute($userStatement);
+    $userResult = mysqli_stmt_get_result($userStatement);
+    $user = $userResult instanceof mysqli_result ? (mysqli_fetch_assoc($userResult) ?: null) : null;
+    if ($userResult instanceof mysqli_result) {
+        mysqli_free_result($userResult);
+    }
+    mysqli_stmt_close($userStatement);
+
+    if (!$user) {
+        throw new RuntimeException('That player could not be found.');
+    }
+
+    $scoreValuesByIndex = [];
+    $fixtureStatement = mysqli_prepare(
+        $con,
+        "SELECT match_number, homescore, awayscore
+         FROM live_match_schedule
+         WHERE match_number BETWEEN ? AND ?
+         ORDER BY match_number ASC"
+    );
+
+    if (!$fixtureStatement) {
+        throw new RuntimeException(mysqli_error($con));
+    }
+
+    $fixtureStart = (int) ($context['fixture_start'] ?? 0);
+    $fixtureEnd = (int) ($context['fixture_end'] ?? 0);
+    mysqli_stmt_bind_param($fixtureStatement, 'ii', $fixtureStart, $fixtureEnd);
+    mysqli_stmt_execute($fixtureStatement);
+    $fixtureResult = mysqli_stmt_get_result($fixtureStatement);
+
+    if ($fixtureResult instanceof mysqli_result) {
+        while ($fixture = mysqli_fetch_assoc($fixtureResult)) {
+            $matchNumber = (int) ($fixture['match_number'] ?? 0);
+            if ($matchNumber <= 0) {
+                continue;
+            }
+
+            $homeIndex = ($matchNumber * 2) - 1;
+            $awayIndex = $matchNumber * 2;
+            $isRecorded = $fixture['homescore'] !== null && $fixture['awayscore'] !== null;
+
+            if ($isRecorded) {
+                $scoreValuesByIndex[$homeIndex] = null;
+                $scoreValuesByIndex[$awayIndex] = null;
+                continue;
+            }
+
+            $scoreValuesByIndex[$homeIndex] = hh_admin_random_prediction_score();
+            $scoreValuesByIndex[$awayIndex] = hh_admin_random_prediction_score();
+        }
+        mysqli_free_result($fixtureResult);
+    }
+
+    mysqli_stmt_close($fixtureStatement);
+
+    hh_upsert_prediction_stage_row_for_user_with_connection(
+        $con,
+        $stageKey,
+        (int) ($user['id'] ?? 0),
+        (string) ($user['username'] ?? ''),
+        (string) ($user['firstname'] ?? ''),
+        (string) ($user['surname'] ?? ''),
+        $scoreValuesByIndex
+    );
+
+    return [
+        'id' => (int) ($user['id'] ?? 0),
+        'username' => (string) ($user['username'] ?? ''),
+        'display_name' => trim((string) ($user['firstname'] ?? '') . ' ' . (string) ($user['surname'] ?? '')) ?: ('@' . (string) ($user['username'] ?? 'player')),
+        'stage_label' => (string) ($context['label'] ?? $stageKey),
+    ];
+}
+
 function hh_admin_preview_table(mysqli $con, string $table, int $limit = 30): array
 {
     $rows = [];
@@ -1311,6 +1433,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $errors[] = 'Prediction override failed: ' . $exception->getMessage();
             }
         }
+    } elseif ($action === 'populate_player_predictions') {
+        $populateUserId = (int) ($_POST['populate_user_id'] ?? 0);
+        $populateStageKey = trim((string) ($_POST['populate_stage_key'] ?? ''));
+
+        try {
+            $populated = hh_admin_populate_prediction_stage_for_user_with_connection($con, $populateUserId, $populateStageKey);
+            $messages[] = 'Populated ' . $populated['stage_label'] . ' predictions for ' . $populated['display_name'] . ' (@' . $populated['username'] . '). Recorded fixtures in that stage were left blank, so they will stay on zero points.';
+        } catch (Throwable $exception) {
+            $errors[] = 'Prediction populate failed: ' . $exception->getMessage();
+        }
     } elseif ($action === 'remove_prediction_override') {
         $overrideId = (int) ($_POST['override_id'] ?? 0);
 
@@ -2246,6 +2378,35 @@ include '../php/navigation.php';
                         <?php endforeach; ?>
                     <?php endif; ?>
                 </div>
+            </div>
+
+            <div class="admin-card">
+                <h2>Populate Predictions For Player</h2>
+                <p class="admin-note">Use the same weighted “Populate for me” idea for a chosen player without logging in as them. Any fixtures in that stage that already have recorded results are left blank automatically, so they stay on zero points rather than gaining anything retrospectively.</p>
+                <form method="post" class="mt-3" onsubmit="return confirm('Populate this player\\'s stage predictions now? Already recorded fixtures in that stage will be left blank.');">
+                    <input type="hidden" name="admin_action" value="populate_player_predictions">
+                    <div>
+                        <label class="form-label" for="populate_user_id">Player</label>
+                        <select class="form-select" id="populate_user_id" name="populate_user_id" required>
+                            <option value="">Choose a player</option>
+                            <?php foreach ($users as $user) : ?>
+                                <option value="<?= (int) ($user['id'] ?? 0) ?>">
+                                    <?= htmlspecialchars(trim((string) ($user['firstname'] ?? '') . ' ' . (string) ($user['surname'] ?? '')) . ' (@' . (string) ($user['username'] ?? '') . ')', ENT_QUOTES) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label" for="populate_stage_key">Stage</label>
+                        <select class="form-select" id="populate_stage_key" name="populate_stage_key" required>
+                            <option value="">Choose a stage</option>
+                            <?php foreach ($restoreStageOptions as $stageKey => $stageLabel) : ?>
+                                <option value="<?= htmlspecialchars($stageKey, ENT_QUOTES) ?>"><?= htmlspecialchars($stageLabel, ENT_QUOTES) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-outline-primary"><i class="bi bi-magic"></i> Populate stage for player</button>
+                </form>
             </div>
         </div>
 
