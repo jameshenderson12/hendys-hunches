@@ -491,16 +491,49 @@ function hh_update_move_status_with_connection(mysqli $con): void {
 
 	$rankings = mysqli_query($con, $sql_getrankings) or die(mysqli_error($con));
 
+	$positionSnapshots = [];
 	while ($row = mysqli_fetch_assoc($rankings)) {
-		$id = (int) $row["id"];
-		$currpos = (int) $row["currpos"];
-		$rank = (int) $row["rank"];
+		$positionSnapshots[] = [
+			'id' => (int) ($row['id'] ?? 0),
+			'lastpos' => (int) ($row['currpos'] ?? 0),
+			'currpos' => (int) ($row['rank'] ?? 0),
+		];
+	}
+	mysqli_free_result($rankings);
 
-		mysqli_query($con, "UPDATE live_user_information SET lastpos = $currpos WHERE id=$id") or die(mysqli_error($con));
-		mysqli_query($con, "UPDATE live_user_information SET currpos = $rank WHERE id=$id") or die(mysqli_error($con));
+	if ($positionSnapshots === []) {
+		return;
 	}
 
-	mysqli_free_result($rankings);
+	$lastPosStatement = mysqli_prepare($con, "UPDATE live_user_information SET lastpos = ? WHERE id = ? LIMIT 1");
+	$currPosStatement = mysqli_prepare($con, "UPDATE live_user_information SET currpos = ? WHERE id = ? LIMIT 1");
+
+	if (!$lastPosStatement || !$currPosStatement) {
+		if ($lastPosStatement) {
+			mysqli_stmt_close($lastPosStatement);
+		}
+		if ($currPosStatement) {
+			mysqli_stmt_close($currPosStatement);
+		}
+		die(mysqli_error($con));
+	}
+
+	foreach ($positionSnapshots as $snapshot) {
+		$previousPosition = $snapshot['lastpos'];
+		$userId = $snapshot['id'];
+		mysqli_stmt_bind_param($lastPosStatement, 'ii', $previousPosition, $userId);
+		mysqli_stmt_execute($lastPosStatement);
+	}
+
+	foreach ($positionSnapshots as $snapshot) {
+		$newPosition = $snapshot['currpos'];
+		$userId = $snapshot['id'];
+		mysqli_stmt_bind_param($currPosStatement, 'ii', $newPosition, $userId);
+		mysqli_stmt_execute($currPosStatement);
+	}
+
+	mysqli_stmt_close($lastPosStatement);
+	mysqli_stmt_close($currPosStatement);
 }
 
 function updateMoveStatus() {
