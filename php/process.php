@@ -1275,7 +1275,7 @@ function displayRankingsEq3() {
 
     echo "<div class='table-responsive'>";
     echo "<table id='rankingsTable' class='table table-striped'>";
-    echo "<thead><tr><th>Rank</th><th>Move</th><th>Player</th><th>Points</th></tr></thead>";
+    echo "<thead><tr><th>Rank</th><th>Player</th><th>Points</th></tr></thead>";
     echo "<tbody>";
 
     // Keep track of the previous rank to identify non-unique ranks
@@ -1539,7 +1539,6 @@ function displayRankingsEq5() {
         // Display the table complete with all data variables
         echo "<tr" . $rowClass . ">";
         echo "<td><span class=''>" . $displayRank . "</span></td>";
-		echo "<td><span class=''>" . $move . "</span></td>";		
         $playerMeta = trim((string) ($row["location"] ?? ''));
         if ($playerMeta === '' || strcasecmp($playerMeta, 'Prefer Not To Say') === 0) {
             $playerMeta = trim((string) ($row["faveteam"] ?? ''));
