@@ -1296,15 +1296,17 @@ if (isset($con) && $con instanceof mysqli) {
 }
 ?>
 <script>
+window.hhFanzoneQuizQuestionBank = <?= json_encode($quickFireQuizBank, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>;
 window.hhFanzoneQuizQuestions = <?= json_encode($quickFireQuiz, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>;
 window.hhSpotTheBallRounds = <?= json_encode($spotTheBallRounds, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>;
 </script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const quizRoot = document.querySelector('[data-fanzone-quiz]');
-    const questions = Array.isArray(window.hhFanzoneQuizQuestions) ? window.hhFanzoneQuizQuestions : [];
+    const questionBank = Array.isArray(window.hhFanzoneQuizQuestionBank) ? window.hhFanzoneQuizQuestionBank : [];
+    let questions = Array.isArray(window.hhFanzoneQuizQuestions) ? window.hhFanzoneQuizQuestions : [];
 
-    if (!quizRoot || questions.length === 0) {
+    if (!quizRoot || questionBank.length === 0 || questions.length === 0) {
         return;
     }
 
@@ -1316,6 +1318,14 @@ document.addEventListener('DOMContentLoaded', function () {
     let currentIndex = 0;
     let score = 0;
     let isLocked = false;
+
+    function selectRandomQuestions() {
+        const shuffled = questionBank
+            .slice()
+            .sort(() => Math.random() - 0.5);
+
+        return shuffled.slice(0, Math.min(10, shuffled.length));
+    }
 
     function createQuestionCard(question, index) {
         const card = document.createElement('article');
@@ -1412,6 +1422,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     restartButton.addEventListener('click', function () {
+        questions = selectRandomQuestions();
         currentIndex = 0;
         score = 0;
         isLocked = false;
