@@ -17,7 +17,7 @@ function hh_badge_definitions(): array
         'CR' => ['token' => 'CR', 'image' => 'img/badges/crowd-rebel.png', 'title' => 'Crowd Rebel', 'description' => 'Beat the crowd with a different scoreline and still score 3+ points.'],
         'HS' => ['token' => 'HS', 'image' => 'img/badges/hot-streak.png', 'title' => 'Hot Streak', 'description' => 'Score points in three consecutive recorded fixtures.'],
         'AC' => ['token' => 'AC', 'image' => 'img/badges/avid-climber.png', 'title' => 'Avid Climber', 'description' => 'Climb 5 or more places in a single results update.'],
-        'DH' => ['token' => 'DH', 'image' => 'img/badges/dizzy-heights.png', 'title' => 'Dizzy Heights', 'description' => 'Break into the top three of the rankings.'],
+        'DH' => ['token' => 'DH', 'image' => 'img/badges/dizzy-heights.png', 'title' => 'Dizzy Heights', 'description' => 'Reach the top three once the knockout rounds begin.'],
         'TFT' => ['token' => 'TFT', 'image' => 'img/badges/top-form-turkey.png', 'title' => 'Top Form Turkey', 'description' => 'Hit three straight 7-pointers in consecutive scored fixtures.'],
         'TH' => ['token' => 'TH', 'image' => 'img/badges/thread-starter.png', 'title' => 'Thread Starter', 'description' => 'Start a message thread in the Fan Zone.'],
         'RP' => ['token' => 'RP', 'image' => 'img/badges/in-the-replies.png', 'title' => 'In The Replies', 'description' => 'Reply to a thread in the Fan Zone.'],
@@ -267,10 +267,7 @@ function hh_badge_stats_for_user(mysqli $con, int $userId): array
     $perfectStreak = 0;
     $lastPosition = (int) ($identity['lastpos'] ?? 0);
     $currentPosition = (int) ($identity['currpos'] ?? 0);
-
-    if ($currentPosition > 0 && $currentPosition <= 3 && (int) ($stats['points_total'] ?? 0) > 0) {
-        $stats['dizzy_heights'] = true;
-    }
+    $knockoutsStarted = false;
 
     foreach ($stageDefinitions as $stageKey => $definition) {
         $tableName = (string) ($definition['table'] ?? '');
@@ -292,6 +289,14 @@ function hh_badge_stats_for_user(mysqli $con, int $userId): array
         $startIndex = (int) ($definition['start'] ?? 0);
         $endIndex = (int) ($definition['end'] ?? -1);
         for ($homeIndex = $startIndex, $awayIndex = $startIndex + 1; $homeIndex <= $endIndex && $awayIndex <= $endIndex; $homeIndex += 2, $awayIndex += 2) {
+            if ($stageKey === 'ro32' && !$knockoutsStarted) {
+                $actualHome = $latestResults['score' . $homeIndex . '_r'] ?? null;
+                $actualAway = $latestResults['score' . $awayIndex . '_r'] ?? null;
+                if (is_numeric($actualHome) && is_numeric($actualAway)) {
+                    $knockoutsStarted = true;
+                }
+            }
+
             if (hh_badge_is_exact_prediction($predictionRow, $latestResults, $homeIndex, $awayIndex)) {
                 $stats['perfect_predictions']++;
             }
@@ -347,6 +352,10 @@ function hh_badge_stats_for_user(mysqli $con, int $userId): array
 
     if ((int) ($stats['recorded_fixtures'] ?? 0) > 0 && $lastPosition > 0 && $currentPosition > 0 && ($lastPosition - $currentPosition) >= 5) {
         $stats['avid_climber'] = true;
+    }
+
+    if ($knockoutsStarted && $currentPosition > 0 && $currentPosition <= 3) {
+        $stats['dizzy_heights'] = true;
     }
 
     $username = trim((string) ($identity['username'] ?? ''));
