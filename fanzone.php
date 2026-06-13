@@ -122,6 +122,25 @@ function hh_fanzone_option_flag(array $teamFlagMap, string $label): string
     return (string) ($teamFlagMap[$teamKey] ?? '');
 }
 
+function hh_fanzone_pick_quiz_questions(array $questionBank, int $limit = 10): array
+{
+    $questionBank = array_values(array_filter($questionBank, static function ($question): bool {
+        return is_array($question)
+            && trim((string) ($question['question'] ?? '')) !== ''
+            && is_array($question['options'] ?? null)
+            && count((array) ($question['options'] ?? [])) >= 2
+            && trim((string) ($question['answer'] ?? '')) !== '';
+    }));
+
+    if ($questionBank === []) {
+        return [];
+    }
+
+    shuffle($questionBank);
+
+    return array_slice($questionBank, 0, max(1, $limit));
+}
+
 function hh_fanzone_schema_ready(mysqli $con, string $table): array
 {
     $requiredColumns = [
@@ -290,7 +309,7 @@ $yourReplyCount = 0;
 $activePollCount = 0;
 $yourPollVoteCount = 0;
 $teamFlagMap = [];
-$quickFireQuiz = [
+$quickFireQuizBank = [
     [
         'question' => 'Who captains Portugal at the 2026 World Cup?',
         'options' => ['Cristiano Ronaldo', 'Rafael Leao', 'Bruno Fernandes', 'Ruben Dias'],
@@ -321,7 +340,68 @@ $quickFireQuiz = [
         'options' => ['New York / New Jersey', 'Los Angeles', 'Dallas', 'Miami'],
         'answer' => 'New York / New Jersey',
     ],
+    [
+        'question' => 'Which nation won the very first FIFA World Cup in 1930?',
+        'options' => ['Argentina', 'Brazil', 'Italy', 'Uruguay'],
+        'answer' => 'Uruguay',
+    ],
+    [
+        'question' => 'Who captains England at the 2026 World Cup?',
+        'options' => ['Harry Kane', 'Jude Bellingham', 'Declan Rice', 'John Stones'],
+        'answer' => 'Harry Kane',
+    ],
+    [
+        'question' => 'How many host nations are there for the 2026 World Cup?',
+        'options' => ['1', '2', '3', '4'],
+        'answer' => '3',
+    ],
+    [
+        'question' => 'Which country lifted the World Cup in 2010?',
+        'options' => ['Brazil', 'Germany', 'Spain', 'Netherlands'],
+        'answer' => 'Spain',
+    ],
+    [
+        'question' => 'Which of these cities is in Canada?',
+        'options' => ['Guadalajara', 'Vancouver', 'Monterrey', 'Houston'],
+        'answer' => 'Vancouver',
+    ],
+    [
+        'question' => 'Who captains Argentina at the 2026 World Cup?',
+        'options' => ['Lautaro Martinez', 'Lionel Messi', 'Rodrigo De Paul', 'Julian Alvarez'],
+        'answer' => 'Lionel Messi',
+    ],
+    [
+        'question' => 'Which African nation reached the semi-finals of the 2022 World Cup?',
+        'options' => ['Morocco', 'Senegal', 'Ghana', 'Cameroon'],
+        'answer' => 'Morocco',
+    ],
+    [
+        'question' => 'How many stars appear above Uruguay’s badge for World Cup titles?',
+        'options' => ['1', '2', '3', '4'],
+        'answer' => '2',
+    ],
+    [
+        'question' => 'Which country hosted the 1994 FIFA World Cup?',
+        'options' => ['Mexico', 'France', 'United States', 'Italy'],
+        'answer' => 'United States',
+    ],
+    [
+        'question' => 'Who captains the Netherlands at the 2026 World Cup?',
+        'options' => ['Virgil van Dijk', 'Memphis Depay', 'Frenkie de Jong', 'Nathan Ake'],
+        'answer' => 'Virgil van Dijk',
+    ],
+    [
+        'question' => 'Which nation beat England in the 2022 World Cup quarter-finals?',
+        'options' => ['France', 'Croatia', 'Argentina', 'Morocco'],
+        'answer' => 'France',
+    ],
+    [
+        'question' => 'Which of these teams is a 2026 host nation?',
+        'options' => ['Costa Rica', 'Mexico', 'Jamaica', 'Panama'],
+        'answer' => 'Mexico',
+    ],
 ];
+$quickFireQuiz = hh_fanzone_pick_quiz_questions($quickFireQuizBank, 10);
 $spotTheBallRounds = [
     [
         'title' => 'Penalty-box scramble',
