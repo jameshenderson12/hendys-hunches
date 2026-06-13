@@ -1058,7 +1058,6 @@ include "php/navigation.php";
                 <div class="fanzone-trivia">
                     <p class="mb-0"><?= htmlspecialchars((string) ($fanzoneTrivia['body'] ?? 'More World Cup nuggets can live here over time.'), ENT_QUOTES) ?></p>
                 </div>
-                <p class="concept-subtle mb-0">A rotating corner for bits of World Cup history, oddities and memory-joggers.</p>
             </aside>
         </div>
 
@@ -1099,28 +1098,18 @@ include "php/navigation.php";
             </div>
         </section>
 
-        <section class="fanzone-panel" id="fanzoneBoardSnapshot">
-            <div class="fanzone-panel__header">
-                <div>
-                    <p class="eyebrow">At a glance</p>
-                    <h2>Board snapshot</h2>
-                </div>
-            </div>
-            <div class="fanzone-snapshot">
-                <p><strong><?= count($threads) ?></strong><span>total live threads</span></p>
-                <p><strong><?= array_sum(array_map(static fn(array $thread): int => (int) $thread['reply_total'], $threads)) ?></strong><span>total replies</span></p>
-                <p><strong><?= $yourThreadCount ?></strong><span>your threads</span></p>
-                <p><strong><?= $yourReplyCount ?></strong><span>your replies</span></p>
-            </div>
-            <p class="concept-subtle mb-0">A quick read on how lively the message board is feeling right now.</p>
-        </section>
-
         <section class="fanzone-panel" id="fanzoneBoard">
             <div class="fanzone-panel__header">
                 <div>
                     <p class="eyebrow">Supporters' board</p>
                     <h2>Message Board</h2>
                 </div>
+            </div>
+            <div class="fanzone-snapshot mb-4">
+                <p><strong><?= count($threads) ?></strong><span>total live threads</span></p>
+                <p><strong><?= array_sum(array_map(static fn(array $thread): int => (int) $thread['reply_total'], $threads)) ?></strong><span>total replies</span></p>
+                <p><strong><?= $yourThreadCount ?></strong><span>your threads</span></p>
+                <p><strong><?= $yourReplyCount ?></strong><span>your replies</span></p>
             </div>
 
             <?php if ($boardNotice !== null) : ?>
