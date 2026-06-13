@@ -3209,6 +3209,19 @@ body.tour-active {
   font-weight: 700;
 }
 
+.fanzone-trivia {
+  padding: 16px 18px;
+  border: 1px solid var(--hh-line);
+  border-radius: 8px;
+  background: rgba(143, 102, 216, 0.08);
+}
+
+.fanzone-trivia p {
+  color: var(--hh-ink);
+  font-weight: 700;
+  line-height: 1.55;
+}
+
 .fanzone-quiz-card {
   display: grid;
   gap: 14px;

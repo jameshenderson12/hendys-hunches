@@ -141,6 +141,24 @@ function hh_fanzone_pick_quiz_questions(array $questionBank, int $limit = 10): a
     return array_slice($questionBank, 0, max(1, $limit));
 }
 
+function hh_fanzone_pick_trivia_item(array $items): ?array
+{
+    $items = array_values(array_filter($items, static function ($item): bool {
+        return is_array($item)
+            && trim((string) ($item['label'] ?? '')) !== ''
+            && trim((string) ($item['title'] ?? '')) !== ''
+            && trim((string) ($item['body'] ?? '')) !== '';
+    }));
+
+    if ($items === []) {
+        return null;
+    }
+
+    shuffle($items);
+
+    return $items[0] ?? null;
+}
+
 function hh_fanzone_schema_ready(mysqli $con, string $table): array
 {
     $requiredColumns = [
@@ -402,6 +420,49 @@ $quickFireQuizBank = [
     ],
 ];
 $quickFireQuiz = hh_fanzone_pick_quiz_questions($quickFireQuizBank, 10);
+$fanzoneTriviaBank = [
+    [
+        'label' => 'Did you know?',
+        'title' => 'Uruguay set the opening marker',
+        'body' => 'Uruguay won the very first World Cup in 1930 and then lifted it again in 1950, giving them one of the game’s earliest tournament legacies.',
+    ],
+    [
+        'label' => 'On this day',
+        'title' => 'South Africa made history in 2010',
+        'body' => 'On 11 June 2010, South Africa became the first African nation to host a FIFA World Cup as the tournament opened in Johannesburg.',
+    ],
+    [
+        'label' => 'World Cup archive',
+        'title' => 'England’s one triumph came in 1966',
+        'body' => 'England’s only World Cup title arrived at Wembley in 1966, when they beat West Germany 4-2 after extra time in the final.',
+    ],
+    [
+        'label' => 'Did you know?',
+        'title' => 'The 2026 tournament is the biggest yet',
+        'body' => 'The 2026 World Cup is the first to feature 48 nations, expanding the field and stretching the tournament across the United States, Canada and Mexico.',
+    ],
+    [
+        'label' => 'On this day',
+        'title' => 'Spain crowned a new champion in 2010',
+        'body' => 'On 11 July 2010, Spain won their first World Cup title thanks to Andres Iniesta’s extra-time goal against the Netherlands.',
+    ],
+    [
+        'label' => 'World Cup archive',
+        'title' => 'Brazil remain the benchmark',
+        'body' => 'Brazil are still the most successful men’s World Cup nation, with five titles spanning from 1958 to 2002.',
+    ],
+    [
+        'label' => 'Did you know?',
+        'title' => 'Three hosts share the stage in 2026',
+        'body' => 'Canada, Mexico and the United States are sharing hosting duties, making this the first men’s World Cup staged by three nations together.',
+    ],
+    [
+        'label' => 'On this day',
+        'title' => 'France lifted their first World Cup in 1998',
+        'body' => 'On 12 July 1998, France beat Brazil 3-0 in Paris to win the World Cup for the first time on home soil.',
+    ],
+];
+$fanzoneTrivia = hh_fanzone_pick_trivia_item($fanzoneTriviaBank);
 $spotTheBallRounds = [
     [
         'title' => 'Penalty-box scramble',
@@ -990,19 +1051,14 @@ include "php/navigation.php";
             <aside class="fanzone-panel fanzone-panel--side">
                 <div class="fanzone-panel__header">
                     <div>
-                        <p class="eyebrow">At a glance</p>
-                        <h2>Board snapshot</h2>
+                        <p class="eyebrow"><?= htmlspecialchars((string) ($fanzoneTrivia['label'] ?? 'Did you know?'), ENT_QUOTES) ?></p>
+                        <h2><?= htmlspecialchars((string) ($fanzoneTrivia['title'] ?? 'World Cup trivia'), ENT_QUOTES) ?></h2>
                     </div>
                 </div>
-                <div class="fanzone-snapshot">
-                    <p><strong><?= count($threads) ?></strong><span>total live threads</span></p>
-                    <p><strong><?= array_sum(array_map(static fn(array $thread): int => (int) $thread['reply_total'], $threads)) ?></strong><span>total replies</span></p>
-                    <p><strong><?= $activePollCount ?></strong><span>active polls</span></p>
-                    <p><strong><?= $yourPollVoteCount ?></strong><span>your poll votes</span></p>
-                    <p><strong><?= $yourThreadCount ?></strong><span>your threads</span></p>
-                    <p><strong><?= $yourReplyCount ?></strong><span>your replies</span></p>
+                <div class="fanzone-trivia">
+                    <p class="mb-0"><?= htmlspecialchars((string) ($fanzoneTrivia['body'] ?? 'More World Cup nuggets can live here over time.'), ENT_QUOTES) ?></p>
                 </div>
-                <p class="concept-subtle mb-0">A quick read on how lively the Fan Zone is feeling, whether that’s message-board chatter or poll action.</p>
+                <p class="concept-subtle mb-0">A rotating corner for bits of World Cup history, oddities and memory-joggers.</p>
             </aside>
         </div>
 
@@ -1041,6 +1097,22 @@ include "php/navigation.php";
                     </div>
                 </div>
             </div>
+        </section>
+
+        <section class="fanzone-panel" id="fanzoneBoardSnapshot">
+            <div class="fanzone-panel__header">
+                <div>
+                    <p class="eyebrow">At a glance</p>
+                    <h2>Board snapshot</h2>
+                </div>
+            </div>
+            <div class="fanzone-snapshot">
+                <p><strong><?= count($threads) ?></strong><span>total live threads</span></p>
+                <p><strong><?= array_sum(array_map(static fn(array $thread): int => (int) $thread['reply_total'], $threads)) ?></strong><span>total replies</span></p>
+                <p><strong><?= $yourThreadCount ?></strong><span>your threads</span></p>
+                <p><strong><?= $yourReplyCount ?></strong><span>your replies</span></p>
+            </div>
+            <p class="concept-subtle mb-0">A quick read on how lively the message board is feeling right now.</p>
         </section>
 
         <section class="fanzone-panel" id="fanzoneBoard">
