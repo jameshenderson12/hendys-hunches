@@ -344,12 +344,62 @@ $quickFireQuizBank = [
         'answer' => '2',
     ],
     [
+        'question' => 'Which nation won the 2022 World Cup?',
+        'options' => ['Argentina', 'France', 'Croatia', 'Brazil'],
+        'answer' => 'Argentina',
+    ],
+    [
+        'question' => 'Which nation has won the most World Cups?',
+        'options' => ['Germany', 'Italy', 'Brazil', 'Argentina'],
+        'answer' => 'Brazil',
+    ],
+    [
+        'question' => 'Which nation has hosted the most World Cups?',
+        'options' => ['Brazil', 'Italy', 'Germany', 'Mexico'],
+        'answer' => 'Mexico',
+    ],
+    [
+        'question' => 'Which nation has never hosted the World Cup?',
+        'options' => ['Argentina', 'Germany', 'Italy', 'Spain'],
+        'answer' => 'Spain',
+    ],
+    [
+        'question' => 'Which nation has never won the World Cup?',
+        'options' => ['Netherlands', 'France', 'Italy', 'Brazil'],
+        'answer' => 'Netherlands',
+    ],
+    [
+        'question' => 'Which nation has never reached a World Cup final?',
+        'options' => ['Croatia', 'Belgium', 'Argentina', 'Germany'],
+        'answer' => 'Belgium',
+    ],
+    [
+        'question' => 'Who is the oldest player in the 2026 World Cup?',
+        'options' => ['Guillermo Ochoa', 'Cristiano Ronaldo', 'Craig Gordon', 'Manuel Neuer'],
+        'answer' => 'Craig Gordon',
+    ],
+    [
         'question' => 'Who captains Croatia at the 2026 World Cup?',
-        'options' => ['Kevin De Bruyne', 'Virgil van Dijk', 'Lionel Messi', 'Luka Modric'],
+        'options' => ['Ivan Rakitic', 'Goran Pandev', 'Mateo Kovacic', 'Luka Modric'],
         'answer' => 'Luka Modric',
     ],
     [
-        'question' => 'England have won the World Cup once. In which year did they win?',
+        'question' => 'Who captains Germany at the 2026 World Cup?',
+        'options' => ['Manuel Neuer', 'Joshua Kimmich', 'Kai Havertz', 'Leroy Sane'],
+        'answer' => 'Joshua Kimmich',
+    ],
+    [
+        'question' => 'Who captains Scotland at the 2026 World Cup?',
+        'options' => ['Andy Robertson', 'Kieran Tierney', 'John McGinn', 'Ryan Christie'],
+        'answer' => 'Andy Robertson',
+    ],
+    [
+        'question' => 'Who captains Brazil at the 2026 World Cup?',
+        'options' => ['Marquinhos', 'Igor Thiago', 'Bruno Guimaraes', 'Alisson Becker'],
+        'answer' => 'Marquinhos',
+    ],
+    [
+        'question' => 'England have won the World Cup once - in which year?',
         'options' => ['1950', '1954', '1966', '1990'],
         'answer' => '1966',
     ],
@@ -379,10 +429,40 @@ $quickFireQuizBank = [
         'answer' => 'Spain',
     ],
     [
+        'question' => 'Which country lifted the World Cup in 2006?',
+        'options' => ['Italy', 'Germany', 'Brazil', 'France'],
+        'answer' => 'Italy',
+    ],
+    [
+        'question' => 'Which country lifted the World Cup in 2002?',
+        'options' => ['Brazil', 'Germany', 'Spain', 'France'],
+        'answer' => 'Brazil',
+    ],
+    [
+        'question' => 'Which country lifted the World Cup in 1998?',
+        'options' => ['Brazil', 'Germany', 'France', 'Italy'],
+        'answer' => 'France',
+    ],
+    [
+        'question' => 'Which country lifted the World Cup in 1994?',
+        'options' => ['Brazil', 'Argentina', 'Spain', 'Netherlands'],
+        'answer' => 'Brazil',
+    ],
+        [
+        'question' => 'Which country lifted the World Cup in 1990?',
+        'options' => ['Germany', 'Argentina', 'Italy', 'Brazil'],
+        'answer' => 'Germany',
+    ],
+    [
         'question' => 'Which of these cities is in Canada?',
         'options' => ['Guadalajara', 'Vancouver', 'Monterrey', 'Houston'],
         'answer' => 'Vancouver',
     ],
+        [
+        'question' => 'Which of these cities is in the United States?',
+        'options' => ['Guadalajara', 'Vancouver', 'Monterrey', 'Houston'],
+        'answer' => 'Houston',
+    ],        
     [
         'question' => 'Who captains Argentina at the 2026 World Cup?',
         'options' => ['Lautaro Martinez', 'Lionel Messi', 'Rodrigo De Paul', 'Julian Alvarez'],
@@ -394,9 +474,9 @@ $quickFireQuizBank = [
         'answer' => 'Morocco',
     ],
     [
-        'question' => 'How many stars appear above Uruguay’s badge for World Cup titles?',
-        'options' => ['1', '2', '3', '4'],
-        'answer' => '2',
+        'question' => 'Which nation beat Brazil in the 2022 World Cup quarter-finals?',
+        'options' => ['Croatia', 'Argentina', 'France', 'Morocco'],
+        'answer' => 'Croatia',
     ],
     [
         'question' => 'Which country hosted the 1994 FIFA World Cup?',
