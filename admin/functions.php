@@ -1526,6 +1526,10 @@ $snapshot = [
     'fanzone' => 0,
     'badges' => 0,
     'logins' => 0,
+    'quiz_players' => 0,
+    'quiz_sessions' => 0,
+    'spot_players' => 0,
+    'spot_sessions' => 0,
 ];
 
 $countQueries = [
@@ -1567,6 +1571,40 @@ if (hh_admin_table_exists($con, 'live_user_logins')) {
     if ($result) {
         $row = mysqli_fetch_assoc($result);
         $snapshot['logins'] = (int) ($row['total'] ?? 0);
+        mysqli_free_result($result);
+    }
+}
+
+if (hh_admin_table_exists($con, 'live_fanzone_quiz_activity')) {
+    $result = mysqli_query(
+        $con,
+        "SELECT
+            COUNT(DISTINCT user_id) AS player_total,
+            COUNT(*) AS event_total,
+            SUM(CASE WHEN event_type = 'session_start' THEN 1 ELSE 0 END) AS session_total
+         FROM live_fanzone_quiz_activity"
+    );
+    if ($result) {
+        $row = mysqli_fetch_assoc($result) ?: [];
+        $snapshot['quiz_players'] = (int) ($row['player_total'] ?? 0);
+        $snapshot['quiz_sessions'] = (int) ($row['session_total'] ?? 0);
+        mysqli_free_result($result);
+    }
+}
+
+if (hh_admin_table_exists($con, 'live_fanzone_spot_activity')) {
+    $result = mysqli_query(
+        $con,
+        "SELECT
+            COUNT(DISTINCT user_id) AS player_total,
+            COUNT(*) AS event_total,
+            SUM(CASE WHEN event_type = 'session_start' THEN 1 ELSE 0 END) AS session_total
+         FROM live_fanzone_spot_activity"
+    );
+    if ($result) {
+        $row = mysqli_fetch_assoc($result) ?: [];
+        $snapshot['spot_players'] = (int) ($row['player_total'] ?? 0);
+        $snapshot['spot_sessions'] = (int) ($row['session_total'] ?? 0);
         mysqli_free_result($result);
     }
 }
@@ -2218,6 +2256,10 @@ include '../php/navigation.php';
                 <div class="admin-kpi__item"><strong><?= $snapshot['fanzone'] ?></strong><span>live Fan Zone posts</span></div>
                 <div class="admin-kpi__item"><strong><?= $snapshot['badges'] ?></strong><span>badge awards stored</span></div>
                 <div class="admin-kpi__item"><strong><?= $snapshot['logins'] ?></strong><span>successful logins recorded</span></div>
+                <div class="admin-kpi__item"><strong><?= $snapshot['quiz_players'] ?></strong><span>quiz players</span></div>
+                <div class="admin-kpi__item"><strong><?= $snapshot['quiz_sessions'] ?></strong><span>quiz sessions started</span></div>
+                <div class="admin-kpi__item"><strong><?= $snapshot['spot_players'] ?></strong><span>spot-the-ball players</span></div>
+                <div class="admin-kpi__item"><strong><?= $snapshot['spot_sessions'] ?></strong><span>spot-the-ball sessions started</span></div>
             </div>
         </div>
 
