@@ -473,6 +473,7 @@ $stagePredictionSnapshots = [];
 $effectiveToday = hh_effective_today_sql();
 $effectiveTodayLabel = hh_effective_today_label('D j M Y');
 $stageWindows = hh_prediction_stage_windows($con);
+$fixtureChronologyOrder = [];
 $hasRecordedResults = false;
 $dashboardReminder = null;
 $stagePoints = [];
@@ -521,6 +522,26 @@ $closestRivalSummary = [
     'behind' => null,
     'count' => 0,
 ];
+
+$fixtureChronologyResult = mysqli_query(
+    $con,
+    "SELECT match_number, date, kotime
+     FROM live_match_schedule
+     WHERE match_number IS NOT NULL
+     ORDER BY date ASC, kotime ASC, match_number ASC"
+);
+
+if ($fixtureChronologyResult instanceof mysqli_result) {
+    $chronologyIndex = 0;
+    while ($chronologyRow = mysqli_fetch_assoc($fixtureChronologyResult)) {
+        $matchNumber = (int) ($chronologyRow['match_number'] ?? 0);
+        if ($matchNumber > 0 && !isset($fixtureChronologyOrder[$matchNumber])) {
+            $fixtureChronologyOrder[$matchNumber] = $chronologyIndex;
+            $chronologyIndex++;
+        }
+    }
+    mysqli_free_result($fixtureChronologyResult);
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['dashboard_action'] ?? '') === 'save_mini_league') {
     if (!$miniLeagueTableExists) {
@@ -1232,6 +1253,7 @@ if ($currentUser && !empty($stageContexts)) {
                     $fixturePoints = 7;
                     $completedFixtures[] = [
                         'match_number' => (int) (($home + 1) / 2),
+                        'chronology_order' => $fixtureChronologyOrder[(int) (($home + 1) / 2)] ?? PHP_INT_MAX,
                         'points' => $fixturePoints,
                     ];
                     continue;
@@ -1252,6 +1274,7 @@ if ($currentUser && !empty($stageContexts)) {
                     }
                     $completedFixtures[] = [
                         'match_number' => (int) (($home + 1) / 2),
+                        'chronology_order' => $fixtureChronologyOrder[(int) (($home + 1) / 2)] ?? PHP_INT_MAX,
                         'points' => $fixturePoints,
                     ];
                     continue;
@@ -1262,6 +1285,7 @@ if ($currentUser && !empty($stageContexts)) {
                     $fixturePoints = 1;
                     $completedFixtures[] = [
                         'match_number' => (int) (($home + 1) / 2),
+                        'chronology_order' => $fixtureChronologyOrder[(int) (($home + 1) / 2)] ?? PHP_INT_MAX,
                         'points' => $fixturePoints,
                     ];
                     continue;
@@ -1270,6 +1294,7 @@ if ($currentUser && !empty($stageContexts)) {
                 $accuracy[4]['value']++;
                 $completedFixtures[] = [
                     'match_number' => (int) (($home + 1) / 2),
+                    'chronology_order' => $fixtureChronologyOrder[(int) (($home + 1) / 2)] ?? PHP_INT_MAX,
                     'points' => 0,
                 ];
             }
@@ -1278,7 +1303,14 @@ if ($currentUser && !empty($stageContexts)) {
         if (!empty($completedFixtures)) {
             usort(
                 $completedFixtures,
-                static fn(array $left, array $right): int => ($left['match_number'] ?? 0) <=> ($right['match_number'] ?? 0)
+                static function (array $left, array $right): int {
+                    $chronologyComparison = ($left['chronology_order'] ?? PHP_INT_MAX) <=> ($right['chronology_order'] ?? PHP_INT_MAX);
+                    if ($chronologyComparison !== 0) {
+                        return $chronologyComparison;
+                    }
+
+                    return ($left['match_number'] ?? 0) <=> ($right['match_number'] ?? 0);
+                }
             );
             $recentForm = array_slice($completedFixtures, -6);
         }
