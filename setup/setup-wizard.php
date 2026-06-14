@@ -677,6 +677,20 @@ function build_installable_table_definitions(array $context): array {
             'sql' => file_get_contents(__DIR__ . '/../sql/setup-poll-votes-table.sql') ?: '',
             'description' => 'Stores one vote per player for each Fan Zone poll.',
         ],
+        'fanzone_quiz_activity' => [
+            'label' => 'Fan Zone Quiz Activity',
+            'file' => 'sql/setup-fanzone-quiz-activity-table.sql',
+            'table' => 'live_fanzone_quiz_activity',
+            'sql' => file_get_contents(__DIR__ . '/../sql/setup-fanzone-quiz-activity-table.sql') ?: '',
+            'description' => 'Stores quiz starts, answers and completions so player engagement can be reviewed over time.',
+        ],
+        'fanzone_spot_activity' => [
+            'label' => 'Fan Zone Spot Activity',
+            'file' => 'sql/setup-fanzone-spot-activity-table.sql',
+            'table' => 'live_fanzone_spot_activity',
+            'sql' => file_get_contents(__DIR__ . '/../sql/setup-fanzone-spot-activity-table.sql') ?: '',
+            'description' => 'Stores Spot The Ball starts, guesses and completions for lightweight activity tracking.',
+        ],
         'user_badges' => [
             'label' => 'Badge Awards',
             'file' => 'sql/setup-user-badges-table.sql',
@@ -1353,6 +1367,8 @@ function build_database_contents_snapshot(mysqli $connection, array $installable
         'live_polls' => 'Poll Questions',
         'live_poll_options' => 'Poll Options',
         'live_poll_votes' => 'Poll Votes',
+        'live_fanzone_quiz_activity' => 'Fan Zone Quiz Activity',
+        'live_fanzone_spot_activity' => 'Fan Zone Spot Activity',
         'live_user_badges' => 'Badge Awards',
         'live_user_logins' => 'Login Events',
         'live_match_results' => 'Match Results',
@@ -1411,6 +1427,8 @@ function clear_current_tournament_setup(mysqli $connection, array $installableTa
         'live_polls',
         'live_poll_options',
         'live_poll_votes',
+        'live_fanzone_quiz_activity',
+        'live_fanzone_spot_activity',
         'live_user_badges',
         'live_user_logins',
         'live_match_results',
@@ -1545,6 +1563,22 @@ function build_table_audit(mysqli $connection, array $installableTables): array 
             $expectedTables[$definition['table']] = [
                 'label' => $definition['label'],
                 'expected_columns' => 5,
+                'score_columns' => 0,
+            ];
+            continue;
+        }
+        if (($definition['table'] ?? '') === 'live_fanzone_quiz_activity') {
+            $expectedTables[$definition['table']] = [
+                'label' => $definition['label'],
+                'expected_columns' => 10,
+                'score_columns' => 0,
+            ];
+            continue;
+        }
+        if (($definition['table'] ?? '') === 'live_fanzone_spot_activity') {
+            $expectedTables[$definition['table']] = [
+                'label' => $definition['label'],
+                'expected_columns' => 10,
                 'score_columns' => 0,
             ];
             continue;

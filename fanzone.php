@@ -226,6 +226,129 @@ function hh_fanzone_poll_schema_ready(mysqli $con): array
     return ['ready' => $missing === [], 'missing' => $missing];
 }
 
+function hh_fanzone_activity_schema_ready(mysqli $con): array
+{
+    $definitions = [
+        'live_fanzone_quiz_activity' => ['id', 'user_id', 'username', 'session_key', 'event_type', 'created_at'],
+        'live_fanzone_spot_activity' => ['id', 'user_id', 'username', 'session_key', 'event_type', 'created_at'],
+    ];
+
+    $missing = [];
+    foreach ($definitions as $table => $requiredColumns) {
+        if (!hh_fanzone_table_exists($con, $table)) {
+            $missing[$table] = $requiredColumns;
+            continue;
+        }
+
+        $result = mysqli_query($con, "SHOW COLUMNS FROM {$table}");
+        if (!$result) {
+            $missing[$table] = $requiredColumns;
+            continue;
+        }
+
+        $columns = [];
+        while ($row = mysqli_fetch_assoc($result)) {
+            $columns[] = $row['Field'];
+        }
+        mysqli_free_result($result);
+
+        $missingColumns = array_values(array_diff($requiredColumns, $columns));
+        if ($missingColumns !== []) {
+            $missing[$table] = $missingColumns;
+        }
+    }
+
+    return ['ready' => $missing === [], 'missing' => $missing];
+}
+
+function hh_fanzone_log_quiz_activity(
+    mysqli $con,
+    int $userId,
+    string $username,
+    string $sessionKey,
+    string $eventType,
+    ?int $questionNumber = null,
+    ?string $questionText = null,
+    ?string $selectedAnswer = null,
+    bool $isCorrect = false,
+    ?int $scoreTotal = null
+): bool {
+    $statement = mysqli_prepare(
+        $con,
+        "INSERT INTO live_fanzone_quiz_activity
+            (user_id, username, session_key, event_type, question_number, question_text, selected_answer, is_correct, score_total)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+    );
+
+    if (!$statement) {
+        return false;
+    }
+
+    $correctFlag = $isCorrect ? 1 : 0;
+    mysqli_stmt_bind_param(
+        $statement,
+        'isssissii',
+        $userId,
+        $username,
+        $sessionKey,
+        $eventType,
+        $questionNumber,
+        $questionText,
+        $selectedAnswer,
+        $correctFlag,
+        $scoreTotal
+    );
+
+    $success = mysqli_stmt_execute($statement);
+    mysqli_stmt_close($statement);
+
+    return $success;
+}
+
+function hh_fanzone_log_spot_activity(
+    mysqli $con,
+    int $userId,
+    string $username,
+    string $sessionKey,
+    string $eventType,
+    ?int $roundNumber = null,
+    ?string $roundTitle = null,
+    ?int $cellNumber = null,
+    bool $isCorrect = false,
+    ?int $solvedTotal = null
+): bool {
+    $statement = mysqli_prepare(
+        $con,
+        "INSERT INTO live_fanzone_spot_activity
+            (user_id, username, session_key, event_type, round_number, round_title, cell_number, is_correct, solved_total)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+    );
+
+    if (!$statement) {
+        return false;
+    }
+
+    $correctFlag = $isCorrect ? 1 : 0;
+    mysqli_stmt_bind_param(
+        $statement,
+        'isssisiii',
+        $userId,
+        $username,
+        $sessionKey,
+        $eventType,
+        $roundNumber,
+        $roundTitle,
+        $cellNumber,
+        $correctFlag,
+        $solvedTotal
+    );
+
+    $success = mysqli_stmt_execute($statement);
+    mysqli_stmt_close($statement);
+
+    return $success;
+}
+
 function hh_fanzone_fetch_poll_with_results(mysqli $con, int $pollId, int $sessionUserId = 0): ?array
 {
     if ($pollId <= 0) {
@@ -308,6 +431,8 @@ $boardSchema = $boardReady ? hh_fanzone_schema_ready($con, $boardTable) : ['read
 $boardSchemaReady = $boardReady && $boardSchema['ready'];
 $pollSchema = isset($con) && $con instanceof mysqli ? hh_fanzone_poll_schema_ready($con) : ['ready' => false, 'missing' => []];
 $pollSchemaReady = $pollSchema['ready'];
+$activitySchema = isset($con) && $con instanceof mysqli ? hh_fanzone_activity_schema_ready($con) : ['ready' => false, 'missing' => []];
+$activitySchemaReady = $activitySchema['ready'];
 $boardError = null;
 $boardNotice = null;
 $pollError = null;
@@ -570,7 +695,70 @@ $spotTheBallRounds = [
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['fanzone_action'])) {
     $action = (string) $_POST['fanzone_action'];
 
-    if ($action === 'create_poll') {
+    if ($action === 'log_quiz_activity' || $action === 'log_spot_activity') {
+        $responseCode = 204;
+
+        if (!$activitySchemaReady || $sessionUserId <= 0 || $sessionUsername === '') {
+            $responseCode = 202;
+        } else {
+            $sessionKey = trim((string) ($_POST['session_key'] ?? ''));
+            $eventType = trim((string) ($_POST['event_type'] ?? ''));
+
+            if (!preg_match('/^[a-z0-9-]{8,64}$/i', $sessionKey) || $eventType === '') {
+                $responseCode = 422;
+            } elseif ($action === 'log_quiz_activity') {
+                $questionNumber = isset($_POST['question_number']) && $_POST['question_number'] !== '' ? (int) $_POST['question_number'] : null;
+                $questionText = isset($_POST['question_text']) ? trim((string) $_POST['question_text']) : null;
+                $selectedAnswer = isset($_POST['selected_answer']) ? trim((string) $_POST['selected_answer']) : null;
+                $scoreTotal = isset($_POST['score_total']) && $_POST['score_total'] !== '' ? (int) $_POST['score_total'] : null;
+                $isCorrect = (string) ($_POST['is_correct'] ?? '0') === '1';
+
+                if (!hh_fanzone_log_quiz_activity(
+                    $con,
+                    $sessionUserId,
+                    $sessionUsername,
+                    $sessionKey,
+                    $eventType,
+                    $questionNumber,
+                    $questionText,
+                    $selectedAnswer,
+                    $isCorrect,
+                    $scoreTotal
+                )) {
+                    $responseCode = 500;
+                }
+            } else {
+                $roundNumber = isset($_POST['round_number']) && $_POST['round_number'] !== '' ? (int) $_POST['round_number'] : null;
+                $roundTitle = isset($_POST['round_title']) ? trim((string) $_POST['round_title']) : null;
+                $cellNumber = isset($_POST['cell_number']) && $_POST['cell_number'] !== '' ? (int) $_POST['cell_number'] : null;
+                $solvedTotal = isset($_POST['solved_total']) && $_POST['solved_total'] !== '' ? (int) $_POST['solved_total'] : null;
+                $isCorrect = (string) ($_POST['is_correct'] ?? '0') === '1';
+
+                if (!hh_fanzone_log_spot_activity(
+                    $con,
+                    $sessionUserId,
+                    $sessionUsername,
+                    $sessionKey,
+                    $eventType,
+                    $roundNumber,
+                    $roundTitle,
+                    $cellNumber,
+                    $isCorrect,
+                    $solvedTotal
+                )) {
+                    $responseCode = 500;
+                }
+            }
+        }
+
+        http_response_code($responseCode);
+        header('Content-Type: application/json');
+        echo json_encode(['ok' => $responseCode < 400]);
+        if (isset($con) && $con instanceof mysqli) {
+            mysqli_close($con);
+        }
+        exit();
+    } elseif ($action === 'create_poll') {
         $pollDraftQuestion = trim((string) ($_POST['poll_question'] ?? ''));
         $pollDraftOptions = [];
         foreach ((array) ($_POST['poll_options'] ?? []) as $optionValue) {
@@ -1379,8 +1567,34 @@ if (isset($con) && $con instanceof mysqli) {
 window.hhFanzoneQuizQuestionBank = <?= json_encode($quickFireQuizBank, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>;
 window.hhFanzoneQuizQuestions = <?= json_encode($quickFireQuiz, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>;
 window.hhSpotTheBallRounds = <?= json_encode($spotTheBallRounds, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>;
+window.hhFanzoneTrackingEnabled = <?= $activitySchemaReady ? 'true' : 'false' ?>;
 </script>
 <script>
+function hhFanzoneLogActivity(action, payload) {
+    if (!window.hhFanzoneTrackingEnabled) {
+        return;
+    }
+
+    const body = new URLSearchParams();
+    body.set('fanzone_action', action);
+
+    Object.entries(payload || {}).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+            body.set(key, String(value));
+        }
+    });
+
+    fetch('fanzone.php', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+        },
+        body: body.toString(),
+        keepalive: true
+    }).catch(() => {});
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     const quizRoot = document.querySelector('[data-fanzone-quiz]');
     const questionBank = Array.isArray(window.hhFanzoneQuizQuestionBank) ? window.hhFanzoneQuizQuestionBank : [];
@@ -1398,6 +1612,15 @@ document.addEventListener('DOMContentLoaded', function () {
     let currentIndex = 0;
     let score = 0;
     let isLocked = false;
+    let sessionKey = '';
+
+    function createSessionKey(prefix) {
+        if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+            return window.crypto.randomUUID();
+        }
+
+        return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2, 10)}`;
+    }
 
     function selectRandomQuestions() {
         const shuffled = questionBank
@@ -1449,6 +1672,16 @@ document.addEventListener('DOMContentLoaded', function () {
                     ? 'Correct — onto the next one.'
                     : `Not this time — the right answer was ${question.answer}.`;
 
+                hhFanzoneLogActivity('log_quiz_activity', {
+                    session_key: sessionKey,
+                    event_type: 'answer',
+                    question_number: index + 1,
+                    question_text: question.question,
+                    selected_answer: option,
+                    is_correct: isCorrect ? 1 : 0,
+                    score_total: score
+                });
+
                 window.setTimeout(() => {
                     card.classList.add('is-leaving');
                     window.setTimeout(() => {
@@ -1478,6 +1711,11 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         status.textContent = 'All done. Give it another go whenever you fancy.';
         restartButton.hidden = false;
+        hhFanzoneLogActivity('log_quiz_activity', {
+            session_key: sessionKey,
+            event_type: 'complete',
+            score_total: score
+        });
     }
 
     function renderCurrentCard() {
@@ -1506,9 +1744,19 @@ document.addEventListener('DOMContentLoaded', function () {
         currentIndex = 0;
         score = 0;
         isLocked = false;
+        sessionKey = createSessionKey('quiz');
+        hhFanzoneLogActivity('log_quiz_activity', {
+            session_key: sessionKey,
+            event_type: 'session_start'
+        });
         renderCurrentCard();
     });
 
+    sessionKey = createSessionKey('quiz');
+    hhFanzoneLogActivity('log_quiz_activity', {
+        session_key: sessionKey,
+        event_type: 'session_start'
+    });
     renderCurrentCard();
 });
 
@@ -1528,6 +1776,15 @@ document.addEventListener('DOMContentLoaded', function () {
     let currentIndex = 0;
     let solvedCount = 0;
     let isLocked = false;
+    let sessionKey = '';
+
+    function createSessionKey(prefix) {
+        if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+            return window.crypto.randomUUID();
+        }
+
+        return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2, 10)}`;
+    }
 
     function createRoundCard(round, index) {
         const card = document.createElement('article');
@@ -1563,6 +1820,15 @@ document.addEventListener('DOMContentLoaded', function () {
                     solvedCount += 1;
                     button.classList.add('is-correct');
                     status.textContent = 'Great, you found it — onto the next one.';
+                    hhFanzoneLogActivity('log_spot_activity', {
+                        session_key: sessionKey,
+                        event_type: 'guess',
+                        round_number: index + 1,
+                        round_title: round.title,
+                        cell_number: cell,
+                        is_correct: 1,
+                        solved_total: solvedCount
+                    });
 
                     window.setTimeout(() => {
                         card.classList.add('is-leaving');
@@ -1575,6 +1841,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 } else {
                     button.classList.add('is-tried');
                     status.textContent = `Not there I'm afraid — keep hunting!`;
+                    hhFanzoneLogActivity('log_spot_activity', {
+                        session_key: sessionKey,
+                        event_type: 'guess',
+                        round_number: index + 1,
+                        round_title: round.title,
+                        cell_number: cell,
+                        is_correct: 0,
+                        solved_total: solvedCount
+                    });
                 }
             });
 
@@ -1599,6 +1874,11 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         status.textContent = 'All images cleared.';
         restartButton.hidden = false;
+        hhFanzoneLogActivity('log_spot_activity', {
+            session_key: sessionKey,
+            event_type: 'complete',
+            solved_total: solvedCount
+        });
     }
 
     function renderCurrentRound() {
@@ -1627,9 +1907,19 @@ document.addEventListener('DOMContentLoaded', function () {
         currentIndex = 0;
         solvedCount = 0;
         isLocked = false;
+        sessionKey = createSessionKey('spot');
+        hhFanzoneLogActivity('log_spot_activity', {
+            session_key: sessionKey,
+            event_type: 'session_start'
+        });
         renderCurrentRound();
     });
 
+    sessionKey = createSessionKey('spot');
+    hhFanzoneLogActivity('log_spot_activity', {
+        session_key: sessionKey,
+        event_type: 'session_start'
+    });
     renderCurrentRound();
 });
 </script>
