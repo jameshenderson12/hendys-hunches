@@ -300,6 +300,143 @@ function hh_admin_preview_table(mysqli $con, string $table, int $limit = 30): ar
     return ['columns' => $columns, 'rows' => $rows];
 }
 
+function hh_admin_fetch_table_names(mysqli $con): array
+{
+    $result = mysqli_query($con, "SHOW TABLES");
+    if (!($result instanceof mysqli_result)) {
+        return [];
+    }
+
+    $tables = [];
+    while ($row = mysqli_fetch_row($result)) {
+        $tableName = trim((string) ($row[0] ?? ''));
+        if ($tableName !== '') {
+            $tables[] = $tableName;
+        }
+    }
+    mysqli_free_result($result);
+
+    sort($tables);
+
+    return $tables;
+}
+
+function hh_admin_humanize_table_name(string $tableName): string
+{
+    $label = preg_replace('/^(live_|backup_)/', '', $tableName);
+    $label = str_replace('_', ' ', (string) $label);
+    $label = ucwords($label);
+
+    if (str_starts_with($tableName, 'backup_')) {
+        return 'Backup · ' . $label;
+    }
+
+    return $label;
+}
+
+function hh_admin_preview_table_paged(mysqli $con, string $table, string $rowMode = '30', int $page = 1, int $allPageSize = 250): array
+{
+    $page = max(1, $page);
+    $allowedModes = ['10', '30', '50', '100', '250', '500', 'all'];
+    if (!in_array($rowMode, $allowedModes, true)) {
+        $rowMode = '30';
+    }
+
+    $countResult = mysqli_query($con, "SELECT COUNT(*) AS total FROM {$table}");
+    $totalRows = 0;
+    if ($countResult instanceof mysqli_result) {
+        $countRow = mysqli_fetch_assoc($countResult) ?: [];
+        $totalRows = (int) ($countRow['total'] ?? 0);
+        mysqli_free_result($countResult);
+    }
+
+    $limit = $rowMode === 'all' ? $allPageSize : (int) $rowMode;
+    $offset = $rowMode === 'all' ? (($page - 1) * $limit) : 0;
+    $maxPage = $rowMode === 'all' && $limit > 0 ? max(1, (int) ceil($totalRows / $limit)) : 1;
+    if ($page > $maxPage) {
+        $page = $maxPage;
+        $offset = $rowMode === 'all' ? (($page - 1) * $limit) : 0;
+    }
+
+    $result = mysqli_query($con, "SELECT * FROM {$table} LIMIT {$limit} OFFSET {$offset}");
+    if (!$result) {
+        return [
+            'columns' => [],
+            'rows' => [],
+            'total_rows' => $totalRows,
+            'row_mode' => $rowMode,
+            'page' => $page,
+            'page_size' => $limit,
+            'page_count' => $maxPage,
+            'showing_from' => 0,
+            'showing_to' => 0,
+            'is_paginated' => $rowMode === 'all' && $totalRows > $limit,
+        ];
+    }
+
+    $columns = [];
+    foreach (mysqli_fetch_fields($result) as $field) {
+        $columns[] = $field->name;
+    }
+
+    $rows = [];
+    while ($row = mysqli_fetch_assoc($result)) {
+        $rows[] = $row;
+    }
+    mysqli_free_result($result);
+
+    $showingFrom = $totalRows > 0 ? ($offset + 1) : 0;
+    $showingTo = $offset + count($rows);
+
+    return [
+        'columns' => $columns,
+        'rows' => $rows,
+        'total_rows' => $totalRows,
+        'row_mode' => $rowMode,
+        'page' => $page,
+        'page_size' => $limit,
+        'page_count' => $maxPage,
+        'showing_from' => $showingFrom,
+        'showing_to' => $showingTo,
+        'is_paginated' => $rowMode === 'all' && $totalRows > $limit,
+    ];
+}
+
+function hh_admin_badge_holders(mysqli $con, string $badgeToken): array
+{
+    $badgeToken = trim($badgeToken);
+    if ($badgeToken === '' || !hh_badge_table_exists($con)) {
+        return [];
+    }
+
+    $statement = mysqli_prepare(
+        $con,
+        "SELECT u.id, u.username, u.firstname, u.surname, b.awarded_at
+         FROM " . hh_badge_table_name() . " b
+         INNER JOIN live_user_information u ON u.id = b.user_id
+         WHERE b.badge_token = ?
+         ORDER BY u.surname ASC, u.firstname ASC, u.username ASC"
+    );
+
+    if (!$statement) {
+        return [];
+    }
+
+    mysqli_stmt_bind_param($statement, 's', $badgeToken);
+    mysqli_stmt_execute($statement);
+    $result = mysqli_stmt_get_result($statement);
+    $rows = [];
+    if ($result instanceof mysqli_result) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            $rows[] = $row;
+        }
+        mysqli_free_result($result);
+    }
+    mysqli_stmt_close($statement);
+
+    return $rows;
+}
+
 function hh_admin_prediction_score_columns(array $context): array
 {
     $columns = [];
@@ -1207,7 +1344,7 @@ function hh_admin_execute_sql(mysqli $con, string $sql): array
 $messages = [];
 $errors = [];
 
-$tableOptions = [
+$knownTableLabels = [
     'live_user_information' => 'User information',
     'live_user_logins' => 'Login events',
     'live_registration_invites' => 'Registration invites',
@@ -1223,6 +1360,11 @@ $tableOptions = [
     'live_user_badges' => 'Badge awards',
     'live_fanzone_posts' => 'Fan Zone posts',
 ];
+
+$tableOptions = [];
+foreach (hh_admin_fetch_table_names($con) as $tableName) {
+    $tableOptions[$tableName] = $knownTableLabels[$tableName] ?? hh_admin_humanize_table_name($tableName);
+}
 
 $tableEditorConfig = hh_admin_table_editor_config();
 
@@ -1503,7 +1645,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $selectedTable = (string) (($_REQUEST['table'] ?? $_POST['table_name'] ?? 'live_user_information'));
 if (!isset($tableOptions[$selectedTable])) {
-    $selectedTable = 'live_user_information';
+    $selectedTable = isset($tableOptions['live_user_information'])
+        ? 'live_user_information'
+        : (array_key_first($tableOptions) ?? 'live_user_information');
 }
 
 $users = hh_admin_fetch_all(
@@ -1640,8 +1784,18 @@ $predictionIntegrityAudit = hh_admin_prediction_integrity_audit($con, $users);
 $scoringAudit = hh_admin_scoring_audit($con, $selectedAuditMatch);
 $badgeSummary = hh_badge_admin_summary($con);
 $selectedBadgeUserId = (int) ($_GET['badge_user_id'] ?? 0);
+$selectedBadgeToken = trim((string) ($_GET['badge_token'] ?? ''));
 $selectedBadgeTokens = [];
 $selectedBadgeUserLabel = '';
+$selectedBadgeTitle = '';
+$selectedBadgeHolders = [];
+
+foreach ($badgeSummary as $badge) {
+    if ((string) ($badge['token'] ?? '') === $selectedBadgeToken) {
+        $selectedBadgeTitle = (string) ($badge['title'] ?? $selectedBadgeToken);
+        break;
+    }
+}
 
 if ($selectedBadgeUserId > 0) {
     foreach ($users as $user) {
@@ -1666,7 +1820,16 @@ if ($selectedBadgeUserId > 0) {
     }
 }
 
-$tablePreview = hh_admin_preview_table($con, $selectedTable, 30);
+$selectedRowMode = trim((string) ($_GET['table_rows'] ?? '30'));
+$selectedTablePage = max(1, (int) ($_GET['table_page'] ?? 1));
+$tablePreview = hh_admin_preview_table_paged($con, $selectedTable, $selectedRowMode, $selectedTablePage);
+$selectedRowMode = (string) ($tablePreview['row_mode'] ?? '30');
+$selectedTablePage = (int) ($tablePreview['page'] ?? 1);
+
+if ($selectedBadgeTitle !== '') {
+    $selectedBadgeHolders = hh_admin_badge_holders($con, $selectedBadgeToken);
+}
+
 $editableTable = $tableEditorConfig[$selectedTable] ?? null;
 $editorRowOptions = $editableTable ? hh_admin_editor_row_options($con, $editableTable) : [];
 $selectedEditRowId = (int) ($_REQUEST['edit_row'] ?? $_POST['row_id'] ?? 0);
@@ -2484,7 +2647,21 @@ include '../php/navigation.php';
                                 <?php endforeach; ?>
                             </select>
                         </div>
+                        <div>
+                            <label class="form-label" for="badge_token">Badge view</label>
+                            <select class="form-select" id="badge_token" name="badge_token">
+                                <option value="">All badges</option>
+                                <?php foreach ($badgeSummary as $badge) : ?>
+                                    <?php $badgeToken = (string) ($badge['token'] ?? ''); ?>
+                                    <option value="<?= htmlspecialchars($badgeToken, ENT_QUOTES) ?>"<?= $selectedBadgeToken === $badgeToken ? ' selected' : '' ?>>
+                                        <?= htmlspecialchars((string) ($badge['title'] ?? $badgeToken), ENT_QUOTES) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
                         <input type="hidden" name="table" value="<?= htmlspecialchars($selectedTable, ENT_QUOTES) ?>">
+                        <input type="hidden" name="table_rows" value="<?= htmlspecialchars($selectedRowMode, ENT_QUOTES) ?>">
+                        <input type="hidden" name="table_page" value="<?= (int) $selectedTablePage ?>">
                         <input type="hidden" name="audit_match" value="<?= (int) $selectedAuditMatch ?>">
                         <button type="submit" class="btn btn-outline-secondary"><i class="bi bi-person-check"></i> View badges</button>
                     </form>
@@ -2524,6 +2701,28 @@ include '../php/navigation.php';
                     </article>
                 <?php endforeach; ?>
             </div>
+            <?php if ($selectedBadgeTitle !== '') : ?>
+                <div class="admin-sql-result mt-3">
+                    <p class="mb-2"><strong><?= htmlspecialchars($selectedBadgeTitle, ENT_QUOTES) ?></strong> has been awarded to <strong><?= count($selectedBadgeHolders) ?></strong> player<?= count($selectedBadgeHolders) === 1 ? '' : 's' ?>.</p>
+                    <?php if ($selectedBadgeHolders === []) : ?>
+                        <p class="admin-note mb-0">Nobody has earned this badge yet.</p>
+                    <?php else : ?>
+                        <div class="admin-checkbox-list" style="max-height: 280px;">
+                            <?php foreach ($selectedBadgeHolders as $holder) : ?>
+                                <?php
+                                $holderName = trim((string) ($holder['firstname'] ?? '') . ' ' . (string) ($holder['surname'] ?? ''));
+                                if ($holderName === '') {
+                                    $holderName = '@' . trim((string) ($holder['username'] ?? 'player'));
+                                }
+                                ?>
+                                <label>
+                                    <span><?= htmlspecialchars($holderName, ENT_QUOTES) ?> <small>@<?= htmlspecialchars((string) ($holder['username'] ?? ''), ENT_QUOTES) ?></small></span>
+                                </label>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
         </div>
 
         <div class="admin-grid admin-grid--three">
@@ -2886,17 +3085,45 @@ include '../php/navigation.php';
             <div class="admin-card">
                 <h3>Quick Table Browser</h3>
                 <form method="get" class="mb-3">
-                    <div>
-                        <label class="form-label" for="table">Database table</label>
-                        <select class="form-select" id="table" name="table" onchange="this.form.submit()">
-                            <?php foreach ($tableOptions as $tableName => $label) : ?>
-                                <option value="<?= htmlspecialchars($tableName, ENT_QUOTES) ?>"<?= $selectedTable === $tableName ? ' selected' : '' ?>>
-                                    <?= htmlspecialchars($label, ENT_QUOTES) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-6">
+                            <label class="form-label" for="table">Database table</label>
+                            <select class="form-select" id="table" name="table">
+                                <?php foreach ($tableOptions as $tableName => $label) : ?>
+                                    <option value="<?= htmlspecialchars($tableName, ENT_QUOTES) ?>"<?= $selectedTable === $tableName ? ' selected' : '' ?>>
+                                        <?= htmlspecialchars($label, ENT_QUOTES) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label" for="table_rows">Rows to show</label>
+                            <select class="form-select" id="table_rows" name="table_rows">
+                                <?php foreach (['10', '30', '50', '100', '250', '500', 'all'] as $rowMode) : ?>
+                                    <option value="<?= htmlspecialchars($rowMode, ENT_QUOTES) ?>"<?= $selectedRowMode === $rowMode ? ' selected' : '' ?>>
+                                        <?= $rowMode === 'all' ? 'All rows' : htmlspecialchars($rowMode, ENT_QUOTES) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="hidden" name="table_page" value="1">
+                            <button type="submit" class="btn btn-outline-dark w-100"><i class="bi bi-table"></i> Browse table</button>
+                        </div>
                     </div>
                 </form>
+                <p class="admin-note">
+                    Showing
+                    <strong><?= (int) ($tablePreview['showing_from'] ?? 0) ?></strong>
+                    to
+                    <strong><?= (int) ($tablePreview['showing_to'] ?? 0) ?></strong>
+                    of
+                    <strong><?= (int) ($tablePreview['total_rows'] ?? 0) ?></strong>
+                    row<?= (int) ($tablePreview['total_rows'] ?? 0) === 1 ? '' : 's' ?>.
+                    <?php if (!empty($tablePreview['is_paginated'])) : ?>
+                        Page <strong><?= (int) ($tablePreview['page'] ?? 1) ?></strong> of <strong><?= (int) ($tablePreview['page_count'] ?? 1) ?></strong>.
+                    <?php endif; ?>
+                </p>
                 <div class="admin-table-preview">
                     <table class="table table-sm table-striped align-middle">
                         <thead>
@@ -2921,6 +3148,23 @@ include '../php/navigation.php';
                         </tbody>
                     </table>
                 </div>
+                <?php if (!empty($tablePreview['is_paginated'])) : ?>
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-3">
+                        <form method="get" class="d-inline">
+                            <input type="hidden" name="table" value="<?= htmlspecialchars($selectedTable, ENT_QUOTES) ?>">
+                            <input type="hidden" name="table_rows" value="<?= htmlspecialchars($selectedRowMode, ENT_QUOTES) ?>">
+                            <input type="hidden" name="table_page" value="<?= max(1, $selectedTablePage - 1) ?>">
+                            <button type="submit" class="btn btn-outline-secondary btn-sm"<?= $selectedTablePage <= 1 ? ' disabled' : '' ?>><i class="bi bi-chevron-left"></i> Previous</button>
+                        </form>
+                        <span class="admin-note mb-0">Browsing all rows in manageable pages.</span>
+                        <form method="get" class="d-inline">
+                            <input type="hidden" name="table" value="<?= htmlspecialchars($selectedTable, ENT_QUOTES) ?>">
+                            <input type="hidden" name="table_rows" value="<?= htmlspecialchars($selectedRowMode, ENT_QUOTES) ?>">
+                            <input type="hidden" name="table_page" value="<?= min((int) ($tablePreview['page_count'] ?? 1), $selectedTablePage + 1) ?>">
+                            <button type="submit" class="btn btn-outline-secondary btn-sm"<?= $selectedTablePage >= (int) ($tablePreview['page_count'] ?? 1) ? ' disabled' : '' ?>>Next <i class="bi bi-chevron-right"></i></button>
+                        </form>
+                    </div>
+                <?php endif; ?>
             </div>
 
             <div class="admin-card">
