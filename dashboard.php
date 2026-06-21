@@ -66,6 +66,44 @@ if (!function_exists('hh_dashboard_move_meta')) {
     }
 }
 
+if (!function_exists('hh_dashboard_apply_mini_league_ranks')) {
+    function hh_dashboard_apply_mini_league_ranks(array $players, bool $hasRecordedResults): array
+    {
+        if (!$hasRecordedResults || empty($players)) {
+            foreach ($players as &$player) {
+                $player['mini_league_rank'] = null;
+                $player['mini_league_rank_label'] = '-';
+            }
+            unset($player);
+
+            return $players;
+        }
+
+        $pointCounts = [];
+        foreach ($players as $player) {
+            $points = (int) ($player['points_total'] ?? 0);
+            $pointCounts[$points] = (int) ($pointCounts[$points] ?? 0) + 1;
+        }
+
+        $lastPoints = null;
+        $denseRank = 0;
+
+        foreach ($players as &$player) {
+            $points = (int) ($player['points_total'] ?? 0);
+            if ($lastPoints === null || $points !== $lastPoints) {
+                $denseRank++;
+                $lastPoints = $points;
+            }
+
+            $player['mini_league_rank'] = $denseRank;
+            $player['mini_league_rank_label'] = (string) $denseRank . (($pointCounts[$points] ?? 0) > 1 ? '=' : '');
+        }
+        unset($player);
+
+        return $players;
+    }
+}
+
 if (!function_exists('hh_dashboard_score_columns')) {
     function hh_dashboard_score_columns(mysqli $con, string $tableName, string $suffix): array
     {
@@ -1067,6 +1105,8 @@ if ($currentUser) {
                 break;
             }
         }
+
+        $miniLeagueRows = hh_dashboard_apply_mini_league_ranks($miniLeagueRows, $hasRecordedResults);
     } else {
         $miniLeagueRows = [];
     }
@@ -1642,7 +1682,7 @@ $dashboardLayoutCards = [
                     <div class="mini-league-table">
                         <?php foreach ($miniLeagueRows as $player) : ?>
                             <div class="mini-league-row<?= !empty($player['is_me']) ? ' mini-league-row--me' : '' ?>">
-                                <span class="mini-league-rank"><?= htmlspecialchars((string) ($hasRecordedResults ? $player['rank'] : '-')) ?></span>
+                                <span class="mini-league-rank"><?= htmlspecialchars((string) ($player['mini_league_rank_label'] ?? '-')) ?></span>
                                 <img class="mini-league-avatar" src="<?= htmlspecialchars((string) $player['avatar']) ?>" alt="<?= htmlspecialchars((string) $player['name']) ?> kit avatar">
                                 <span class="mini-league-player"><strong><?= htmlspecialchars((string) $player['name']) ?></strong><small><?= htmlspecialchars((string) ($player['location'] !== '' ? $player['location'] : ($player['faveteam'] !== '' ? $player['faveteam'] : 'Mini-league player'))) ?></small></span>
                                 <span class="mini-league-points"><?= htmlspecialchars((string) $player['points_total']) ?> pts</span>
