@@ -6,6 +6,7 @@ require_once dirname(__DIR__) . '/php/auth.php';
 require_once dirname(__DIR__) . '/php/config.php';
 require_once dirname(__DIR__) . '/php/process.php';
 require_once dirname(__DIR__) . '/php/badges.php';
+require_once dirname(__DIR__) . '/php/flags.php';
 
 hh_require_admin('../dashboard.php');
 
@@ -57,6 +58,464 @@ function hh_admin_existing_prediction_backup_tables(mysqli $con): array
         $tables,
         static fn(string $table): bool => hh_admin_table_exists($con, $table)
     ));
+}
+
+function hh_admin_group_stage_rank_sort(array $left, array $right): int
+{
+    if (($left['points'] ?? 0) !== ($right['points'] ?? 0)) {
+        return ((int) ($right['points'] ?? 0)) <=> ((int) ($left['points'] ?? 0));
+    }
+
+    if (($left['goal_difference'] ?? 0) !== ($right['goal_difference'] ?? 0)) {
+        return ((int) ($right['goal_difference'] ?? 0)) <=> ((int) ($left['goal_difference'] ?? 0));
+    }
+
+    if (($left['goals_for'] ?? 0) !== ($right['goals_for'] ?? 0)) {
+        return ((int) ($right['goals_for'] ?? 0)) <=> ((int) ($left['goals_for'] ?? 0));
+    }
+
+    return strcasecmp((string) ($left['name'] ?? ''), (string) ($right['name'] ?? ''));
+}
+
+function hh_admin_group_stage_sort_key(string $stageLabel): array
+{
+    if (preg_match('/^group\s+([a-z0-9]+)/i', $stageLabel, $matches)) {
+        return [0, strtoupper($matches[1])];
+    }
+
+    return [1, strtoupper($stageLabel)];
+}
+
+function hh_admin_extract_group_code(string $stageLabel): string
+{
+    if (preg_match('/^group\s+([a-z0-9]+)/i', trim($stageLabel), $matches)) {
+        return strtoupper($matches[1]);
+    }
+
+    return '';
+}
+
+function hh_admin_build_group_standings(mysqli $con): array
+{
+    $standings = [];
+
+    $result = mysqli_query(
+        $con,
+        "SELECT stage, hometeam, awayteam, homescore, awayscore, hometeamimg, awayteamimg
+         FROM live_match_schedule
+         WHERE stage LIKE 'Group %'
+         ORDER BY stage ASC, match_number ASC"
+    );
+
+    if (!($result instanceof mysqli_result)) {
+        return [];
+    }
+
+    while ($row = mysqli_fetch_assoc($result)) {
+        $stage = trim((string) ($row['stage'] ?? ''));
+        $homeTeam = trim((string) ($row['hometeam'] ?? ''));
+        $awayTeam = trim((string) ($row['awayteam'] ?? ''));
+        $groupCode = hh_admin_extract_group_code($stage);
+
+        if ($stage === '' || $groupCode === '' || $homeTeam === '' || $awayTeam === '') {
+            continue;
+        }
+
+        if (!isset($standings[$stage])) {
+            $standings[$stage] = [];
+        }
+
+        if (!isset($standings[$stage][$homeTeam])) {
+            $standings[$stage][$homeTeam] = [
+                'name' => $homeTeam,
+                'img' => (string) ($row['hometeamimg'] ?? ''),
+                'group_code' => $groupCode,
+                'played' => 0,
+                'won' => 0,
+                'drawn' => 0,
+                'lost' => 0,
+                'goals_for' => 0,
+                'goals_against' => 0,
+                'goal_difference' => 0,
+                'points' => 0,
+            ];
+        }
+
+        if (!isset($standings[$stage][$awayTeam])) {
+            $standings[$stage][$awayTeam] = [
+                'name' => $awayTeam,
+                'img' => (string) ($row['awayteamimg'] ?? ''),
+                'group_code' => $groupCode,
+                'played' => 0,
+                'won' => 0,
+                'drawn' => 0,
+                'lost' => 0,
+                'goals_for' => 0,
+                'goals_against' => 0,
+                'goal_difference' => 0,
+                'points' => 0,
+            ];
+        }
+
+        if ($row['homescore'] === null || $row['awayscore'] === null) {
+            continue;
+        }
+
+        $homeScore = (int) $row['homescore'];
+        $awayScore = (int) $row['awayscore'];
+
+        $standings[$stage][$homeTeam]['played']++;
+        $standings[$stage][$awayTeam]['played']++;
+        $standings[$stage][$homeTeam]['goals_for'] += $homeScore;
+        $standings[$stage][$homeTeam]['goals_against'] += $awayScore;
+        $standings[$stage][$awayTeam]['goals_for'] += $awayScore;
+        $standings[$stage][$awayTeam]['goals_against'] += $homeScore;
+        $standings[$stage][$homeTeam]['goal_difference'] = $standings[$stage][$homeTeam]['goals_for'] - $standings[$stage][$homeTeam]['goals_against'];
+        $standings[$stage][$awayTeam]['goal_difference'] = $standings[$stage][$awayTeam]['goals_for'] - $standings[$stage][$awayTeam]['goals_against'];
+
+        if ($homeScore > $awayScore) {
+            $standings[$stage][$homeTeam]['won']++;
+            $standings[$stage][$awayTeam]['lost']++;
+            $standings[$stage][$homeTeam]['points'] += 3;
+        } elseif ($awayScore > $homeScore) {
+            $standings[$stage][$awayTeam]['won']++;
+            $standings[$stage][$homeTeam]['lost']++;
+            $standings[$stage][$awayTeam]['points'] += 3;
+        } else {
+            $standings[$stage][$homeTeam]['drawn']++;
+            $standings[$stage][$awayTeam]['drawn']++;
+            $standings[$stage][$homeTeam]['points']++;
+            $standings[$stage][$awayTeam]['points']++;
+        }
+    }
+
+    mysqli_free_result($result);
+
+    uksort(
+        $standings,
+        static function (string $left, string $right): int {
+            [$leftBucket, $leftCode] = hh_admin_group_stage_sort_key($left);
+            [$rightBucket, $rightCode] = hh_admin_group_stage_sort_key($right);
+
+            if ($leftBucket !== $rightBucket) {
+                return $leftBucket <=> $rightBucket;
+            }
+
+            return strcasecmp($leftCode, $rightCode);
+        }
+    );
+
+    foreach ($standings as $stage => $teams) {
+        $orderedTeams = array_values($teams);
+        usort($orderedTeams, 'hh_admin_group_stage_rank_sort');
+        $standings[$stage] = $orderedTeams;
+    }
+
+    return $standings;
+}
+
+function hh_admin_round_of_32_wildcard_slots(array $groupStandings): int
+{
+    $groupCount = count($groupStandings);
+    if ($groupCount === 0) {
+        return 0;
+    }
+
+    $nextKnockoutFixtures = 0;
+    foreach (hh_stage_blueprint() as $stage) {
+        if (($stage['key'] ?? '') === 'groups') {
+            continue;
+        }
+
+        $nextKnockoutFixtures = (int) ($stage['fixtures'] ?? 0);
+        if ($nextKnockoutFixtures > 0) {
+            break;
+        }
+    }
+
+    if ($nextKnockoutFixtures <= 0) {
+        return 0;
+    }
+
+    return ($nextKnockoutFixtures * 2) % $groupCount;
+}
+
+function hh_admin_group_finishers(array $groupStandings): array
+{
+    $finishers = [];
+
+    foreach ($groupStandings as $stage => $teams) {
+        $groupCode = hh_admin_extract_group_code($stage);
+        if ($groupCode === '') {
+            continue;
+        }
+
+        foreach ($teams as $index => $team) {
+            $finishers[($index + 1) . $groupCode] = $team;
+        }
+    }
+
+    return $finishers;
+}
+
+function hh_admin_best_third_place_pool(array $groupStandings): array
+{
+    $thirdPlaced = [];
+    foreach ($groupStandings as $teams) {
+        if (isset($teams[2])) {
+            $thirdPlaced[] = $teams[2];
+        }
+    }
+
+    usort($thirdPlaced, 'hh_admin_group_stage_rank_sort');
+
+    $wildcardSlots = hh_admin_round_of_32_wildcard_slots($groupStandings);
+    if ($wildcardSlots > 0) {
+        $thirdPlaced = array_slice($thirdPlaced, 0, $wildcardSlots);
+    }
+
+    return array_values($thirdPlaced);
+}
+
+function hh_admin_extract_fixture_team_pool(mysqli $con): array
+{
+    $result = mysqli_query(
+        $con,
+        "SELECT hometeam AS team_name, hometeamimg AS team_flag FROM live_match_schedule
+         WHERE TRIM(hometeam) <> ''
+         UNION
+         SELECT awayteam AS team_name, awayteamimg AS team_flag FROM live_match_schedule
+         WHERE TRIM(awayteam) <> ''"
+    );
+
+    if (!($result instanceof mysqli_result)) {
+        return [];
+    }
+
+    $teams = [];
+    while ($row = mysqli_fetch_assoc($result)) {
+        $name = trim((string) ($row['team_name'] ?? ''));
+        if ($name === '' || hh_is_placeholder_team($name)) {
+            continue;
+        }
+
+        if (!isset($teams[$name])) {
+            $teams[$name] = [
+                'name' => $name,
+                'img' => trim((string) ($row['team_flag'] ?? '')),
+            ];
+        }
+    }
+    mysqli_free_result($result);
+
+    uasort(
+        $teams,
+        static fn(array $left, array $right): int => strcasecmp((string) $left['name'], (string) $right['name'])
+    );
+
+    return array_values($teams);
+}
+
+function hh_admin_resolve_knockout_placeholder(string $placeholder, array $finishers, array $thirdPlacePool, array &$usedThirdGroups): ?array
+{
+    $placeholder = strtoupper(trim($placeholder));
+    if ($placeholder === '') {
+        return null;
+    }
+
+    if (isset($finishers[$placeholder])) {
+        return $finishers[$placeholder];
+    }
+
+    if (!preg_match('/^3([A-Z]+)$/', $placeholder, $matches)) {
+        return null;
+    }
+
+    $eligibleGroups = str_split($matches[1]);
+    foreach ($thirdPlacePool as $team) {
+        $groupCode = strtoupper((string) ($team['group_code'] ?? ''));
+        if ($groupCode === '' || isset($usedThirdGroups[$groupCode])) {
+            continue;
+        }
+
+        if (in_array($groupCode, $eligibleGroups, true)) {
+            $usedThirdGroups[$groupCode] = true;
+            return $team;
+        }
+    }
+
+    return null;
+}
+
+function hh_admin_build_round_of_32_seed_preview(mysqli $con): array
+{
+    $groupStandings = hh_admin_build_group_standings($con);
+    $finishers = hh_admin_group_finishers($groupStandings);
+    $thirdPlacePool = hh_admin_best_third_place_pool($groupStandings);
+    $usedThirdGroups = [];
+
+    $fixtures = hh_admin_fetch_all(
+        $con,
+        "SELECT id, match_number, stage, date, kotime, venue, hometeam, hometeamimg, awayteam, awayteamimg
+         FROM live_match_schedule
+         WHERE stage = 'Round of 32'
+         ORDER BY date ASC, kotime ASC, match_number ASC"
+    );
+
+    foreach ($fixtures as &$fixture) {
+        $homePlaceholder = trim((string) ($fixture['hometeam'] ?? ''));
+        $awayPlaceholder = trim((string) ($fixture['awayteam'] ?? ''));
+        $homeSuggested = hh_admin_resolve_knockout_placeholder($homePlaceholder, $finishers, $thirdPlacePool, $usedThirdGroups);
+        $awaySuggested = hh_admin_resolve_knockout_placeholder($awayPlaceholder, $finishers, $thirdPlacePool, $usedThirdGroups);
+
+        $fixture['home_placeholder'] = $homePlaceholder;
+        $fixture['away_placeholder'] = $awayPlaceholder;
+        $fixture['home_suggested'] = $homeSuggested;
+        $fixture['away_suggested'] = $awaySuggested;
+    }
+    unset($fixture);
+
+    return [
+        'group_standings' => $groupStandings,
+        'finishers' => $finishers,
+        'third_place_pool' => $thirdPlacePool,
+        'fixtures' => $fixtures,
+    ];
+}
+
+function hh_admin_save_round_of_32_fixture_with_connection(
+    mysqli $con,
+    int $fixtureId,
+    string $homeTeam,
+    string $awayTeam,
+    array $teamPool
+): array {
+    if ($fixtureId <= 0) {
+        throw new RuntimeException('Choose a valid Round of 32 fixture.');
+    }
+
+    $fixtureStatement = mysqli_prepare(
+        $con,
+        "SELECT id, match_number, hometeam, awayteam
+         FROM live_match_schedule
+         WHERE id = ? AND stage = 'Round of 32'
+         LIMIT 1"
+    );
+
+    if (!$fixtureStatement) {
+        throw new RuntimeException(mysqli_error($con));
+    }
+
+    mysqli_stmt_bind_param($fixtureStatement, 'i', $fixtureId);
+    mysqli_stmt_execute($fixtureStatement);
+    $fixtureResult = mysqli_stmt_get_result($fixtureStatement);
+    $fixture = $fixtureResult instanceof mysqli_result ? (mysqli_fetch_assoc($fixtureResult) ?: null) : null;
+    if ($fixtureResult instanceof mysqli_result) {
+        mysqli_free_result($fixtureResult);
+    }
+    mysqli_stmt_close($fixtureStatement);
+
+    if (!$fixture) {
+        throw new RuntimeException('That Round of 32 fixture could not be found.');
+    }
+
+    $teamMap = [];
+    foreach ($teamPool as $team) {
+        $name = trim((string) ($team['name'] ?? ''));
+        if ($name !== '') {
+            $teamMap[$name] = $team;
+        }
+    }
+
+    if (!isset($teamMap[$homeTeam]) || !isset($teamMap[$awayTeam])) {
+        throw new RuntimeException('Choose valid teams for both sides.');
+    }
+
+    $homeFlag = trim((string) ($teamMap[$homeTeam]['img'] ?? ''));
+    if ($homeFlag === '') {
+        $homeFlag = hh_get_team_flag_path($homeTeam);
+    }
+
+    $awayFlag = trim((string) ($teamMap[$awayTeam]['img'] ?? ''));
+    if ($awayFlag === '') {
+        $awayFlag = hh_get_team_flag_path($awayTeam);
+    }
+
+    $updateStatement = mysqli_prepare(
+        $con,
+        "UPDATE live_match_schedule
+         SET hometeam = ?, hometeamimg = ?, awayteam = ?, awayteamimg = ?
+         WHERE id = ? AND stage = 'Round of 32'
+         LIMIT 1"
+    );
+
+    if (!$updateStatement) {
+        throw new RuntimeException(mysqli_error($con));
+    }
+
+    mysqli_stmt_bind_param($updateStatement, 'ssssi', $homeTeam, $homeFlag, $awayTeam, $awayFlag, $fixtureId);
+    if (!mysqli_stmt_execute($updateStatement)) {
+        $error = mysqli_stmt_error($updateStatement);
+        mysqli_stmt_close($updateStatement);
+        throw new RuntimeException($error);
+    }
+    mysqli_stmt_close($updateStatement);
+
+    return [
+        'match_number' => (int) ($fixture['match_number'] ?? 0),
+        'home_team' => $homeTeam,
+        'away_team' => $awayTeam,
+    ];
+}
+
+function hh_admin_populate_round_of_32_from_current_standings_with_connection(mysqli $con): array
+{
+    $preview = hh_admin_build_round_of_32_seed_preview($con);
+    $fixtures = $preview['fixtures'] ?? [];
+
+    if ($fixtures === []) {
+        throw new RuntimeException('No Round of 32 fixtures are currently loaded.');
+    }
+
+    $updated = 0;
+    foreach ($fixtures as $fixture) {
+        $fixtureId = (int) ($fixture['id'] ?? 0);
+        $homeTeam = trim((string) (($fixture['home_suggested']['name'] ?? '') ?: ($fixture['hometeam'] ?? '')));
+        $awayTeam = trim((string) (($fixture['away_suggested']['name'] ?? '') ?: ($fixture['awayteam'] ?? '')));
+
+        if ($fixtureId <= 0 || $homeTeam === '' || $awayTeam === '') {
+            continue;
+        }
+
+        $homeFlag = trim((string) (($fixture['home_suggested']['img'] ?? '') ?: hh_get_team_flag_path($homeTeam)));
+        $awayFlag = trim((string) (($fixture['away_suggested']['img'] ?? '') ?: hh_get_team_flag_path($awayTeam)));
+
+        $statement = mysqli_prepare(
+            $con,
+            "UPDATE live_match_schedule
+             SET hometeam = ?, hometeamimg = ?, awayteam = ?, awayteamimg = ?
+             WHERE id = ? AND stage = 'Round of 32'
+             LIMIT 1"
+        );
+
+        if (!$statement) {
+            throw new RuntimeException(mysqli_error($con));
+        }
+
+        mysqli_stmt_bind_param($statement, 'ssssi', $homeTeam, $homeFlag, $awayTeam, $awayFlag, $fixtureId);
+        if (!mysqli_stmt_execute($statement)) {
+            $error = mysqli_stmt_error($statement);
+            mysqli_stmt_close($statement);
+            throw new RuntimeException($error);
+        }
+        mysqli_stmt_close($statement);
+        $updated++;
+    }
+
+    return [
+        'updated' => $updated,
+        'third_place_count' => count($preview['third_place_pool'] ?? []),
+    ];
 }
 
 function hh_admin_restore_prediction_backup_with_connection(mysqli $con, int $userId, string $stageKey): array
@@ -1585,6 +2044,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } catch (Throwable $exception) {
             $errors[] = 'Prediction populate failed: ' . $exception->getMessage();
         }
+    } elseif ($action === 'populate_round_of_32') {
+        try {
+            $populateSummary = hh_admin_populate_round_of_32_from_current_standings_with_connection($con);
+            $messages[] = 'Round of 32 seeding populated from current group standings for ' . (int) ($populateSummary['updated'] ?? 0) . ' fixture(s). The current best-third pool contains ' . (int) ($populateSummary['third_place_count'] ?? 0) . ' team(s).';
+        } catch (Throwable $exception) {
+            $errors[] = 'Round of 32 populate failed: ' . $exception->getMessage();
+        }
+    } elseif ($action === 'save_round_of_32_fixture') {
+        $fixtureId = (int) ($_POST['fixture_id'] ?? 0);
+        $homeTeam = trim((string) ($_POST['fixture_home_team'] ?? ''));
+        $awayTeam = trim((string) ($_POST['fixture_away_team'] ?? ''));
+
+        try {
+            $teamPool = hh_admin_extract_fixture_team_pool($con);
+            $savedFixture = hh_admin_save_round_of_32_fixture_with_connection($con, $fixtureId, $homeTeam, $awayTeam, $teamPool);
+            $messages[] = 'Round of 32 match ' . (int) ($savedFixture['match_number'] ?? 0) . ' updated to ' . $savedFixture['home_team'] . ' v ' . $savedFixture['away_team'] . '.';
+        } catch (Throwable $exception) {
+            $errors[] = 'Round of 32 update failed: ' . $exception->getMessage();
+        }
     } elseif ($action === 'remove_prediction_override') {
         $overrideId = (int) ($_POST['override_id'] ?? 0);
 
@@ -1783,6 +2261,10 @@ if ($requestedAuditMatch > 0) {
 $predictionIntegrityAudit = hh_admin_prediction_integrity_audit($con, $users);
 $scoringAudit = hh_admin_scoring_audit($con, $selectedAuditMatch);
 $badgeSummary = hh_badge_admin_summary($con);
+$roundOf32Preview = hh_admin_build_round_of_32_seed_preview($con);
+$roundOf32Fixtures = $roundOf32Preview['fixtures'] ?? [];
+$roundOf32ThirdPlacePool = $roundOf32Preview['third_place_pool'] ?? [];
+$roundOf32TeamPool = hh_admin_extract_fixture_team_pool($con);
 $selectedBadgeUserId = (int) ($_GET['badge_user_id'] ?? 0);
 $selectedBadgeToken = trim((string) ($_GET['badge_token'] ?? ''));
 $selectedBadgeTokens = [];
@@ -2351,13 +2833,90 @@ include '../php/navigation.php';
         align-items: center;
         justify-content: space-between;
       }
+      .admin-seed-grid {
+        display: grid;
+        gap: 14px;
+      }
+      .admin-seed-summary {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 14px;
+      }
+      .admin-seed-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border: 1px solid var(--hh-line);
+        border-radius: 999px;
+        background: rgba(143, 102, 216, 0.08);
+        font-size: 0.84rem;
+        font-weight: 800;
+      }
+      .admin-seed-card {
+        padding: 16px;
+        border: 1px solid var(--hh-line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.84);
+      }
+      .admin-seed-card__top {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+      .admin-seed-card__meta {
+        color: var(--hh-muted);
+        font-size: 0.84rem;
+      }
+      .admin-seed-matchup {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        margin-bottom: 12px;
+      }
+      .admin-seed-side {
+        padding: 12px;
+        border: 1px solid var(--hh-line);
+        border-radius: 8px;
+        background: rgba(12, 90, 67, 0.04);
+      }
+      .admin-seed-side strong,
+      .admin-seed-side span {
+        display: block;
+      }
+      .admin-seed-side span {
+        color: var(--hh-muted);
+        font-size: 0.78rem;
+      }
+      .admin-seed-side small {
+        display: block;
+        margin-top: 6px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--hh-green-dark);
+      }
+      .admin-seed-form {
+        display: grid;
+        gap: 12px;
+      }
+      .admin-seed-form__grid {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
       @media (max-width: 991px) {
         .admin-grid--two,
         .admin-grid--three,
         .admin-kpi,
         .admin-audit-metrics,
         .admin-score-summary,
-        .admin-editor-grid {
+        .admin-editor-grid,
+        .admin-seed-matchup,
+        .admin-seed-form__grid {
           grid-template-columns: 1fr;
         }
       }
@@ -2423,6 +2982,115 @@ include '../php/navigation.php';
                 <div class="admin-kpi__item"><strong><?= $snapshot['quiz_sessions'] ?></strong><span>quiz sessions started</span></div>
                 <div class="admin-kpi__item"><strong><?= $snapshot['spot_players'] ?></strong><span>spot-the-ball players</span></div>
                 <div class="admin-kpi__item"><strong><?= $snapshot['spot_sessions'] ?></strong><span>spot-the-ball sessions started</span></div>
+            </div>
+        </div>
+
+        <div class="admin-card">
+            <div class="admin-badge-toolbar">
+                <div>
+                    <h2>Round of 32 Seeding</h2>
+                    <p class="admin-note">Populate knockout placeholders from the current live group standings, then tweak any fixture manually if you want to steer the bracket yourself.</p>
+                </div>
+                <form method="post" onsubmit="return confirm('Populate the Round of 32 from the current group standings now?');">
+                    <input type="hidden" name="admin_action" value="populate_round_of_32">
+                    <button type="submit" class="btn btn-outline-primary"><i class="bi bi-diagram-3"></i> Populate from standings</button>
+                </form>
+            </div>
+
+            <div class="admin-seed-summary">
+                <span class="admin-seed-chip"><strong><?= count($roundOf32Fixtures) ?></strong> Round of 32 fixtures loaded</span>
+                <span class="admin-seed-chip"><strong><?= count($roundOf32ThirdPlacePool) ?></strong> best third-place teams currently qualifying</span>
+                <?php foreach ($roundOf32ThirdPlacePool as $thirdPlaceTeam) : ?>
+                    <span class="admin-seed-chip">
+                        <?= htmlspecialchars((string) ($thirdPlaceTeam['group_code'] ?? ''), ENT_QUOTES) ?>:
+                        <?= htmlspecialchars((string) ($thirdPlaceTeam['name'] ?? ''), ENT_QUOTES) ?>
+                    </span>
+                <?php endforeach; ?>
+            </div>
+
+            <div class="admin-seed-grid">
+                <?php if ($roundOf32Fixtures === []) : ?>
+                    <p class="admin-note mb-0">No Round of 32 fixtures are currently stored in the schedule table.</p>
+                <?php else : ?>
+                    <?php foreach ($roundOf32Fixtures as $fixture) : ?>
+                        <?php
+                        $homePlaceholder = trim((string) ($fixture['home_placeholder'] ?? ''));
+                        $awayPlaceholder = trim((string) ($fixture['away_placeholder'] ?? ''));
+                        $homeSuggested = trim((string) (($fixture['home_suggested']['name'] ?? '') ?: ''));
+                        $awaySuggested = trim((string) (($fixture['away_suggested']['name'] ?? '') ?: ''));
+                        $homeCurrent = trim((string) ($fixture['hometeam'] ?? ''));
+                        $awayCurrent = trim((string) ($fixture['awayteam'] ?? ''));
+                        ?>
+                        <article class="admin-seed-card">
+                            <div class="admin-seed-card__top">
+                                <div>
+                                    <strong>Match <?= (int) ($fixture['match_number'] ?? 0) ?></strong>
+                                    <div class="admin-seed-card__meta">
+                                        <?= htmlspecialchars((string) ($fixture['date'] ?? ''), ENT_QUOTES) ?>
+                                        <?php if (trim((string) ($fixture['kotime'] ?? '')) !== '') : ?>
+                                            at <?= htmlspecialchars((string) ($fixture['kotime'] ?? ''), ENT_QUOTES) ?>
+                                        <?php endif; ?>
+                                        <?php if (trim((string) ($fixture['venue'] ?? '')) !== '') : ?>
+                                            | <?= htmlspecialchars((string) ($fixture['venue'] ?? ''), ENT_QUOTES) ?>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                                <span class="admin-status-pill admin-status-pill--pending">Round of 32</span>
+                            </div>
+
+                            <div class="admin-seed-matchup">
+                                <div class="admin-seed-side">
+                                    <strong><?= htmlspecialchars($homeCurrent, ENT_QUOTES) ?></strong>
+                                    <span>Placeholder: <?= htmlspecialchars($homePlaceholder, ENT_QUOTES) ?></span>
+                                    <?php if ($homeSuggested !== '') : ?>
+                                        <small>Suggested: <?= htmlspecialchars($homeSuggested, ENT_QUOTES) ?></small>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="admin-seed-side">
+                                    <strong><?= htmlspecialchars($awayCurrent, ENT_QUOTES) ?></strong>
+                                    <span>Placeholder: <?= htmlspecialchars($awayPlaceholder, ENT_QUOTES) ?></span>
+                                    <?php if ($awaySuggested !== '') : ?>
+                                        <small>Suggested: <?= htmlspecialchars($awaySuggested, ENT_QUOTES) ?></small>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+
+                            <form method="post" class="admin-seed-form">
+                                <input type="hidden" name="admin_action" value="save_round_of_32_fixture">
+                                <input type="hidden" name="fixture_id" value="<?= (int) ($fixture['id'] ?? 0) ?>">
+                                <div class="admin-seed-form__grid">
+                                    <div>
+                                        <label class="form-label">Home team</label>
+                                        <select class="form-select" name="fixture_home_team" required>
+                                            <option value="">Choose team</option>
+                                            <?php foreach ($roundOf32TeamPool as $team) : ?>
+                                                <?php $teamName = (string) ($team['name'] ?? ''); ?>
+                                                <option value="<?= htmlspecialchars($teamName, ENT_QUOTES) ?>" <?= $teamName === $homeCurrent ? 'selected' : '' ?>>
+                                                    <?= htmlspecialchars($teamName, ENT_QUOTES) ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="form-label">Away team</label>
+                                        <select class="form-select" name="fixture_away_team" required>
+                                            <option value="">Choose team</option>
+                                            <?php foreach ($roundOf32TeamPool as $team) : ?>
+                                                <?php $teamName = (string) ($team['name'] ?? ''); ?>
+                                                <option value="<?= htmlspecialchars($teamName, ENT_QUOTES) ?>" <?= $teamName === $awayCurrent ? 'selected' : '' ?>>
+                                                    <?= htmlspecialchars($teamName, ENT_QUOTES) ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="admin-actions">
+                                    <button type="submit" class="btn btn-outline-success btn-sm"><i class="bi bi-check2-circle"></i> Save fixture</button>
+                                </div>
+                            </form>
+                        </article>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </div>
         </div>
 
