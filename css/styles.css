@@ -6433,8 +6433,25 @@ body.tour-active {
 
 .mini-league-move {
   grid-area: move;
+  display: inline-flex;
+  align-items: center;
   justify-self: end;
+  gap: 0.16rem;
   font-weight: 900;
+  white-space: nowrap;
+}
+
+.mini-league-move i {
+  font-size: 0.9em;
+}
+
+.mini-league-move span {
+  display: inline;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
 }
 
 .mini-league-summary {
@@ -7108,38 +7125,47 @@ body.tour-active {
   }
 
   .mini-league-row {
-    grid-template-columns: 38px 44px minmax(0, 1fr);
-    grid-template-areas:
-      "rank avatar points"
-      "player player player"
-      "move move move";
-    gap: 10px 12px;
-    align-items: start;
+    grid-template-columns: 32px 38px minmax(0, 1fr) auto auto;
+    grid-template-areas: "rank avatar player points move";
+    gap: 8px;
+    align-items: center;
+    padding: 10px 9px;
   }
 
   .mini-league-rank {
+    width: 32px;
+    height: 32px;
+    font-size: 0.92rem;
+  }
+
+  .mini-league-avatar {
     width: 38px;
     height: 38px;
   }
 
-  .mini-league-avatar {
-    width: 44px;
-    height: 44px;
+  .mini-league-player {
+    gap: 1px;
   }
 
-  .mini-league-player {
-    gap: 4px;
+  .mini-league-player strong {
+    font-size: 0.98rem;
+    line-height: 1.18;
+  }
+
+  .mini-league-player small {
+    font-size: 0.74rem;
+    line-height: 1.15;
   }
 
   .mini-league-points {
     align-self: center;
     justify-self: end;
-    font-size: 1rem;
+    font-size: 0.92rem;
   }
 
   .mini-league-move {
-    justify-self: start;
-    padding-left: calc(38px + 12px + 44px);
+    justify-self: end;
+    font-size: 0.88rem;
   }
 
   .mini-league-empty-state,

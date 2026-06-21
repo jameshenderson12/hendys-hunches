@@ -1646,7 +1646,10 @@ $dashboardLayoutCards = [
                                 <img class="mini-league-avatar" src="<?= htmlspecialchars((string) $player['avatar']) ?>" alt="<?= htmlspecialchars((string) $player['name']) ?> kit avatar">
                                 <span class="mini-league-player"><strong><?= htmlspecialchars((string) $player['name']) ?></strong><small><?= htmlspecialchars((string) ($player['location'] !== '' ? $player['location'] : ($player['faveteam'] !== '' ? $player['faveteam'] : 'Mini-league player'))) ?></small></span>
                                 <span class="mini-league-points"><?= htmlspecialchars((string) $player['points_total']) ?> pts</span>
-                                <span class="mini-league-move <?= htmlspecialchars((string) $player['move']['class']) ?>"><?= htmlspecialchars((string) $player['move']['label']) ?></span>
+                                <span class="mini-league-move <?= htmlspecialchars((string) $player['move']['class']) ?>">
+                                    <i class="<?= htmlspecialchars((string) ($player['move']['icon'] ?? 'bi bi-caret-right-fill')) ?>" aria-hidden="true"></i>
+                                    <span><?= htmlspecialchars((string) ($hasRecordedResults ? ($player['move']['value'] ?? '0') : '-')) ?></span>
+                                </span>
                             </div>
                         <?php endforeach; ?>
                     </div>
