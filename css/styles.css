@@ -4021,6 +4021,21 @@ body.tour-active {
   margin-right: 8px;
 }
 
+.competition-team-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.competition-team-line--away {
+  justify-content: flex-end;
+}
+
+.competition-team-line__flag {
+  height: 24px;
+  border: 1px solid var(--hh-line);
+}
+
 .predictions-page form {
   display: grid;
   gap: 12px;
