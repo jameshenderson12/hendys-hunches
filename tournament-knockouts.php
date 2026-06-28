@@ -85,9 +85,10 @@ mysqli_close($con);
                                 <thead class="table-dark">
                                     <tr>
                                         <th class="d-none d-sm-table-cell">Kick-Off</th>
-                                        <th></th>
-                                        <th></th>
-                                        <th></th>
+                                        <th>Home</th>
+                                        <th class="text-center">H</th>
+                                        <th class="text-center">A</th>
+                                        <th class="text-end">Away</th>
                                         <th class="d-none d-sm-table-cell">Venue</th>
                                     </tr>
                                 </thead>
@@ -100,20 +101,20 @@ mysqli_close($con);
                                         $homeTeam = htmlspecialchars((string) $fixture['hometeam']);
                                         $awayTeam = htmlspecialchars((string) $fixture['awayteam']);
                                         $venue = htmlspecialchars((string) $fixture['venue']);
-                                        $match = ($fixture['homescore'] !== null && $fixture['awayscore'] !== null)
-                                            ? htmlspecialchars((string) $fixture['homescore']) . ' - ' . htmlspecialchars((string) $fixture['awayscore'])
-                                            : 'vs';
+                                        $homeScore = $fixture['homescore'] !== null ? htmlspecialchars((string) $fixture['homescore']) : '&ndash;';
+                                        $awayScore = $fixture['awayscore'] !== null ? htmlspecialchars((string) $fixture['awayscore']) : '&ndash;';
                                         ?>
                                         <tr>
                                             <td class="small d-none d-sm-table-cell"><?= $kickoff ?></td>
                                             <td>
-                                                <img src="<?= $homeImage ?>" width="24" style="width: 36px; border-radius: 50%; margin-right: 10px;" alt="<?= $homeTeam ?> flag">
+                                                <img class="competition-flag" src="<?= $homeImage ?>" alt="<?= $homeTeam ?> flag">
                                                 <?= hh_render_team_name_responsive((string) ($fixture['hometeam'] ?? '')) ?>
                                             </td>
-                                            <td class="text-center"><?= $match ?></td>
+                                            <td class="text-center"><strong><?= $homeScore ?></strong></td>
+                                            <td class="text-center"><strong><?= $awayScore ?></strong></td>
                                             <td class="text-end">
                                                 <?= hh_render_team_name_responsive((string) ($fixture['awayteam'] ?? '')) ?>
-                                                <img src="<?= $awayImage ?>" width="24" style="width: 36px; border-radius: 50%;" alt="<?= $awayTeam ?> flag">
+                                                <img class="competition-flag" src="<?= $awayImage ?>" alt="<?= $awayTeam ?> flag">
                                             </td>
                                             <td class="small d-none d-sm-table-cell"><?= $venue ?></td>
                                         </tr>
