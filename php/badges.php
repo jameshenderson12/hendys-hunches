@@ -126,6 +126,36 @@ function hh_badge_latest_result_row(mysqli $con): array
     return is_array($row) ? $row : [];
 }
 
+function hh_badge_fixture_chronology(mysqli $con): array
+{
+    $result = mysqli_query(
+        $con,
+        "SELECT match_number
+         FROM live_match_schedule
+         ORDER BY date ASC, kotime ASC, match_number ASC"
+    );
+
+    if (!($result instanceof mysqli_result)) {
+        return [];
+    }
+
+    $chronology = [];
+    $index = 0;
+    while ($row = mysqli_fetch_assoc($result)) {
+        $matchNumber = (int) ($row['match_number'] ?? 0);
+        if ($matchNumber <= 0 || isset($chronology[$matchNumber])) {
+            continue;
+        }
+
+        $chronology[$matchNumber] = $index;
+        $index++;
+    }
+
+    mysqli_free_result($result);
+
+    return $chronology;
+}
+
 function hh_badge_is_exact_prediction(array $predictionRow, array $resultRow, int $homeIndex, int $awayIndex): bool
 {
     $predHome = $predictionRow['score' . $homeIndex . '_p'] ?? null;
@@ -262,9 +292,9 @@ function hh_badge_stats_for_user(mysqli $con, int $userId): array
     }
 
     $latestResults = hh_badge_latest_result_row($con);
+    $fixtureChronology = hh_badge_fixture_chronology($con);
     $stageDefinitions = hh_prediction_stage_definitions();
-    $scoringStreak = 0;
-    $perfectStreak = 0;
+    $recordedFixturePoints = [];
     $lastPosition = (int) ($identity['lastpos'] ?? 0);
     $currentPosition = (int) ($identity['currpos'] ?? 0);
     $knockoutsStarted = false;
@@ -310,24 +340,12 @@ function hh_badge_stats_for_user(mysqli $con, int $userId): array
 
             if (!empty($detail['recorded'])) {
                 $stats['recorded_fixtures']++;
-
-                if ((int) ($detail['points'] ?? 0) > 0) {
-                    $scoringStreak++;
-                    if ($scoringStreak >= 3) {
-                        $stats['hot_streak'] = true;
-                    }
-                } else {
-                    $scoringStreak = 0;
-                }
-
-                if ((int) ($detail['points'] ?? 0) === 7) {
-                    $perfectStreak++;
-                    if ($perfectStreak >= 3) {
-                        $stats['top_form_turkey'] = true;
-                    }
-                } else {
-                    $perfectStreak = 0;
-                }
+                $matchNumber = (int) (($homeIndex + 1) / 2);
+                $recordedFixturePoints[] = [
+                    'match_number' => $matchNumber,
+                    'chronology_order' => $fixtureChronology[$matchNumber] ?? PHP_INT_MAX,
+                    'points' => (int) ($detail['points'] ?? 0),
+                ];
             }
 
             if ((int) ($detail['points'] ?? 0) < 3) {
@@ -346,6 +364,45 @@ function hh_badge_stats_for_user(mysqli $con, int $userId): array
             $popularScoreKeys = hh_badge_popular_prediction_keys_for_fixture($con, $tableName, $homeIndex, $awayIndex);
             if ($popularScoreKeys !== [] && !in_array($playerScoreKey, $popularScoreKeys, true)) {
                 $stats['crowd_rebel'] = true;
+            }
+        }
+    }
+
+    if ($recordedFixturePoints !== []) {
+        usort(
+            $recordedFixturePoints,
+            static function (array $left, array $right): int {
+                $chronologyComparison = ((int) ($left['chronology_order'] ?? PHP_INT_MAX)) <=> ((int) ($right['chronology_order'] ?? PHP_INT_MAX));
+                if ($chronologyComparison !== 0) {
+                    return $chronologyComparison;
+                }
+
+                return ((int) ($left['match_number'] ?? 0)) <=> ((int) ($right['match_number'] ?? 0));
+            }
+        );
+
+        $scoringStreak = 0;
+        $perfectStreak = 0;
+
+        foreach ($recordedFixturePoints as $fixture) {
+            $points = (int) ($fixture['points'] ?? 0);
+
+            if ($points > 0) {
+                $scoringStreak++;
+                if ($scoringStreak >= 3) {
+                    $stats['hot_streak'] = true;
+                }
+            } else {
+                $scoringStreak = 0;
+            }
+
+            if ($points === 7) {
+                $perfectStreak++;
+                if ($perfectStreak >= 3) {
+                    $stats['top_form_turkey'] = true;
+                }
+            } else {
+                $perfectStreak = 0;
             }
         }
     }
