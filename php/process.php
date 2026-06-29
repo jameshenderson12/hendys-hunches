@@ -320,6 +320,149 @@ function hh_prediction_stage_access_meta(mysqli $con, int $userId, string $stage
 	];
 }
 
+function hh_prediction_stage_fixture_access_map(mysqli $con, array $context, array $stageAccess): array {
+	$fixtureStart = (int) ($context['fixture_start'] ?? 0);
+	$fixtureEnd = (int) ($context['fixture_end'] ?? -1);
+	if ($fixtureStart <= 0 || $fixtureEnd < $fixtureStart) {
+		return [];
+	}
+
+	$result = mysqli_query(
+		$con,
+		"SELECT match_number, date, kotime, homescore, awayscore
+		 FROM live_match_schedule
+		 WHERE match_number BETWEEN {$fixtureStart} AND {$fixtureEnd}
+		 ORDER BY date ASC, kotime ASC, match_number ASC"
+	);
+
+	if (!($result instanceof mysqli_result)) {
+		return [];
+	}
+
+	$nowUtc = hh_effective_now(new DateTimeZone('UTC'));
+	$fixtureTimezone = new DateTimeZone('Europe/London');
+	$map = [];
+
+	while ($row = mysqli_fetch_assoc($result)) {
+		$matchNumber = (int) ($row['match_number'] ?? 0);
+		if ($matchNumber <= 0) {
+			continue;
+		}
+
+		$dateValue = trim((string) ($row['date'] ?? ''));
+		$timeValue = trim((string) ($row['kotime'] ?? ''));
+		$kickoffUtc = null;
+		if ($dateValue !== '' && $timeValue !== '') {
+			$kickoffLocal = DateTimeImmutable::createFromFormat('Y-m-d H:i', $dateValue . ' ' . $timeValue, $fixtureTimezone);
+			if ($kickoffLocal instanceof DateTimeImmutable) {
+				$kickoffUtc = $kickoffLocal->setTimezone(new DateTimeZone('UTC'));
+			}
+		}
+
+		$hasResult = is_numeric($row['homescore'] ?? null) && is_numeric($row['awayscore'] ?? null);
+		$hasStarted = $kickoffUtc instanceof DateTimeImmutable ? $nowUtc >= $kickoffUtc : false;
+		$isLocked = $hasResult || $hasStarted;
+
+		$map[$matchNumber] = [
+			'match_number' => $matchNumber,
+			'kickoff_utc' => $kickoffUtc,
+			'has_result' => $hasResult,
+			'has_started' => $hasStarted,
+			'is_locked' => $isLocked,
+			'can_edit' => !empty($stageAccess['can_edit']) && !$isLocked,
+		];
+	}
+
+	mysqli_free_result($result);
+
+	return $map;
+}
+
+function hh_prediction_stage_editable_score_indexes(array $fixtureAccessMap): array {
+	$editable = [];
+
+	foreach ($fixtureAccessMap as $matchNumber => $fixtureAccess) {
+		if (!is_array($fixtureAccess) || empty($fixtureAccess['can_edit'])) {
+			continue;
+		}
+
+		$indexes = hh_fixture_score_indexes($matchNumber);
+		$editable[] = (int) ($indexes['home'] ?? 0);
+		$editable[] = (int) ($indexes['away'] ?? 0);
+	}
+
+	return array_values(array_filter($editable, static fn(int $index): bool => $index > 0));
+}
+
+function hh_stage_posted_score_stats_for_indexes(array $scoreIndexes): array {
+	$present = 0;
+	$filled = 0;
+
+	foreach ($scoreIndexes as $scoreIndex) {
+		$field = "score{$scoreIndex}_p";
+		if (!array_key_exists($field, $_POST)) {
+			continue;
+		}
+
+		$present++;
+		$value = trim((string) $_POST[$field]);
+		if ($value !== '') {
+			$filled++;
+		}
+	}
+
+	$required = count($scoreIndexes);
+
+	return [
+		'present' => $present,
+		'filled' => $filled,
+		'required' => $required,
+		'has_any' => $present > 0,
+		'is_complete' => $required === 0 ? true : $filled === $required,
+	];
+}
+
+function hh_prediction_stage_score_values_for_submission(array $definition, array $editableScoreIndexes, array $existingRow = []): array {
+	$editableLookup = array_fill_keys($editableScoreIndexes, true);
+	$scoreValuesByIndex = [];
+
+	for ($scoreIndex = (int) ($definition['start'] ?? 0); $scoreIndex <= (int) ($definition['end'] ?? -1); $scoreIndex++) {
+		$field = "score{$scoreIndex}_p";
+		if (isset($editableLookup[$scoreIndex])) {
+			$value = trim((string) ($_POST[$field] ?? ''));
+			$scoreValuesByIndex[$scoreIndex] = $value === '' ? null : (int) $value;
+			continue;
+		}
+
+		$existingValue = $existingRow[$field] ?? null;
+		$scoreValuesByIndex[$scoreIndex] = ($existingValue === '' || $existingValue === null) ? null : (int) $existingValue;
+	}
+
+	return $scoreValuesByIndex;
+}
+
+function hh_prediction_stage_existing_row(mysqli $con, string $tableName, int $userId): array {
+	if ($tableName === '' || $userId <= 0) {
+		return [];
+	}
+
+	$statement = mysqli_prepare($con, "SELECT * FROM {$tableName} WHERE id = ? LIMIT 1");
+	if (!$statement) {
+		return [];
+	}
+
+	mysqli_stmt_bind_param($statement, 'i', $userId);
+	mysqli_stmt_execute($statement);
+	$result = mysqli_stmt_get_result($statement);
+	$row = $result instanceof mysqli_result ? (mysqli_fetch_assoc($result) ?: []) : [];
+	if ($result instanceof mysqli_result) {
+		mysqli_free_result($result);
+	}
+	mysqli_stmt_close($statement);
+
+	return is_array($row) ? $row : [];
+}
+
 function hh_fixture_score_indexes(int $matchNumber): array {
 	$homeIndex = max(1, ($matchNumber * 2) - 1);
 
@@ -1173,8 +1316,10 @@ function submitPredictions(): array {
 	if ($selectedStage !== '' && isset($stageDefinitions[$selectedStage])) {
 		$stageWindows = hh_prediction_stage_windows($con);
 		$selectedWindow = $stageWindows[$selectedStage] ?? null;
-		$selectedStats = hh_stage_posted_score_stats($stageDefinitions[$selectedStage]);
 		$selectedAccess = hh_prediction_stage_access_meta($con, (int) ($_SESSION['id'] ?? 0), $selectedStage, $selectedWindow);
+		$selectedFixtureAccess = hh_prediction_stage_fixture_access_map($con, hh_prediction_stage_contexts()[$selectedStage] ?? [], $selectedAccess);
+		$selectedEditableIndexes = hh_prediction_stage_editable_score_indexes($selectedFixtureAccess);
+		$selectedStats = hh_stage_posted_score_stats_for_indexes($selectedEditableIndexes);
 
 		if (!$selectedAccess['can_edit']) {
 			mysqli_close($con);
@@ -1182,6 +1327,15 @@ function submitPredictions(): array {
 				'ok' => false,
 				'stage' => $selectedStage,
 				'message' => 'This prediction window is not currently open.',
+			];
+		}
+
+		if ($selectedEditableIndexes === []) {
+			mysqli_close($con);
+			return [
+				'ok' => false,
+				'stage' => $selectedStage,
+				'message' => 'This stage has an active override, but all remaining fixtures are already locked.',
 			];
 		}
 
@@ -1197,7 +1351,17 @@ function submitPredictions(): array {
 		if (hh_stage_has_posted_scores($stageDefinitions[$selectedStage])) {
 			mysqli_begin_transaction($con);
 			try {
-				hh_upsert_prediction_stage_row_with_connection($con, $selectedStage);
+				$existingRow = hh_prediction_stage_existing_row($con, (string) ($stageDefinitions[$selectedStage]['table'] ?? ''), (int) ($_SESSION['id'] ?? 0));
+				$scoreValuesByIndex = hh_prediction_stage_score_values_for_submission($stageDefinitions[$selectedStage], $selectedEditableIndexes, $existingRow);
+				hh_upsert_prediction_stage_row_for_user_with_connection(
+					$con,
+					$selectedStage,
+					(int) ($_SESSION['id'] ?? 0),
+					(string) ($_SESSION['username'] ?? ''),
+					(string) ($_SESSION['firstname'] ?? ''),
+					(string) ($_SESSION['surname'] ?? ''),
+					$scoreValuesByIndex
+				);
 				hh_recalculate_all_prediction_points($con);
 				mysqli_commit($con);
 				$submittedAnyStage = true;
@@ -1215,22 +1379,38 @@ function submitPredictions(): array {
 		mysqli_begin_transaction($con);
 		try {
 			foreach ($stageDefinitions as $stageKey => $definition) {
-				$stats = hh_stage_posted_score_stats($definition);
+				$stageWindows = $stageWindows ?? hh_prediction_stage_windows($con);
+				$stageAccess = hh_prediction_stage_access_meta($con, (int) ($_SESSION['id'] ?? 0), $stageKey, $stageWindows[$stageKey] ?? null);
+				$fixtureAccess = hh_prediction_stage_fixture_access_map($con, hh_prediction_stage_contexts()[$stageKey] ?? [], $stageAccess);
+				$editableIndexes = hh_prediction_stage_editable_score_indexes($fixtureAccess);
+				$stats = hh_stage_posted_score_stats_for_indexes($editableIndexes);
 				if (!$stats['has_any']) {
 					continue;
 				}
 
-				$stageWindows = $stageWindows ?? hh_prediction_stage_windows($con);
-				$stageAccess = hh_prediction_stage_access_meta($con, (int) ($_SESSION['id'] ?? 0), $stageKey, $stageWindows[$stageKey] ?? null);
 				if (!$stageAccess['can_edit']) {
 					throw new RuntimeException('This prediction window is not currently open.');
+				}
+
+				if ($editableIndexes === []) {
+					throw new RuntimeException('This stage has an active override, but all remaining fixtures are already locked.');
 				}
 
 				if (!$stats['is_complete']) {
 					throw new RuntimeException('Please complete every score in each stage before saving your predictions.');
 				}
 
-				hh_upsert_prediction_stage_row_with_connection($con, $stageKey);
+				$existingRow = hh_prediction_stage_existing_row($con, (string) ($definition['table'] ?? ''), (int) ($_SESSION['id'] ?? 0));
+				$scoreValuesByIndex = hh_prediction_stage_score_values_for_submission($definition, $editableIndexes, $existingRow);
+				hh_upsert_prediction_stage_row_for_user_with_connection(
+					$con,
+					$stageKey,
+					(int) ($_SESSION['id'] ?? 0),
+					(string) ($_SESSION['username'] ?? ''),
+					(string) ($_SESSION['firstname'] ?? ''),
+					(string) ($_SESSION['surname'] ?? ''),
+					$scoreValuesByIndex
+				);
 				$submittedAnyStage = true;
 			}
 

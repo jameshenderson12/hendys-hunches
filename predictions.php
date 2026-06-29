@@ -75,6 +75,8 @@ if ($selectedStageKey === '' || !isset($stageContexts[$selectedStageKey])) {
 $selectedStage = $stageContexts[$selectedStageKey] ?? null;
 $selectedWindow = $stageWindows[$selectedStageKey] ?? null;
 $selectedAccess = $stageAccess[$selectedStageKey] ?? ['can_edit' => !empty($selectedWindow['is_open']), 'override_active' => false, 'override' => null, 'display_status' => (string) ($selectedWindow['status'] ?? 'pending')];
+$selectedFixtureAccess = $selectedStage ? hh_prediction_stage_fixture_access_map($con, $selectedStage, $selectedAccess) : [];
+$selectedHasEditableFixtures = !empty(array_filter($selectedFixtureAccess, static fn(array $fixture): bool => !empty($fixture['can_edit'])));
 $fixtures = [];
 $predictionRow = [];
 $predictionRows = [];
@@ -260,6 +262,16 @@ include 'php/navigation.php';
 
 .predictions-page .fixture-meta span:last-child {
   font-size: 0.68rem;
+}
+
+.predictions-page .fixture-lock-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  color: #8a6d03;
+  font-size: 0.74rem;
+  font-weight: 800;
 }
 
 .predictions-page .team-cell {
@@ -646,11 +658,11 @@ include 'php/navigation.php';
                             <?php if (!empty($selectedAccess['override_active']) && !empty($selectedAccess['override']['granted_until_utc']) && $selectedAccess['override']['granted_until_utc'] instanceof DateTimeImmutable) : ?>
                                 <p class="predictions-stage-note">Admin access override active until <?= htmlspecialchars($selectedAccess['override']['granted_until_utc']->setTimezone(new DateTimeZone(date_default_timezone_get()))->format('D j M Y, g:ia')) ?>.</p>
                             <?php endif; ?>
-                            <p class="predictions-stage-note">Every prediction in this round must be filled in before your first save. After that, you can come back and update individual scores until the stage window closes.</p>
+                            <p class="predictions-stage-note">Every still-open fixture in this round must be filled in before your first save. Once a match has kicked off or a result has been recorded, that fixture locks automatically even if an admin override is active for the wider stage.</p>
                         </div>
                         <div class="predictions-stage-actions">
-                            <button type="button" class="btn btn-secondary populate-scores" <?= empty($selectedAccess['can_edit']) ? 'disabled' : '' ?>><i class="bi bi-magic"></i> Populate for me</button>
-                            <button type="submit" class="btn btn-primary" name="predictionsSubmitted" <?= empty($selectedAccess['can_edit']) ? 'disabled' : '' ?>><i class="bi bi-floppy-fill"></i> Save</button>
+                            <button type="button" class="btn btn-secondary populate-scores" <?= empty($selectedAccess['can_edit']) || !$selectedHasEditableFixtures ? 'disabled' : '' ?>><i class="bi bi-magic"></i> Populate for me</button>
+                            <button type="submit" class="btn btn-primary" name="predictionsSubmitted" <?= empty($selectedAccess['can_edit']) || !$selectedHasEditableFixtures ? 'disabled' : '' ?>><i class="bi bi-floppy-fill"></i> Save</button>
                         </div>
                     </div>
                     <table id="table" class="table table-sm table-striped">
@@ -674,6 +686,9 @@ include 'php/navigation.php';
                                 $awayScoreIndex = $matchNumber * 2;
                                 $homeValue = hh_prediction_value($predictionRow, $homeScoreIndex);
                                 $awayValue = hh_prediction_value($predictionRow, $awayScoreIndex);
+                                $fixtureAccess = $selectedFixtureAccess[$matchNumber] ?? ['can_edit' => !empty($selectedAccess['can_edit']), 'is_locked' => false, 'has_result' => false, 'has_started' => false];
+                                $fixtureCanEdit = !empty($fixtureAccess['can_edit']);
+                                $fixtureLocked = !empty($fixtureAccess['is_locked']);
                                 $stageLabel = trim((string) ($fixture['stage'] ?? '')) ?: ($selectedStage['label'] ?? '');
                                 $kickoffDate = !empty($fixture['date']) ? date('D j M', strtotime((string) $fixture['date'])) : '';
                                 $kickoffTime = trim((string) ($fixture['kotime'] ?? ''));
@@ -686,6 +701,9 @@ include 'php/navigation.php';
                                             <strong>Match <?= htmlspecialchars((string) $matchNumber) ?> · <?= htmlspecialchars($stageLabel !== '' ? $stageLabel : 'Fixture') ?></strong>
                                             <span><?= htmlspecialchars($fixtureDateTime !== '' ? $fixtureDateTime : 'Kick-off TBC') ?></span>
                                             <span><?= htmlspecialchars($fixtureVenue !== '' ? $fixtureVenue : 'Venue TBC') ?></span>
+                                            <?php if ($fixtureLocked) : ?>
+                                                <span class="fixture-lock-note"><i class="bi bi-lock-fill"></i> <?= !empty($fixtureAccess['has_result']) ? 'Result recorded' : 'Kick-off passed' ?></span>
+                                            <?php endif; ?>
                                         </div>
                                     </td>
                                     <td>
@@ -696,11 +714,11 @@ include 'php/navigation.php';
                                     </td>
                                     <td class="d-none d-md-table-cell"></td>
                                     <td class="text-center">
-                                        <input type="number" min="0" max="20" inputmode="numeric" id="score<?= $homeScoreIndex ?>_p" name="score<?= $homeScoreIndex ?>_p" class="form-control score-field" value="<?= htmlspecialchars($homeValue) ?>" required <?= empty($selectedAccess['can_edit']) ? 'disabled' : '' ?>>
+                                        <input type="number" min="0" max="20" inputmode="numeric" id="score<?= $homeScoreIndex ?>_p" name="score<?= $homeScoreIndex ?>_p" class="form-control score-field" value="<?= htmlspecialchars($homeValue) ?>" required <?= !$fixtureCanEdit ? 'disabled' : '' ?>>
                                     </td>
                                     <td class="text-center"><span class="versus-pill">v</span></td>
                                     <td class="text-center">
-                                        <input type="number" min="0" max="20" inputmode="numeric" id="score<?= $awayScoreIndex ?>_p" name="score<?= $awayScoreIndex ?>_p" class="form-control score-field" value="<?= htmlspecialchars($awayValue) ?>" required <?= empty($selectedAccess['can_edit']) ? 'disabled' : '' ?>>
+                                        <input type="number" min="0" max="20" inputmode="numeric" id="score<?= $awayScoreIndex ?>_p" name="score<?= $awayScoreIndex ?>_p" class="form-control score-field" value="<?= htmlspecialchars($awayValue) ?>" required <?= !$fixtureCanEdit ? 'disabled' : '' ?>>
                                     </td>
                                     <td class="d-none d-md-table-cell"></td>
                                     <td>
@@ -714,8 +732,8 @@ include 'php/navigation.php';
                         </tbody>
                     </table>
                     <div class="predictions-stage-actions" style="margin-top: 12px;">
-                        <button type="button" class="btn btn-secondary populate-scores" <?= empty($selectedAccess['can_edit']) ? 'disabled' : '' ?>><i class="bi bi-magic"></i> Populate for me</button>
-                        <button type="submit" class="btn btn-primary" name="predictionsSubmitted" <?= empty($selectedAccess['can_edit']) ? 'disabled' : '' ?>><i class="bi bi-floppy-fill"></i> Save</button>
+                        <button type="button" class="btn btn-secondary populate-scores" <?= empty($selectedAccess['can_edit']) || !$selectedHasEditableFixtures ? 'disabled' : '' ?>><i class="bi bi-magic"></i> Populate for me</button>
+                        <button type="submit" class="btn btn-primary" name="predictionsSubmitted" <?= empty($selectedAccess['can_edit']) || !$selectedHasEditableFixtures ? 'disabled' : '' ?>><i class="bi bi-floppy-fill"></i> Save</button>
                     </div>
                 </div>
             </form>
@@ -736,7 +754,7 @@ $(document).ready(function () {
             return 5;
         }
 
-        $('#predictionForm input[name^="score"]').each(function() {
+        $('#predictionForm input[name^="score"]:enabled').each(function() {
             $(this).val(getRandomScore());
         });
     });
