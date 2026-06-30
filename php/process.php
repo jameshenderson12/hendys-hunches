@@ -151,12 +151,58 @@ function hh_prediction_access_override_table_name(): string {
 	return 'live_prediction_access_overrides';
 }
 
+function hh_prize_position_table_name(): string {
+	return 'live_prize_positions';
+}
+
 function hh_ensure_registration_invite_table(mysqli $con): bool {
 	return hh_runtime_ensure_sql_table($con, hh_registration_invite_table_name(), 'setup-registration-invites-table.sql');
 }
 
 function hh_ensure_prediction_access_override_table(mysqli $con): bool {
 	return hh_runtime_ensure_sql_table($con, hh_prediction_access_override_table_name(), 'setup-prediction-access-overrides-table.sql');
+}
+
+function hh_ensure_prize_position_table(mysqli $con): bool {
+	return hh_runtime_ensure_sql_table($con, hh_prize_position_table_name(), 'setup-prize-positions-table.sql');
+}
+
+function hh_prize_position_map_with_connection(mysqli $con): array {
+	if (!hh_ensure_prize_position_table($con)) {
+		return [];
+	}
+
+	$result = mysqli_query(
+		$con,
+		"SELECT position_rank, amount
+		 FROM " . hh_prize_position_table_name() . "
+		 ORDER BY position_rank ASC"
+	);
+
+	if (!($result instanceof mysqli_result)) {
+		return [];
+	}
+
+	$map = [];
+	while ($row = mysqli_fetch_assoc($result)) {
+		$position = (int) ($row['position_rank'] ?? 0);
+		if ($position <= 0) {
+			continue;
+		}
+
+		$map[$position] = round((float) ($row['amount'] ?? 0), 2);
+	}
+
+	mysqli_free_result($result);
+
+	return $map;
+}
+
+function hh_format_prize_amount(float $amount): string {
+	$normalized = round($amount, 2);
+	$decimals = abs($normalized - floor($normalized)) < 0.00001 ? 0 : 2;
+
+	return number_format($normalized, $decimals, '.', '');
 }
 
 function hh_registration_invite_access_with_connection(mysqli $con, string $token): array {
@@ -1669,6 +1715,7 @@ function displayRankingsEq4() {
 function displayRankingsEq5() {
     // Connect to the database
     include 'php/db-connect.php';
+    $configuredPrizes = hh_prize_position_map_with_connection($con);
 
     // Set up SQL query to retrieve data from database tables
 		$sql_maketable = "SELECT lui.id, lui.firstname, lui.surname, lui.avatar, lui.faveteam, lui.location, lui.startpos, lui.currpos, lui.lastpos, lui.signupdate,
@@ -1745,6 +1792,19 @@ function displayRankingsEq5() {
         });
     }
 
+    $rankCounts = [];
+    foreach ($rows as $index => $row) {
+        $rankValue = !$hasRecordedResults ? ($index + 1) : (int) ($row['rank'] ?? 0);
+        if ($rankValue <= 0) {
+            continue;
+        }
+
+        if (!isset($rankCounts[$rankValue])) {
+            $rankCounts[$rankValue] = 0;
+        }
+        $rankCounts[$rankValue]++;
+    }
+
     echo "<div class='table-responsive'>";
     echo "<table id='rankingsTable' class='table table-striped'>";
     echo "<thead><tr><th>Rank</th><th>Move</th><th>Player</th><th>Points</th></tr></thead>";
@@ -1785,12 +1845,34 @@ function displayRankingsEq5() {
         $uppCaseSN = ucfirst($row["surname"]);
 
         $isCurrentUser = isset($_SESSION['id']) && (string) $_SESSION['id'] === (string) $row["id"];
-        $rowClass = $isCurrentUser ? " class='rankings-row--me'" : "";
+        $rankNumber = (int) $rank;
+        $rowClassNames = [];
+        if ($rankNumber === 1) {
+            $rowClassNames[] = 'rankings-row--gold';
+        } elseif ($rankNumber === 2) {
+            $rowClassNames[] = 'rankings-row--silver';
+        } elseif ($rankNumber === 3) {
+            $rowClassNames[] = 'rankings-row--bronze';
+        } elseif (isset($configuredPrizes[$rankNumber]) && (float) $configuredPrizes[$rankNumber] > 0) {
+            $rowClassNames[] = 'rankings-row--prize';
+        }
+        if ($isCurrentUser) {
+            $rowClassNames[] = 'rankings-row--me';
+        }
+
+        $rowClass = $rowClassNames !== [] ? " class='" . implode(' ', $rowClassNames) . "'" : "";
         $youBadge = $isCurrentUser ? "<span class='rankings-you-badge'>You</span>" : "";
 
         // Display the table complete with all data variables
         echo "<tr" . $rowClass . ">";
-        echo "<td><span class=''>" . $displayRank . "</span></td>";
+        $prizeMarkup = '';
+        if (isset($configuredPrizes[$rankNumber]) && (float) $configuredPrizes[$rankNumber] > 0) {
+            $tieCount = max(1, (int) ($rankCounts[$rankNumber] ?? 1));
+            $splitAmount = (float) $configuredPrizes[$rankNumber] / $tieCount;
+            $prizeMarkup = "<span class='cash-note'>£" . hh_format_prize_amount($splitAmount) . "</span>";
+        }
+
+        echo "<td><div class='rankings-rank-cell'><span class='rankings-rank-value'>" . $displayRank . "</span>" . $prizeMarkup . "</div></td>";
 		echo "<td><span class=''>" . $move . "</span></td>";
         $playerMeta = trim((string) ($row["location"] ?? ''));
         if ($playerMeta === '' || strcasecmp($playerMeta, 'Prefer Not To Say') === 0) {

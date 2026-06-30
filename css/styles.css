@@ -4244,26 +4244,18 @@ body.tour-active {
 }
 
 .rankings-panel #rankingsTable tbody tr.rankings-row--gold {
-  --bs-table-bg: rgba(243, 199, 66, 0.24);
-  --bs-table-striped-bg: rgba(243, 199, 66, 0.24);
   border-left-color: var(--hh-gold);
 }
 
 .rankings-panel #rankingsTable tbody tr.rankings-row--silver {
-  --bs-table-bg: rgba(173, 181, 189, 0.22);
-  --bs-table-striped-bg: rgba(173, 181, 189, 0.22);
   border-left-color: #adb5bd;
 }
 
 .rankings-panel #rankingsTable tbody tr.rankings-row--bronze {
-  --bs-table-bg: rgba(188, 108, 37, 0.18);
-  --bs-table-striped-bg: rgba(188, 108, 37, 0.18);
   border-left-color: #bc6c25;
 }
 
 .rankings-panel #rankingsTable tbody tr.rankings-row--prize {
-  --bs-table-bg: rgba(12, 90, 67, 0.12);
-  --bs-table-striped-bg: rgba(12, 90, 67, 0.12);
   border-left-color: var(--hh-green);
 }
 
@@ -4278,6 +4270,47 @@ body.tour-active {
   margin-right: 8px;
   height: auto;
   vertical-align: middle;
+}
+
+.rankings-rank-cell {
+  display: inline-grid;
+  grid-template-columns: 2.5ch auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.rankings-rank-value {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-width: 0;
+}
+
+.cash-note {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 26px;
+  min-width: 54px;
+  padding: 0 10px;
+  box-sizing: border-box;
+  background:
+    radial-gradient(circle at 8px 8px, rgba(255,255,255,0.35) 0 2px, transparent 3px),
+    radial-gradient(circle at calc(100% - 8px) calc(100% - 8px), rgba(0,0,0,0.12) 0 2px, transparent 3px),
+    linear-gradient(135deg, #7fc97f, #2f8f46);
+  border: 2px solid #1f6f35;
+  border-radius: 4px;
+  color: #083b1a;
+  font-size: 13px;
+  font-weight: 800;
+  font-family: "Arial", sans-serif;
+  line-height: 1;
+  box-shadow:
+    inset 0 0 0 2px rgba(255,255,255,0.25),
+    inset 0 0 0 5px rgba(0,0,0,0.08),
+    0 1px 2px rgba(0,0,0,0.25);
+  letter-spacing: 0.5px;
+  white-space: nowrap;
 }
 
 .rankings-player-cell {
@@ -7431,6 +7464,19 @@ body.tour-active {
     font-size: 0.72rem;
     letter-spacing: 0.04em;
     white-space: nowrap;
+  }
+
+  .rankings-rank-cell {
+    grid-template-columns: 3ch auto;
+    gap: 4px;
+  }
+
+  .cash-note {
+    height: 22px;
+    min-width: 46px;
+    padding: 0 8px;
+    font-size: 11px;
+    border-width: 1.5px;
   }
 
   .rankings-player-cell {

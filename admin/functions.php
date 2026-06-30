@@ -861,6 +861,85 @@ function hh_admin_preview_table_paged(mysqli $con, string $table, string $rowMod
     ];
 }
 
+function hh_admin_prize_configuration(mysqli $con, int $maxPlaces = 10): array
+{
+    $saved = hh_prize_position_map_with_connection($con);
+    $count = count($saved);
+
+    return [
+        'max_places' => $maxPlaces,
+        'place_count' => min($maxPlaces, $count),
+        'positions' => $saved,
+        'total' => array_sum($saved),
+    ];
+}
+
+function hh_admin_save_prize_configuration_with_connection(mysqli $con, int $placeCount, array $amountInputs, int $maxPlaces = 10): array
+{
+    if (!hh_ensure_prize_position_table($con)) {
+        throw new RuntimeException('The prize settings table could not be created.');
+    }
+
+    $placeCount = max(0, min($maxPlaces, $placeCount));
+    $positions = [];
+
+    for ($position = 1; $position <= $placeCount; $position++) {
+        $rawAmount = trim((string) ($amountInputs[$position] ?? $amountInputs[(string) $position] ?? '0'));
+        if ($rawAmount === '' || !is_numeric($rawAmount)) {
+            throw new RuntimeException('Enter a valid amount for place ' . $position . '.');
+        }
+
+        $amount = round((float) $rawAmount, 2);
+        if ($amount < 0) {
+            throw new RuntimeException('Prize amounts cannot be negative.');
+        }
+
+        $positions[$position] = $amount;
+    }
+
+    mysqli_begin_transaction($con);
+
+    try {
+        if (!mysqli_query($con, "DELETE FROM " . hh_prize_position_table_name())) {
+            throw new RuntimeException(mysqli_error($con));
+        }
+
+        if ($positions !== []) {
+            $statement = mysqli_prepare(
+                $con,
+                "INSERT INTO " . hh_prize_position_table_name() . " (position_rank, amount)
+                 VALUES (?, ?)"
+            );
+
+            if (!$statement) {
+                throw new RuntimeException(mysqli_error($con));
+            }
+
+            foreach ($positions as $position => $amount) {
+                mysqli_stmt_bind_param($statement, 'id', $position, $amount);
+                if (!mysqli_stmt_execute($statement)) {
+                    $error = mysqli_stmt_error($statement);
+                    mysqli_stmt_close($statement);
+                    throw new RuntimeException($error);
+                }
+            }
+
+            mysqli_stmt_close($statement);
+        }
+
+        mysqli_commit($con);
+    } catch (Throwable $exception) {
+        mysqli_rollback($con);
+        throw $exception;
+    }
+
+    return [
+        'place_count' => $placeCount,
+        'positions' => $positions,
+        'total' => array_sum($positions),
+    ];
+}
+
 function hh_admin_badge_holders(mysqli $con, string $badgeToken): array
 {
     $badgeToken = trim($badgeToken);
@@ -1992,6 +2071,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } catch (Throwable $exception) {
             $errors[] = 'Badge refresh failed: ' . $exception->getMessage();
         }
+    } elseif ($action === 'save_prize_configuration') {
+        $placeCount = (int) ($_POST['prize_place_count'] ?? 0);
+        $amountInputs = (array) ($_POST['prize_amounts'] ?? []);
+
+        try {
+            $savedPrizes = hh_admin_save_prize_configuration_with_connection($con, $placeCount, $amountInputs);
+            $messages[] = 'Prize setup saved for ' . (int) ($savedPrizes['place_count'] ?? 0) . ' place' . ((int) ($savedPrizes['place_count'] ?? 0) === 1 ? '' : 's') . '.';
+        } catch (Throwable $exception) {
+            $errors[] = 'Prize setup failed: ' . $exception->getMessage();
+        }
     } elseif ($action === 'create_registration_invite') {
         $emailHint = trim((string) ($_POST['invite_email_hint'] ?? ''));
         $notes = trim((string) ($_POST['invite_notes'] ?? ''));
@@ -2139,6 +2228,7 @@ foreach (hh_prediction_stage_contexts() as $stageKey => $context) {
 }
 $registrationInvites = hh_admin_list_registration_invites($con);
 $predictionOverrides = hh_admin_list_prediction_overrides($con);
+$prizeConfiguration = hh_admin_prize_configuration($con);
 
 $snapshot = [
     'users' => 0,
@@ -2152,6 +2242,8 @@ $snapshot = [
     'quiz_sessions' => 0,
     'spot_players' => 0,
     'spot_sessions' => 0,
+    'prize_places' => (int) ($prizeConfiguration['place_count'] ?? 0),
+    'prize_total' => (float) ($prizeConfiguration['total'] ?? 0),
 ];
 
 $countQueries = [
@@ -2854,6 +2946,26 @@ include '../php/navigation.php';
         font-size: 0.84rem;
         font-weight: 800;
       }
+      .admin-prize-summary {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: flex-start;
+      }
+      .admin-prize-grid {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .admin-prize-field {
+        padding: 14px;
+        border: 1px solid var(--hh-line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.84);
+      }
+      .admin-prize-field--muted {
+        opacity: 0.62;
+      }
       .admin-seed-card {
         padding: 16px;
         border: 1px solid var(--hh-line);
@@ -2915,6 +3027,7 @@ include '../php/navigation.php';
         .admin-audit-metrics,
         .admin-score-summary,
         .admin-editor-grid,
+        .admin-prize-grid,
         .admin-seed-matchup,
         .admin-seed-form__grid {
           grid-template-columns: 1fr;
@@ -2982,7 +3095,63 @@ include '../php/navigation.php';
                 <div class="admin-kpi__item"><strong><?= $snapshot['quiz_sessions'] ?></strong><span>quiz sessions started</span></div>
                 <div class="admin-kpi__item"><strong><?= $snapshot['spot_players'] ?></strong><span>spot-the-ball players</span></div>
                 <div class="admin-kpi__item"><strong><?= $snapshot['spot_sessions'] ?></strong><span>spot-the-ball sessions started</span></div>
+                <div class="admin-kpi__item"><strong><?= $snapshot['prize_places'] ?></strong><span>prize places configured</span></div>
+                <div class="admin-kpi__item"><strong>£<?= htmlspecialchars(hh_format_prize_amount((float) $snapshot['prize_total']), ENT_QUOTES) ?></strong><span>configured prize total</span></div>
             </div>
+        </div>
+
+        <div class="admin-card">
+            <h2>Prize Money</h2>
+            <p class="admin-note">Set how many finishing places pay out and the total amount assigned to each place. If players are tied on the same rank, that place amount is split evenly between them.</p>
+            <form method="post" class="mt-3">
+                <input type="hidden" name="admin_action" value="save_prize_configuration">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-4">
+                        <label class="form-label" for="prize_place_count">Paying places</label>
+                        <select class="form-select" id="prize_place_count" name="prize_place_count">
+                            <?php for ($place = 0; $place <= (int) ($prizeConfiguration['max_places'] ?? 10); $place++) : ?>
+                                <option value="<?= $place ?>"<?= $place === (int) ($prizeConfiguration['place_count'] ?? 0) ? ' selected' : '' ?>>
+                                    <?= $place === 0 ? 'No prize places' : $place . ' place' . ($place === 1 ? '' : 's') ?>
+                                </option>
+                            <?php endfor; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="admin-prize-summary">
+                            <span class="admin-seed-chip"><strong><?= (int) ($prizeConfiguration['place_count'] ?? 0) ?></strong> places live</span>
+                            <span class="admin-seed-chip"><strong>£<?= htmlspecialchars(hh_format_prize_amount((float) ($prizeConfiguration['total'] ?? 0)), ENT_QUOTES) ?></strong> prize pot shown</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-prize-grid mt-3">
+                    <?php for ($position = 1; $position <= (int) ($prizeConfiguration['max_places'] ?? 10); $position++) : ?>
+                        <?php
+                        $amountValue = $prizeConfiguration['positions'][$position] ?? 0;
+                        $isActivePlace = $position <= (int) ($prizeConfiguration['place_count'] ?? 0);
+                        ?>
+                        <div class="admin-prize-field<?= $isActivePlace ? '' : ' admin-prize-field--muted' ?>">
+                            <label class="form-label" for="prize_amount_<?= $position ?>">Place <?= $position ?></label>
+                            <div class="input-group">
+                                <span class="input-group-text">£</span>
+                                <input
+                                    class="form-control"
+                                    type="number"
+                                    min="0"
+                                    step="0.01"
+                                    id="prize_amount_<?= $position ?>"
+                                    name="prize_amounts[<?= $position ?>]"
+                                    value="<?= htmlspecialchars(number_format((float) $amountValue, 2, '.', ''), ENT_QUOTES) ?>"
+                                >
+                            </div>
+                        </div>
+                    <?php endfor; ?>
+                </div>
+
+                <div class="admin-actions mt-3">
+                    <button type="submit" class="btn btn-outline-success"><i class="bi bi-cash-stack"></i> Save prize setup</button>
+                </div>
+            </form>
         </div>
 
         <div class="admin-card">
@@ -4018,6 +4187,27 @@ include '../php/navigation.php';
 </div>
 
 <script>
+  (() => {
+    const placeCountField = document.getElementById('prize_place_count');
+    const prizeFields = Array.from(document.querySelectorAll('.admin-prize-field'));
+
+    if (!placeCountField || prizeFields.length === 0) {
+      return;
+    }
+
+    const syncPrizeFieldState = () => {
+      const activePlaces = Number.parseInt(placeCountField.value || '0', 10) || 0;
+
+      prizeFields.forEach((field, index) => {
+        const position = index + 1;
+        field.classList.toggle('admin-prize-field--muted', position > activePlaces);
+      });
+    };
+
+    placeCountField.addEventListener('change', syncPrizeFieldState);
+    syncPrizeFieldState();
+  })();
+
   (() => {
     const selectAllButton = document.getElementById('preserveUsersSelectAll');
     const clearAllButton = document.getElementById('preserveUsersClearAll');
